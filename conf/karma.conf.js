@@ -12,7 +12,6 @@ module.exports = function(config) {
             dir: "coverage/"
         },
         files: [
-           "./test/lib/jasmine-tools.js",
             "./build/ugma.js",
             "./test/modules/**/*.js"
         ]

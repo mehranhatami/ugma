@@ -1,20 +1,25 @@
 {
-  "name": "es6Workflow",
-  "version": "0.0.4",
-  "codename": "es6w",
-  "author": "Jon Doe",
-  "description": "ES6 javascript build process",
+  "name": "ugma",
+  "version": "0.0.1",
+  "codename": "trackira",
+  "author": "Kenny Flashlight",
+  "description": "Javascript framework",
   "license": "MIT",
   "keywords": [
     "es6",
     "transpiller",
+    "javascript",
+    "mehran",
+    "hatami",
+    "ecma-6",
     "ecma",
+    "library",
     "gulp"
   ],
-  "bugs": "",
+  "bugs": "https://github.com/ugma/ugma/issues",
   "repository": {
     "type": "git",
-    "url": "..."
+    "url": "https://github.com/ugma/ugma"
   },
   "engines": {
     "node": ">=0.10.0",
