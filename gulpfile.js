@@ -51,7 +51,7 @@ gulp.task("compile", function() {
         version = pkg.version;
     }
 
-    return gulp.src(["public/*.js", "inject/*.js", "core/*.js", "modules/*.js", "util/*.js", "*.js"], {cwd: "./src"})
+    return gulp.src(["public/*.js", "inject/*.js", "modules/*.js", "util/*.js", "*.js"], {cwd: "./src"})
         .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
         .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter("jshint-stylish"))
@@ -103,7 +103,7 @@ gulp.task("minify", ["test"], function() {
 
 // create a dev version
 gulp.task("dev", ["compile", "lint-test"], function() {
-    gulp.watch(["src/public/*.js", "inject/*.js", "src/core/*.js", "src/modules/*.js", "src/util/*.js", "src/*.js"], ["compile"]);
+    gulp.watch(["src/public/*.js", "inject/*.js", "src/modules/*.js", "src/util/*.js", "src/*.js"], ["compile"]);
     gulp.watch(["test/modules/**/*.js"], ["lint-test"]);
 
     karma.start({
