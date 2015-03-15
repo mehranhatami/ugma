@@ -15,4 +15,6 @@ before_install:
 script:
   - gulp test
 env:
+addons:
+  firefox: "35.0"
 
