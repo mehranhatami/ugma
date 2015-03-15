@@ -54,7 +54,7 @@ module.exports = function(dest, pkg) {
                 file: dest,
                 // Make unique name 
                 prop: function(name) {
-                    return name ? "{{" + name + "!" + codename + "}}" : "{{" + codename + "}}";
+                     return name ? "__" + name + "_" + codename + "__" : "__" + codename + "__";
                 }
             });
 
