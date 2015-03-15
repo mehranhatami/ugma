@@ -52,8 +52,9 @@ module.exports = function(dest, pkg) {
             code = gutil.template(code, {
                 pkg: pkg,
                 file: dest,
+                // Make unique name 
                 prop: function(name) {
-                    return name ? name + version : "__" + version + "__";
+                    return name ? "{{" + name + "!" + codename + "}}" : "{{" + codename + "}}";
                 }
             });
 
