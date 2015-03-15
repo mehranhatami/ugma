@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 15 Mar 2015 13:11:38 GMT
+ * Build date: Sun, 15 Mar 2015 13:21:13 GMT
  */
 (function() {
     "use strict";var SLICE$0 = Array.prototype.slice;
@@ -289,325 +289,6 @@
         wrapper.prototype = Object.create(Error.prototype);
         throw new wrapper(module, msg);
     }
-    /* es6-transpiler has-iterators:false, has-generators: false */
-
-    var // operator type / priority object
-        public$emmet$$operators = {"(": 1,")": 2,"^": 3,">": 4,"+": 5,"*": 6,"`": 7,"[": 8,".": 8,"#": 8},
-        public$emmet$$reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-        public$emmet$$reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-        public$emmet$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
-        public$emmet$$reDot = /\./g,
-        public$emmet$$reDollar = /\$/g,
-        public$emmet$$tagCache = {"": ""},
-        public$emmet$$parseAttr = function(_, name, value, rawValue)  {
-            // try to detemnie which kind of quotes to use
-            var quote = value && value.indexOf("\"") >= 0 ? "'" : "\"";
-    
-            if (toolset$$is(rawValue, "string")) {
-                // grab unquoted value for smart quotes
-                value = rawValue;
-            } else if (!toolset$$is(value, "string")) {
-                // handle boolean attributes by using name as value
-                value = name;
-            }
-            // always wrap attribute values with quotes even they don't exist
-            return " " + name + "=" + quote + value + quote;
-        },
-        public$emmet$$injection = function(term, adjusted)  {return function(html)  {
-            // find index of where to inject the term
-            var index = adjusted ? html.lastIndexOf("<") : html.indexOf(">");
-            // inject the term into the HTML string
-            return html.slice(0, index) + term + html.slice(index);
-        }},
-        public$emmet$$processTag = function(tag)  {
-            return public$emmet$$tagCache[tag] || (public$emmet$$tagCache[tag] = "<" + tag + "></" + tag + ">");
-        },
-       
-       
-        public$emmet$$indexing = function(num, term)  {
-           var stricted = num >= 1500 ? /* max 1500 HTML elements */ 1500 : (num <= 0 ? 1 : num),
-               result = new Array(stricted),
-              i = 0;
-    
-            for (;i < num; ++i) {
-                result[i] = term.replace(public$emmet$$reIndex, function(expr, fmt, sign, base)  {
-                    var index = (sign ? num - i - 1 : i) + (base ? +base : 1);
-                    // handle zero-padded index values, like $$$ etc.
-                    return (fmt + index).slice(-fmt.length).replace(public$emmet$$reDollar, "0");
-                });
-            }
-            return result;  
-        },
-        public$emmet$$badChars = /[&<>"']/g,
-        // http://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
-        public$emmet$$charMap = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"};
-
-    // populate empty tag names with result
-    "area base br col hr img input link meta param command keygen source".split(" ").forEach(function(tag)  {
-        public$emmet$$tagCache[tag] = "<" + tag + ">";
-    });
-
-    ugma.emmet = function(template, varMap) {var $D$0;var $D$1;var $D$2;
-    
-        if (!toolset$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
-    
-        if (varMap) template = ugma.format(template, varMap);
-     // If already cached, return the cached result
-        if (template in public$emmet$$tagCache) {return public$emmet$$tagCache[template];}
-    
-        // transform template string into RPN
-    
-        var stack = [], output = [];
-    
-    
-        $D$2 = (template.match(public$emmet$$reParse));$D$0 = 0;$D$1 = $D$2.length;for (var str ;$D$0 < $D$1;){str = ($D$2[$D$0++]);
-            var op = str[0];
-            var priority = public$emmet$$operators[op];
-    
-            if (priority) {
-                if (str !== "(") {
-                    // for ^ operator need to skip > str.length times
-                    for (var i = 0, n = (op === "^" ? str.length : 1); i < n; ++i) {
-                        while (stack[0] !== op && public$emmet$$operators[stack[0]] >= priority) {
-                            var head = stack.shift();
-    
-                            output.push(head);
-                            // for ^ operator stop shifting when the first > is found
-                            if (op === "^" && head === ">") break;
-                        }
-                    }
-                }
-    
-                if (str === ")") {
-                    stack.shift(); // remove "(" symbol from stack
-                } else {
-                    // handle values inside of `...` and [...] sections
-                    if (op === "[" || op === "`") {
-                        output.push(str.slice(1, -1));
-                    }
-                    // handle multiple classes, e.g. a.one.two
-                    if (op === ".") {
-                        output.push(str.slice(1).replace(public$emmet$$reDot, " "));
-                    }
-    
-                    stack.unshift(op);
-                }
-            } else {
-                output.push(str);
-            }
-        };$D$0 = $D$1 = $D$2 = void 0;
-    
-        output = output.concat(stack);
-    
-        // transform RPN into html nodes
-    
-        stack = [];
-    
-        $D$0 = 0;$D$1 = output.length;for (var str$0 ;$D$0 < $D$1;){str$0 = (output[$D$0++]);
-            if (str$0 in public$emmet$$operators) {
-                var value = stack.shift();
-                var node = stack.shift();
-    
-                if (typeof node === "string") {
-                    node = [ public$emmet$$processTag(node) ];
-                }
-    
-               if (toolset$$is(node, "undefined") || toolset$$is(value, "undefined")) {
-                   minErr$$minErr("emmet()", ERROR_MSG[4]);
-               }
-                        
-                if(str$0 === ".") { // class
-                    value = public$emmet$$injection(" class=\"" + value + "\"");            
-                } else if(str$0 === "#") { // id
-                    value = public$emmet$$injection(" id=\"" + value + "\"");
-                } else if(str$0 === "[") { // id
-                    value = public$emmet$$injection(value.replace(public$emmet$$reAttr, public$emmet$$parseAttr));
-                } else if(str$0 === "*") { // universal selector 
-                    node = public$emmet$$indexing(+value, node.join(""));
-                } else if(str$0 === "`") { // Back tick
-                    stack.unshift(node);
-                    // escape unsafe HTML symbols
-                    node = [ value.replace(public$emmet$$badChars, function(ch)  {return public$emmet$$charMap[ch]}) ];
-                } else {  /* ">", "+", "^" */
-                    value = toolset$$is(value, "string") ? public$emmet$$processTag(value) : value.join("");
-    
-                    if (str$0 === ">") {
-                        value = public$emmet$$injection(value, true);
-                    } else {
-                        node.push(value);
-                    }
-                    }
-    
-                str$0 = toolset$$is(value, "function") ? node.map(value) : node;
-            }
-    
-            stack.unshift(str$0);
-        };$D$0 = $D$1 = void 0;
-    
-        if (output.length === 1) {
-            // handle single tag case
-            output = public$emmet$$processTag(stack[0]);
-        } else {
-            output = stack[0].join("");
-        }
-    
-        return output;
-    };
-
-    var public$emmet$$default = public$emmet$$tagCache;
-
-    // 'format' a placeholder value with it's original content 
-    // @example
-    // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
-    var public$format$$reVar = /\{([\w\-]+)\}/g;
-    ugma.format = function(tmpl, varMap) {
-        if (!toolset$$is(tmpl, "string")) tmpl = String(tmpl);
-    
-        if (!varMap || !toolset$$is(varMap, "object")) varMap = {};
-    
-        return tmpl.replace(public$format$$reVar, function(x, name, index)  {
-            if (name in varMap) {
-                x = varMap[name];
-    
-                if (toolset$$is(x, "function")) x = x(index);
-    
-                x = String(x);
-            }
-    
-            return x;
-        });
-    };
-
-    var public$frame$$global = WINDOW;
-    // Test if we are within a foreign domain. Use raf from the top if possible.
-    /* jshint ignore:start */
-    try {
-        // Accessing .name will throw SecurityError within a foreign domain.
-        public$frame$$global.top.name;
-        public$frame$$global = public$frame$$global.top;
-    } catch (e) {}
-    /* jshint ignore:end */
-    // Works around a iOS6 bug
-    var public$frame$$raf = public$frame$$global.requestAnimationFrame,
-        public$frame$$craf = public$frame$$global.cancelAnimationFrame,
-        public$frame$$lastTime = 0;
-
-    if (!(public$frame$$raf && !public$frame$$craf)) {
-        toolset$$each(VENDOR_PREFIXES, function(prefix)  {
-            prefix = prefix.toLowerCase();
-            public$frame$$raf = public$frame$$raf || WINDOW[prefix + "RequestAnimationFrame"];
-            public$frame$$craf = public$frame$$craf || WINDOW[prefix + "CancelAnimationFrame"];
-        });
-    }
-
-    // Executes a callback in the next frame
-    ugma.requestFrame = function(callback)  {
-        /* istanbul ignore else */
-        if (public$frame$$raf) {
-            return public$frame$$raf.call(public$frame$$global, callback);
-        } else {
-            // Dynamically set delay on a per-tick basis to match 60fps.
-            var currTime = Date.now(),
-                timeDelay = Math.max(0, 16 - (currTime - public$frame$$lastTime)); // 1000 / 60 = 16.666
-
-            public$frame$$lastTime = currTime + timeDelay;
-
-            return public$frame$$global.setTimeout(function()  {
-                callback(currTime + timeDelay);
-            }, timeDelay);
-        }
-    };
-
-    // Works around a rare bug in Safari 6 where the first request is never invoked.
-    ugma.requestFrame(function() {return function() {}});
-
-    // Cancel a scheduled frame
-    ugma.cancelFrame = function(frameId)  {
-        /* istanbul ignore else */
-        if (public$frame$$craf) {
-            public$frame$$craf.call(public$frame$$global, frameId);
-        } else {
-            public$frame$$global.clearTimeout(frameId);
-        }
-    };
-
-    // Create a ugma wrapper object for a native DOM element or a
-    // jQuery element. E.g. (ugma.native($('#foo')[0]))
-    ugma.native = function(node)  {
-        var nodeType = node && node.nodeType;
-        // filter non elements like text nodes, comments etc.
-        return (((nodeType === 9 ? Document : Element))
-            )
-            (
-                nodeType === 1 ||
-                nodeType === 9 ?
-                node :
-                null
-            );
-    };
-
-    toolset$$implement({
-        // Append global css styles
-        injectCSS: function(selector, cssText) {
-            var styleSheet = this._["{{styles!trackira}}"];
-    
-            if (!styleSheet) {
-                var doc = this[0].ownerDocument,
-                    styleNode = toolset$$injectElement(doc.createElement("style"));
-    
-                styleSheet = styleNode.sheet || styleNode.styleSheet;
-                // store object internally
-                this._["{{styles!trackira}}"] = styleSheet;
-            }
-    
-            if (!toolset$$is(selector, "string") || !toolset$$is(cssText, "string")) {
-                minErr$$minErr("injectCSS()", ERROR_MSG[1]);
-            }
-    
-            toolset$$each(selector.split(","), function(selector) {
-                try {
-                   styleSheet.insertRule(selector + "{" + cssText + "}", styleSheet.cssRules.length);
-                } catch(err) {}
-            });
-        }
-    });
-
-    toolset$$implement({
-        // Import external javascript files in the document, and call optional 
-        // callback when it will be done. 
-        injectScript: function() {var urls = SLICE$0.call(arguments, 0);
-            var doc = this[0].ownerDocument;
-    
-            var callback = function()  {
-                var arg = urls.shift(),
-                    argType = typeof arg,
-                    script;
-    
-                if (toolset$$is(arg, "string")) {
-                    
-                    script = doc.createElement("script");
-                    script.onload = callback;
-     
-                   // Support: IE9
-                   // Bug in IE force us to set the 'src' after the element has been
-                   // added to the document.
-                    
-                    toolset$$injectElement(script);
-    
-                    script.src = arg;
-                    script.async = true;
-                    script.type = "text/javascript";
-                    
-                } else if (toolset$$is(arg, "function")) {
-                    arg();
-                } else if (arg) {
-                    minErr$$minErr("injectScript()", ERROR_MSG[3]);
-                }
-            };
-    
-            callback();
-        }
-    });
 
     toolset$$implement({
        // Assign a new attribute for the current element
@@ -684,7 +365,7 @@
             if (quick[4]) quick[4] = " " + quick[4] + " ";
         }
 
-        return function(node) {var $D$3;var $D$4;
+        return function(node) {var $D$0;var $D$1;
             var result, found;
             /* istanbul ignore if */
             if (!quick && !util$selectormatcher$$propName) {
@@ -704,9 +385,9 @@
                     if (util$selectormatcher$$propName) {
                         result = node[util$selectormatcher$$propName](selector);
                     } else {
-                        $D$3 = 0;$D$4 = found.length;for (var n ;$D$3 < $D$4;){n = (found[$D$3++]);
+                        $D$0 = 0;$D$1 = found.length;for (var n ;$D$0 < $D$1;){n = (found[$D$0++]);
                             if (n === node) return n;
-                        };$D$3 = $D$4 = void 0;
+                        };$D$0 = $D$1 = void 0;
                     }
                 }
 
@@ -823,7 +504,7 @@
             };
         } else {
     
-            return function() {var $D$5;var $D$6;
+            return function() {var $D$2;var $D$3;
                 var tokens;
                 if (supportMultipleArgs && multiClass) {
                     tokens = toolset$$convertArgs(arguments);
@@ -835,11 +516,11 @@
                     this[0].classList[nativeMethodName === "removeClass" ? "remove" : "add"].apply(this[0].classList, tokens);
                 } else {
                     tokens = arguments;
-                    $D$5 = 0;$D$6 = tokens.length;for (var token ;$D$5 < $D$6;){token = (tokens[$D$5++]);
+                    $D$2 = 0;$D$3 = tokens.length;for (var token ;$D$2 < $D$3;){token = (tokens[$D$2++]);
                         if (typeof token !== "string") minErr$$minErr(nativeMethodName + "()", "The class provided is not a string.");
     
                         strategy(this, token);
-                    };$D$5 = $D$6 = void 0;
+                    };$D$2 = $D$3 = void 0;
                 }
                return this;
             };
@@ -908,6 +589,172 @@
             minErr$$minErr("contains()", "Comparing position against non-Node values is not allowed.");
         }
     }, null, function()  {return RETURN_FALSE});
+    /* es6-transpiler has-iterators:false, has-generators: false */
+
+    var // operator type / priority object
+        modules$emmet$$operators = {"(": 1,")": 2,"^": 3,">": 4,"+": 5,"*": 6,"`": 7,"[": 8,".": 8,"#": 8},
+        modules$emmet$$reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
+        modules$emmet$$reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
+        modules$emmet$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
+        modules$emmet$$reDot = /\./g,
+        modules$emmet$$reDollar = /\$/g,
+        modules$emmet$$tagCache = {"": ""},
+        modules$emmet$$parseAttr = function(_, name, value, rawValue)  {
+            // try to detemnie which kind of quotes to use
+            var quote = value && value.indexOf("\"") >= 0 ? "'" : "\"";
+    
+            if (toolset$$is(rawValue, "string")) {
+                // grab unquoted value for smart quotes
+                value = rawValue;
+            } else if (!toolset$$is(value, "string")) {
+                // handle boolean attributes by using name as value
+                value = name;
+            }
+            // always wrap attribute values with quotes even they don't exist
+            return " " + name + "=" + quote + value + quote;
+        },
+        modules$emmet$$injection = function(term, adjusted)  {return function(html)  {
+            // find index of where to inject the term
+            var index = adjusted ? html.lastIndexOf("<") : html.indexOf(">");
+            // inject the term into the HTML string
+            return html.slice(0, index) + term + html.slice(index);
+        }},
+        modules$emmet$$processTag = function(tag)  {
+            return modules$emmet$$tagCache[tag] || (modules$emmet$$tagCache[tag] = "<" + tag + "></" + tag + ">");
+        },
+       
+       
+        modules$emmet$$indexing = function(num, term)  {
+           var stricted = num >= 1500 ? /* max 1500 HTML elements */ 1500 : (num <= 0 ? 1 : num),
+               result = new Array(stricted),
+              i = 0;
+    
+            for (;i < num; ++i) {
+                result[i] = term.replace(modules$emmet$$reIndex, function(expr, fmt, sign, base)  {
+                    var index = (sign ? num - i - 1 : i) + (base ? +base : 1);
+                    // handle zero-padded index values, like $$$ etc.
+                    return (fmt + index).slice(-fmt.length).replace(modules$emmet$$reDollar, "0");
+                });
+            }
+            return result;  
+        },
+        modules$emmet$$badChars = /[&<>"']/g,
+        // http://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
+        modules$emmet$$charMap = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"};
+
+    // populate empty tag names with result
+    "area base br col hr img input link meta param command keygen source".split(" ").forEach(function(tag)  {
+        modules$emmet$$tagCache[tag] = "<" + tag + ">";
+    });
+
+    ugma.emmet = function(template, varMap) {var $D$4;var $D$5;var $D$6;
+    
+        if (!toolset$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
+    
+        if (varMap) template = ugma.format(template, varMap);
+     // If already cached, return the cached result
+        if (template in modules$emmet$$tagCache) {return modules$emmet$$tagCache[template];}
+    
+        // transform template string into RPN
+    
+        var stack = [], output = [];
+    
+    
+        $D$6 = (template.match(modules$emmet$$reParse));$D$4 = 0;$D$5 = $D$6.length;for (var str ;$D$4 < $D$5;){str = ($D$6[$D$4++]);
+            var op = str[0];
+            var priority = modules$emmet$$operators[op];
+    
+            if (priority) {
+                if (str !== "(") {
+                    // for ^ operator need to skip > str.length times
+                    for (var i = 0, n = (op === "^" ? str.length : 1); i < n; ++i) {
+                        while (stack[0] !== op && modules$emmet$$operators[stack[0]] >= priority) {
+                            var head = stack.shift();
+    
+                            output.push(head);
+                            // for ^ operator stop shifting when the first > is found
+                            if (op === "^" && head === ">") break;
+                        }
+                    }
+                }
+    
+                if (str === ")") {
+                    stack.shift(); // remove "(" symbol from stack
+                } else {
+                    // handle values inside of `...` and [...] sections
+                    if (op === "[" || op === "`") {
+                        output.push(str.slice(1, -1));
+                    }
+                    // handle multiple classes, e.g. a.one.two
+                    if (op === ".") {
+                        output.push(str.slice(1).replace(modules$emmet$$reDot, " "));
+                    }
+    
+                    stack.unshift(op);
+                }
+            } else {
+                output.push(str);
+            }
+        };$D$4 = $D$5 = $D$6 = void 0;
+    
+        output = output.concat(stack);
+    
+        // transform RPN into html nodes
+    
+        stack = [];
+    
+        $D$4 = 0;$D$5 = output.length;for (var str$0 ;$D$4 < $D$5;){str$0 = (output[$D$4++]);
+            if (str$0 in modules$emmet$$operators) {
+                var value = stack.shift();
+                var node = stack.shift();
+    
+                if (typeof node === "string") {
+                    node = [ modules$emmet$$processTag(node) ];
+                }
+    
+               if (toolset$$is(node, "undefined") || toolset$$is(value, "undefined")) {
+                   minErr$$minErr("emmet()", ERROR_MSG[4]);
+               }
+                        
+                if(str$0 === ".") { // class
+                    value = modules$emmet$$injection(" class=\"" + value + "\"");            
+                } else if(str$0 === "#") { // id
+                    value = modules$emmet$$injection(" id=\"" + value + "\"");
+                } else if(str$0 === "[") { // id
+                    value = modules$emmet$$injection(value.replace(modules$emmet$$reAttr, modules$emmet$$parseAttr));
+                } else if(str$0 === "*") { // universal selector 
+                    node = modules$emmet$$indexing(+value, node.join(""));
+                } else if(str$0 === "`") { // Back tick
+                    stack.unshift(node);
+                    // escape unsafe HTML symbols
+                    node = [ value.replace(modules$emmet$$badChars, function(ch)  {return modules$emmet$$charMap[ch]}) ];
+                } else {  /* ">", "+", "^" */
+                    value = toolset$$is(value, "string") ? modules$emmet$$processTag(value) : value.join("");
+    
+                    if (str$0 === ">") {
+                        value = modules$emmet$$injection(value, true);
+                    } else {
+                        node.push(value);
+                    }
+                    }
+    
+                str$0 = toolset$$is(value, "function") ? node.map(value) : node;
+            }
+    
+            stack.unshift(str$0);
+        };$D$4 = $D$5 = void 0;
+    
+        if (output.length === 1) {
+            // handle single tag case
+            output = modules$emmet$$processTag(stack[0]);
+        } else {
+            output = stack[0].join("");
+        }
+    
+        return output;
+    };
+
+    var modules$emmet$$default = modules$emmet$$tagCache;
 
     toolset$$implement({
         // Create a new Element from Emmet or HTML string in memory
@@ -926,7 +773,7 @@
     
         var nodes, el;
     
-        if (value && value in public$emmet$$default) {
+        if (value && value in modules$emmet$$default) {
     
             if (!toolset$$is(value, "string")) {
                 minErr$$minErr(methodName + "()", ERROR_MSG[7]);
@@ -1155,172 +1002,6 @@
             return this;
         }
     }});
-    /* es6-transpiler has-iterators:false, has-generators: false */
-
-    var // operator type / priority object
-        modules$emmet$$operators = {"(": 1,")": 2,"^": 3,">": 4,"+": 5,"*": 6,"`": 7,"[": 8,".": 8,"#": 8},
-        modules$emmet$$reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-        modules$emmet$$reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-        modules$emmet$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
-        modules$emmet$$reDot = /\./g,
-        modules$emmet$$reDollar = /\$/g,
-        modules$emmet$$tagCache = {"": ""},
-        modules$emmet$$parseAttr = function(_, name, value, rawValue)  {
-            // try to detemnie which kind of quotes to use
-            var quote = value && value.indexOf("\"") >= 0 ? "'" : "\"";
-    
-            if (toolset$$is(rawValue, "string")) {
-                // grab unquoted value for smart quotes
-                value = rawValue;
-            } else if (!toolset$$is(value, "string")) {
-                // handle boolean attributes by using name as value
-                value = name;
-            }
-            // always wrap attribute values with quotes even they don't exist
-            return " " + name + "=" + quote + value + quote;
-        },
-        modules$emmet$$injection = function(term, adjusted)  {return function(html)  {
-            // find index of where to inject the term
-            var index = adjusted ? html.lastIndexOf("<") : html.indexOf(">");
-            // inject the term into the HTML string
-            return html.slice(0, index) + term + html.slice(index);
-        }},
-        modules$emmet$$processTag = function(tag)  {
-            return modules$emmet$$tagCache[tag] || (modules$emmet$$tagCache[tag] = "<" + tag + "></" + tag + ">");
-        },
-       
-       
-        modules$emmet$$indexing = function(num, term)  {
-           var stricted = num >= 1500 ? /* max 1500 HTML elements */ 1500 : (num <= 0 ? 1 : num),
-               result = new Array(stricted),
-              i = 0;
-    
-            for (;i < num; ++i) {
-                result[i] = term.replace(modules$emmet$$reIndex, function(expr, fmt, sign, base)  {
-                    var index = (sign ? num - i - 1 : i) + (base ? +base : 1);
-                    // handle zero-padded index values, like $$$ etc.
-                    return (fmt + index).slice(-fmt.length).replace(modules$emmet$$reDollar, "0");
-                });
-            }
-            return result;  
-        },
-        modules$emmet$$badChars = /[&<>"']/g,
-        // http://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript
-        modules$emmet$$charMap = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"};
-
-    // populate empty tag names with result
-    "area base br col hr img input link meta param command keygen source".split(" ").forEach(function(tag)  {
-        modules$emmet$$tagCache[tag] = "<" + tag + ">";
-    });
-
-    ugma.emmet = function(template, varMap) {var $D$7;var $D$8;var $D$9;
-    
-        if (!toolset$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
-    
-        if (varMap) template = ugma.format(template, varMap);
-     // If already cached, return the cached result
-        if (template in modules$emmet$$tagCache) {return modules$emmet$$tagCache[template];}
-    
-        // transform template string into RPN
-    
-        var stack = [], output = [];
-    
-    
-        $D$9 = (template.match(modules$emmet$$reParse));$D$7 = 0;$D$8 = $D$9.length;for (var str ;$D$7 < $D$8;){str = ($D$9[$D$7++]);
-            var op = str[0];
-            var priority = modules$emmet$$operators[op];
-    
-            if (priority) {
-                if (str !== "(") {
-                    // for ^ operator need to skip > str.length times
-                    for (var i = 0, n = (op === "^" ? str.length : 1); i < n; ++i) {
-                        while (stack[0] !== op && modules$emmet$$operators[stack[0]] >= priority) {
-                            var head = stack.shift();
-    
-                            output.push(head);
-                            // for ^ operator stop shifting when the first > is found
-                            if (op === "^" && head === ">") break;
-                        }
-                    }
-                }
-    
-                if (str === ")") {
-                    stack.shift(); // remove "(" symbol from stack
-                } else {
-                    // handle values inside of `...` and [...] sections
-                    if (op === "[" || op === "`") {
-                        output.push(str.slice(1, -1));
-                    }
-                    // handle multiple classes, e.g. a.one.two
-                    if (op === ".") {
-                        output.push(str.slice(1).replace(modules$emmet$$reDot, " "));
-                    }
-    
-                    stack.unshift(op);
-                }
-            } else {
-                output.push(str);
-            }
-        };$D$7 = $D$8 = $D$9 = void 0;
-    
-        output = output.concat(stack);
-    
-        // transform RPN into html nodes
-    
-        stack = [];
-    
-        $D$7 = 0;$D$8 = output.length;for (var str$1 ;$D$7 < $D$8;){str$1 = (output[$D$7++]);
-            if (str$1 in modules$emmet$$operators) {
-                var value = stack.shift();
-                var node = stack.shift();
-    
-                if (typeof node === "string") {
-                    node = [ modules$emmet$$processTag(node) ];
-                }
-    
-               if (toolset$$is(node, "undefined") || toolset$$is(value, "undefined")) {
-                   minErr$$minErr("emmet()", ERROR_MSG[4]);
-               }
-                        
-                if(str$1 === ".") { // class
-                    value = modules$emmet$$injection(" class=\"" + value + "\"");            
-                } else if(str$1 === "#") { // id
-                    value = modules$emmet$$injection(" id=\"" + value + "\"");
-                } else if(str$1 === "[") { // id
-                    value = modules$emmet$$injection(value.replace(modules$emmet$$reAttr, modules$emmet$$parseAttr));
-                } else if(str$1 === "*") { // universal selector 
-                    node = modules$emmet$$indexing(+value, node.join(""));
-                } else if(str$1 === "`") { // Back tick
-                    stack.unshift(node);
-                    // escape unsafe HTML symbols
-                    node = [ value.replace(modules$emmet$$badChars, function(ch)  {return modules$emmet$$charMap[ch]}) ];
-                } else {  /* ">", "+", "^" */
-                    value = toolset$$is(value, "string") ? modules$emmet$$processTag(value) : value.join("");
-    
-                    if (str$1 === ">") {
-                        value = modules$emmet$$injection(value, true);
-                    } else {
-                        node.push(value);
-                    }
-                    }
-    
-                str$1 = toolset$$is(value, "function") ? node.map(value) : node;
-            }
-    
-            stack.unshift(str$1);
-        };$D$7 = $D$8 = void 0;
-    
-        if (output.length === 1) {
-            // handle single tag case
-            output = modules$emmet$$processTag(stack[0]);
-        } else {
-            output = stack[0].join("");
-        }
-    
-        return output;
-    };
-
-    var modules$emmet$$default = modules$emmet$$tagCache;
 
     toolset$$implement({
          // Remove all children of the current node
@@ -1787,6 +1468,69 @@
             }
         }
     }, null, function()  {return function() {}});
+
+    toolset$$implement({
+        // Append global css styles
+        injectCSS: function(selector, cssText) {
+            var styleSheet = this._["{{styles!trackira}}"];
+    
+            if (!styleSheet) {
+                var doc = this[0].ownerDocument,
+                    styleNode = toolset$$injectElement(doc.createElement("style"));
+    
+                styleSheet = styleNode.sheet || styleNode.styleSheet;
+                // store object internally
+                this._["{{styles!trackira}}"] = styleSheet;
+            }
+    
+            if (!toolset$$is(selector, "string") || !toolset$$is(cssText, "string")) {
+                minErr$$minErr("injectCSS()", ERROR_MSG[1]);
+            }
+    
+            toolset$$each(selector.split(","), function(selector) {
+                try {
+                   styleSheet.insertRule(selector + "{" + cssText + "}", styleSheet.cssRules.length);
+                } catch(err) {}
+            });
+        }
+    });
+
+    toolset$$implement({
+        // Import external javascript files in the document, and call optional 
+        // callback when it will be done. 
+        injectScript: function() {var urls = SLICE$0.call(arguments, 0);
+            var doc = this[0].ownerDocument;
+    
+            var callback = function()  {
+                var arg = urls.shift(),
+                    argType = typeof arg,
+                    script;
+    
+                if (toolset$$is(arg, "string")) {
+                    
+                    script = doc.createElement("script");
+                    script.onload = callback;
+     
+                   // Support: IE9
+                   // Bug in IE force us to set the 'src' after the element has been
+                   // added to the document.
+                    
+                    toolset$$injectElement(script);
+    
+                    script.src = arg;
+                    script.async = true;
+                    script.type = "text/javascript";
+                    
+                } else if (toolset$$is(arg, "function")) {
+                    arg();
+                } else if (arg) {
+                    minErr$$minErr("injectScript()", ERROR_MSG[3]);
+                }
+            };
+    
+            callback();
+        }
+    });
 
     toolset$$implement({
         // Inserts nodes after the last child of node, while replacing strings 
