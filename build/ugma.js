@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 16 Mar 2015 12:13:19 GMT
+ * Build date: Mon, 16 Mar 2015 12:18:58 GMT
  */
 (function() {
     "use strict";var this$0 = this;
@@ -26,8 +26,8 @@
     }
 
     Element.prototype.version = "0.5.0a";
-    Element.prototype.codename = "trackira",
-        Element.prototype.toString = function()  {
+    Element.prototype.codename = "trackira";
+    Element.prototype.toString = function()  {
             var node = this$0[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
         };
