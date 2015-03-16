@@ -14,20 +14,22 @@
 
     function Element(node) {
     
-        if (!(this instanceof Element)) {
+        if ((this instanceof Element)) {
+            node["__trackira__"] = this;
+            this[0] = node;
+            this._ = {};
+    
+        } else {
             return node ? node["__trackira__"] || new Element(node) : new Node();
         }
     
-        node["__trackira__"] = this;
-        this[0] = node;
-        this._ = {};
     }
 
     Element.prototype = {
         // all of these placeholder strings will be replaced by gulps's
-        version: "0.0.1a",
+        version: "0.5.0a",
         codename: "trackira",
-  
+    
         toString: function() {
             var node = this[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
@@ -39,12 +41,11 @@
         return Element.call(this, node.documentElement);
     }
 
-
-    // empty object
-    Document.prototype = Object.create(Element.prototype, {});
+    // inheritance
+    Document.prototype = Object.create(Element.prototype);
+    Node.prototype = Object.create(Element.prototype);
+    // both 'Document' and 'Node' need a overloaded toString 
     Document.prototype.toString = function()  {return "<document>"};
-    // empty object
-    Node.prototype = Object.create(Element.prototype, {});
     Node.prototype.toString = function()  {return ""};
 
     var WINDOW = window;

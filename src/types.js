@@ -4,13 +4,15 @@ function Node() {}
 
 function Element(node) {
 
-    if (!(this instanceof Element)) {
+    if ((this instanceof Element)) {
+        node["<%= prop() %>"] = this;
+        this[0] = node;
+        this._ = {};
+
+    } else {
         return node ? node["<%= prop() %>"] || new Element(node) : new Node();
     }
 
-    node["<%= prop() %>"] = this;
-    this[0] = node;
-    this._ = {};
 }
 
 Element.prototype = {
@@ -24,12 +26,15 @@ Element.prototype = {
     }
 };
 
-  // Set correct document, and determine what kind it is.
-  function Document(node) { return Element.call(this, node.documentElement); }
+// Set correct document, and determine what kind it is.
+function Document(node) {
+    return Element.call(this, node.documentElement);
+}
 
-  Document.prototype = Object.create(Element.prototype, {}); // empty object
-  Document.prototype.toString = () => "<document>";
-  Node.prototype = Object.create(Element.prototype, {});  // empty object
-  Node.prototype.toString = () => "";
-
+// inheritance
+Document.prototype = Object.create(Element.prototype);
+Node.prototype = Object.create(Element.prototype);
+// both 'Document' and 'Node' need a overloaded toString 
+Document.prototype.toString = () => "<document>";
+Node.prototype.toString = () => "";
 export { Element, Node, Document };
