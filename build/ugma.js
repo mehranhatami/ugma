@@ -18,35 +18,34 @@
             return node ? node["__trackira__"] || new Element(node) : new Node();
         }
     
-        if (node) {
-            node["__trackira__"] = this;
-            this[0] = node;
-            this._ = {};
-        }
+        node["__trackira__"] = this;
+        this[0] = node;
+        this._ = {};
     }
 
-    Element.prototype.version = "0.5.0a";
-    Element.prototype.codename = "trackira";
-    Element.prototype.toString = function()  {
-            var node = this$0[0];
+    Element.prototype = {
+        // all of these placeholder strings will be replaced by gulps's
+        version: "0.0.1a",
+        codename: "trackira",
+  
+        toString: function() {
+            var node = this[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-        };
+        }
+    };
 
     // Set correct document, and determine what kind it is.
     function Document(node) {
         return Element.call(this, node.documentElement);
     }
 
-    var proto = Object.create(Element.prototype);
 
-    // Document
-    Document.prototype = Object.create(Element.prototype);
+    // empty object
+    Document.prototype = Object.create(Element.prototype, {});
     Document.prototype.toString = function()  {return "<document>"};
-    // Node
-    Node.prototype = Object.create(Element.prototype);
+    // empty object
+    Node.prototype = Object.create(Element.prototype, {});
     Node.prototype.toString = function()  {return ""};
-    proto.constructor = Document;
-    proto.constructor = Node;
 
     var WINDOW = window;
     var DOCUMENT = document;
