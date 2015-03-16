@@ -4,19 +4,13 @@ function Node() {}
 
 function Element(node) {
 
-    if (this instanceof Element) {
-
-        node["<%= prop() %>"] = this;
-
-        this[0] = node;
-        this._ = {};
-
-    } else if (node) {
-        // create a wrapper only once for each native element
-        return node["<%= prop() %>"] || new Element(node);
-    } else {
-        return new Node();
+    if (!(this instanceof Element)) {
+        return node ? node["<%= prop() %>"] || new Element(node) : new Node();
     }
+
+    node["<%= prop() %>"] = this;
+    this[0] = node;
+    this._ = {};
 }
 
 Element.prototype = {
@@ -31,13 +25,10 @@ Element.prototype = {
 };
 
 // Set correct document, and determine what kind it is.
-function Document(node) {
-    return Element.call(this, node.documentElement);
-}
-
-  Document.prototype = Object.create(Element.prototype, { constructor: Element}); 
-  Document.prototype.toString = () => "<document>";
-  Node.prototype = Object.create(Element.prototype, { constructor: Element});  
-  Node.prototype.toString = () => "";
+function Document(node) { return Element.call(this, node.documentElement); }
+Document.prototype = Object.create(Element.prototype, { constructor: Element });
+Document.prototype.toString = () => "<document>";
+Node.prototype = Object.create(Element.prototype, { constructor: Element });
+Node.prototype.toString = () => "";
 
 export { Element, Node, Document };
