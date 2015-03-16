@@ -24,11 +24,12 @@ Element.prototype = {
     }
 };
 
-// Set correct document, and determine what kind it is.
-function Document(node) { return Element.call(this, node.documentElement); }
-Document.prototype = Object.create(Element.prototype, { constructor: Element });
-Document.prototype.toString = () => "<document>";
-Node.prototype = Object.create(Element.prototype, { constructor: Element });
-Node.prototype.toString = () => "";
+  // Set correct document, and determine what kind it is.
+  function Document(node) { return Element.call(this, node.documentElement); }
+
+  Document.prototype = Object.create(Element.prototype, {}); // empty object
+  Document.prototype.toString = () => "<document>";
+  Node.prototype = Object.create(Element.prototype, {});  // empty object
+  Node.prototype.toString = () => "";
 
 export { Element, Node, Document };
