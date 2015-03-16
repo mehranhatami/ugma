@@ -64,10 +64,10 @@
 
     var INTERNET_EXPLORER = document.documentMode;
 
-    var identityFunction = function(arg)   {return function()  {return arg}};
-    var RETURN_THIS = function()  {return identityFunction(this$0)};
-    var RETURN_TRUE = function()  {return identityFunction(true)};
-    var RETURN_FALSE = function()  {return identityFunction(false)};
+    var identityFunction = function(arg)  {return function()  {return arg}};
+    var RETURN_THIS = function() {return this};
+    var RETURN_TRUE = identityFunction(true);
+    var RETURN_FALSE = identityFunction(false);
 
     var GINGERBREAD = /Android 2\.3\.[3-7]/i.test(WINDOW.navigator.userAgent);
 
