@@ -27,7 +27,7 @@ Element.prototype = {
     toString() {
         var node = this[0];
         return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-    },
+    }
 };
 
 // Set correct document, and determine what kind it is.
@@ -35,13 +35,9 @@ function Document(node) {
     return Element.call(this, node.documentElement);
 }
 
-var proto = Object.create(Element.prototype);
-
-// Document
-Document.prototype = Object.create(Element.prototype);
-Document.prototype.toString = () => "<document>";
-// Node
-Node.prototype = Object.create(Element.prototype);
-Node.prototype.toString = () => "";
+  Document.prototype = Object.create(Element.prototype, { constructor: Element}); 
+  Document.prototype.toString = () => "<document>";
+  Node.prototype = Object.create(Element.prototype, { constructor: Element});  
+  Node.prototype.toString = () => "";
 
 export { Element, Node, Document };
