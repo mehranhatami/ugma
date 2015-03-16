@@ -16,8 +16,8 @@ function Element(node) {
 }
 
 Element.prototype.version = "<%= pkg.version %>";
-Element.prototype.codename = "<%= pkg.codename %>",
-    Element.prototype.toString = () => {
+Element.prototype.codename = "<%= pkg.codename %>";
+Element.prototype.toString = () => {
         var node = this[0];
         return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
     };
