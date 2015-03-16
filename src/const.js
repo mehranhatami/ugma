@@ -18,21 +18,17 @@ export const ERROR_MSG = {
     7: "The first argument need to be a string"
 };
 
-// documentMode is an IE-only property
-// http://msdn.microsoft.com/en-us/library/ie/cc196988(v=vs.85).aspx
-export const INTERNET_EXPLORER = document.documentMode;
-
 // identity
-export const identityFunction = (arg)  => () => arg;
-export const RETURN_THIS = () => identityFunction(this);
-export const RETURN_TRUE = () => identityFunction(true);
-export const RETURN_FALSE = () => identityFunction(false);
+export const identityFunction = (arg) => () => arg;
+export const RETURN_THIS = function() {return this};
+export const RETURN_TRUE = identityFunction(true);
+export const RETURN_FALSE = identityFunction(false);
 
 // Browser
+export const INTERNET_EXPLORER = document.documentMode;
 export const GINGERBREAD = /Android 2\.3\.[3-7]/i.test(WINDOW.navigator.userAgent);
 
 // Prefixes
-
 export const VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
 export const WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
 
