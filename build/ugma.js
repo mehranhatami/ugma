@@ -10,22 +10,22 @@
 (function() {
     "use strict";var this$0 = this;
 
-    function Node() {}
+    function core$$Node() {}
 
-    function Element(node) {
+    function core$$Element(node) {
     
-        if ((this instanceof Element)) {
+        if (this instanceof core$$Element) {
             node["__trackira__"] = this;
             this[0] = node;
             this._ = {};
     
         } else {
-            return node ? node["__trackira__"] || new Element(node) : new Node();
+            return node ? node["__trackira__"] || new core$$Element(node) : new core$$Node();
         }
     
     }
 
-    Element.prototype = {
+    core$$Element.prototype = {
         // all of these placeholder strings will be replaced by gulps's
         version: "0.5.0a",
         codename: "trackira",
@@ -37,16 +37,16 @@
     };
 
     // Set correct document, and determine what kind it is.
-    function Document(node) {
-        return Element.call(this, node.documentElement);
+    function core$$Document(node) {
+        return core$$Element.call(this, node.documentElement);
     }
 
     // inheritance
-    Document.prototype = Object.create(Element.prototype);
-    Node.prototype = Object.create(Element.prototype);
+    core$$Document.prototype = Object.create(core$$Element.prototype);
+    core$$Node.prototype = Object.create(core$$Element.prototype);
     // both 'Document' and 'Node' need a overloaded toString 
-    Document.prototype.toString = function()  {return "<document>"};
-    Node.prototype.toString = function()  {return ""};
+    core$$Document.prototype.toString = function()  {return "<document>"};
+    core$$Node.prototype.toString = function()  {return ""};
 
     var WINDOW = window;
     var DOCUMENT = document;

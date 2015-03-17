@@ -1,6 +1,6 @@
 /* globals window, document */
 
-import { Document } from "./types";
+import { Document } from "./core";
 
 // globals
 export const WINDOW = window;

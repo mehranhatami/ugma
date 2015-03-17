@@ -24,7 +24,7 @@ var gulp = require("gulp"),
     " * <%= pkg.description %> <%= pkg.version %>",
     " * <%= pkg.repository.url %>",
     " * ",
-    " * Copyright 2015 <%= pkg.author %>",
+    " * Copyright 2014 - " + new Date().getFullYear() + " <%= pkg.author %>",
     " * Released under the <%= pkg.license %> license",
     " * ",
     " * Build date: <%= new Date().toUTCString() %>",
@@ -33,8 +33,8 @@ var gulp = require("gulp"),
 ].join("\n");
 
 // lint testing your build 
-gulp.task("lint-test", function() {
-    return gulp.src(["test/spec/**/*.js"])
+gulp.task("lint", function() {
+    return gulp.src(["test/modules/**/*.js"])
         .pipe(jshint(require("./conf/jshintrc-test")))
         .pipe(jshint.reporter("jshint-stylish"))
         .pipe(gulpif(process.env.TRAVIS_JOB_NUMBER, jshint.reporter("fail")));
@@ -65,7 +65,7 @@ gulp.task("compile", function() {
 });
 
 // compiles and run linting to check code quality
-gulp.task("test", ["compile", "lint-test"], function(done) {
+gulp.task("test", ["compile", "lint"], function(done) {
     var config = {preprocessors: []};
 
     if (process.env.TRAVIS_JOB_NUMBER) {
@@ -102,9 +102,9 @@ gulp.task("minify", ["test"], function() {
 });
 
 // create a dev version
-gulp.task("dev", ["compile", "lint-test"], function() {
+gulp.task("dev", ["compile", "lint"], function() {
     gulp.watch(["src/modules/*.js", "src/util/*.js", "src/*.js"], ["compile"]);
-    gulp.watch(["test/modules/**/*.js"], ["lint-test"]);
+    gulp.watch(["test/modules/**/*.js"], ["lint"]);
 
     karma.start({
         configFile: karmaConfig,
