@@ -1,7 +1,5 @@
 import { WINDOW, DOCUMENT } from "./const";
 
-import { WINDOW, DOCUMENT } from "./const";
-
 function Node() {}
 
 // Ugma are presented as a node tree similar to DOM Living specs
