@@ -48,9 +48,11 @@ Element.prototype = {
     }
 };
 
-// inheritance
+// Prototype chain with Object.create() + assign constructor
 Document.prototype = Object.create(Element.prototype);
+Document.prototype.constructor = Document;
 Node.prototype = Object.create(Element.prototype);
+Node.prototype.constructor = Node;
 // both 'Document' and 'Node' need a overloaded toString 
 Document.prototype.toString = () => "<document>";
 Node.prototype.toString = () => "";
