@@ -17,14 +17,14 @@ export function uClass() {
         Class, SuperClassEmpty;
 
     if (body.constructor === Object) {
-        Class = function() {};
+        Class = () => {};
     } else {
         Class = body.constructor;
         delete body.constructor;
     }
 
     if (SuperClass) {
-        SuperClassEmpty = function() {};
+        SuperClassEmpty = () => {};
         SuperClassEmpty.prototype = SuperClass.prototype;
         Class.prototype = new SuperClassEmpty();
         Class.prototype.constructor = Class;
