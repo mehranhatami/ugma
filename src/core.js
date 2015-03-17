@@ -1,9 +1,8 @@
-import { WINDOW, DOCUMENT } from "./const";
 import { uClass } from "./uclass";
 
 var Node, Document,
     Element = uClass({
-        constructor: function(node) {
+        constructor(node) {
             if (this instanceof Element) {
                 node["<%= prop() %>"] = this;
                 this[0] = node;
