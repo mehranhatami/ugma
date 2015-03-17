@@ -1,5 +1,5 @@
 /**
- * ugma javascript framework 0.5.0a
+ * ugma javascript framework 0.0.1
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
@@ -25,21 +25,36 @@
     
     }
 
+    // Set correct document, and determine what kind it is.
+    function core$$Document(node) {
+        return core$$Element.call(this, node.documentElement);
+    }
+
     core$$Element.prototype = {
         // all of these placeholder strings will be replaced by gulps's
-        version: "0.0.1",
+        version: "0.5.0a",
         codename: "trackira",
     
         toString: function() {
             var node = this[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
+        },
+        
+          // Create a ugma wrapper object for a native DOM element or a
+        // jQuery element. E.g. (ugma.native($('#foo')[0]))
+        native: function(node) {
+            var nodeType = node && node.nodeType;
+            // filter non elements like text nodes, comments etc.
+            return (((nodeType === 9 ? core$$Document : core$$Element))
+                )
+                (
+                    nodeType === 1 ||
+                    nodeType === 9 ?
+                    node :
+                    null
+                );
         }
     };
-
-    // Set correct document, and determine what kind it is.
-    function core$$Document(node) {
-        return core$$Element.call(this, node.documentElement);
-    }
 
     // inheritance
     core$$Document.prototype = Object.create(core$$Element.prototype);
