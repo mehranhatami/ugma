@@ -6,7 +6,6 @@ import { Document } from "./core";
 export const WINDOW = window;
 export const DOCUMENT = document;
 export const HTML = DOCUMENT.documentElement;
-export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
 // error messages
 export const ERROR_MSG = {
@@ -18,11 +17,10 @@ export const ERROR_MSG = {
     7: "The first argument need to be a string"
 };
 
-// identity
-export const identityFunction = (arg) => () => arg;
+// constants
 export const RETURN_THIS = function() {return this};
-export const RETURN_TRUE = identityFunction(true);
-export const RETURN_FALSE = identityFunction(false);
+export const RETURN_TRUE = () => true;
+export const RETURN_FALSE = () => false;
 
 // Browser
 export const INTERNET_EXPLORER = document.documentMode;
@@ -31,6 +29,9 @@ export const GINGERBREAD = /Android 2\.3\.[3-7]/i.test(WINDOW.navigator.userAgen
 // Prefixes
 export const VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
 export const WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
+
+// css
+export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
 //  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
 // information on preventing it
