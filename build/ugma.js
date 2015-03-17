@@ -8,14 +8,71 @@
  * Build date: Mon, 16 Mar 2015 12:18:58 GMT
  */
 (function() {
-    "use strict";var this$0 = this;
+    "use strict";var SLICE$0 = Array.prototype.slice;
+    var uclass$$extend = function (obj, extension, override) {
+      var prop;
+      if (override === false) {
+        for (prop in extension)
+          if (!(prop in obj))
+            obj[prop] = extension[prop];
+      } else {
+        for (prop in extension)
+          obj[prop] = extension[prop];
+        if (extension.toString !== Object.prototype.toString)
+          obj.toString = extension.toString;
+      }
+    };
 
-    function core$$Node() {}
+    //============================================================================
+    // @method my.extendClass
+    // @params Class:function, extension:Object, ?override:boolean=true
+    var uclass$$extendClass = function (Class, extension, override) {
+      if (extension.STATIC) {
+        uclass$$extend(Class, extension.STATIC, override);
+        delete extension.STATIC;
+      }
+      uclass$$extend(Class.prototype, extension, override);
+    };
 
-    // Ugma are presented as a node tree similar to DOM Living specs
-    function core$$Element(node) {
+    function uclass$$uClass () {
+      var len = arguments.length;
+        var body = arguments[len - 1];
+        var SuperClass = len > 1 ? arguments[0] : null;
+        var hasImplementClasses = len > 2;
+        var Class, SuperClassEmpty;
     
-        if (this instanceof core$$Element) {
+        if (body.constructor === Object) {
+          Class = function() {};
+        } else {
+          Class = body.constructor;
+          delete body.constructor;
+        }
+    
+        if (SuperClass) {
+          SuperClassEmpty = function() {};
+          SuperClassEmpty.prototype = SuperClass.prototype;
+          Class.prototype = new SuperClassEmpty();
+          Class.prototype.constructor = Class;
+          Class.Super = SuperClass;
+          uclass$$extend(Class, SuperClass, false);
+        }
+        
+        
+         if (hasImplementClasses)
+          for (var i = 1; i < len - 1; i++)
+            uclass$$extend(Class.prototype, arguments[i].prototype, false);    
+    
+        uclass$$extendClass(Class, body);
+    
+        return Class;
+      }
+
+
+    var core$$Node;
+
+    var core$$Element = uclass$$uClass({
+        constructor: function(node) {
+            if (this instanceof core$$Element) {
             node["__trackira__"] = this;
             this[0] = node;
             this._ = {};
@@ -23,33 +80,33 @@
         } else {
             return node ? node["__trackira__"] || new core$$Element(node) : new core$$Node();
         }
-    }
-
-    core$$Element.prototype = {
-        // all of these placeholder strings will be replaced by gulps's
+       },
+       // all of these placeholder strings will be replaced by gulps's
         version: "0.5.0a",
         codename: "trackira",
-    
         toString: function() {
             var node = this[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
         }
-    };
+    });
 
 
-    // Set correct document, and determine what kind it is.
-    function core$$Document(node) {
-        return core$$Element.call(this, node.documentElement);
-    }
+    core$$Node = uclass$$uClass(core$$Element, {
+        constructor: function() {
+       },
+       toString: function() { return ""; }
+   
+   });
 
-    // Prototype chain with Object.create() + assign constructor
-    core$$Document.prototype = Object.create(core$$Element.prototype);
-    core$$Document.prototype.constructor = core$$Document;
-    core$$Node.prototype = Object.create(core$$Element.prototype);
-    core$$Node.prototype.constructor = core$$Node;
-    // both 'Document' and 'Node' need a overloaded toString 
-    core$$Document.prototype.toString = function()  {return "<document>"};
-    core$$Node.prototype.toString = function()  {return ""};
+
+    var core$$Document = uclass$$uClass(core$$Element, {
+         constructor: function(node) {
+         return core$$Element.call(this, node.documentElement);
+        },
+        toString: function() { return "<document>"; }
+    
+    });
+
 
     var WINDOW = window;
     var DOCUMENT = document;
