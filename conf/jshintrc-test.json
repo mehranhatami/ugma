@@ -17,7 +17,7 @@
     "lastsemic": true,
 
     "globals": {
-        "es6Workflow": true,
+        "ugma": true,
         "beforeEach": true,
         "afterEach": true,
         "describe": true,
