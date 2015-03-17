@@ -12,6 +12,7 @@
 
     function core$$Node() {}
 
+    // Ugma are presented as a node tree similar to DOM Living specs
     function core$$Element(node) {
     
         if (this instanceof core$$Element) {
@@ -22,12 +23,6 @@
         } else {
             return node ? node["__trackira__"] || new core$$Element(node) : new core$$Node();
         }
-    
-    }
-
-    // Set correct document, and determine what kind it is.
-    function core$$Document(node) {
-        return core$$Element.call(this, node.documentElement);
     }
 
     core$$Element.prototype = {
@@ -38,27 +33,20 @@
         toString: function() {
             var node = this[0];
             return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-        },
-        
-          // Create a ugma wrapper object for a native DOM element or a
-        // jQuery element. E.g. (ugma.native($('#foo')[0]))
-        native: function(node) {
-            var nodeType = node && node.nodeType;
-            // filter non elements like text nodes, comments etc.
-            return (((nodeType === 9 ? core$$Document : core$$Element))
-                )
-                (
-                    nodeType === 1 ||
-                    nodeType === 9 ?
-                    node :
-                    null
-                );
         }
     };
 
-    // inheritance
+
+    // Set correct document, and determine what kind it is.
+    function core$$Document(node) {
+        return core$$Element.call(this, node.documentElement);
+    }
+
+    // Prototype chain with Object.create() + assign constructor
     core$$Document.prototype = Object.create(core$$Element.prototype);
+    core$$Document.prototype.constructor = core$$Document;
     core$$Node.prototype = Object.create(core$$Element.prototype);
+    core$$Node.prototype.constructor = core$$Node;
     // both 'Document' and 'Node' need a overloaded toString 
     core$$Document.prototype.toString = function()  {return "<document>"};
     core$$Node.prototype.toString = function()  {return ""};
@@ -88,6 +76,21 @@
 
     var VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
     var WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
+
+    // Create a ugma wrapper object for a native DOM element or a
+    // jQuery element. E.g. (ugma.native($('#foo')[0]))
+    ugma.native = function(node)  {
+        var nodeType = node && node.nodeType;
+        // filter non elements like text nodes, comments etc.
+        return (((nodeType === 9 ? core$$Document : core$$Element))
+            )
+            (
+                nodeType === 1 ||
+                nodeType === 9 ?
+                node :
+                null
+            );
+    };
 
     // Set a new document, and define a local copy of ugma
     var ugma = new Document(DOCUMENT);
