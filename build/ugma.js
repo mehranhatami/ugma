@@ -27,7 +27,7 @@
 
     core$$Element.prototype = {
         // all of these placeholder strings will be replaced by gulps's
-        version: "0.5.0a",
+        version: "0.0.1",
         codename: "trackira",
     
         toString: function() {
