@@ -1,5 +1,4 @@
 
-  //============================================================================
   var extend = function (obj, extension, override) {
     var prop;
     if (override === false) {
@@ -14,9 +13,7 @@
     }
   };
 
-//============================================================================
-  // @method my.extendClass
-  // @params Class:function, extension:Object, ?override:boolean=true
+
   var extendClass = function (Class, extension, override) {
     if (extension.STATIC) {
       extend(Class, extension.STATIC, override);
@@ -25,12 +22,14 @@
     extend(Class.prototype, extension, override);
   };
 
+// Export it
+
 export function uClass () {
-  var len = arguments.length;
-    var body = arguments[len - 1];
-    var SuperClass = len > 1 ? arguments[0] : null;
-    var hasImplementClasses = len > 2;
-    var Class, SuperClassEmpty;
+  var len = arguments.length,
+     body = arguments[len - 1],
+     SuperClass = len > 1 ? arguments[0] : null,
+     hasImplementClasses = len > 2,
+     Class, SuperClassEmpty;
 
     if (body.constructor === Object) {
       Class = function() {};
