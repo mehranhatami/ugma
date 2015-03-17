@@ -32,7 +32,15 @@ export const GINGERBREAD = /Android 2\.3\.[3-7]/i.test(WINDOW.navigator.userAgen
 export const VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
 export const WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
 
+//  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
+// information on preventing it
+if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
+    WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
+        "tag to your HTML to prevent this from happening: " +
+        "<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
+    );
+}
+
 // Set a new document, and define a local copy of ugma
 var ugma = new Document(DOCUMENT);
-
 export { ugma };
