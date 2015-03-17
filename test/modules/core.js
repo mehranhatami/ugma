@@ -15,7 +15,7 @@ describe("core", function() {
     });
 
     it("should output the version number", function() {
-        expect(ugma.version).toBe("0.5.0a");
+        expect(ugma.version).toBe("0.0.1");
         expect(typeof ugma.version).toBe("string");        
     });
 
