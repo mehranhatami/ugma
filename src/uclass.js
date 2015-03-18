@@ -5,18 +5,17 @@ export function uClass() {
         body = arguments[len - 1],
         SuperClass = len > 1 ? arguments[0] : null,
         Class, SuperClassEmpty,
-        extend = function(obj, extension, override) {
-            if (override === false) {
-                forOwn(extension, (prop, func) => {
-                    if (!(prop in obj)) {
-                        obj[prop] = func;
-                    }
-                });
-            } else {
-                forOwn(extension, (prop, func) => {
-                    obj[prop] = func;
-                });
-            }
+        // helper for merging two object with each other
+        extend = function(obj, extension, preserve) {
+
+            // failsave if something goes wrong
+            if (!obj || !extension) return obj || extension || {};
+
+            forOwn(extension, (prop, func) => {
+                // if preserve is set to true, obj will not be overwritten by extension if
+                // obj has already a method key
+                obj[prop] = (preserve === false && !(prop in obj)) ? func : func;
+            });
         };
 
     if (body.constructor === Object) {

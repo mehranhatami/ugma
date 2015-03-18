@@ -12,8 +12,9 @@ var Node, Document,
                     return node ? node["<%= prop() %>"] || new Element(node) : new Node();
                 }
             },
-            // all of these placeholder strings will be replaced by gulps's
+            // returns current running version
             version: "<%= pkg.version %>",
+           // returns current running codename on this build
             codename: "<%= pkg.codename %>",
             toString() {
                 var node = this[0];
