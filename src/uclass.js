@@ -5,6 +5,7 @@ export function uClass() {
         body = arguments[len - 1],
         SuperClass = len > 1 ? arguments[0] : null,
         Class, SuperClassEmpty,
+
         // helper for merging two object with each other
         extend = (obj, extension, preserve) => {
 
@@ -15,6 +16,10 @@ export function uClass() {
                 // if preserve is set to true, obj will not be overwritten by extension if
                 // obj has already a method key
                 obj[prop] = (preserve === false && !(prop in obj)) ? func : func;
+
+                if (preserve && extension.toString !== Object.prototype.toString) {
+                    obj.toString = extension.toString;
+                }
             });
         };
 
