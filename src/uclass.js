@@ -1,12 +1,12 @@
 import { forOwn } from "./helpers";
 
 export function uClass() {
-    var len = arguments.length,
+    let len = arguments.length,
         body = arguments[len - 1],
         SuperClass = len > 1 ? arguments[0] : null,
         Class, SuperClassEmpty,
         // helper for merging two object with each other
-        extend = function(obj, extension, preserve) {
+        extend = (obj, extension, preserve) => {
 
             // failsave if something goes wrong
             if (!obj || !extension) return obj || extension || {};
