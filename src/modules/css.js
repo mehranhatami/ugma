@@ -4,20 +4,6 @@ import { minErr } from "../minErr";
 import cssHooks from "../util/csshooks";
 import { adjustCSS } from "../util/adjustCSS";
 
- // For SVG elements, some properties (namely, dimensional ones) are GET/SET via 
- // the element's HTML attributes (instead of via CSS styles). */
- function SVGAttribute(property) {
-     var SVGAttributes = "width|height|x|y|cx|cy|r|rx|ry|x1|x2|y1|y2";
-
-     // Certain browsers require an SVG transform to be applied as an 
-     // attribute. (Otherwise, application via CSS is preferable due to 3D support.)
-     if (INTERNET_EXPLORER || (ANDROID && !CHROME)) {
-         SVGAttributes += "|transform";
-     }
-
-     return new RegExp("^(" + SVGAttributes + ")$", "i").test(property);
- }
-
  implement({
      // Get and set the style property on a DOM Node
      css(name, value) {
@@ -86,13 +72,7 @@ import { adjustCSS } from "../util/adjustCSS";
              if (is(setter, "function")) {
                  setter(value, style);
              } else {
-
-                 if (isSVG(node) && SVGAttribute(setter)) {
-                     node.setAttribute(setter, value);
-                 } else {
-
-                     style[setter] = is(value, "number") ? value + "px" : value + ""; // cast to string; 
-                 }
+                 style[setter] = is(value, "number") ? value + "px" : value + ""; // cast to string; 
              }
          } else if (len === 1 && name && is(name, "object")) {
              forOwn(name, (key, value) => {
