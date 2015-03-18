@@ -9,6 +9,24 @@ describe("css", function() {
         link = ugma.query("#test0");
     });
 
+    it("should return width / height on disconnected node", function() {
+        var div = ugma.native(document.createElement("div")).css({
+            "width": 4,
+            "height": 4
+        });
+
+        expect(div.css("width")).toBe("4px");
+        expect(div.css("height")).toBe("4px");
+    });
+
+    it("should return width / height on disconnected node", function() {
+
+        jasmine.sandbox.set("<div style='display:none;'><input type='text' style='height:20px;'/><textarea style='height:20px;'/><div style='height:20px;'></div></div>");
+
+        expect(ugma.query("input").css("height")).toBe("20px"); // height on hidden input
+        expect(ugma.query("textarea").css("height")).toBe("20px"); // height on hidden textarea
+    });
+
     describe("getter", function() {
         it("should read style property", function() {
             expect(link.css("color")).toBe("red");
