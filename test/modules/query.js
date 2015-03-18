@@ -19,9 +19,9 @@ describe("query", function() {
 
         expect(el.query("#test1")).toHaveId("test1");
 
-        el.remove();
+    //    el.remove();
 
-        expect(el.query("#test1")).toHaveId("test1");
+    //        expect(el.query("#test1")).toHaveId("test1");
     });
 
     it("should query an element by class", function() {
