@@ -87,6 +87,10 @@ export function is(obj, type) {
         typeof obj === type;
 }
 
+export function isSVG(variable) {
+    return WINDOW.SVGElement && (variable instanceof WINDOW.SVGElement);
+    }
+
 // Support: Android<4.1
 // Make sure we trim BOM and NBSP
 var atrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
