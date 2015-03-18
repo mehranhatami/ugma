@@ -38,10 +38,6 @@ describe("css", function() {
             expect(function() { link.css(1); }).toThrow();
         });
 
-        it("should support array", function() {
-            expect(link.css(["float","line-height"])).toEqual({"float": "left", "line-height": "2"});
-            expect(ugma.mock().css(["float","line-height"])).toEqual({});
-        });
     });
 
     describe("setter", function() {
