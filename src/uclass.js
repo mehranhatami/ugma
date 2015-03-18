@@ -1,20 +1,23 @@
-var extend = function(obj, extension, override) {
-    var prop;
-    if (override === false) {
-        for (prop in extension)
-            if (!(prop in obj))
-                obj[prop] = extension[prop];
-    } else {
-        for (prop in extension)
-            obj[prop] = extension[prop];
-    }
-};
+import { forOwn } from "./helpers";
 
 export function uClass() {
     var len = arguments.length,
         body = arguments[len - 1],
         SuperClass = len > 1 ? arguments[0] : null,
-        Class, SuperClassEmpty;
+        Class, SuperClassEmpty,
+        extend = function(obj, extension, override) {
+            if (override === false) {
+                forOwn(extension, (prop, func) => {
+                    if (!(prop in obj)) {
+                        obj[prop] = func;
+                    }
+                });
+            } else {
+                forOwn(extension, (prop, func) => {
+                    obj[prop] = func;
+                });
+            }
+        };
 
     if (body.constructor === Object) {
         Class = () => {};
