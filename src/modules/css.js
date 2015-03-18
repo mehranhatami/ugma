@@ -1,5 +1,5 @@
-import { ERROR_MSG, RCSSNUM, INTERNET_EXPLORER, CHROME, ANDROID } from "../const";
-import { implement, isArray, isSVG, computeStyle, is, map, forOwn, reduce } from "../helpers";
+import { ERROR_MSG, RCSSNUM } from "../const";
+import { implement, isArray, computeStyle, is, map, forOwn, reduce } from "../helpers";
 import { minErr } from "../minErr";
 import cssHooks from "../util/csshooks";
 import { adjustCSS } from "../util/adjustCSS";
@@ -7,8 +7,8 @@ import { adjustCSS } from "../util/adjustCSS";
  implement({
      // Get and set the style property on a DOM Node
      css(name, value) {
-         var self = this,
-             len = arguments.length,
+         
+         var len = arguments.length,
              node = this[0],
              pseudoElement = value && value[0] === ":",
              style = node.style,
