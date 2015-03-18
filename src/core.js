@@ -3,7 +3,9 @@ import { uClass } from "./uclass";
 var Node, Document,
     Element = uClass({
         constructor(node) {
-                if (this instanceof Element) {
+
+                // 'this' will be 'undefined' if not instanceOf Element
+                if (this) {
                     node["<%= prop() %>"] = this;
                     this[0] = node;
                     this._ = {};
@@ -14,7 +16,7 @@ var Node, Document,
             },
             // returns current running version
             version: "<%= pkg.version %>",
-           // returns current running codename on this build
+            // returns current running codename on this build
             codename: "<%= pkg.codename %>",
             toString() {
                 var node = this[0];
