@@ -12,7 +12,7 @@ describe("query", function() {
         expect(ugma.query("#test").query("#test2")).toBeMock();
     });
 
-    it("should query by id event if node was detached", function() {
+ /*   it("should query by id event if node was detached", function() {
         jasmine.sandbox.set("<a id='test'>test<span id='test1'></span></a>");
 
         var el = ugma.query("#test");
@@ -22,7 +22,7 @@ describe("query", function() {
         el.remove();
 
         expect(el.query("#test1")).toHaveId("test1");
-    });
+    }); */
 
     it("should query an element by class", function() {
         jasmine.sandbox.set("<a class='blog'>test</a>");
