@@ -3,16 +3,13 @@ import { uClass } from "./uclass";
 var Node, Document,
     Element = uClass({
         constructor(node) {
-
                 // 'this' will be 'undefined' if not instanceOf Element
-                if (this) {
-                    node["<%= prop() %>"] = this;
-                    this[0] = node;
-                    this._ = {};
-
-                } else {
+                if (!(this)) {
                     return node ? node["<%= prop() %>"] || new Element(node) : new Node();
                 }
+                node["<%= prop() %>"] = this;
+                this[0] = node;
+                this._ = {};
             },
             // returns current running version
             version: "<%= pkg.version %>",
@@ -57,5 +54,4 @@ Document = uClass(Element, {
     }
 
 });
-
 export { Element, Node, Document };
