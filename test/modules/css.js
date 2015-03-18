@@ -1,3 +1,4 @@
+describe("css", function() {
     "use strict";
 
     var link, link1;
@@ -6,7 +7,7 @@
         jasmine.sandbox.set("<a id='test0' style='z-index:2;line-height:2;color:red;padding:5px;margin:2px;border:1px solid;float:left;display:block;width:100px'>test</a><a id='test1' style='line-height:2;color:red;padding:5px;margin:2px;border:1px solid;float:left;display:block;width:100px'>test</a><div style='display:none;'><input type='text' style='height:20px;'/><textarea style='height:20px;'/><div style='height:20px;'>");
 
         link = ugma.query("#test0");
-        link1 = ugma.query("#test1");
+        link1 = ugma.query("#test1"); 
     });
 
     it("should return width / height on disconnected node", function() {
@@ -47,28 +48,22 @@
         });
 
         it("should handle opacity", function() {
-            link.css({
-                "opacity": ""
-            })
-            expect(link.css("opacity")).toBe('1');
-            expect(link1.css("opacity")).toBe('1');
+            link.css({"opacity": ""});
+            expect(link.css("opacity")).toBe("1");
+            expect(link1.css("opacity")).toBe("1"); 
         });
 
 
-        it("should handle font-size property", function() {
-            link.css({
-                "font-size": "30px"
-            });
-            expect(link.css("font-size")).toBe("30px");
-        });
+    it("should handle font-size property", function() {
+        link.css({"font-size": "30px"});
+        expect(link.css("font-size")).toBe("30px");
+    });
 
 
-        it("should handle float", function() {
-            link.css({
-                "float": "right"
-            });
-            expect(link.css("float")).toBe("right"); // height on hidden textarea
-        });
+    it("should handle float", function() {
+      link.css({"float": "right"});
+        expect(link.css("float")).toBe("right"); // height on hidden textarea
+    });
 
 
         it("should fix float property name", function() {
