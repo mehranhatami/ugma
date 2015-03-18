@@ -119,24 +119,21 @@ import { Document, Element, Node } from "./core";
  }
 
  export function implement(obj, callback, mixin) {
-         if (is(obj, "object")) {
-             var proto = (mixin ? Element : Document).prototype;
 
-             if (!callback) {
-                 callback = function(method, strategy) {
-                     return strategy;
-                 };
-             }
-             forOwn(obj, (method, func) => {
-                 var args = [method].concat(func);
-                 proto[method] = callback.apply(null, args);
-
-                 if (mixin) {
-                     Node.prototype[method] = mixin.apply(null, args);
-                 }
-             });
-         }
+     if (!callback) {
+         callback = function(method, strategy) {
+             return strategy;
+         };
      }
+     forOwn(obj, (method, func) => {
+         var args = [method].concat(func);
+         (mixin ? Element : Document).prototype[method] = callback.apply(null, args);
+
+         if (mixin) {
+             Node.prototype[method] = mixin.apply(null, args);
+         }
+     });
+ }
      // Faster alternative then slice.call
  export function convertArgs(arg) {
      var i = arg.length,
