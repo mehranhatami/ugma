@@ -3,6 +3,7 @@ import { minErr } from "../minErr";
 import { Element } from "../core";
 import { RETURN_FALSE } from "../const";
 
+// Referance: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
 implement({
     // Test whether an element contains another element in the DOM.
     contains(other) {

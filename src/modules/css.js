@@ -1,8 +1,8 @@
-import HOOK from "../util/csshooks";
-import { adjustCSS } from "../util/adjustCSS";
 import { ERROR_MSG, RCSSNUM } from "../const";
+import { implement, isArray, computeStyle, is, map, forOwn, reduce } from "../helpers";
 import { minErr } from "../minErr";
-import { implement, keys, isArray, computeStyle, is, map, forOwn, each, reduce } from "../helpers";
+import cssHooks from "../util/csshooks";
+import { adjustCSS } from "../util/adjustCSS";
 
 implement({
     // CSS getter/setter for an element
@@ -15,10 +15,14 @@ implement({
             computed;
 
         // Get CSS values
+        // with support for pseudo-elements in getComputedStyle 
         if (pseudoElement || (len === 1 && (is(name, "string") || isArray(name)))) {
             let getValue = (name) => {
-                var getter = HOOK.get[name] || HOOK._default(name, style),
-                    // Try inline styles first.
+                var getter = cssHooks.get[name] || cssHooks._default(name, style),
+
+                    // if a 'pseudoElement' is present, don't change the original value. 
+                    // The 'pseudoElement' need to be the second argument.
+                    // E.g. link.css('color', ':before');
                     value = pseudoElement ? value : is(getter, "function") ? getter(style) : style[getter];
 
                 if (!value || pseudoElement) {
@@ -31,7 +35,9 @@ implement({
             };
 
             if (is(name, "string")) {
+
                 return getValue(name);
+
             } else {
                 return reduce(map(name, getValue), (memo, value, index) => {
                     memo[name[index]] = value;
@@ -41,7 +47,7 @@ implement({
         }
 
         if (len === 2 && is(name, "string")) {
-            var ret, setter = HOOK.set[name] || HOOK._default(name, style);
+            var ret, setter = cssHooks.set[name] || cssHooks._default(name, style);
 
             if (is(value, "function")) {
                 value = value(this);

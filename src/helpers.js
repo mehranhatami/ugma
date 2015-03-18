@@ -151,6 +151,8 @@ export function camelize(prop) {
     }).replace(mozHack, "Moz$1");
 }
 
+// getComputedStyle takes a pseudoClass as an optional argument, so do we
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
 export function computeStyle(node, pseudoElement) {
     /* istanbul ignore if */
     pseudoElement = pseudoElement ? pseudoElement : "";

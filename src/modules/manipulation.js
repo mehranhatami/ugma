@@ -3,6 +3,10 @@ import { Element } from "../core";
 import { minErr } from "../minErr";
 import { implement, isArray, trim, each, is } from "../helpers";
 
+// https://dom.spec.whatwg.org
+// 
+// Section: 4.2.5 Interface ChildNode
+
 implement({
     // Inserts nodes after the last child of node, while replacing strings 
     // in nodes with native element or equivalent html string.
@@ -37,8 +41,9 @@ implement({
 
     if (requiresParent && !node.parentNode) return this;
 
-    if ((methodName === "after" || methodName === "before") && this === ugma) {
-        minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
+    if ((methodName === "after" ||
+         methodName === "before") && this === ugma) {
+         minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
     }
     
     // don't create fragment for adjacentHTML
@@ -46,7 +51,8 @@ implement({
 
     contents.forEach((content) => {
 
-        // Handle native DOM elements - e.g. document.createElement('li')
+        // Handle native DOM elements 
+        // e.g. link.append(document.createElement('li'));
         if (native && content.nodeType === 1) {
             content = Element(content);
         }
@@ -70,7 +76,9 @@ implement({
             content = [content];
         }
         
-        // handle documentFragments()
+        // handle documentFragment (nodeType 1)
+        // FIXME! Need to find a solution for shadowDOM elements that also
+        // are documentFragments, but with support for innerHTML
         if (content.nodeType === 11) {
             fragment = content;
         } else {
