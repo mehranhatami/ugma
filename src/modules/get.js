@@ -1,41 +1,14 @@
 import { minErr } from "../minErr";
 import { implement, isArray, reduce, is } from "../helpers";
 import { ERROR_MSG } from "../const";
-import PROP from "../util/accessorhooks";
-
-var multiDash = /([A-Z])/g,
-    dataAttr = (node, key) => {
-        // convert from camel case to dash-separated value
-        key = "data-" + key.replace(multiDash, "-$1").toLowerCase();
-
-        var value = node.getAttribute(key),
-            parseJSON = (value)  => {
-                try {
-                    value = JSON.parse(value);
-                } catch (err) {}
-                return value;
-            };
-
-        if (value != null) {
-
-				value = value === "true" ? true :
-					value === "false" ? false :
-					value === "null" ? null :
-					// Only convert to a number if it doesn't change the string
-					+value + "" === value ? +value :
- 			        // try to recognize and parse object notation syntax
-            		value[0] === "{" && value[value.length - 1] === "}" ? parseJSON(value) :
-					value;
-        }
-
-        return value;
-    };
+import { dataAttr } from "../util/dataAttr";
+import accessorhooks from "../util/accessorhooks";
 
 implement({
     // Get property or attribute value by name
     get(name) {
         var node = this[0],
-            hook = PROP.get[name];
+            hook = accessorhooks.get[name];
         // use 'hook' if it exist
         if (hook) return hook(node, name);
 

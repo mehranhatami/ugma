@@ -1,7 +1,7 @@
 import { implement, invoke, isArray, keys, each, is, forOwn } from "../helpers";
 import { minErr } from "../minErr";
 import { ERROR_MSG, GINGERBREAD, RETURN_THIS } from "../const";
-import PROP from "../util/accessorhooks";
+import accessorhooks from "../util/accessorhooks";
 
 implement({
     // Set property/attribute value by name
@@ -27,7 +27,7 @@ implement({
             }
         }
 
-        var hook = PROP.set[name],
+        var hook = accessorhooks.set[name],
             subscription = (this._["<%= prop('subscription') %>"] || {})[name],
             oldValue;
 
