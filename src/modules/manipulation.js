@@ -72,7 +72,7 @@ implement({
             } else {
                 content = ugma.createAll(content);
             }
-        } else if (content instanceof Element) {
+        } else if (content._) {
             content = [content];
         }
         
@@ -91,7 +91,7 @@ implement({
                 }
 
                 each(content, function(el) {
-                    fragment.appendChild(el instanceof Element ? el[0] : el);
+                    fragment.appendChild(el._ ? el[0] : el);
                 });
             }
         }
