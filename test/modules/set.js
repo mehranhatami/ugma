@@ -141,10 +141,7 @@ describe("set", function() {
 
     });
     
-     it("should add and remove data on SVGs", function() {
-            expect(ugma.create("<svg><rect></rect></svg>").set("_svg-level", 1).get("_svg-level")).toEqual(1);
-        });
-    
+   
     describe("value shortcut", function() {
         it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
             var value = "set-test-changed";
@@ -154,16 +151,6 @@ describe("set", function() {
 
             expect(link).toHaveHtml(value);
             expect(input).toHaveProp("value", value);
-        });
-
-        it("should set select value properly", function() {
-            var select = ugma.create("<select><option>AM</option><option>PM</option></select>");
-
-            expect(select.get()).toBe("AM");
-            select.set("PM");
-            expect(select.get()).toBe("PM");
-            select.set("MM");
-            expect(select.get()).toBe("");
         });
 
         it("should accept function", function() {
