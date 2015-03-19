@@ -23,7 +23,10 @@ export function uClass() {
             });
         };
 
-    if (body.constructor === Object) {
+    // Fixes a rare bug in v8
+    if (typeof body.constructor === "object" &&
+        // Double negation considered slower than a straight null check.
+        body.constructor !== null) {
         Class = () => {};
     } else {
         Class = body.constructor;

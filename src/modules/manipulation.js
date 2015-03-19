@@ -41,8 +41,7 @@ implement({
 
     if (requiresParent && !node.parentNode) return this;
 
-    if ((methodName === "after" ||
-         methodName === "before") && this === ugma) {
+    if ((methodName === "after" || methodName === "before") && this === ugma) {
          minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
     }
     
@@ -76,9 +75,7 @@ implement({
             content = [content];
         }
         
-        // handle documentFragment (nodeType 1)
-        // FIXME! Need to find a solution for shadowDOM elements that also
-        // are documentFragments, but with support for innerHTML
+        // should handle documentFragment
         if (content.nodeType === 11) {
             fragment = content;
         } else {
