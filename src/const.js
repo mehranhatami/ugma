@@ -21,7 +21,7 @@ export const ERROR_MSG = {
 export const RETURN_THIS = function() {return this};
 export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
-
+export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 // Browser
 
 const userAgent = WINDOW.navigator.userAgent;

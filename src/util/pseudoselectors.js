@@ -1,9 +1,9 @@
 import { computeStyle, forOwn } from "../helpers";
+import { FOCUSABLE } from "../const";
 
-var rfocusable = /^(?:input|select|textarea|button)$/i,
-    pseudos = {
+var pseudos = {
 
-        ":input": (node) => rfocusable.test(node.nodeName),
+        ":input": (node) => FOCUSABLE.test(node.nodeName),
 
         ":selected": (node) => {
             // Accessing this property makes selected-by-default

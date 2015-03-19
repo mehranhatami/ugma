@@ -1,11 +1,8 @@
 import { trim, each, every } from "../helpers";
-import { INTERNET_EXPLORER, DOCUMENT } from "../const";
+import { INTERNET_EXPLORER, DOCUMENT, FOCUSABLE } from "../const";
 
-var langFix = /_/g;
-
-var rfocusable = /^(?:input|select|textarea|button)$/i;
-
-var accessorHooks = {
+var langFix = /_/g,
+    accessorHooks = {
 
     get: {
 
@@ -67,7 +64,7 @@ each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMa
     if (key === "tabIndex") {
         accessorHooks.get.tabindex = (node) => {
             return node.hasAttribute("tabindex") ||
-                rfocusable.test(node.nodeName) || node.href ?
+                FOCUSABLE.test(node.nodeName) || node.href ?
                 node.tabIndex :
                 -1;
         };
