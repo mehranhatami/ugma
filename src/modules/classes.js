@@ -3,13 +3,29 @@ import { implement, trim, is, convertArgs } from "../helpers";
 import { minErr } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
+
 var reClass = /[\n\t\r]/g,
-    whitespace = /\s/g;
+    whitespace = /\s/g,
+    supportClassList = HTML.classList !== null,
+    supportMultipleArgs = (function() {
+        try {
+            var div = DOCUMENT.createElement("div");
+            div.classList.add("a", "b");
+            return /(^| )a( |$)/.test(div.className) && /(^| )b( |$)/.test(div.className);
+        } catch (err) {
+            return false;
+        }
+    }());
 
 implement({
-    // Adds a class or an array of class names, e.g.:
-    // ["no-work", "candybar", ...] to the element if 
-    // it doesn't already have it
+    /**
+     * Adds a class or an array of class names
+     * @param  {...String} tokens class name(s)
+     * @return {Element}
+     * @function
+     * @example
+     * link.addClass("foo", "bar");
+     */
     addClass: ["add", true, (node, token) => {
         var existingClasses = (" " + node[0].className + " ")
             .replace(reClass, " ");
@@ -21,21 +37,44 @@ implement({
         node[0].className = trim(existingClasses);
     }],
 
-    // Remove any class or an array of class names names that match the 
-    // given `class`, when present.
+    /**
+     * Remove class(es) or an array of class names from element
+     * @param  {...String} tokens class name(s)
+     * @return {Element}
+     * @function
+     * @example
+     * link.removeClass("foo", "bar");
+     */
     removeClass: ["remove", true, (node, token) => {
         node[0].className = trim((" " + node[0].className + " ")
             .replace(reClass, " ")
             .replace(" " + trim(token) + " ", " "));
     }],
 
-    // Check if the given `class` is in the class list.
+    /**
+     * Check if element contains class name
+     * @param  {String}   token class name
+     * @return {Boolean}  returns <code>true</code> if the element contains the class
+     * @function
+     * @example
+     * link.hasClass("foo");
+     */
     hasClass: ["contains", false, (node, token) => {
         return ((" " + node[0].className + " ")
             .replace(reClass, " ").indexOf(" " + token + " ") > -1);
     }],
 
-    // Toggle the `class` in the class list. Optionally force state via `condition`.
+    /**
+     * Toggle the `class` in the class list. Optionally force state via `condition`
+     * @param  {String}  token class name
+     * @param  {Boolean} [force] if <code>true</code> then adds the className; if <code>false</code> - removes it
+     * @return {Boolean} returns <code>true</code> if the className is now present, and <code>false</code> otherwise.
+     * @function
+     * @example
+     * link.toggleClass("foo");
+     * link.toggleClass("bar", true);
+     */
+
     toggleClass: ["toggle", false, (el, token) => {
         var hasClass = el.hasClass(token);
 
@@ -49,19 +88,8 @@ implement({
     }]
 }, (methodName, nativeMethodName, multiClass, strategy) => {
 
-    // Support: Webkit, Gecko
-    var supportMultipleArgs = (function() {
-        try {
-            var div = DOCUMENT.createElement("div");
-            div.classList.add("a", "b");
-            return /(^| )a( |$)/.test(div.className) && /(^| )b( |$)/.test(div.className);
-        } catch (err) {
-            return false;
-        }
-    }());
-
     /* istanbul ignore else  */
-    if (HTML.classList) {
+    if (supportClassList) {
         // use native classList property if possible
         strategy = function(el, token) {
             return el[0].classList[nativeMethodName](token);
@@ -84,7 +112,7 @@ implement({
 
         return function() {
             var tokens;
-            if (supportMultipleArgs && multiClass) {
+            if (multiClass && supportClassList && supportMultipleArgs) {
                 tokens = convertArgs(arguments);
                 // Throw if the token contains whitespace (e.g. 'hello world' or 'crazy mehran')
                 if (whitespace.test(tokens)) {
