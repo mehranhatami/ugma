@@ -3,8 +3,8 @@ import { implement, trim, convertArgs } from "../helpers";
 import { minErr } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
-var reClass = /[\n\t\r]/g;
-var whitespace = /\s/g;
+var reClass = /[\n\t\r]/g,
+    whitespace = /\s/g;
 
 implement({
     // Adds a class or an array of class names, e.g.:
@@ -24,26 +24,22 @@ implement({
     // Remove any class or an array of class names names that match the 
     // given `class`, when present.
     removeClass: ["remove", true, (node, token) => {
-        node[0].className = trim(
-            (" " + node[0].className + " ")
+        node[0].className = trim((" " + node[0].className + " ")
             .replace(reClass, " ")
             .replace(" " + trim(token) + " ", " "));
     }],
 
     // Check if the given `class` is in the class list.
     hasClass: ["contains", false, (node, token) => {
-        return ((" " + node[0].className + " ").replace(reClass, " ").indexOf(" " + token + " ") > -1);
+        return ((" " + node[0].className + " ")
+            .replace(reClass, " ").indexOf(" " + token + " ") > -1);
     }],
 
     // Toggle the `class` in the class list. Optionally force state via `condition`.
     toggleClass: ["toggle", false, (el, token) => {
         var hasClass = el.hasClass(token);
 
-        if (hasClass) {
-            el.removeClass(token);
-        } else {
-            el[0].className += " " + token;
-        }
+       hasClass ? el.removeClass(token) : el[0].className += " " + token;
 
         return !hasClass;
     }]
@@ -76,7 +72,7 @@ implement({
                 return force;
             }
 
-            if (typeof token !== "string") minErr(nativeMethodName + "()", "The class provided is not a string.");
+            if (!is(token, "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
 
             return strategy(this, token);
         };
@@ -95,12 +91,12 @@ implement({
             } else {
                 tokens = arguments;
                 for (var token of tokens) {
-                    if (typeof token !== "string") minErr(nativeMethodName + "()", "The class provided is not a string.");
+                    if (!is(token, "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
 
                     strategy(this, token);
                 }
             }
-           return this;
+            return this;
         };
     }
 }, function(methodName, nativeMethodName) {

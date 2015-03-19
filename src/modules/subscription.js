@@ -2,24 +2,24 @@ import { implement, filter } from "../helpers";
 import { RETURN_THIS } from "../const";
 
 implement({
-// Subscribe on particular properties / attributes, and get notified if they are changing
+    // Subscribe on particular properties / attributes, and get notified if they are changing
     subscribe(name, callback) {
-        var subscription = this._["<%= prop('subscription') %>"];
+            var subscription = this._["<%= prop('subscription') %>"] || (this._["<%= prop('subscription') %>"] = []);
 
-        if (!subscription) this._["<%= prop('subscription') %>"] = subscription = [];
+            if (!subscription[name]) subscription[name] = [];
 
-         (subscription[name] || (subscription[name] = [])).push(callback);
+            subscription[name].push(callback);
 
-        return this;
-    },
+            return this;
+        },
 
-    // Cancel / stop a property / attribute subscription
-    unsubscribe(name, callback) {
-        var subscription = this._["<%= prop('subscription') %>"];
+        // Cancel / stop a property / attribute subscription
+        unsubscribe(name, callback) {
+            var subscription = this._["<%= prop('subscription') %>"];
 
-            if (subscription) {
-                subscription[name] = filter((subscription[name] || []), (cb) => cb !== callback);
+            if (subscription[name]) {
+                subscription[name] = filter(subscription[name], (cb) => cb !== callback);
             }
-        return this;
-    }
+            return this;
+        }
 }, null, () => RETURN_THIS);
