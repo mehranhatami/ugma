@@ -1,5 +1,5 @@
 import { DOCUMENT, HTML, RETURN_FALSE, RETURN_THIS } from "../const";
-import { implement, trim, convertArgs } from "../helpers";
+import { implement, trim, is, convertArgs } from "../helpers";
 import { minErr } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
@@ -39,7 +39,11 @@ implement({
     toggleClass: ["toggle", false, (el, token) => {
         var hasClass = el.hasClass(token);
 
-       hasClass ? el.removeClass(token) : el[0].className += " " + token;
+        if (hasClass) {
+            el.removeClass(token);
+        } else {
+            el[0].className += " " + token;
+        }
 
         return !hasClass;
     }]

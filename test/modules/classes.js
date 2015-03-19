@@ -46,16 +46,16 @@ describe("classes manipulation", function() {
 
         it("should throw error if the first arg is not a string", function() {
             expect(function() {
-                link.hasClass(1)
+                link.hasClass(1);
             }).toThrow();
             expect(function() {
-                link.hasClass(function() {})
+                link.hasClass(function() {});
             }).toThrow();
             expect(function() {
-                link.hasClass(null)
+                link.hasClass(null);
             }).toThrow();
             expect(function() {
-                link.hasClass({})
+                link.hasClass({});
             }).toThrow();
         });
     });
@@ -136,29 +136,29 @@ describe("classes manipulation", function() {
 
         it("should throw error if the first arg is not a string", function() {
             expect(function() {
-                link.addClass(1)
+                link.addClass(1);
             }).toThrow();
             expect(function() {
-                link.addClass(function() {})
+                link.addClass(function() {});
             }).toThrow();
             expect(function() {
-                link.addClass(null)
+                link.addClass(null);
             }).toThrow();
             expect(function() {
-                link.addClass({})
+                link.addClass({});
             }).toThrow();
 
             expect(function() {
-                link.removeClass(1)
+                link.removeClass(1);
             }).toThrow();
             expect(function() {
-                link.removeClass(function() {})
+                link.removeClass(function() {});
             }).toThrow();
             expect(function() {
-                link.removeClass(null)
+                link.removeClass(null);
             }).toThrow();
             expect(function() {
-                link.removeClass({})
+                link.removeClass({});
             }).toThrow();
         });
     });
