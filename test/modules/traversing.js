@@ -9,7 +9,7 @@ describe("traversing", function() {
         link = ugma.query("#test");
     });
 
-    describe("next, prev, closest", function() {
+    describe("next, prev", function() {
         it("should return an appropriate element", function() {
             var expectedResults = {
                     next: "b",
@@ -24,17 +24,6 @@ describe("traversing", function() {
         it("should search for the first matching element if selector exists", function() {
             expect(link.next("i")).toHaveTag("i");
             expect(link.prev("b")).toHaveTag("b");
-        });
-    });
-
-    describe("closest", function() {
-        it("searches for the first matching element if selector exists", function() {
-            expect(link.closest("body")).toHaveTag("body");
-        });
-
-        it("returns direct parent when no selector specified", function() {
-            expect(ugma.query("body").closest()).toBe(ugma);
-            expect(ugma.closest()[0]).toBeUndefined();
         });
     });
 
