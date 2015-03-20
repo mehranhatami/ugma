@@ -9,19 +9,19 @@ implement({
 }, (method, prefix) => function(key, value) {
     if (arguments.length === 1) {
 
+        // mass-setter: data({key1: val1, key2: val2})
         if (key && is(key, "object")) {
 
-        // Assume we've been passed an object full of key/value pairs.
-        forOwn(key, (key, value) => {
-            this.set(prefix + key, value);
-        });
-
+            // Assume we've been passed an object full of key/value pairs.
+            forOwn(key, (key, value) => {
+                this.set(prefix + key, value);
+            });
 
         } else {
-            return this.get(prefix + key);
+            return this.get(prefix + key); // data('key')
         }
     } else if (arguments.length === 2) {
-        this.set(prefix + key, value);
+        this.set(prefix + key, value); // data('key', value)
     }
     return this;
 
