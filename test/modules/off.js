@@ -44,13 +44,6 @@ describe("off", function() {
         expect(obj.test2).not.toHaveBeenCalled();
     });
 
-    it("should return reference to 'this'", function() {
-        expect(input.off("click")).toEqual(input);
-
-        var empty = ugma.mock();
-        expect(empty.off("click")).toBe(empty);
-    });
-
     it("should throw error if agruments are invalid", function() {
         expect(function() { link.off(123); }).toThrow();
     });
