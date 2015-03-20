@@ -44,7 +44,7 @@ var langFix = /_/g,
 
                 (node === doc.documentElement ? doc : node).title = value;
             },
-            value: function(node, value) {
+            value: (node, value) => {
                 if (node.tagName === "SELECT") {
                     // selectbox has special case
                     if (every.call(node.options, (o) => !(o.selected = o.value === value))) {
@@ -80,7 +80,7 @@ var langFix = /_/g,
     // Setting the type on a radio button after the value resets the value in IE9
     if (input.value !== "t") {
 
-        accessorHooks.set.type = function(node, value) {
+        accessorHooks.set.type = (node, value) => {
             if (value === "radio" &&
                 node.nodeName === "INPUT") {
                 var val = node.value;
@@ -100,7 +100,7 @@ var langFix = /_/g,
 each(("multiple selected checked disabled readOnly required open").split(" "), function(key) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
-        accessorHooks.set[key.toLowerCase()] = function(node, value) {
+        accessorHooks.set[key.toLowerCase()] = (node, value) => {
 
             if (!!value) {
                 node[key] = true;
@@ -125,18 +125,7 @@ if (INTERNET_EXPLORER === 9) {
 // properties written as camelCase
 each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime " +
     "frameBorder contentEditable valueType defaultValue accessKey encType readOnly vAlign longDesc").split(" "), function(key) {
-    // 'tabIndex' of <div> returns 0 by default on IE, yet other browsers
-    // can return -1. So we give 'tabIndex' special treatment to fix that
-    if (key === "tabIndex") {
-        accessorHooks.get.tabindex = (node) => {
-            return node.hasAttribute("tabindex") ||
-                FOCUSABLE.test(node.nodeName) || node.href ?
-                node.tabIndex :
-                -1;
-        };
-    } else {
         accessorHooks.get[key.toLowerCase()] = (node) => node[key];
-    }
 });
 
 /*

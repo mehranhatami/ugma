@@ -9,11 +9,12 @@ implement({
     get(name) {
         var node = this[0],
             hook = accessorhooks.get[name];
-        // use 'hook' if it exist
+        // Grab necessary hook if it is defined
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
             if (name in node) {
+                // Get the value of an attribute / property.
                 return node[name];
                 // if no private data storage   
             } else if (name[0] !== "_") {
