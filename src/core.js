@@ -48,7 +48,7 @@ Document = uClass(Element, {
     constructor: function(node) {
         return Element.call(this, node.documentElement);
     },
-    toString() { return "<document>"}
+    toString() { return "#document"}
 
 });
 export { Element, Node, Document };

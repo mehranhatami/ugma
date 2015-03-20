@@ -39,19 +39,6 @@ export function map(collection, callback) {
     }
     return null;
 }
-export function reduce(array, iteratee, accumulator, initFromArray) {
-    var index = -1,
-        length = array.length;
-
-    if (initFromArray && length) {
-        accumulator = array[++index];
-    }
-    while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
-    }
-    return accumulator;
-}
-
 // Iterates over own enumerable properties of an object, executing 
 // the callback for each property.
 export function forOwn(obj, callback) {

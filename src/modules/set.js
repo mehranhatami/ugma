@@ -1,4 +1,4 @@
-import { implement, invoke, isArray, keys, each, is, forOwn } from "../helpers";
+import { implement, invoke, isArray, each, is, forOwn } from "../helpers";
 import { minErr } from "../minErr";
 import { ERROR_MSG, GINGERBREAD, RETURN_THIS } from "../const";
 import accessorhooks from "../util/accessorhooks";
@@ -58,10 +58,14 @@ implement({
                     node.className = node.className;
                 }
             }
+            // set array of key values
+            // e.g. link.set(["autocomplete", "autocorrect"], "off");
         } else if (isArray(name)) {
             each(name, (key) => {
                 this.set(key, value);
             });
+            // set a object with key-value pairs    
+            // e.g.   link.set({"data-foo1": "bar1", "data-foo2": "bar2" });
         } else if (is(name, "object")) {
             forOwn(name, (key, value) => {
                 this.set(key, name[key]);

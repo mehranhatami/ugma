@@ -1,5 +1,5 @@
 import { ERROR_MSG, RCSSNUM } from "../const";
-import { implement, isArray, computeStyle, is, map, forOwn, reduce } from "../helpers";
+import { implement, isArray, computeStyle, is, map, forOwn, each } from "../helpers";
 import { minErr } from "../minErr";
 import cssHooks from "../util/csshooks";
 import { adjustCSS } from "../util/adjustCSS";
@@ -39,10 +39,11 @@ import { adjustCSS } from "../util/adjustCSS";
                  return getValue(name);
 
              } else {
-                 return reduce(map(name, getValue), (memo, value, index) => {
-                     memo[name[index]] = value;
-                     return memo;
-                 }, {});
+                 var obj = {};
+                  each(map(name, getValue), (value, index) => {
+                     obj[name[index]] = value;
+                 });
+               return obj;
              }
          }
 

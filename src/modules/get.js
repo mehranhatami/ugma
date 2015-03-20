@@ -1,5 +1,5 @@
 import { minErr } from "../minErr";
-import { implement, isArray, reduce, is } from "../helpers";
+import { implement, isArray, each, is } from "../helpers";
 import { ERROR_MSG } from "../const";
 import { dataAttr } from "../util/dataAttr";
 import accessorhooks from "../util/accessorhooks";
@@ -9,11 +9,12 @@ implement({
     get(name) {
         var node = this[0],
             hook = accessorhooks.get[name];
-        // use 'hook' if it exist
+        // Grab necessary hook if it is defined
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
             if (name in node) {
+                // Get the value of an attribute / property.
                 return node[name];
                 // if no private data storage   
             } else if (name[0] !== "_") {
@@ -31,9 +32,12 @@ implement({
                 return data[key];
             }
         } else if (isArray(name)) {
-            return reduce(name, (memo, key) => {
-                return memo[key] = this.get(key), memo;
-            }, {});
+            var obj = {};
+            each(name, (key) => {
+                 obj[key] = this.get(key);
+            });
+         
+            return obj;
         } else {
             minErr("get()", ERROR_MSG[4]);
         }

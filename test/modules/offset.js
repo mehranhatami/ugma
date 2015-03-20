@@ -10,14 +10,14 @@ describe("offset", function() {
     });
 
     it("should return object without getBoundingClientRect", function() {
-      // Simulates a browser without gBCR on elements, we just want to return 0,0
+      // Simulates a browser without gBCR on elements, we just want to return 0,0,0,0
   	  var result = ugma.offset();
         expect(result.top).toBe(0);
         expect(result.left).toBe(0);
     });
 
     it("should return nothing on disconnected node", function() {
-      // Simulates a browser without gBCR on elements, we just want to return 0,0
+      // Simulates a browser without gBCR on elements, we just want to return 0,0,0,0
   	  var result = ugma.native( document.createElement("div") ).offset();
         expect(result).not.toBeDefined();
     });
@@ -50,7 +50,4 @@ describe("offset", function() {
         expect(normalize(link.offset())).toEqual(offset);
     });
 
-///    it("should return mocked object for empty nodes", function() {
-///        expect(ugma.mock().offset()).toEqual({ top : 0, left : 0, right : 0, bottom : 0, width : 0, height : 0 });
-   /// });
 });

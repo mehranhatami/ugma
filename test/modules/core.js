@@ -10,7 +10,7 @@ describe("core", function() {
     });
 
     it("should have a overloaded toString", function() {
-        expect(ugma.toString()).toBe("<document>");
+        expect(ugma.toString()).toBe("#document");
         expect(typeof ugma.toString()).toBe("string");        
     });
 

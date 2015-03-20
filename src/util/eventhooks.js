@@ -1,21 +1,7 @@
-import { DOCUMENT, INTERNET_EXPLORER, ugma } from "../const";
+import { DOCUMENT, WINDOW, INTERNET_EXPLORER, ugma } from "../const";
 import { each, forOwn } from "../helpers";
-// Receive specific events at 60fps, with requestAnimationFrame (rAF).
-// http://www.html5rocks.com/en/tutorials/speed/animations/
-// NOTE! This feature only for browsers who support rAF, so no
-// polyfill needed except for iOS6. But are anyone using that browser?
-function DebouncedWrapper(handler, node) {
-    var debouncing;
-    return (e) => {
-        if (!debouncing) {
-            debouncing = true;
-            node._["<%= prop('raf') %>"] = ugma.requestFrame(function() {
-                handler(e);
-                debouncing = false;
-            });
-        }
-    };
-}
+import { DebouncedWrapper } from "../util/DebouncedWrapper";
+
 var eventHooks = {};
 
 // Create mouseenter/leave events using mouseover/out and event-time checks
@@ -40,6 +26,8 @@ if (!INTERNET_EXPLORER || INTERNET_EXPLORER > 9) {
         eventHooks[name] = DebouncedWrapper;
     });
 }
+    // Support: Firefox, Chrome, Safari
+    // Create 'bubbling' focus and blur events
 
 /* istanbul ignore if */
 if ("onfocusin" in DOCUMENT.documentElement) {
@@ -61,6 +49,30 @@ if (DOCUMENT.createElement("input").validity) {
         handler.capturing = true;
     };
 }
+    // Support: IE9
+    if (INTERNET_EXPLORER < 10) {
+
+        var capturedNode, capturedNodeValue;
+
+        // IE9 doesn't fire oninput when text is deleted, so use
+        // onselectionchange event to detect such cases
+        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
+        DOCUMENT.attachEvent("onselectionchange", function() {
+            if (capturedNode && capturedNode.value !== capturedNodeValue) {
+                capturedNodeValue = capturedNode.value;
+                // trigger custom event that capture
+                ugma.native(capturedNode).fire("input");
+            }
+        });
+
+        // input event fix via propertychange
+        DOCUMENT.attachEvent("onfocusin", function() {
+            capturedNode = WINDOW.event.srcElement;
+            capturedNodeValue = capturedNode.value;
+        });
+    }
+
+
 /* istanbul ignore if */
 
 export default eventHooks;
