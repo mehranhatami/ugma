@@ -1,7 +1,7 @@
 // import { forOwn } from "./helpers";
 
 // Mehran! This broke Travis
-"use strict";
+// "use strict";
 
 var forOwn = function(){};
 
