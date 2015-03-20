@@ -56,6 +56,56 @@ var langFix = /_/g,
     }
 };
 
+// Support: IE<=11+    
+(function() {
+    var input = DOCUMENT.createElement("input");
+        
+       input.type = "checkbox";
+
+    // Support: Android<4.4
+    // Default value for a checkbox should be "on"
+   if(input.value !== "") {
+    accessorHooks.get.checked = (node) => {
+        return node.getAttribute("value") === null ? "on" : node.value;
+    };
+   }
+    // Support: IE<=11+
+    // An input loses its value after becoming a radio
+    input = DOCUMENT.createElement("input");
+    input.value = "t";
+    input.type = "radio";
+
+    // Setting the type on a radio button after the value resets the value in IE9
+    if (input.value !== "t") {
+
+        accessorHooks.set.type = function(node, value) {
+            if (value === "radio" &&
+                node.nodeName === "INPUT") {
+                var val = node.value;
+                node.setAttribute("type", value);
+                if (val) {
+                    node.value = val;
+                }
+                return value;
+            } else {
+                node.type = value;
+            }
+        };
+    }
+    input = null;
+}());
+
+
+// fix hidden attribute for IE9
+if (INTERNET_EXPLORER === 9) {
+    accessorHooks.set.hidden = (node, value) => {
+        node.hidden = value;
+        node.setAttribute("hidden", "hidden");
+        // trigger redraw in IE9
+        node.style.zoom = "1";
+    };
+}
+
 // properties written as camelCase
 each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime " +
     "frameBorder contentEditable valueType defaultValue accessKey encType readOnly vAlign longDesc").split(" "), function(key) {
@@ -85,56 +135,4 @@ each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMa
         node.innerHTML = value;
     };*/
 
-// fix hidden attribute for IE9
-if (INTERNET_EXPLORER === 9) {
-    accessorHooks.set.hidden = (node, value) => {
-        node.hidden = value;
-        node.setAttribute("hidden", "hidden");
-        // trigger redraw in IE9
-        node.style.zoom = "1";
-    };
-}
-
-// Support: IE<=11+    
-(function() {
-    var input = DOCUMENT.createElement("input");
-
-    input.type = "checkbox";
-    accessorHooks.get.checked = (node) => {
-        // Support: Android<4.4
-        // Default value for a checkbox should be "on"
-        if (input.value !== "") {
-            if (node.type === "checkbox" ||
-                node.type === "radio") {
-                return node.getAttribute("value") === null ? "on" : node.value;
-            }
-        } else {
-            return !!node.checked;
-        }
-    };
-    // Support: IE<=11+
-    // An input loses its value after becoming a radio
-    input = DOCUMENT.createElement("input");
-    input.value = "t";
-    input.type = "radio";
-
-    // Setting the type on a radio button after the value resets the value in IE9
-    if (input.value !== "t") {
-
-        accessorHooks.set.type = function(node, value) {
-            if (value === "radio" &&
-                node.nodeName === "INPUT") {
-                var val = node.value;
-                node.setAttribute("type", value);
-                if (val) {
-                    node.value = val;
-                }
-                return value;
-            } else {
-                node.type = value;
-            }
-        };
-    }
-    input = null;
-}());
 export default accessorHooks;
