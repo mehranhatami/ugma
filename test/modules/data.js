@@ -64,6 +64,14 @@ describe("data", function() {
         expect(link.custom("false", "false").custom("false")).toBe("false");        
     });
 
+    it("shoud remove private properties", function() {
+        link.custom("test", "yeah");
+        expect(link).toHaveAttr("data-test", "yeah");
+        link.custom("test", null);
+        expect(link).not.toHaveAttr("data-test", "yeah");
+    });
+    
+    
     it("shoud be stored in _ object", function() {
         link.custom("test", "yeah");
 

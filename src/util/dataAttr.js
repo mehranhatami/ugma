@@ -1,28 +1,22 @@
 var multiDash = /([A-Z])/g;
 
- export function dataAttr(node, key) {
-        // convert from camel case to dash-separated value
-        key = "data-" + key.replace(multiDash, "-$1").toLowerCase();
+export function dataAttr(node, key) {
 
-        var value = node.getAttribute(key),
-            parseJSON = (value) => {
-                try {
-                    value = JSON.parse(value);
-                } catch (err) {}
-                return value;
-            };
+    // convert from camel case to dash-separated value
 
-        if (value != null) {
+    key = "data-" + key.replace(multiDash, "-$&").toLowerCase();
 
-            value = value === "true" ? true :
-                value === "false" ? false :
-                value === "null" ? null :
-                // Only convert to a number if it doesn't change the string
-                +value + "" === value ? +value :
-                // try to recognize and parse object notation syntax
-                value[0] === "{" && value[value.length - 1] === "}" ? parseJSON(value) :
-                value;
+    var value = node.getAttribute(key);
+
+    if (value != null) {
+
+        // try to recognize and parse object notation syntax
+        if (value[0] === "{" && value[value.length - 1] === "}") {
+            try {
+                value = JSON.parse(value);
+            } catch (err) {}
         }
-
-        return value;
     }
+
+    return value;
+}
