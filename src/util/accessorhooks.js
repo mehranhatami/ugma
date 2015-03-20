@@ -12,6 +12,8 @@ var langFix = /_/g,
 
                 return (node === doc.documentElement ? doc : node).title;
             },
+            option: (node) => trim(node.value),
+            select: (node) => ~node.selectedIndex ? node.options[node.selectedIndex].value : "",
             undefined: (node) => {
                 switch (node.tagName) {
                     case "SELECT":
@@ -19,7 +21,7 @@ var langFix = /_/g,
                     case "OPTION":
                         // Support: IE<11
                         // option.value not trimmed
-                        return trim(node.value);
+                        return trim(node[node.hasAttribute("value") ? "value" : "text"]);
                     default:
                         return node[node.type && "value" in node ? "value" : "innerHTML"];
                 }
