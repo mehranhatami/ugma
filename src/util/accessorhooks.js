@@ -4,71 +4,71 @@ import { INTERNET_EXPLORER, DOCUMENT, FOCUSABLE } from "../const";
 var langFix = /_/g,
     accessorHooks = {
 
-    get: {
+        get: {
 
-        style: (node) => node.style.cssText,
-        title: (node) => {
-            var doc = node.ownerDocument;
+            style: (node) => node.style.cssText,
+            title: (node) => {
+                var doc = node.ownerDocument;
 
-            return (node === doc.documentElement ? doc : node).title;
-        },
-        undefined: (node) => {
-            switch (node.tagName) {
-                case "SELECT":
-                    return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
-                case "OPTION":
-                    // Support: IE<11
-                    // option.value not trimmed
-                    return trim(node.value);
-                default:
-                    return node[node.type && "value" in node ? "value" : "innerHTML"];
-            }
-        },
-        type: (node) => node.getAttribute("type") || node.type
-    },
-
-    set: {
-        lang: (node, value) => {
-            // correct locale browser language before setting the attribute             
-            // e.g. from zh_CN to zh-cn, from en_US to en-us
-            node.setAttribute("lang", value.replace(langFix, "-").toLowerCase());
-        },
-
-        style: (node, value) => {
-            node.style.cssText = value;
-        },
-        title: (node, value) => {
-            var doc = node.ownerDocument;
-
-            (node === doc.documentElement ? doc : node).title = value;
-        },
-        value: function(node, value) {
-            if (node.tagName === "SELECT") {
-                // selectbox has special case
-                if (every.call(node.options, (o) => !(o.selected = o.value === value))) {
-                    node.selectedIndex = -1;
+                return (node === doc.documentElement ? doc : node).title;
+            },
+            undefined: (node) => {
+                switch (node.tagName) {
+                    case "SELECT":
+                        return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                    case "OPTION":
+                        // Support: IE<11
+                        // option.value not trimmed
+                        return trim(node.value);
+                    default:
+                        return node[node.type && "value" in node ? "value" : "innerHTML"];
                 }
-            } else {
-                // for IE use innerText for textareabecause it doesn't trigger onpropertychange
-                node.value = value;
+            },
+            type: (node) => node.getAttribute("type") || node.type
+        },
+
+        set: {
+            lang: (node, value) => {
+                // correct locale browser language before setting the attribute             
+                // e.g. from zh_CN to zh-cn, from en_US to en-us
+                node.setAttribute("lang", value.replace(langFix, "-").toLowerCase());
+            },
+
+            style: (node, value) => {
+                node.style.cssText = value;
+            },
+            title: (node, value) => {
+                var doc = node.ownerDocument;
+
+                (node === doc.documentElement ? doc : node).title = value;
+            },
+            value: function(node, value) {
+                if (node.tagName === "SELECT") {
+                    // selectbox has special case
+                    if (every.call(node.options, (o) => !(o.selected = o.value === value))) {
+                        node.selectedIndex = -1;
+                    }
+                } else {
+                    // for IE use innerText for textareabecause it doesn't trigger onpropertychange
+                    node.value = value;
+                }
             }
         }
-    }
-};
+    };
 
 // Support: IE<=11+    
 (function() {
     var input = DOCUMENT.createElement("input");
-        
-       input.type = "checkbox";
+
+    input.type = "checkbox";
 
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
-   if(input.value !== "") {
-    accessorHooks.get.checked = (node) => {
-        return node.getAttribute("value") === null ? "on" : node.value;
-    };
-   }
+    if (input.value !== "") {
+        accessorHooks.get.checked = (node) => {
+            return node.getAttribute("value") === null ? "on" : node.value;
+        };
+    }
     // Support: IE<=11+
     // An input loses its value after becoming a radio
     input = DOCUMENT.createElement("input");
@@ -95,6 +95,20 @@ var langFix = /_/g,
     input = null;
 }());
 
+each(("multiple selected checked disabled readOnly required open").split(" "), function(key) {
+        // For Boolean attributes we need to give them a special treatment, and set 
+        // the corresponding property to either true or false
+        accessorHooks.set[key.toLowerCase()] = function(node, value) {
+
+            if (!!value) {
+                node[key] = true;
+                node.setAttribute(key, value);
+            } else {
+                node[key] = false;
+                node.removeAttribute(value);
+            }
+        };
+    });
 
 // fix hidden attribute for IE9
 if (INTERNET_EXPLORER === 9) {

@@ -26,6 +26,8 @@ if (!INTERNET_EXPLORER || INTERNET_EXPLORER > 9) {
         eventHooks[name] = DebouncedWrapper;
     });
 }
+    // Support: Firefox, Chrome, Safari
+    // Create 'bubbling' focus and blur events
 
 /* istanbul ignore if */
 if ("onfocusin" in DOCUMENT.documentElement) {
