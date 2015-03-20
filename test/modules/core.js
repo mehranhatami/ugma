@@ -13,12 +13,12 @@ describe("core", function() {
         expect(ugma.toString()).toBe("#document");
         expect(typeof ugma.toString()).toBe("string");        
     });
-/*
+
     it("should output the version number", function() {
         expect(ugma.version).toBe("0.0.1");
         expect(typeof ugma.version).toBe("string");        
     });
-*/
+
     it("should output the codename", function() {
         expect(ugma.codename).toBe("trackira");
         expect(typeof ugma.codename).toBe("string");        
