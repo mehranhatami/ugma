@@ -4,7 +4,7 @@ describe("Node", function() {
     it("should have overloaded toString", function() {
         var link = ugma.add("a"),
             input = ugma.add("input"),
-            spans = ugma.addAll("i+b"),
+            spans = ugma.addAll("i+b");
           //  empty = ugma.mock();
 
         expect(link.toString()).toBe("<a>");
