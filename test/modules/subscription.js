@@ -35,27 +35,6 @@ describe("subscribe", function() {
         link.set("href", "url_changed");
     });
 
-    it("should execute for visibility methods", function(done) {
-        var spy = jasmine.createSpy("watcher");
-
-        link.subscribe("aria-hidden", spy);
-
-        spy.and.callFake(function(newValue, oldValue) {
-            if (spy.calls.count() === 1) {
-                expect(newValue).toBe("true");
-                expect(oldValue).toBeFalsy();
-
-                link.show();
-            } else {
-                expect(newValue).toBe("false");
-                expect(oldValue).toBe("true");
-
-                done();
-            }
-        });
-
-        link.hide();
-    });
 
     it("should allow to unregister handler", function(done) {
         var spy = jasmine.createSpy("watcher");
@@ -97,15 +76,5 @@ describe("subscribe", function() {
 
         link.subscribe("innerHTML", spy);
         link.set("test1");
-    });
-
-    it("does nothing for empty nodes", function() {
-        var spy = jasmine.createSpy("watcher");
-        var empty = ugma.mock();
-
-        expect(empty.subscribe("title", spy)).toBe(empty);
-        empty.set("title", "abc");
-        expect(spy).not.toHaveBeenCalled();
-        expect(empty.unsubscribe("title", spy)).toBe(empty);
     });
 });

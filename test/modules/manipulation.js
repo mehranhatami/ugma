@@ -24,13 +24,6 @@ describe("manipulation", function() {
         it("should check if element has parent", function() {
             expect(div.remove().remove()).toBe(div);
         });
-
-        it("does nothing for empty nodes", function() {
-            var empty = ugma.mock();
-
-            expect(empty.remove()).toBe(empty);
-        });
-
     });
 
     describe("append", function() {
