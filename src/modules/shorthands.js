@@ -1,5 +1,5 @@
 import { implement } from "../helpers";
-import { RETURN_THIS } from "../const";
+import { RETURN_THIS, BOOLEANS } from "../const";
 
 implement({
      // Remove all children of the current node
@@ -13,7 +13,8 @@ implement({
     },
     // Clear all attributes / properties on the node
     clear(value) {
-        return this.set(value, null);
+        // Boolean attributes need to be set to 'false' before removed
+        return this.set(value, BOOLEANS.indexOf(value) > 1 ? false : null);
     }
 
 }, null, () => RETURN_THIS);

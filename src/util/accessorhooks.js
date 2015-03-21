@@ -1,5 +1,5 @@
 import { trim, each, every } from "../helpers";
-import { INTERNET_EXPLORER, DOCUMENT, FOCUSABLE } from "../const";
+import { INTERNET_EXPLORER, DOCUMENT, FOCUSABLE, BOOLEANS } from "../const";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -97,7 +97,7 @@ var langFix = /_/g,
     input = null;
 }());
 
-each(("multiple selected checked disabled readOnly required open").split(" "), function(key) {
+each(BOOLEANS, function(key) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
         accessorHooks.set[key.toLowerCase()] = (node, value) => {

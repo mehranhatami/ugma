@@ -28,8 +28,10 @@ export const RETURN_THIS = function() {return this};
 export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
-// Browser
+export const BOOLEANS = ["multiple", "selected", "checked", "disabled", "readOnly", "required", "open"];
 
+
+// Browser
 const userAgent = WINDOW.navigator.userAgent;
 
 export const INTERNET_EXPLORER = document.documentMode;
