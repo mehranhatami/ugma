@@ -5,14 +5,14 @@ import accessorhooks from "../util/accessorhooks";
 
 implement({
     // Set property/attribute value by name
-    set(name, value) {
+    set(prop, value) {
         var node = this[0];
 
         if (arguments.length === 1) {
-            if (is(name, "function")) {
-                value = name;
+            if (is(prop, "function")) {
+                value = prop;
             } else {
-                value = name == null ? "" : name + "";
+                value = prop == null ? "" : prop + "";
             }
 
             if (value !== "[object Object]") {
@@ -23,25 +23,27 @@ implement({
                     case "TEXTAREA":
                     case "SELECT":
                     case "OPTION":
-                        name = "value";
+                        prop = "value";
                         break;
                     default:
-                        name = "innerHTML";
+                        prop = "innerHTML";
                 }
             }
         }
 
-        var hook = accessorhooks.set[name],
-            subscription = (this._["<%= prop('subscription') %>"] || {})[name],
-            oldValue;
+        var hook = accessorhooks.set[prop],
+            subscription = (this._["<%= prop('subscription') %>"] || {})[prop],
+            previousValue;
 
+        // if it's already a subscription on this attribute / property,
+        // grab the previous value
         if (subscription) {
-            oldValue = this.get(name);
+            previousValue = this.get(prop);
         }
 
-        if (is(name, "string")) {
-            if (name[0] === "_") {
-                this._[name.slice(1)] = value;
+        if (is(prop, "string")) {
+            if (prop[0] === "_") {
+                this._[prop.slice(1)] = value;
             } else {
 
                 if (is(value, "function")) {
@@ -49,13 +51,13 @@ implement({
                 }
 
                 if (value == null) {
-                    node.removeAttribute(name);
+                    node.removeAttribute(prop);
                 } else if (hook) {
                     hook(node, value);
-                } else if (name in node) {
-                    node[name] = value;
+                } else if (prop in node) {
+                    node[prop] = value;
                 } else {
-                    node.setAttribute(name, value);
+                    node.setAttribute(prop, value);
                 }
                 /* istanbul ignore if */
                 if (GINGERBREAD) {
@@ -65,23 +67,24 @@ implement({
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
-        } else if (isArray(name)) {
-            each(name, (key) => {
+        } else if (isArray(prop)) {
+            each(prop, (key) => {
                 this.set(key, value);
             });
             // set a object with key-value pairs    
             // e.g.   link.set({"data-foo1": "bar1", "data-foo2": "bar2" });
-        } else if (is(name, "object")) {
-            forOwn(name, (key, value) => {
-                this.set(key, name[key]);
+        } else if (is(prop, "object")) {
+            forOwn(prop, (key, value) => {
+                this.set(key, prop[key]);
             });
         } else {
             minErr("set()", ERROR_MSG[6]);
         }
 
-        if (subscription && oldValue !== value) {
+        if (subscription && previousValue !== value) {
+            // Trigger all relevant attribute / property changes.
             each(subscription, (w) => {
-                invoke(this, w, value, oldValue);
+                invoke(this, w, value, previousValue);
             });
         }
 
