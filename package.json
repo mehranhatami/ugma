@@ -14,7 +14,18 @@
     "ecma-6",
     "ecma",
     "library",
-    "gulp"
+    "gulp",
+    "html",
+    "DOM",
+    "css",
+    "traverse",
+    "manipulate",
+    "extend",
+    "better",
+    "query",
+    "element",
+    "emmet",
+    "native"
   ],
   "bugs": "https://github.com/ugma/ugma/issues",
   "repository": {
