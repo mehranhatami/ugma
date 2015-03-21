@@ -14,7 +14,7 @@ implement({
     // Clear all attributes / properties on the node
     clear(value) {
         // Boolean attributes need to be set to 'false' before removed
-        return this.set(value, BOOLEANS.indexOf(value) > 1 ? false : null);
+        return this.set(value, BOOLEANS[value.toLowerCase()] ? false : null);
     }
 
 }, null, () => RETURN_THIS);
