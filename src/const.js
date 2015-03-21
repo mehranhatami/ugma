@@ -2,8 +2,14 @@
 
 import { Document } from "./core";
 
+// Used to determine if values are of the language type Object. 
+export const objectTypes = {
+    "function": true,
+    "object": true
+};
+
 // globals
-export const WINDOW = window;
+export const WINDOW = (objectTypes[typeof window] && window) || this;
 export const DOCUMENT = document;
 export const HTML = DOCUMENT.documentElement;
 
@@ -16,20 +22,6 @@ export const ERROR_MSG = {
     6: "The property or attribute is not valid.",
     7: "The first argument need to be a string"
 };
-
-// Node Types
-export const ELEMENT_NODE                = 1;
-export const ATTRIBUTE_NODE              = 2;
-export const TEXT_NODE                   = 3;
-export const CDATA_SECTION_NODE          = 4;
-export const ENTITY_REFERENCE_NODE       = 5;
-export const ENTITY_NODE                 = 6;
-export const PROCESSING_INSTRUCTION_NODE = 7;
-export const COMMENT_NODE                = 8;
-export const DOCUMENT_NODE               = 9;
-export const DOCUMENT_TYPE_NODE          = 10;
-export const DOCUMENT_FRAGMENT_NODE      = 11;
-export const NOTATION_NODE               = 12;
 
 // constants
 export const RETURN_THIS = function() {return this};
@@ -63,4 +55,6 @@ if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
 
 // Set a new document, and define a local copy of ugma
 var ugma = new Document(DOCUMENT);
-export { ugma };
+export {
+    ugma
+};

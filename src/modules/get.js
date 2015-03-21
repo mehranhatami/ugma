@@ -9,17 +9,14 @@ implement({
     get(name) {
         var node = this[0],
             hook = accessorhooks.get[name];
+
         // Grab necessary hook if it is defined
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
-            if (name in node) {
-                // Get the value of an attribute / property.
-                return node[name];
-                // if no private data storage   
-            } else if (name[0] !== "_") {
-                return node.getAttribute(name);
-            } else {
+            
+            if (name[0] === "_") {
+                
                 // remove '_' from the name
                 let key = name.slice(1),
                     data = this._;
@@ -30,7 +27,14 @@ implement({
                 }
 
                 return data[key];
-            }
+              // get property
+            } else if (name in node) {
+                return node[name];
+              // get attribute
+            } else  {
+                return node.getAttribute(name);
+            } 
+            
         } else if (isArray(name)) {
             var obj = {};
             each(name, (key) => {
