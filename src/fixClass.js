@@ -51,8 +51,6 @@ function firstSolution(){
 
   array.push(11,22,33,44);
 
-  console.log('MyArray:'+ array);
-
   return array;
 }
 
@@ -74,8 +72,6 @@ function secondSolution(){
   var array = MyOtherArray.new();
 
   array.push(111,222,333,444);
-
-  console.log('MyOtherArray:' + array);
 
   return array;
 }
