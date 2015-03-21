@@ -3,9 +3,15 @@ import { minErr } from "../minErr";
 import { ERROR_MSG, GINGERBREAD, RETURN_THIS } from "../const";
 import accessorhooks from "../util/accessorhooks";
 
+function getTagName(node) {
+    var tag = node.tagName;
+    return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
+}
+
 implement({
     // Set property/attribute value by name
     set(prop, value) {
+
         var node = this[0];
 
         if (arguments.length === 1) {
@@ -17,16 +23,10 @@ implement({
 
             if (value !== "[object Object]") {
 
-                switch (node.tagName) {
-
-                    case "INPUT":
-                    case "TEXTAREA":
-                    case "SELECT":
-                    case "OPTION":
-                        prop = "value";
-                        break;
-                    default:
-                        prop = "innerHTML";
+                if (getTagName(node)) {
+                    prop = "value";
+                } else {
+                    prop = "innerHTML";
                 }
             }
         }
