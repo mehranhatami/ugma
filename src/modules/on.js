@@ -4,16 +4,14 @@ import { implement, isArray, keys, each, forOwn, is } from "../helpers";
 import { minErr } from "../minErr";
 
 implement({
-    // Attach an event handler function for one or more events to 
+    // Bind an event to a callback function for one or more events to 
     // the selected elements.
     on: false,
-    // Attach a handler to an event for the elements. The handler
-    // is executed at most once per element per event type.
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
     once: true
 
 }, (method, single) => function(type, selector, args, callback) {
-
-    var listeners = this._["<%= prop('handler') %>"] || (this._["<%= prop('handler') %>"] = []);
 
     if (is(type, "string")) {
         if (is(args, "function")) {
@@ -34,27 +32,35 @@ implement({
         }
 
         if (!is(callback, "function")) {
-              minErr(method + "()", callback + " is not a function.");
+            minErr(method + "()", callback + " is not a function.");
         }
 
+        // http://jsperf.com/string-indexof-vs-split
         var node = this[0],
-            handler = EventHandler(type, selector, callback, args, this, single);
-        node.addEventListener(handler._type || type, handler, !!handler.capturing);
+            types = type.indexOf(" ") >= 0 ? type.split(" ") : [type],
+            i = types.length,
+            handlers = this._["<%= prop('events') %>"] || (this._["<%= prop('events') %>"] = []);
+        // Handle space separated event names.
+        while (i--) {
+            type = types[i];
 
-        // store event entry
-        listeners.push(handler);
+            var handler = EventHandler(type, selector, callback, args, this, single);
+            node.addEventListener(handler._type || type, handler, !!handler.capturing);
+
+            // store event entry
+            handlers.push(handler);
+        }
+
     } else if (is(type, "object")) {
-
-        let self = this;
 
         if (isArray(type)) {
 
-            each(type, function(name) {
-                self[method](name, selector, args, callback);
+            each(type, (name) => {
+                this[method](name, selector, args, callback);
             });
         } else {
-            forOwn(type, function(name, value) {
-                self[method](name, selector, args, value);
+            forOwn(type, (name, value) => {
+                this[method](name, selector, args, value);
             });
         }
     } else {

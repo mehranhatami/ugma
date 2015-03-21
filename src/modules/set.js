@@ -8,21 +8,25 @@ implement({
     set(name, value) {
         var node = this[0];
 
-        // handle the value shortcut
         if (arguments.length === 1) {
             if (is(name, "function")) {
                 value = name;
             } else {
-                value = name == null ? "" : String(name);
+                value = name == null ? "" : name + "";
             }
 
             if (value !== "[object Object]") {
-                let tag = node.tagName;
 
-                if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION") {
-                    name = "value";
-                } else {
-                    name = "innerHTML";
+                switch (node.tagName) {
+
+                    case "INPUT":
+                    case "TEXTAREA":
+                    case "SELECT":
+                    case "OPTION":
+                        name = "value";
+                        break;
+                    default:
+                        name = "innerHTML";
                 }
             }
         }
@@ -39,14 +43,15 @@ implement({
             if (name[0] === "_") {
                 this._[name.slice(1)] = value;
             } else {
+
                 if (is(value, "function")) {
                     value = value(this);
                 }
 
-                if (hook) {
-                    hook(node, value);
-                } else if (value == null) {
+                if (value == null) {
                     node.removeAttribute(name);
+                } else if (hook) {
+                    hook(node, value);
                 } else if (name in node) {
                     node[name] = value;
                 } else {

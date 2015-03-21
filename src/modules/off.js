@@ -28,7 +28,7 @@ implement({
                 node.removeEventListener((handler._type || handler.type), handler, !!handler.capturing);
             };
 
-        this._["<%= prop('handler') %>"] = filter(this._["<%= prop('handler') %>"], (handler) => {
+        this._["<%= prop('events') %>"] = filter(this._["<%= prop('events') %>"], (handler) => {
 
             if (type !== handler.type ||
                 selector && selector !== handler.selector ||
