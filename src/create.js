@@ -40,12 +40,12 @@ function copy(source, object, props) {
   return object;
 }
 
-function create(prototype, properties) {
+export function create(prototype, properties) {
   var result = baseCreate(prototype);
   return properties ? copy(properties, result, Object.keys(properties)) : result;
 }
 
-function extend(obj, extension, preserve) {
+export function extend(obj, extension, preserve) {
   // failsave if something goes wrong
   if (!obj || !extension) return obj || extension || {};
 
