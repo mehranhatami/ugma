@@ -29,6 +29,9 @@ export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
+// Booleans
+export const BOOLS = ("compact nowrap ismap declare noshade checked disabled readOnly multiple " +
+                     "selected noresize defer defaultChecked autofocus controls autoplay loop").split(" ");
 // Browser
 const userAgent = WINDOW.navigator.userAgent;
 

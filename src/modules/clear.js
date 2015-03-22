@@ -1,9 +1,9 @@
 import { implement, each } from "../helpers";
-import { RETURN_THIS } from "../const";
+import { RETURN_THIS, BOOLS } from "../const";
 
 var BOOLEANS = {};
 
-each("multiple selected checked disabled readOnly required open".split(" "), (value) => {
+each(BOOLS, (value) => {
   BOOLEANS[value.toLowerCase()] = value;
 });
 
