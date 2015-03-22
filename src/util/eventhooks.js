@@ -22,7 +22,7 @@ forOwn({
 // that browser
 if (!INTERNET_EXPLORER || INTERNET_EXPLORER > 9) {
     // Special events for the frame events 'hook'
-    each(("resize touchmove mousewheel scroll mousemove drag").split(" "), function(name) {
+    each(("touchmove mousewheel scroll mousemove drag").split(" "), function(name) {
         eventHooks[name] = DebouncedWrapper;
     });
 }
