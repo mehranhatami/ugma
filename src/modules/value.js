@@ -7,10 +7,12 @@ implement({
     value(val) {
         if (arguments.length === 0) {
             return this.get();
-        }
-        if (is(val, "string")) {
+        } else if ((val instanceof Element) || Array.isArray(val)) {
+            return this.set("").append(val);
+        } else if (is(val, "string")) {
             return this.set(val);
         }
-        return this.set("").append(val);
     }
-}, null, () => RETURN_THIS);
+}, null, () => function() {
+    if (arguments.length) return this;
+});
