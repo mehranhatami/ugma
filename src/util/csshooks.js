@@ -1,21 +1,9 @@
 import { filter, map, keys, camelize, each, forOwn } from "../helpers";
 import { VENDOR_PREFIXES, HTML } from "../const";
 
-var cssHooks = {
-        get: {},
-        set: {},
-        _default(name, style) {
-            var propName = camelize(name);
-
-            if (!(propName in style)) {
-                propName = filter(map(VENDOR_PREFIXES, (prefix) => prefix + propName[0].toUpperCase() + propName.slice(1)), (prop) => prop in style)[0];
-            }
-
-            return this.get[name] = this.set[name] = propName;
-        }
-    },
+var cssHooks = { get: {}, set: {} },
     directions = ["Top", "Right", "Bottom", "Left"],
-    shortCuts = {
+    shortHand = {
         font: ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
         borderRadius: ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomRightRadius", "borderBottomLeftRadius"],
         padding: map(directions, (dir) => "padding" + dir),
@@ -39,7 +27,7 @@ each(("box-flex box-flex-group column-count flex flex-grow flex-shrink order orp
 });
 
 // normalize property shortcuts
-forOwn(shortCuts, (key, props) => {
+forOwn(shortHand, (key, props) => {
 
     cssHooks.get[key] = (style) => {
         var result = [],
@@ -61,5 +49,15 @@ forOwn(shortCuts, (key, props) => {
         }
     };
 });
+
+cssHooks._default = function(name, style) {
+    var propName = camelize(name);
+
+    if (!(propName in style)) {
+        propName = filter(map(VENDOR_PREFIXES, (prefix) => prefix + propName[0].toUpperCase() + propName.slice(1)), (prop) => prop in style)[0];
+    }
+
+    return this.get[name] = this.set[name] = propName;
+};
 
 export default cssHooks;

@@ -67,6 +67,11 @@ describe("add", function() {
         expect(function() { ugma.add({}); }).toThrow();
     });
 
+    it("should create an element with type='email'", function(){
+		var el = ugma.add("input").set("type", "email");
+		expect(el.get("type").match(/email|text/)).toBeTruthy();
+	});
+
     describe("addAll", function() {
         it("should always return array of elements", function() {
             var els = ugma.addAll("a");
