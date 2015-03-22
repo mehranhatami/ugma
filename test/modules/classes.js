@@ -102,21 +102,33 @@ describe("classes manipulation", function() {
             expect(link.hasClass("abc")).toEqual(true);
 
         });
-        
-        
-      it('should allow multiple classes to be added', function() {
-          link[0].className = '';
-          link.addClass("foo", "bar", "baz");
-        expect(link[0].className).toBe('foo bar baz');
-      });
 
-  
-      it("should not add duplicate classes", function() {
+        it("should allow multiple classes to be added", function() {
+            link[0].className = "";
+            link.addClass("foo", "bar", "baz");
+            expect(link[0].className).toBe("foo bar baz");
+        });
+
+
+        it("should not add duplicate classes", function() {
             link[0].className = "foo";
             link.addClass("foo");
             expect(link[0].className).toBe("foo");
         });
 
+    });
+
+    describe("removeClass", function() {
+        it("should correctly remove middle class", function() {
+            var element = ugma.add("<div class='foo bar baz'></div>");
+            expect(element.hasClass("bar")).toBe(true);
+
+            element.removeClass("bar");
+
+            expect(element.hasClass("foo")).toBe(true);
+            expect(element.hasClass("bar")).toBe(false);
+            expect(element.hasClass("baz")).toBe(true);
+        });
     });
 
     describe("addClass, removeClass", function() {

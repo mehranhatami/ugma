@@ -12,9 +12,9 @@ describe("traversing", function() {
     describe("next, prev", function() {
         it("should return an appropriate element", function() {
             var expectedResults = {
-                    next: "b",
-                    prev: "i"
-                };
+                next: "b",
+                prev: "i"
+            };
 
             _forIn(expectedResults, function(tagName, methodName) {
                 expect(link[methodName]()).toHaveTag(tagName);
@@ -36,11 +36,31 @@ describe("traversing", function() {
     });
 
     it("should throw error if arguments are invalid", function() {
-        expect(function() { link.child({}) }).toThrow();
-        expect(function() { link.child(function() {}) }).toThrow();
-        expect(function() { link.next({}) }).toThrow();
-        expect(function() { link.prev(function() {}) }).toThrow();
+        expect(function() {
+            link.child({})
+        }).toThrow();
+        expect(function() {
+            link.child(function() {})
+        }).toThrow();
+        expect(function() {
+            link.next({})
+        }).toThrow();
+        expect(function() {
+            link.prev(function() {})
+        }).toThrow();
     });
+
+
+    describe("next", function() {
+        it("should return next sibling", function() {
+            var element = ugma.add("<div><b>b</b><i>i</i></div>");
+            var b = element.query("b");
+            var i = element.query("i");
+            expect(b.next()).toEqual(i);
+        });
+
+    });
+
 
     describe("children, nextAll, prevAll", function() {
         it("should return an appropriate collection of elements", function() {
@@ -90,10 +110,18 @@ describe("traversing", function() {
         });
 
         it("should throw error if arguments are invalid", function() {
-            expect(function() { link.children({}) }).toThrow();
-            expect(function() { link.children(function() {}) }).toThrow();
-            expect(function() { link.nextAll({}) }).toThrow();
-            expect(function() { link.prevAll(function() {}) }).toThrow();
+            expect(function() {
+                link.children({})
+            }).toThrow();
+            expect(function() {
+                link.children(function() {})
+            }).toThrow();
+            expect(function() {
+                link.nextAll({})
+            }).toThrow();
+            expect(function() {
+                link.prevAll(function() {})
+            }).toThrow();
         });
     });
 
