@@ -123,7 +123,6 @@ describe("get", function() {
         expect(link.get("href")).toBe("");
     });
 
-
     it("should read boolean values", function() {
 
         checkbox.set("checked", true);
@@ -190,6 +189,36 @@ describe("get", function() {
         expect(form.get("textContent")).toBe("");
     });
 
+    it("should set/get the boolean value of loop, controls, and autoplay", function() {
+
+        tabIndex.set({
+            innerHTML: "<video loop controls autoplay>"
+        });
+
+        var video = tabIndex.query("video");
+
+        if ("loop" in video) {
+            expect(video.get("loop")).toBe(true);
+            expect(video.set("loop", false).get("loop")).toBe(false);
+        }
+        //				expect(video.get("controls")).toBe(true);
+        expect(video.set("controls", false).get("controls")).toBe(false);
+        //			expect(video.get("autoplay")).toBe(true);
+        expect(video.set("autoplay", false).get("autoplay")).toBe(false);
+    });
+
+    it('should set a number (so no string) as html', function() {
+        expect(tabIndex.set({
+            innerHTML: 20
+        })[0].innerHTML).toEqual('20');
+    });
+
+    it("should get and set the correct tabIndex", function() {
+        var div = document.createElement("div");
+        div.innerHTML = "<input tabindex='2'>";
+        expect(ugma.native(div.firstChild).get("tabindex")).toEqual(2);
+        expect(ugma.native(div.firstChild).set("tabindex", 3).get("tabindex")).toEqual(3);
+    });
 
     it("should handle tabIndex", function() {
 
@@ -265,6 +294,7 @@ describe("get", function() {
         expect(div.value().toLowerCase()).toBe("<a></a><a></a>");
         expect(input.get()).toBe("foo");
     });
+
     it("handles textarea", function() {
         var textarea = ugma.add("textarea");
 
@@ -296,6 +326,28 @@ describe("get", function() {
         expect(elm.get("readonly")).toBeFalsy();
         expect(elm.get("readOnly")).toBeFalsy();
         expect(elm.get("disabled")).toBeFalsy();
+    });
+
+    it("should keep the input value after setting a input field to another type (submit button)", function() {
+        input.set("value", "myValue");
+        input.set("type", "submit");
+        expect(input.get("value")).toEqual("myValue");
+    });
+
+    it("should get the value of a option element when it does not have the value attribute", function() {
+        var select = ugma.add("select").set("innerHTML", "<option>s</option>");
+        expect(select.query("option").get("value")).toEqual("s");
+    });
+
+    it("should return the text of the selected option for a select element", function() {
+        var form = ugma.add("form");
+        form.set("innerHTML", "<select>" +
+            "<option>value 1</option>" +
+            "<option>value 2</option>" +
+            "<option selected>value 3</option>" +
+            "<option>value 4</option>" +
+            "</select>");
+        expect(form.query("select").get("value")).toEqual("value 3");
     });
 
     it("should return undefined for empty node", function() {

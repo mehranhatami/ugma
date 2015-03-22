@@ -208,7 +208,7 @@ describe("set", function() {
         });
 
 
-        it("should set the style attribute of an Element", function() {
+        it("should set the style attribute of an element", function() {
             var style = "font-size:12px;line-height:23px;";
             var div = ugma.add("div").set("style", style);
             expect(div[0].style.lineHeight).toEqual("23px");
@@ -216,7 +216,7 @@ describe("set", function() {
         });
 
 
-        it("should set multiple attributes of an Element", function() {
+        it("should set multiple attributes of an element", function() {
             link.set({
                 id: "some_id",
                 "title": "some_title",
@@ -228,7 +228,7 @@ describe("set", function() {
         });
 
 
-        it("should set various attributes of a script Element", function() {
+        it("should set various attributes of a script element", function() {
             link.set({
                 type: "text/javascript",
                 defer: "defer"
@@ -238,7 +238,7 @@ describe("set", function() {
         });
 
 
-        it("should set various attributes of a table Element", function() {
+        it("should set various attributes of a table element", function() {
             var table = ugma.add("table").set({
                 border: "2",
                 cellpadding: "3",
@@ -277,6 +277,31 @@ describe("set", function() {
             expect(link).toHaveHtml("ok");
             expect(input).toHaveProp("value", "ok");
         });
+
+
+         it("should return `null` when the value of a input element is set to `undefined`", function(){
+			var value;
+			expect(input.set({value: value}).get("value")).toEqual("");
+		});
+        
+        it("should set a falsey value and not an empty string", function(){
+			expect(input.set({value: false}).get("value")).toEqual("false");
+			expect(input.set({value: 0}).get("value")).toEqual("0");
+		});
+        
+		it("should set the selected option for a select element to matching string w/o falsy matches", function(){
+			var form = ugma.add("form");
+			form.set("innerHTML", "<select>"+
+				"<option value=''>no value</option>"+
+				"<option value='0'>value 0</option>"+
+				"<option value='1'>value 1</option>"+
+				"</select>");
+			expect(form.query("select").set("value", 0).get("value")).toEqual("");
+		});
+        
+        it("should set the type of a button", function(){
+			expect(ugma.add("button").set({type: "button"}).get("type")).toEqual("submit");
+		});
 
         it("accept object with overriden toString", function() {
             function Type() {
