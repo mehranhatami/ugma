@@ -53,7 +53,7 @@ implement({
         // Handle native DOM elements 
         // e.g. link.append(document.createElement('li'));
         if (native && content.nodeType === 1) {
-            content = Element.toString(content);
+            content = Element(content);
         }
 
         if (is(content, "function")) {
