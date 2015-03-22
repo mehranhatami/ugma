@@ -245,9 +245,9 @@ describe("set", function() {
                 cellspacing: "4",
                 align: "center"
             });
-            expect(table[0].border == 2).toBeTruthy();
-            expect(table[0].cellPadding == 3).toBeTruthy();
-            expect(table[0].cellSpacing == 4).toBeTruthy();
+            expect(table.get("border")).toBe("2");
+            expect(table.get("cellPadding")).toBe("3");
+            expect(table.get("cellSpacing")).toBe("4");
             expect(table[0].align).toEqual("center");
         });
 
@@ -276,12 +276,6 @@ describe("set", function() {
 
             expect(link).toHaveHtml("ok");
             expect(input).toHaveProp("value", "ok");
-        });
-
-        it("should return a CSS string representing the Element's styles", function() {
-            var style = "font-size:12px;color:rgb(255,255,255)";
-            var myElement = ugma.add("div").set("style", style);
-            expect(myElement.get("style").toLowerCase().replace(/\s/g, "").replace(/;$/, "")).toMatch(/(font-size:12px;color:rgb\(255,255,255\))|(color:rgb\(255,255,255\);font-size:12px)/);
         });
 
         it("accept object with overriden toString", function() {

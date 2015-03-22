@@ -16,6 +16,12 @@ describe("get", function() {
         tabIndex = ugma.query("#tabindex");
     });
 
+    it("should return a CSS string representing the Element's styles", function() {
+        var style = "font-size:12px;color:rgb(255,255,255)";
+        var myElement = ugma.add("div").set("style", style);
+        expect(myElement.get("style").toLowerCase().replace(/\s/g, "").replace(/;$/, "")).toMatch(/(font-size:12px;color:rgb\(255,255,255\))|(color:rgb\(255,255,255\);font-size:12px)/);
+    });
+
     it("should read an attribute value(s)", function() {
         expect(link.get("id")).toBe("test");
         expect(link.get("data-attr")).toBe("val");
@@ -31,10 +37,14 @@ describe("get", function() {
         expect(textarea.get("type")).toBe("textarea");
     });
 
-
     it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
         expect(link.get()).toBe("get-test");
         expect(input.get()).toBe("test");
+    });
+
+    it("should return the nodes's tagName", function() {
+        var myElement = ugma.add("div");
+        expect(myElement.get("tagName")).toEqual("DIV");
     });
 
     it("should try to read property value first", function() {
@@ -42,6 +52,26 @@ describe("get", function() {
         expect(input.get("tabIndex")).toBe(10);
         expect(input.get("form").nodeType).toBe(1);
     });
+
+    it("should get an absolute href", function() {
+        var link = ugma.add("a").set({
+            href: "http://google.com/"
+        });
+        expect(link.get("href")).toEqual("http://google.com/");
+    });
+
+    it("should get an absolute href to the same domain", function() {
+        var link = ugma.add("a").set({
+            href: window.location.href
+        });
+        expect(link.get("href")).toEqual(window.location.href);
+    });
+
+    it("should return '' when attribute is missing", function() {
+        var link = ugma.add("a");
+        expect(link.get("href")).toBe("");
+    });
+
 
     it("should read boolean values", function() {
 
@@ -69,7 +99,6 @@ describe("get", function() {
         expect(txt.get("required")).toBe(true);
         expect(txt.set("required", false).get("required")).toBe(false);
     });
-
 
     it("should return undefined for non-existing attributes on input", function() {
         var elm = ugma.add("input");
@@ -142,7 +171,6 @@ describe("get", function() {
         tabIndex.set("tabindex", "5");
 
         expect(tabIndex.get("tabindex")).toBe(5);
-
     });
 
     it("handles select as undefined key", function() {
