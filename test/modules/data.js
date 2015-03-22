@@ -4,7 +4,7 @@ describe("data", function() {
     var link;
 
     beforeEach(function() {
-        jasmine.sandbox.set("<div id='test'</div>");
+        jasmine.sandbox.set("<div id='test' data-test='x'></div>");
 
         link = ugma.query("#test");
     });
@@ -78,7 +78,24 @@ describe("data", function() {
         expect(link).not.toHaveAttr("_test", "yeah");
         expect(link).not.toHaveProp("_test", "yeah");
     });
+    
+    it("should read an appropriate data-* attribute if it exists", function() {
+        expect(link.data("test")).toEqual("x");
+    });
 
+    it("should return reference to 'this' when called with 2 arguments", function() {
+        expect(link.data("test", 123)).toEqual(link);
+    });
+    
+    it("should accept object argument", function() {
+        var param = {a: "b", c: 1};
+
+        link.data(param);
+
+        expect(link.data("a")).toBe("b");
+        expect(link.data("c")).toBe(1);
+    });
+    
     it("should delete custom properties", function() {
 
         link.data({

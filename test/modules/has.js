@@ -1,22 +1,24 @@
 describe("has", function() {
    
-    var checkbox, option;
+   var input;
 
     beforeEach(function() {
-        jasmine.sandbox.set("<option id='option'><option/><input id='chkbox' type='checkbox'/>");
+        jasmine.sandbox.set("<input type='checkbox' id='has' required>");
 
-        checkbox = ugma.query("#chkbox");
-        option = ugma.query("#option");
+         input = ugma.query("#has");
     });
 
-  it("should read boolean values", function() {
+ it("should return true/false if property/attribute exists", function() {
+        input[0].checked = true;
+        expect(input.has("required")).toBe(true);
+        expect(input.has("unknown")).toBe(false);
+        expect(input.has("checked")).toBe(true);
 
-        checkbox.set("checked", true);
+        input[0].checked = false;
+        expect(input.has("checked")).toBe(false);
+    });
 
-        expect(checkbox.has("checked")).toBe(true);
-
-        option.set("selected", true);
-
-        expect(option.has("selected")).toBe(true);
+    it("should throw error if arguments are invalid", function() {
+        expect(function() { input.has(1); }).toThrow();
     });
 });

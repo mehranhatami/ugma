@@ -76,6 +76,8 @@ describe("manipulation", function() {
             expect(root.get().toLowerCase()).toEqual("<span></span>abc");
         });
     });
+    
+    
 
     describe("append, prepend, after, before", function() {
         var checkStrategies = {
@@ -103,6 +105,15 @@ describe("manipulation", function() {
         it("should accept html string", function() {
             _forIn(checkStrategies, function(checkMethod, strategy) {
                 var arg = createDivHtml(strategy);
+
+                expect(checkMethod(div[strategy](arg))).toHaveClass(strategy);
+            });
+        });
+
+        it("should accept document fragment", function() {
+            _forIn(checkStrategies, function(checkMethod, strategy) {
+                  var arg =  createDivFragment(strategy);
+
 
                 expect(checkMethod(div[strategy](arg))).toHaveClass(strategy);
             });
@@ -191,7 +202,7 @@ describe("manipulation", function() {
         });
     });
 
-    describe("replace", function() {
+    describe("replaceWith", function() {
         var div;
 
         beforeEach(function() {
@@ -205,8 +216,23 @@ describe("manipulation", function() {
 
             expectToBeReplaced("test", "replace");
         });
+        
+        it("should accept document fragment", function() {         
+            div.replaceWith(createDivFragment("replace"));
+            expectToBeReplaced("test", "replace");
+        });
     });
+   
+   function createDivFragment(className) {
+        var fragment = document.createDocumentFragment(),
+            el = document.createElement("div");
+ 
+        el.className = className;
 
+        fragment.appendChild(el);
+        return fragment;
+    }
+    
     function createDivHtml(className) {
         return "<div class='" + className + "'></div>";
     }

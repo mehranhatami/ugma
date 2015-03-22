@@ -24,6 +24,8 @@ describe("traversing", function() {
         it("should search for the first matching element if selector exists", function() {
             expect(link.next("i")).toHaveTag("i");
             expect(link.prev("b")).toHaveTag("b");
+            expect(link.last("em")).toHaveTag("em");
+            expect(link.closest("body")).toHaveTag("body");
         });
     });
 
@@ -37,19 +39,18 @@ describe("traversing", function() {
 
     it("should throw error if arguments are invalid", function() {
         expect(function() {
-            link.child({})
+            link.child({});
         }).toThrow();
         expect(function() {
-            link.child(function() {})
+            link.child(function() {});
         }).toThrow();
         expect(function() {
-            link.next({})
+            link.next({});
         }).toThrow();
         expect(function() {
-            link.prev(function() {})
+            link.prev(function() {});
         }).toThrow();
     });
-
 
     describe("next", function() {
         it("should return next sibling", function() {
@@ -60,7 +61,6 @@ describe("traversing", function() {
         });
 
     });
-
 
     describe("children, nextAll, prevAll", function() {
         it("should return an appropriate collection of elements", function() {
@@ -111,16 +111,16 @@ describe("traversing", function() {
 
         it("should throw error if arguments are invalid", function() {
             expect(function() {
-                link.children({})
+                link.children({});
             }).toThrow();
             expect(function() {
-                link.children(function() {})
+                link.children(function() {});
             }).toThrow();
             expect(function() {
-                link.nextAll({})
+                link.nextAll({});
             }).toThrow();
             expect(function() {
-                link.prevAll(function() {})
+                link.prevAll(function() {});
             }).toThrow();
         });
     });

@@ -29,14 +29,6 @@ export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
-// boolean attributes
-
-export const BOOLEANS = {};
-
-"multiple selected checked disabled readOnly required open".split(" ").forEach(function(value) {
-  BOOLEANS[value.toLowerCase()] = value;
-});
-
 // Browser
 const userAgent = WINDOW.navigator.userAgent;
 

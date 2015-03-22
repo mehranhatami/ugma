@@ -19,15 +19,15 @@ describe("query", function() {
 
         expect(el.query("#test1")).toHaveId("test1");
 
-    //    el.remove();
+        el.remove();
 
-    //        expect(el.query("#test1")).toHaveId("test1");
+        expect(el.query("#test1")).toHaveId("test1");
     });
 
     it("should query an element by class", function() {
-        jasmine.sandbox.set("<a class='blog'>test</a>");
+        jasmine.sandbox.set("<a class='test321'>test</a>");
 
-        expect(ugma.query(".blog")).toHaveClass("blog");
+        expect(ugma.query(".test321")).toHaveClass("test321");
     });
 
     it("should query an element by class with context", function() {
@@ -39,6 +39,16 @@ describe("query", function() {
         jasmine.sandbox.set("<div><h2><span/></h2><div><p><span/></p><p/></div></div>");
         expect(ugma.queryAll("h2, div p").length).toBe(3);
     });
+
+    it("should find an element by selector", function() {
+        jasmine.sandbox.set("<a class='test123'>test</a>");
+
+        var domLink = ugma.query("a.test123");
+        
+        expect(domLink).toHaveTag("a");
+        expect(domLink).toHaveClass("test123");
+    });
+
 
     it("should query an element by selector", function() {
         jasmine.sandbox.set("<div id=test><a data-attr='0'>test</a></div>");
@@ -76,6 +86,11 @@ describe("query", function() {
     it("should throw error if the first argument is not a string", function() {
         expect(function() { ugma.query(1); }).toThrow();
     });
+    
+     it("should throw error if the first argument is not a string", function() {
+        expect(function() { ugma.query(1); }).toThrow();
+    });
+
 
     it("should not throw error if selector is not valid", function() {
         jasmine.clock().install();

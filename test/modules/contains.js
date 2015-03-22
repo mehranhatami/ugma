@@ -1,4 +1,4 @@
-describe("contains", function() {
+   describe("contains", function() {
     "use strict";
 
     var testEl;
@@ -13,11 +13,11 @@ describe("contains", function() {
         expect(testEl.contains(testEl.query("a"))).toBeTruthy();
     });
 
-    it("should accept native node", function() {
-        expect(ugma.contains(document.getElementsByTagName("a")[0])).toBeTruthy();
+    it("should accept native elements", function() {
+        expect(ugma.contains(testEl.query("a")[0])).toBeTruthy();
     });
 
-    it("should only accept native node with nodeType 1", function() {
+    it("should only accept native elements with nodeType 1", function() {
         expect(function() { ugma.contains(document.createComment("foo")[0])}).toThrow();
     });
 
