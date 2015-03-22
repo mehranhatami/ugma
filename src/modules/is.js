@@ -2,16 +2,16 @@ import { implement, is } from "../helpers";
 import { RETURN_FALSE, ERROR_MSG } from "../const";
 import { minErr } from "../minErr";
 import SelectorMatcher from "../util/selectormatcher";
-import HOOK from "../util/pseudoselectors";
+import pseudoselectors from "../util/pseudoselectors";
 
 implement({
     // Check if the element matches selector
-    matches(selector) {
+    is(selector) {
 
         if (selector && is(selector, "string")) {
             // compare a match with CSS pseudos selectors 
             // e.g "link.matches(":enabled") or "link.matches(":checked")
-            var checker = HOOK[selector] ||
+            var checker = pseudoselectors[selector] ||
                 // native
                 SelectorMatcher(selector);
             return !!checker(this[0]);
