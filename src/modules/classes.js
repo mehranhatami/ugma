@@ -64,15 +64,19 @@ implement({
 
             if (!is(token, "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
 
-            return strategy(this, token);
+
+
+            return strategy(this, trim(token));
         };
     } else {
 
         return function() {
-            var i = arguments.length;
-            while (i--) {
+                var i = 0,
+                    len = arguments.length;
+                for (; i < len; i++) {    
                 if (!is(arguments[i], "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
-
+                if (whitespace.test(arguments[i])) minErr(methodName + "()", "The class provided contains HTML space " +
+                            "characters, which are not valid.");
                 strategy(this, arguments[i]);
             }
 

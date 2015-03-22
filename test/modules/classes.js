@@ -102,8 +102,16 @@ describe("classes manipulation", function() {
             expect(link.hasClass("abc")).toEqual(true);
 
         });
+        
+        
+      it('should allow multiple classes to be added', function() {
+          link[0].className = '';
+          link.addClass("foo", "bar", "baz");
+        expect(link[0].className).toBe('foo bar baz');
+      });
 
-        it("should not add duplicate classes", function() {
+  
+      it("should not add duplicate classes", function() {
             link[0].className = "foo";
             link.addClass("foo");
             expect(link[0].className).toBe("foo");
