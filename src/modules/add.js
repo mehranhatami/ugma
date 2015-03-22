@@ -10,7 +10,7 @@ implement({
     // Create a new array of Element from Emmet or HTML string in memory
     addAll: "All"
 
-}, (methodName, all) => function(value, varMap) {
+}, (methodName, all) => function(value, varMap, attributes, styles) {
 
     var doc = this[0].ownerDocument,
         sandbox = this._["<%= prop('sandbox') %>"] || (this._["<%= prop('sandbox') %>"] = doc.createElement("div"));
@@ -31,7 +31,15 @@ implement({
         // handle vanila HTML strings
         // e.g. <div id="foo" class="bar"></div>
         if (value[0] === "<" && value[value.length - 1] === ">" && value.length >= 3) {
+            
             value = varMap ? ugma.format(value, varMap) : value;
+            
+            // styles
+            if (styles && is(styles, "object")) value.css(styles);
+            
+            // attributes
+            if (attributes && is(attributes, "object")) value.set(attributes);
+            
         } else { // emmet strings
             value = ugma.emmet(value, varMap);
         }
