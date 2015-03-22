@@ -98,24 +98,18 @@ var langFix = /_/g,
 }());
 // Booleans
 each(BOOLS, function(key) {
-        // For Boolean attributes we need to give them a special treatment, and set 
-        // the corresponding property to either true or false
-        accessorHooks.set[key.toLowerCase()] = (node, value) => {
-
-            if (!!value) {
-                node[key] = true;
-                node.setAttribute(key, value);
-            } else {
-                node[key] = false;
-                node.removeAttribute(value);
-            }
-        };
-    });
+    // For Boolean attributes we need to give them a special treatment, and set 
+    // the corresponding property to either true or false
+    accessorHooks.set[key.toLowerCase()] = (node, value) => {
+        node[key] = !!value ? true : false;
+        node[!!value ? "setAttribute" : "removeAttribute"](value);
+    };
+});
 
 // properties written as camelCase
 each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime " +
     "frameBorder contentEditable valueType defaultValue accessKey encType readOnly vAlign longDesc").split(" "), function(key) {
-        accessorHooks.get[key.toLowerCase()] = (node) => node[key];
+    accessorHooks.get[key.toLowerCase()] = (node) => node[key];
 });
 
 /*

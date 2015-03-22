@@ -4,7 +4,8 @@ import { minErr } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 var reClass = /[\n\t\r]/g,
-    whitespace = /\s/g;
+    whitespace = /\s/g,
+    hasClassList = !!DOCUMENT.createElement("div").classList;
 
 implement({
     // Adds a class or an array of class names
@@ -47,7 +48,7 @@ implement({
 }, (methodName, defaultStrategy, nativeMethodName, strategy) => {
 
     /* istanbul ignore else  */
-    if (HTML.classList) {
+    if (hasClassList) {
         // use native classList property if possible
         strategy = function(el, token) {
             return el[0].classList[nativeMethodName](token);
@@ -75,8 +76,7 @@ implement({
                     len = arguments.length;
                 for (; i < len; i++) {    
                 if (!is(arguments[i], "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
-                if (whitespace.test(arguments[i])) minErr(methodName + "()", "The class provided contains HTML space " +
-                            "characters, which are not valid.");
+
                 strategy(this, arguments[i]);
             }
 

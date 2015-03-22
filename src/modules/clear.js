@@ -11,12 +11,13 @@ implement({
     // Clear a property/attribute on the node
     clear(name) {
 
-        var node = this[0];
-
-        if (BOOLEANS[name.toLowerCase()]) {
+        var node = this[0],
+            lower = name.toLowerCase();
+            
+        if (BOOLEANS[lower]) {
             // Boolean attributes need to be set to 'false' before removed
             node[name] = false;
-            node.removeAttribute(name.toLowerCase());
+            node.removeAttribute(lower);
 
         } else {
             node.removeAttribute(name);
