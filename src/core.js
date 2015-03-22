@@ -3,10 +3,12 @@ import { uClass } from "./uclass";
 var Node, Document,
     Element = uClass({
         constructor(node) {
+
+                if (node && node["<%= prop() %>"]) return node["<%= prop() %>"];
+
                 // 'this' will be 'undefined' if not instanceOf Element
-                if (!(this)) {
-                    return node ? node["<%= prop() %>"] || new Element(node) : new Node();
-                }
+                if (!(this)) return node ? new Element(node) : new Node();
+
                 if (node) {
                     node["<%= prop() %>"] = this;
                     this[0] = node;

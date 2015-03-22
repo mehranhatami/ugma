@@ -11,6 +11,7 @@ implement({
     addAll: "All"
 
 }, (methodName, all) => function(value, varMap) {
+
     var doc = this[0].ownerDocument,
         sandbox = this._["<%= prop('sandbox') %>"] || (this._["<%= prop('sandbox') %>"] = doc.createElement("div"));
 
@@ -39,16 +40,15 @@ implement({
 
         nodes = all ? [] : null;
 
-        for (; el = sandbox.firstChild;) {
-            sandbox.removeChild(el); // detach element from the sandbox
+        if (sandbox.childNodes.length === 1 && sandbox.firstChild.nodeType === 1) {
+            nodes = sandbox.removeChild(sandbox.firstChild);
+        } else {
 
-            if (el.nodeType === 1) {
-                if (all) {
+            for (; el = sandbox.firstChild;) {
+                sandbox.removeChild(el); // detach element from the sandbox
+
+                if (el.nodeType === 1) {
                     nodes.push(new Element(el));
-                } else {
-                    nodes = el;
-
-                    break; // stop early, because need only the first element
                 }
             }
         }
