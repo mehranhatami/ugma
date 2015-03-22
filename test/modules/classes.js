@@ -102,6 +102,12 @@ describe("classes manipulation", function() {
             expect(link.hasClass("abc")).toEqual(true);
 
         });
+        
+        it("should append classes", function(){
+		link.addClass("aclass");
+		expect(link.hasClass("aclass")).toBeTruthy();
+	});
+
 
         it("should allow multiple classes to be added", function() {
             link[0].className = "";

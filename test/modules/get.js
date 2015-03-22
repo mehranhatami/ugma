@@ -53,6 +53,57 @@ describe("get", function() {
         expect(input.get("form").nodeType).toBe(1);
     });
 
+
+    it("should get property type of an input element", function() {
+        expect(input.get("type")).toEqual("email");
+
+        expect(checkbox.get("type")).toEqual("checkbox");
+
+        var div = tabIndex.set("innerHTML", "<select name='test' id='test' multiple='multiple'>" +
+            "<option value='1'>option-value</option></select>");
+
+        var input3 = div.query("select");
+        expect(input3.get("type")).toEqual("select-multiple");
+        expect(input3.get("name")).toEqual("test");
+    });
+
+    it("should get propety checked from an input element", function() {
+
+        checkbox.set("checked", "checked");
+        expect(checkbox.get("checked")).toBeTruthy();
+
+
+        checkbox[0].checked = true;
+        expect(checkbox.get("checked")).toBeTruthy();
+
+        checkbox[0].checked = false;
+        expect(checkbox.get("checked")).toBeFalsy();
+    });
+
+    it("should get property disabled from an input element", function() {
+
+        txt[0].disabled = "disabled";
+        expect(txt.get("disabled")).toBeTruthy();
+
+        txt[0].disabled = true;
+        expect(txt.get("disabled")).toBeTruthy();
+
+        txt[0].disabled = false;
+        expect(txt.get("disabled")).toBeFalsy();
+    });
+
+    it("should get property readonly from an input element", function() {
+
+        txt[0].readOnly = "readonly";
+        expect(txt.get("readonly")).toBeTruthy();
+
+        txt[0].readOnly = true;
+        expect(txt.get("readonly")).toBeTruthy();
+
+        txt[0].readOnly = false;
+        expect(txt.get("readonly")).toBeFalsy();
+    });
+
     it("should get an absolute href", function() {
         var link = ugma.add("a").set({
             href: "http://google.com/"
