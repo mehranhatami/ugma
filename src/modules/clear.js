@@ -1,5 +1,5 @@
 import { implement, each } from "../helpers";
-import { RETURN_THIS, BOOLEANS } from "../const";
+import { RETURN_THIS } from "../const";
 
 var BOOLEANS = {};
 
