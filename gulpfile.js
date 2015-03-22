@@ -16,6 +16,7 @@ var gulp = require("gulp"),
     tag_version = require("gulp-tag-version"),
     plumber = require("gulp-plumber"),
     header = require("gulp-header"),
+    gzip = require( "gulp-gzip" ),
     karma = require("karma").server,
     karmaConfig = require.resolve("./conf/karma.conf"),
 
@@ -92,12 +93,23 @@ gulp.task("test", ["compile", "lint"], function(done) {
 });
 
 // make a minified version
-gulp.task("minify", ["test"], function() {
+gulp.task("minify", ["test", "zipped"], function() {
     var dest = argv.tag ? "dist/" : "build/";
 
     return gulp.src(dest + "ugma.js")
         .pipe(uglify({preserveComments: "some"}))
         .pipe(rename("ugma.min.js"))
+        .pipe(gulp.dest(dest));
+});
+
+// make a minified version
+gulp.task("zipped", ["test"], function() {
+    var dest = argv.tag ? "dist/" : "build/";
+
+    return gulp.src(dest + "ugma.js")
+        .pipe(uglify({preserveComments: "some"}))
+        .pipe(rename("ugma.min.js"))
+        .pipe(gzip())
         .pipe(gulp.dest(dest));
 });
 
