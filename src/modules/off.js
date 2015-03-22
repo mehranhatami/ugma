@@ -19,16 +19,16 @@ implement({
             removeHandler = (handler) => {
 
                 // Cancel previous frame if it exists
-                if (self._["<%= prop('raf') %>"]) {
-                    ugma.cancelFrame(self._["<%= prop('raf') %>"]);
+                if (self._._raf) {
+                    ugma.cancelFrame(self._._raf);
                     // Zero out rAF id used during the animation
-                    self._["<%= prop('raf') %>"] = null;
+                    self._._raf = null;
                 }
                 // Remove the listener
                 node.removeEventListener((handler._type || handler.type), handler, !!handler.capturing);
             };
 
-        this._["<%= prop('events') %>"] = filter(this._["<%= prop('events') %>"], (handler) => {
+        this._._events = filter(this._._events, (handler) => {
 
             if (type !== handler.type ||
                 selector && selector !== handler.selector ||

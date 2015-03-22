@@ -15,7 +15,7 @@ implement({
     if (is(value, "string")) {
 
         var doc = this[0].ownerDocument,
-            sandbox = this._["<%= prop('sandbox') %>"] || (this._["<%= prop('sandbox') %>"] = doc.createElement("div"));
+            sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
 
         var nodes, el;
 

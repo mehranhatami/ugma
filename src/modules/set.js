@@ -32,7 +32,7 @@ implement({
         }
 
         var hook = accessorhooks.set[prop],
-            subscription = (this._["<%= prop('subscription') %>"] || {})[prop],
+            subscription = (this._._subscription || {})[prop],
             previousValue;
 
         // if it's already a subscription on this attribute / property,

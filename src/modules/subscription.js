@@ -4,7 +4,7 @@ import { RETURN_THIS } from "../const";
 implement({
     // Subscribe on particular properties / attributes, and get notified if they are changing
     subscribe(name, callback) {
-            var subscription = this._["<%= prop('subscription') %>"] || (this._["<%= prop('subscription') %>"] = []);
+            var subscription = this._._subscription || (this._._subscription = []);
 
             if (!subscription[name]) subscription[name] = [];
 
@@ -15,7 +15,7 @@ implement({
 
         // Cancel / stop a property / attribute subscription
         unsubscribe(name, callback) {
-            var subscription = this._["<%= prop('subscription') %>"];
+            var subscription = this._._subscription;
 
             if (subscription[name]) {
                 subscription[name] = filter(subscription[name], (cb) => cb !== callback);

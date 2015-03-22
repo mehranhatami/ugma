@@ -36,7 +36,7 @@ if (INTERNET_EXPLORER) {
 
 implement({
     shadow(name, callback = () => {}) {
-        var contexts = this._["<%= prop('context') %>"] || (this._["<%= prop('context') %>"] = {}),
+        var contexts = this._._shadow || (this._._shadow = {}),
             data = contexts[name] || [];
 
         if (data[0]) {

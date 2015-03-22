@@ -39,7 +39,7 @@ implement({
         var node = this[0],
             types = type.indexOf(" ") >= 0 ? type.split(" ") : [type],
             i = types.length,
-            handlers = this._["<%= prop('events') %>"] || (this._["<%= prop('events') %>"] = []);
+            handlers = this._._events || (this._._events = []);
         // Handle space separated event names.
         while (i--) {
             type = types[i];

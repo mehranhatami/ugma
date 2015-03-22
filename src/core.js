@@ -1,16 +1,17 @@
 import { uClass } from "./uclass";
+import { PLACEHOLDER } from "./const";
 
 var Node, Document,
     Element = uClass({
         constructor(node) {
 
-                if (node && node["<%= prop() %>"]) return node["<%= prop() %>"];
+                if (node && node["__" + "<%= pkg.codename %>" + "__"]) return node["__" + "<%= pkg.codename %>" + "__"];
 
                 // 'this' will be 'undefined' if not instanceOf Element
                 if (!(this)) return node ? new Element(node) : new Node();
 
                 if (node) {
-                    node["<%= prop() %>"] = this;
+                    node["__" + "<%= pkg.codename %>" + "__"] = this;
                     this[0] = node;
                     this._ = {};
                 }

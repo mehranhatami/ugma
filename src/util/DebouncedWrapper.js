@@ -7,7 +7,7 @@ export function DebouncedWrapper(handler, node) {
     return (e) => {
         if (!debouncing) {
             debouncing = true;
-            node._["<%= prop('raf') %>"] = ugma.requestFrame(function() {
+            node._._raf = ugma.requestFrame(function() {
                 handler(e);
                 debouncing = false;
             });

@@ -22,7 +22,7 @@ implement({
     }
     // Handles triggering the appropriate event callbacks.
     e = node.ownerDocument.createEvent("HTMLEvents");
-    e["<%= prop() %>"] = arguments;
+    e["__" + "<%= pkg.codename %>" + "__"] = arguments;
     e.initEvent(eventType, true, true);
     canContinue = node.dispatchEvent(e);
 
