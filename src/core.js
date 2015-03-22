@@ -5,13 +5,13 @@ var Node, Document,
     Element = uClass({
         constructor(node) {
 
-                if (node && node["__" + "<%= pkg.codename %>" + "__"]) return node["__" + "<%= pkg.codename %>" + "__"];
+                var placeholder = "__" + "<%= pkg.codename %>" + "__";
 
                 // 'this' will be 'undefined' if not instanceOf Element
-                if (!(this)) return node ? new Element(node) : new Node();
+                if (!(this)) return node ? node[placeholder] || new Element(node) : new Node();
 
                 if (node) {
-                    node["__" + "<%= pkg.codename %>" + "__"] = this;
+                    node[placeholder] = this;
                     this[0] = node;
                     this._ = {};
                 }
@@ -45,7 +45,9 @@ var Node, Document,
 // Node class
 Node = uClass(Element, {
     constructor: function() {},
-    toString() {return ""}
+    toString() {
+        return ""
+    }
 });
 
 // Document class
@@ -53,7 +55,9 @@ Document = uClass(Element, {
     constructor: function(node) {
         return Element.call(this, node.documentElement);
     },
-    toString() {return "#document"}
+    toString() {
+        return "#document"
+    }
 
 });
 export { Element, Node, Document };
