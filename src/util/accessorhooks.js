@@ -1,5 +1,5 @@
 import { trim, each, every } from "../helpers";
-import { INTERNET_EXPLORER, DOCUMENT, FOCUSABLE } from "../const";
+import { DOCUMENT, FOCUSABLE } from "../const";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -111,16 +111,6 @@ each("multiple selected checked disabled readOnly required open".split(" "), fun
             }
         };
     });
-
-// fix hidden attribute for IE9
-if (INTERNET_EXPLORER === 9) {
-    accessorHooks.set.hidden = (node, value) => {
-        node.hidden = value;
-        node.setAttribute("hidden", "hidden");
-        // trigger redraw in IE9
-        node.style.zoom = "1";
-    };
-}
 
 // properties written as camelCase
 each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime " +

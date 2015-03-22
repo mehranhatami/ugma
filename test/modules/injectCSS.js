@@ -37,6 +37,12 @@ describe("ugma.injectCSS", function() {
         expect(link.css("display")).toBe("none");
     });
 
+ it("should handle vendor prefixed properties", function() {
+        jasmine.sandbox.set("<a id='importStyles3'></a>");
+        var link = ugma.query("#importStyles3");
+        expect(link.css("box-sizing")).not.toBe("border-box");
+    });
+
     it("should throw error if arguments are invalid", function() {
         expect(function() { ugma.injectCSS(1); }).toThrow();
         expect(function() { ugma.injectCSS("a"); }).toThrow();
