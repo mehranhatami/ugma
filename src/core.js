@@ -45,9 +45,7 @@ var Node, Document,
 // Node class
 Node = uClass(Element, {
     constructor: function() {},
-    toString() {
-        return ""
-    }
+    toString() {return ""}
 });
 
 // Document class
@@ -55,9 +53,7 @@ Document = uClass(Element, {
     constructor: function(node) {
         return Element.call(this, node.documentElement);
     },
-    toString() {
-        return "#document"
-    }
+    toString() {return "#document" }
 
 });
 export { Element, Node, Document };
