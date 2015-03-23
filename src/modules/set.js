@@ -1,6 +1,6 @@
 import { implement, invoke, isArray, each, is, forOwn } from "../helpers";
 import { minErr } from "../minErr";
-import { ERROR_MSG, GINGERBREAD, RETURN_THIS } from "../const";
+import { ERROR_MSG, RETURN_THIS } from "../const";
 import accessorhooks from "../util/accessorhooks";
 
 function getTagName(node) {
@@ -59,24 +59,15 @@ implement({
                 } else {
                     node.setAttribute(prop, value);
                 }
-                /* istanbul ignore if */
-                if (GINGERBREAD) {
-                    // always trigger reflow manually for Android Gingerbread
-                    node.className = node.className;
-                }
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
         } else if (isArray(prop)) {
-            each(prop, (key) => {
-                this.set(key, value);
-            });
+            each(prop, (key) => { this.set(key, value) });
             // set a object with key-value pairs    
             // e.g.   link.set({"data-foo1": "bar1", "data-foo2": "bar2" });
         } else if (is(prop, "object")) {
-            forOwn(prop, (key, value) => {
-                this.set(key, prop[key]);
-            });
+            forOwn(prop, (key, value) => { this.set(key, prop[key])});
         } else {
             minErr("set()", ERROR_MSG[6]);
         }

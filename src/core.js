@@ -27,10 +27,7 @@ function uClass() {
             });
         };
 
-    // Fixes a rare bug in v8
-    if (typeof body.constructor === "object" &&
-        // Double negation considered slower than a straight null check.
-        body.constructor !== null) {
+    if (body.constructor === "[object Object]") {
         Class = () => {};
     } else {
         Class = body.constructor;
