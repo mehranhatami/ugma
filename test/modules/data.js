@@ -10,6 +10,38 @@ describe("data", function() {
         input = ugma.query("#set_input");
     });
 
+    it("should only remove the specified value when setting a property name to 'null'", function() {
+
+        input.data("prop1", "value");
+        input.data("prop2", "doublevalue");
+
+        expect(input.data("prop1")).toBe("value");
+        expect(input.data("prop2")).toBe("doublevalue");
+
+        input.data("prop1", null);
+
+        expect(input.data("prop1")).toBeNull();
+        expect(input.data("prop2")).toBe("doublevalue");
+
+        input.data("prop2", null);
+    });
+
+    it("should provide the non-wrapped data calls", function() {
+        var node = document.createElement("div"),
+            native = ugma.native(node);
+
+        expect(native.data("foo")).toBeNull();
+
+        native.data("foo", "bar");
+
+        expect(native.data("foo")).toBe("bar");
+        expect(native.data("foo")).toBe("bar");
+
+        native.data("foo", null);
+        expect(native.data("foo")).toBeNull();
+
+    });
+
     it("shoud be stored in _ object", function() {
         input.data("test", "yeah");
 

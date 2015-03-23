@@ -25,6 +25,26 @@ describe("set", function() {
         txt = ugma.query("#text1");
     });
 
+
+     it('should set boolean element property', function() {
+         
+       var checkbox = ugma.add('<input type="checkbox">');  
+         
+      expect(checkbox.get('checked')).toBe(false);
+
+      checkbox.set('checked', true);
+      expect(checkbox.get('checked')).toBe(true);
+
+      checkbox.set('checked', '');
+      expect(checkbox.get('checked')).toBe(false);
+
+      checkbox.set('checked', 'lala');
+      expect(checkbox.get('checked')).toBe(true);
+
+      checkbox.set('checked', null);
+      expect(checkbox.get('checked')).toBe(false);
+    });
+
     it("should return reference to 'this'", function() {
         expect(link.set("id", "t")).toBe(link);
     });
@@ -249,11 +269,6 @@ describe("set", function() {
         });
 
 
-         it("should return `null` when the value of a input element is set to `undefined`", function(){
-			var value;
-			expect(input.set({value: value}).get("value")).toEqual("");
-		});
-        
         it("should set a falsey value and not an empty string", function(){
 			expect(input.set({value: false}).get("value")).toEqual("false");
 			expect(input.set({value: 0}).get("value")).toEqual("0");

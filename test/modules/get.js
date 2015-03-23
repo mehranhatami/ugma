@@ -16,6 +16,10 @@ describe("get", function() {
         tabIndex = ugma.query("#tabindex");
     });
 
+    it("should return nodes outerHTML", function() {
+      expect(tabIndex.get("outerHTML")).not.toBeUndefined();
+    });
+    
     it("should return a CSS string representing the Element's styles", function() {
         var style = "font-size:12px;color:rgb(255,255,255)";
         var myElement = ugma.add("div").set("style", style);
@@ -90,6 +94,20 @@ describe("get", function() {
 
         txt[0].disabled = false;
         expect(txt.get("disabled")).toBeFalsy();
+    });
+
+    it("should normalize the case of boolean attributes", function() {
+        var input = ugma.add("<input readonly>");
+        expect(input.get("readonly")).toBeTruthy();
+        expect(input.get("readOnly")).toBeTruthy();
+
+
+        input.set("readonly", false);
+        expect(input[0].getAttribute("readonly")).toBe(null);
+
+        input.set("readOnly", "READonly");
+        expect(input.get("readonly")).toBeTruthy();
+        expect(input.get("readOnly")).toBeTruthy();
     });
 
     it("should get property readonly from an input element", function() {
@@ -337,6 +355,20 @@ describe("get", function() {
         expect(select.query("option").get("value")).toEqual("s");
     });
 
+    it("should return null for non-existing attributes", function() {
+      var elm = ugma.add("<div class='any'>a</div>");
+      expect(elm.get("non-existing")).toBeNull();
+    });
+    
+     it("should return null for non-existing attributes on input", function() {
+      
+      input.set("readonly", null);
+      
+      expect(input.get("readonly")).toBeFalsy();
+      expect(input.get("readOnly")).toBeFalsy();
+      expect(input.get("disabled")).toBeFalsy();
+    }); 
+
     it("should return the text of the selected option for a select element", function() {
         var form = ugma.add("form");
         form.set("innerHTML", "<select>" +
@@ -360,10 +392,10 @@ describe("get", function() {
         it("should read an appropriate data-* attribute if it exists", function() {
             expect(input.get("data-a1")).toEqual("x");
             expect(input.get("data-a2")).toEqual({
-                  a: "b",
-                  c: 1,
-                  d: null
-              });
+                a: "b",
+                c: 1,
+                d: null
+            });
             expect(input.get("data-a3")).toBe("1=2=3");
             expect(input.get("data-a4")).toBe("/url?q=:q");
             expect(input.get("data-a5")).toBeNull();

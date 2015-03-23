@@ -34,8 +34,7 @@ implement({
             subscription = (this._._subscription || {})[prop],
             previousValue;
 
-        // if it's already a subscription on this attribute / property,
-        // grab the previous value
+        // grab the previous value if it's already a subscription on this attribute / property,
         if (subscription) {
             previousValue = this.get(prop);
         }
@@ -45,10 +44,10 @@ implement({
                 value = value(this);
             }
 
-            if (value == null) {
-                node.removeAttribute(prop);
-            } else if (hook) {
+            if (hook) {
                 hook(node, value);
+            } else if (value == null) {
+                node.removeAttribute(prop);
             } else if (prop in node) {
                 node[prop] = value;
             } else {
