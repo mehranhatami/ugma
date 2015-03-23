@@ -128,37 +128,7 @@ describe("set", function() {
 
         expect(empty.set("attr", "test")).toBe(empty);
     });
-/*
-    describe("private properties", function() {
-        it("shoud be stored in _ object", function() {
-            input.set("_test", "yeah");
 
-            expect(input).not.toHaveAttr("_test", "yeah");
-            expect(input).not.toHaveProp("_test", "yeah");
-        });
-
-        it("should accept any kind of object", function() {
-            var obj = {},
-                nmb = 123,
-                arr = [],
-                func = function() {},
-                tym = new Date(),
-                regEx = /test/;
-
-            expect(input.set("_obj", obj).get("_obj")).toEqual(obj);
-            expect(input.set("_nmb", nmb).get("_nmb")).toEqual(nmb);
-            expect(input.set("_arr", arr).get("_arr")).toEqual(arr);
-            expect(input.set("_func", func).get("_func")).toEqual(func);
-            expect(input.set("_tym", tym).get("_tym")).toEqual(tym);
-            expect(input.set("_regEx", regEx).get("_regEx")).toEqual(regEx);
-        });
-
-    });
-
-    it("should add and remove data on SVGs", function() {
-        expect(ugma.add("<svg><rect></rect></svg>").set("_svg-level", 1).get("_svg-level")).toEqual(1);
-    });
-*/
     describe("value shortcut", function() {
         it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
             var value = "set-test-changed";

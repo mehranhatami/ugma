@@ -1,63 +1,43 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-describe("set data", function() {
+describe("data", function() {
     "use strict";
 
     var input;
 
     beforeEach(function() {
 
- jasmine.sandbox.set("<input id='set_input' data-a1='test'/><input id='set_input1'/>");
+        jasmine.sandbox.set("<input id='set_input' data-a1='test'/><input id='set_input1'/>");
 
- 
-
-    input = ugma.query("#set_input");
+        input = ugma.query("#set_input");
     });
-    
-  it("shoud be stored in _ object", function() {
-            input.data("test", "yeah");
 
-            expect(input).not.toHaveAttr("test", "yeah");
-            expect(input).not.toHaveProp("test", "yeah");
-        });
+    it("shoud be stored in _ object", function() {
+        input.data("test", "yeah");
 
-        it("should accept any kind of object", function() {
-            var obj = {},
-                nmb = 123,
-                arr = [],
-                func = function() {},
-                tym = new Date(),
-                regEx = /test/;
+        expect(input).not.toHaveAttr("test", "yeah");
+        expect(input).not.toHaveProp("test", "yeah");
+    });
 
-            expect(input.data("obj", obj).data("obj")).toEqual(obj);
-            expect(input.data("nmb", nmb).data("nmb")).toEqual(nmb);
-            expect(input.data("arr", arr).data("arr")).toEqual(arr);
-            expect(input.data("func", func).data("func")).toEqual(func);
-            expect(input.data("tym", tym).data("tym")).toEqual(tym);
-            expect(input.data("regEx", regEx).data("regEx")).toEqual(regEx);
-        });
+    it("should accept any kind of object", function() {
+        var obj = {},
+            nmb = 123,
+            arr = [],
+            func = function() {},
+            tym = new Date(),
+            regEx = /test/;
+
+        expect(input.data("obj", obj).data("obj")).toEqual(obj);
+        expect(input.data("nmb", nmb).data("nmb")).toEqual(nmb);
+        expect(input.data("arr", arr).data("arr")).toEqual(arr);
+        expect(input.data("func", func).data("func")).toEqual(func);
+        expect(input.data("tym", tym).data("tym")).toEqual(tym);
+        expect(input.data("regEx", regEx).data("regEx")).toEqual(regEx);
+    });
 
     it("should accept object argument", function() {
-        var param = {a: "b", c: 1};
+        var param = {
+            a: "b",
+            c: 1
+        };
 
         input.data(param);
 
@@ -65,20 +45,18 @@ describe("set data", function() {
         expect(input.data("c")).toBe(1);
     });
 
- it("shoud be stored in _ object", function() {
-            input.data("test", "yeah");
+    it("shoud be stored in _ object", function() {
+        input.data("test", "yeah");
 
-            expect(input).not.toHaveAttr("test", "yeah");
-            expect(input).not.toHaveProp("test", "yeah");
-        });
-        
+        expect(input).not.toHaveAttr("test", "yeah");
+        expect(input).not.toHaveProp("test", "yeah");
+    });
+
     it("should return reference to 'this' when called with 2 arguments", function() {
         expect(input.data("a1", 123)).toEqual(input);
     });
 
-
- 
-    
-
-    
+    it("should add and remove data on SVGs", function() {
+        expect(ugma.add("<svg><rect></rect></svg>").data("svg-level", 1).data("svg-level")).toEqual(1);
+    });
 });

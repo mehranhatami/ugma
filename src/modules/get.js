@@ -15,20 +15,20 @@ implement({
 
         if (is(name, "string")) {
             if (/^data-/.test(name)) {
-                 return dataAttr(node, name);
+                return dataAttr(node, name);
             } else if (name in node) {
                 return node[name];
-              // get attribute
-            } else  {
+                // get attribute
+            } else {
                 return node.getAttribute(name);
-            } 
-            
+            }
+
         } else if (isArray(name)) {
             var obj = {};
             each(name, (key) => {
-                 obj[key] = this.get(key);
+                obj[key] = this.get(key);
             });
-         
+
             return obj;
         } else {
             minErr("get()", ERROR_MSG[4]);
