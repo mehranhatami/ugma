@@ -7,14 +7,14 @@ describe("css", function() {
         jasmine.sandbox.set("<div id='nothiddendiv' style='height:1px;background:white;' class='nothiddendiv'><div id='nothiddendivchild'></div></div><a id='test0' style='z-index:2;line-height:2;color:red;padding:5px;margin:2px;border:1px solid;float:left;display:block;width:100px'>test</a><a id='test1' style='line-height:2;color:red;padding:5px;margin:2px;border:1px solid;float:left;display:block;width:100px'>test</a><div style='display:none;'><input type='text' style='height:20px;'/><textarea style='height:20px;'/><div style='height:20px;'>");
 
         link = ugma.query("#test0");
-        link1 = ugma.query("#test1"); 
-        hidden = ugma.query("#nothiddendiv"); 
-        child = ugma.query("#nothiddendivchild"); 
-                
+        link1 = ugma.query("#test1");
+        hidden = ugma.query("#nothiddendiv");
+        child = ugma.query("#nothiddendivchild");
+
     });
 
-  
     describe("getter", function() {
+
         it("should read style property", function() {
             expect(link.css("color")).toBe("red");
         });
@@ -22,7 +22,6 @@ describe("css", function() {
         it("should read properties by dash-separated key", function() {
             expect(link.css("line-height")).toBe("2");
         });
-
 
         it("should handle composite properties", function() {
             expect(link.css("padding")).toBe("5px 5px 5px 5px");
@@ -36,93 +35,105 @@ describe("css", function() {
         });
 
         it("should handle opacity", function() {
-            link.css({"opacity": ""});
+            link.css({
+                "opacity": ""
+            });
             expect(link.css("opacity")).toBe("1");
-            expect(link1.css("opacity")).toBe("1"); 
+            expect(link1.css("opacity")).toBe("1");
         });
 
+        it("should handle font-size property", function() {
+            link.css({
+                "font-size": "30px"
+            });
+            expect(link.css("font-size")).toBe("30px");
 
-    it("should handle font-size property", function() {
-        link.css({"font-size": "30px"});
-        expect(link.css("font-size")).toBe("30px");
-        
-        expect(hidden.css("fontSize")).toBe("16px");
-        expect(hidden.css("font-size")).toBe("16px");
-        expect(child.css("fontSize")).toBe("16px");
-        expect(child.css("font-size")).toBe("16px");
-    });
-    
-      it("should return width / height on disconnected node", function() {
-        var div = ugma.native(document.createElement("div")).css({
-            "width": 4,
-            "height": 4
+            expect(hidden.css("fontSize")).toBe("16px");
+            expect(hidden.css("font-size")).toBe("16px");
+            expect(child.css("fontSize")).toBe("16px");
+            expect(child.css("font-size")).toBe("16px");
         });
 
-        expect(div.css("width")).toBe("4px");
-        expect(div.css("height")).toBe("4px");
-    });
-    
-    it("should return width / height in %", function() {
-        child.css("height", "100%");
-        child.css("width", "100%");
-        expect(child[0].style.height).toBe("100%");
-        expect(child[0].style.width).toBe("100%");
-    });
-   
-    it("should return width / height on disconnected node", function() {
+        it("should return width / height on disconnected node", function() {
+            var div = ugma.native(document.createElement("div")).css({
+                "width": 4,
+                "height": 4
+            });
 
-        expect(ugma.query("input").css("height")).toBe("20px"); // height on hidden input
-        expect(ugma.query("textarea").css("height")).toBe("20px"); // height on hidden textarea
-    });
+            expect(div.css("width")).toBe("4px");
+            expect(div.css("height")).toBe("4px");
+        });
 
-    it("should handle explicit and relative values", function() {
+        it("should return width / height in %", function() {
+            child.css("height", "100%");
+            child.css("width", "100%");
+            expect(child[0].style.height).toBe("100%");
+            expect(child[0].style.width).toBe("100%");
+        });
 
-        hidden.css({ "width": 1, "height": 1, "paddingLeft": "1px", "opacity": 1 });
+        it("should return width / height on disconnected node", function() {
 
-        expect(hidden.css("width")).toBe("1px"); // height on hidden input
-        expect(hidden.css("height")).toBe("1px"); // height on hidden input
-        expect(hidden.css("paddingLeft")).toBe("1px"); // height on hidden input
-        expect(hidden.css("opacity")).toBe("1"); // height on hidden input                
-        
-       hidden.css({ width: "+=9" });
-	   
-       expect(hidden.css("width")).toBe("10px");
+            expect(ugma.query("input").css("height")).toBe("20px"); // height on hidden input
+            expect(ugma.query("textarea").css("height")).toBe("20px"); // height on hidden textarea
+        });
 
-       hidden.css({ width: "-=9" });
+        it("should handle explicit and relative values", function() {
 
-       expect(hidden.css("width")).toBe("1px");
+            hidden.css({
+                "width": 1,
+                "height": 1,
+                "paddingLeft": "1px",
+                "opacity": 1
+            });
 
-    });
+            expect(hidden.css("width")).toBe("1px"); // height on hidden input
+            expect(hidden.css("height")).toBe("1px"); // height on hidden input
+            expect(hidden.css("paddingLeft")).toBe("1px"); // height on hidden input
+            expect(hidden.css("opacity")).toBe("1"); // height on hidden input                
 
-    it("should return width / height on disconnected node", function() {
+            hidden.css({
+                width: "+=9"
+            });
 
-        expect(ugma.query("input").css("height")).toBe("20px"); // height on hidden input
-        expect(ugma.query("textarea").css("height")).toBe("20px"); // height on hidden textarea
-    });
+            expect(hidden.css("width")).toBe("10px");
 
-    it("should handle negative values", function() {
-    
-  	   hidden.css( "margin-top", "-10px" );
- 	   hidden.css( "margin-left", "-10px" );
+            hidden.css({
+                width: "-=9"
+            });
 
-       expect(hidden.css("margin-top")).toBe("-10px");
-       expect(hidden.css("margin-left")).toBe("-10px");
-       
-  	   hidden.css( "position", "absolute" );
- 	   hidden.css( "top", "-20px" );
- 	   hidden.css( "left", "-20px" );
-       
-       expect(hidden.css("top")).toBe("-20px");
-       expect(hidden.css("left")).toBe("-20px");
+            expect(hidden.css("width")).toBe("1px");
 
-    });
+        });
 
+        it("should return width / height on disconnected node", function() {
 
+            expect(ugma.query("input").css("height")).toBe("20px"); // height on hidden input
+            expect(ugma.query("textarea").css("height")).toBe("20px"); // height on hidden textarea
+        });
 
-    it("should handle float", function() {
-      link.css({"float": "right"});
-        expect(link.css("float")).toBe("right"); // height on hidden textarea
-    });
+        it("should handle negative values", function() {
+
+            hidden.css("margin-top", "-10px");
+            hidden.css("margin-left", "-10px");
+
+            expect(hidden.css("margin-top")).toBe("-10px");
+            expect(hidden.css("margin-left")).toBe("-10px");
+
+            hidden.css("position", "absolute");
+            hidden.css("top", "-20px");
+            hidden.css("left", "-20px");
+
+            expect(hidden.css("top")).toBe("-20px");
+            expect(hidden.css("left")).toBe("-20px");
+
+        });
+
+        it("should handle float", function() {
+            link.css({
+                "float": "right"
+            });
+            expect(link.css("float")).toBe("right"); // height on hidden textarea
+        });
 
 
         it("should fix float property name", function() {
@@ -134,17 +145,19 @@ describe("css", function() {
                 link.css(1);
             }).toThrow();
         });
-/*
+
         it("should support array", function() {
             expect(link.css(["float", "line-height"])).toEqual({
                 "float": "left",
                 "line-height": "2"
             });
             expect(ugma.mock().css(["float", "line-height"])).toEqual({});
-        }); */
-    }); 
+        });
+    });
 
     describe("setter", function() {
+
+
         it("should return reference to 'this'", function() {
             expect(link.css("color", "white")).toBe(link);
         });

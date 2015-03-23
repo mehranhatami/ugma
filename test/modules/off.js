@@ -12,6 +12,18 @@ describe("off", function() {
         spy = jasmine.createSpy("click");
     });
 
+
+    it("should do nothing when no listener was registered with bound", function() {
+      link.off("click");
+      link.off("click", function() {});
+    });
+
+ it("should do nothing when a specific listener was not registered", function() {
+      link.on("click", function() {});
+
+      link.off("mouseenter", function() {});
+    });
+    
     it("should remove event callback", function() {
         input.on("click", spy).off("click", null).fire("click");
         expect(spy).not.toHaveBeenCalled();
@@ -42,6 +54,13 @@ describe("off", function() {
 
         expect(obj.test).not.toHaveBeenCalled();
         expect(obj.test2).not.toHaveBeenCalled();
+    });
+
+    it("should return reference to 'this'", function() {
+        expect(input.off("click")).toEqual(input);
+
+        var empty = ugma.mock();
+        expect(empty.off("click")).toBe(empty);
     });
 
     it("should throw error if agruments are invalid", function() {
