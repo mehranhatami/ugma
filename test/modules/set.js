@@ -128,7 +128,7 @@ describe("set", function() {
 
         expect(empty.set("attr", "test")).toBe(empty);
     });
-
+/*
     describe("private properties", function() {
         it("shoud be stored in _ object", function() {
             input.set("_test", "yeah");
@@ -158,7 +158,7 @@ describe("set", function() {
     it("should add and remove data on SVGs", function() {
         expect(ugma.add("<svg><rect></rect></svg>").set("_svg-level", 1).get("_svg-level")).toEqual(1);
     });
-
+*/
     describe("value shortcut", function() {
         it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
             var value = "set-test-changed";

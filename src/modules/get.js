@@ -14,20 +14,8 @@ implement({
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
-            
-            if (name[0] === "_") {
-                
-                // remove '_' from the name
-                let key = name.slice(1),
-                    data = this._;
-                // If no data was found internally, try to fetch any
-                // data from the HTML5 data-* attribute
-                if (!(key in data)) {
-                    data[key] = dataAttr(node, key);
-                }
-
-                return data[key];
-              // get property
+            if (/^data-/.test(name)) {
+                 return dataAttr(node, name);
             } else if (name in node) {
                 return node[name];
               // get attribute

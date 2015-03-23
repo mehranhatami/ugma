@@ -42,10 +42,6 @@ implement({
         }
 
         if (is(prop, "string")) {
-            if (prop[0] === "_") {
-                this._[prop.slice(1)] = value;
-            } else {
-
                 if (is(value, "function")) {
                     value = value(this);
                 }
@@ -59,7 +55,6 @@ implement({
                 } else {
                     node.setAttribute(prop, value);
                 }
-            }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
         } else if (isArray(prop)) {

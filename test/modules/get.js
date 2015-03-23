@@ -197,20 +197,18 @@ describe("get", function() {
 
         var video = tabIndex.query("video");
 
-        if ("loop" in video) {
+        if ("loop" in video[0]) {
             expect(video.get("loop")).toBe(true);
             expect(video.set("loop", false).get("loop")).toBe(false);
         }
-        //				expect(video.get("controls")).toBe(true);
         expect(video.set("controls", false).get("controls")).toBe(false);
-        //			expect(video.get("autoplay")).toBe(true);
         expect(video.set("autoplay", false).get("autoplay")).toBe(false);
     });
 
-    it('should set a number (so no string) as html', function() {
+    it("should set a number (so no string) as html", function() {
         expect(tabIndex.set({
             innerHTML: 20
-        })[0].innerHTML).toEqual('20');
+        })[0].innerHTML).toEqual("20");
     });
 
     it("should get and set the correct tabIndex", function() {
@@ -354,29 +352,21 @@ describe("get", function() {
         expect(ugma.query("some-node").get("attr")).toBeUndefined();
     });
 
-    describe("private properties", function() {
+    describe("custom data-* attributes", function() {
         beforeEach(function() {
             input = ugma.add("<input data-a1=\"x\" data-a2='{\"a\":\"b\",\"c\":1,\"d\":null}' data-a3=\"1=2=3\" data-a4=\"/url?q=:q\" data-camel-cased=\"test\" data-a101-value=\"numbered\"/>");
         });
 
         it("should read an appropriate data-* attribute if it exists", function() {
-            expect(input.get("_a1")).toEqual("x");
-            expect(input.get("_a2")).toEqual({
-                a: "b",
-                c: 1,
-                d: null
-            });
-            expect(input.get("_a3")).toBe("1=2=3");
-            expect(input.get("_a4")).toBe("/url?q=:q");
-            expect(input.get("_a5")).toBeNull();
-        });
-
-        it("should handle camel case syntax", function() {
-            expect(input.get("_camelCased")).toBe("test");
-            expect(input._.camelCased).toBe("test");
-
-            expect(input.get("_a101Value")).toBe("numbered");
-            expect(input._.a101Value).toBe("numbered");
+            expect(input.get("data-a1")).toEqual("x");
+            expect(input.get("data-a2")).toEqual({
+                  a: "b",
+                  c: 1,
+                  d: null
+              });
+            expect(input.get("data-a3")).toBe("1=2=3");
+            expect(input.get("data-a4")).toBe("/url?q=:q");
+            expect(input.get("data-a5")).toBeNull();
         });
     });
 

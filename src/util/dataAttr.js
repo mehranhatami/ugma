@@ -4,7 +4,7 @@ export function dataAttr(node, key) {
 
     // convert from camel case to dash-separated value
 
-    key = "data-" + key.replace(multiDash, "-$&").toLowerCase();
+    key = key.replace(multiDash, "-$&").toLowerCase();
 
     var value = node.getAttribute(key);
 
