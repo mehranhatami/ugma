@@ -2,6 +2,8 @@
 
 import { forOwn } from "./helpers";
 
+var Element, Node, Document;
+
 function uClass() {
     let len = arguments.length,
         body = arguments[len - 1],
@@ -29,7 +31,7 @@ function uClass() {
     if (typeof body.constructor === "object" &&
         // Double negation considered slower than a straight null check.
         body.constructor !== null) {
-            Class = () => {};
+        Class = () => {};
     } else {
         Class = body.constructor;
         delete body.constructor;
@@ -49,41 +51,46 @@ function uClass() {
     return Class;
 }
 
-var Element = uClass({
-        constructor(node) {
+Element = uClass({
+            constructor(node) {
 
-                var placeholder = "__" + "<%= pkg.codename %>" + "__";
+                if (this) {
+                    if (node) {
+                        this[0] = node;
+                        // use a generated property to store a reference
+                        // to the wrapper for circular object binding
+                        node["<%= pkg.codename %>"] = this;
 
-                // 'this' will be 'undefined' if not instanceOf Element
-                if (!(this)) return node ? node[placeholder] || new Element(node) : new Node();
+                        this._ = {};
+                    }
+                } else if (node) {
+                    // create a wrapper only once for each native element
+                    return node["<%= pkg.codename %>" || new Element(node);
+                    } else {
+                        return new Node();
+                    }
+                },
+                // returns current running version
+                version: "<%= pkg.version %>",
+                    // returns current running codename on this build
+                    codename: "<%= pkg.codename %>",
+                    toString() {
+                        var node = this[0];
+                        return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
+                    }
+            });
 
-                if (node) {
-                    node[placeholder] = this;
-                    this[0] = node;
-                    this._ = {};
-                }
+        Document = uClass(Element, {
+            constructor: function(node) {
+                return Element.call(this, node.documentElement);
             },
-            // returns current running version
-            version: "<%= pkg.version %>",
-            // returns current running codename on this build
-            codename: "<%= pkg.codename %>",
-            toString() {
-                var node = this[0];
-                return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-            }
-    }),
-    Document = uClass(Element, {
-        constructor: function(node) {
-            return Element.call(this, node.documentElement);
-        },
-        toString() {return "#document"}
-    }),
-    Node = uClass(Element, {
-    constructor: function() {},
-    toString() {return ""}
-});
+            toString() { return "#document"}
+        }); Node = uClass(Element, {
+            constructor: function() {},
+            toString() {return ""}
+        });
 
-// Set a new document, and define a local copy of ugma
-var ugma = new Document(document);
-
+        // Set a new document, and define a local copy of ugma
+        var ugma = new Document(document);
+        
 export { Element, Node, Document, ugma };
