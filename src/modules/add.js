@@ -1,6 +1,6 @@
-import { ugma, ERROR_MSG } from "../const";
+import { ERROR_MSG } from "../const";
 import { minErr } from "../minErr";
-import { Element } from "../core";
+import { ugma, Element } from "../core";
 import tagCache from "../emmet/emmet";
 import { implement, reduce, is, trim } from "../helpers";
 

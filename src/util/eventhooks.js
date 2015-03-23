@@ -1,4 +1,5 @@
-import { DOCUMENT, WINDOW, INTERNET_EXPLORER, ugma } from "../const";
+import { DOCUMENT, WINDOW, INTERNET_EXPLORER } from "../const";
+import { ugma } from "../core";
 import { each, forOwn } from "../helpers";
 import { DebouncedWrapper } from "../util/DebouncedWrapper";
 

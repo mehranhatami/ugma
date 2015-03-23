@@ -1,4 +1,5 @@
-import { ugma, WINDOW } from "./const";
+import { WINDOW } from "./const";
+import { ugma } from "./core";
 
 // Map over 'ugma' in case of overwrite
 var _ugma = WINDOW.ugma;

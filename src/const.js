@@ -55,9 +55,3 @@ if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
         "<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
     );
 }
-
-// Set a new document, and define a local copy of ugma
-var ugma = new Document(DOCUMENT);
-export {
-    ugma
-};

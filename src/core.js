@@ -1,8 +1,55 @@
-import { uClass } from "./uclass";
-import { PLACEHOLDER } from "./const";
+/* globals window, document */
 
-var Node, Document,
-    Element = uClass({
+import { forOwn } from "./helpers";
+
+function uClass() {
+    let len = arguments.length,
+        body = arguments[len - 1],
+        SuperClass = len > 1 ? arguments[0] : null,
+        Class, SuperClassEmpty,
+
+        // helper for merging two object with each other
+        extend = (obj, extension, preserve) => {
+
+            // failsave if something goes wrong
+            if (!obj || !extension) return obj || extension || {};
+
+            forOwn(extension, (prop, func) => {
+                // if preserve is set to true, obj will not be overwritten by extension if
+                // obj has already a method key
+                obj[prop] = (preserve === false && !(prop in obj)) ? func : func;
+
+                if (preserve && extension.toString !== Object.prototype.toString) {
+                    obj.toString = extension.toString;
+                }
+            });
+        };
+
+    // Fixes a rare bug in v8
+    if (typeof body.constructor === "object" &&
+        // Double negation considered slower than a straight null check.
+        body.constructor !== null) {
+            Class = () => {};
+    } else {
+        Class = body.constructor;
+        delete body.constructor;
+    }
+
+    if (SuperClass) {
+        SuperClassEmpty = () => {};
+        SuperClassEmpty.prototype = SuperClass.prototype;
+        Class.prototype = new SuperClassEmpty();
+        Class.prototype.constructor = Class;
+        Class.Super = SuperClass;
+        extend(Class, SuperClass, false);
+    }
+
+    extend(Class.prototype, body);
+
+    return Class;
+}
+
+var Element = uClass({
         constructor(node) {
 
                 var placeholder = "__" + "<%= pkg.codename %>" + "__";
@@ -23,37 +70,20 @@ var Node, Document,
             toString() {
                 var node = this[0];
                 return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-            },
-            // Create a ugma wrapper object for a native DOM element or a
-            // jQuery element. E.g. (ugma.native($('#foo')[0]))
-            native(node) {
-                var nodeType = node && node.nodeType;
-                // filter non elements like text nodes, comments etc.
-                return (nodeType === 9 ?
-                        Document :
-                        Element
-                    )
-                    (
-                        nodeType === 1 ||
-                        nodeType === 9 ?
-                        node :
-                        null
-                    );
             }
-    });
-
-// Node class
-Node = uClass(Element, {
+    }),
+    Document = uClass(Element, {
+        constructor: function(node) {
+            return Element.call(this, node.documentElement);
+        },
+        toString() {return "#document"}
+    }),
+    Node = uClass(Element, {
     constructor: function() {},
     toString() {return ""}
 });
 
-// Document class
-Document = uClass(Element, {
-    constructor: function(node) {
-        return Element.call(this, node.documentElement);
-    },
-    toString() {return "#document" }
+// Set a new document, and define a local copy of ugma
+var ugma = new Document(document);
 
-});
-export { Element, Node, Document };
+export { Element, Node, Document, ugma };

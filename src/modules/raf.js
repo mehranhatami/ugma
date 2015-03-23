@@ -1,4 +1,5 @@
-import { ugma, WINDOW, VENDOR_PREFIXES } from "../const";
+import { WINDOW, VENDOR_PREFIXES } from "../const";
+import { ugma } from "../core";
 import { each } from "../helpers";
 
     var global = WINDOW;

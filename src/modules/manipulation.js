@@ -1,5 +1,5 @@
-import { ugma, RETURN_THIS } from "../const";
-import { Element } from "../core";
+import { RETURN_THIS } from "../const";
+import { ugma, Element } from "../core";
 import { minErr } from "../minErr";
 import { implement, isArray, trim, each, is } from "../helpers";
 

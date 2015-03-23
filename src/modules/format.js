@@ -1,4 +1,4 @@
-import { ugma } from "../const";
+import { ugma } from "../core";
 import { is } from "../helpers";
 
 var reVar = /\{([\w\-]+)\}/g;

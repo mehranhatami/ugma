@@ -1,4 +1,4 @@
-import { ugma } from "../const";
+import { ugma } from "../core";
 
 // Receive specific events at 60fps, with requestAnimationFrame (rAF).
 // http://www.html5rocks.com/en/tutorials/speed/animations/
