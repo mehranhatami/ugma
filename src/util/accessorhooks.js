@@ -1,4 +1,4 @@
-import { trim, each, every } from "../helpers";
+import { trim, each, forOwn, every } from "../helpers";
 import { DOCUMENT, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
@@ -106,9 +106,19 @@ each(BOOLS, function(key) {
     };
 });
 
+// shortCuts
+forOwn({
+    html: "innerHTML",
+    text: "textContext",
+    val: "value",
+    attr: "attribute",
+}, function(key, value) {
+    accessorHooks.get[key] = (node) => node[value];
+});
+
 // properties written as camelCase
-each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime " +
-    "frameBorder contentEditable valueType defaultValue accessKey encType readOnly vAlign longDesc").split(" "), function(key) {
+each(("tabIndex readOnly maxLength cellSpacing cellPadding rowSpan colSpan useMap dateTime innerHTML " +
+    "frameBorder contentEditable textContent valueType defaultValue accessKey encType readOnly vAlign longDesc").split(" "), function(key) {
     accessorHooks.get[key.toLowerCase()] = (node) => node[key];
 });
 

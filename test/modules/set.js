@@ -26,23 +26,23 @@ describe("set", function() {
     });
 
 
-     it('should set boolean element property', function() {
+     it("should set boolean element property", function() {
          
-       var checkbox = ugma.add('<input type="checkbox">');  
+       var checkbox = ugma.add("<input type='checkbox'>");  
          
-      expect(checkbox.get('checked')).toBe(false);
+      expect(checkbox.get("checked")).toBe(false);
 
-      checkbox.set('checked', true);
-      expect(checkbox.get('checked')).toBe(true);
+      checkbox.set("checked", true);
+      expect(checkbox.get("checked")).toBe(true);
 
-      checkbox.set('checked', '');
-      expect(checkbox.get('checked')).toBe(false);
+      checkbox.set("checked", "");
+      expect(checkbox.get("checked")).toBe(false);
 
-      checkbox.set('checked', 'lala');
-      expect(checkbox.get('checked')).toBe(true);
+      checkbox.set("checked", "lala");
+      expect(checkbox.get("checked")).toBe(true);
 
-      checkbox.set('checked', null);
-      expect(checkbox.get('checked')).toBe(false);
+      checkbox.set("checked", null);
+      expect(checkbox.get("checked")).toBe(false);
     });
 
     it("should return reference to 'this'", function() {
