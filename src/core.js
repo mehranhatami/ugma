@@ -65,7 +65,7 @@ Element = uClass({
                     }
                 } else if (node) {
                     // create a wrapper only once for each native element
-                    return node["<%= pkg.codename %>" || new Element(node);
+                    return node["<%= pkg.codename %>"] || new Element(node);
                     } else {
                         return new Node();
                     }
