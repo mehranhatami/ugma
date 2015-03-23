@@ -23,9 +23,4 @@ describe("empty", function() {
         expect(input.empty()).toBe(input);
         expect(input).toBeEmpty();
     });
-
-    it("does nothing for empty nodes", function() {
-        var empty = ugma.mock();
-        expect(empty.empty()).toBe(empty);
-    });
 });
