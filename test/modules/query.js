@@ -30,6 +30,14 @@ describe("query", function() {
         expect(ugma.query(".test321")).toHaveClass("test321");
     });
 
+ it("should find child by name", function() {
+      var root = ugma.add("<div><div>text</div></div>");
+      var innerDiv = root.queryAll("div");
+      expect(innerDiv.length).toEqual(1);
+      expect(innerDiv[0].get("textContent")).toEqual("text");
+    });
+
+
     it("should query an element by class with context", function() {
         jasmine.sandbox.set("<p><a class='blog'>test</a></p>");
         expect(ugma.query("p").query(".blog")).toHaveClass("blog");

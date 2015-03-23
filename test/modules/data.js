@@ -26,6 +26,23 @@ describe("data", function() {
         input.data("prop2", null);
     });
 
+    it("should only remove the specified value when setting a property name to 'undefined'", function() {
+
+        input.data("prop1", "value");
+        input.data("prop2", "doublevalue");
+
+        expect(input.data("prop1")).toBe("value");
+        expect(input.data("prop2")).toBe("doublevalue");
+
+        input.data("prop1", undefined);
+
+        expect(input.data("prop1")).toBeNull();
+        expect(input.data("prop2")).toBe("doublevalue");
+
+        input.data("prop2", undefined);
+    });
+
+
     it("should provide the non-wrapped data calls", function() {
         var node = document.createElement("div"),
             native = ugma.native(node);

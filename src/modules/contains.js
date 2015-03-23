@@ -4,16 +4,19 @@ import { Element } from "../core";
 import { RETURN_FALSE } from "../const";
 
 implement({
-    // The contains(other) method returns true if other is an inclusive descendant of the context object,
-    // and false otherwise (including when other is null).
-    // Referance: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+    // The contains(other) method returns true if other is an inclusive descendant of the 
+    // context object, and false otherwise (including when other is null).
+    //
+    // Reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
     contains(other) {
         // let reference be the context object.
-        var reference = this[0];
+        var reference = this[0],
+            nodeType = other.nodeType;
 
-        if (other instanceof Element || (other && other.nodeType === 1)) {
+        if (other instanceof Element ||
+           (other && nodeType === 1)) {
 
-            other = (other.nodeType === 1) ? other : other[0];
+            other = (nodeType === 1) ? other : other[0];
 
             // If other and reference are the same object, return zero.
             if (other === reference) return 0;

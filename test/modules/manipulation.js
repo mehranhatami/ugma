@@ -24,6 +24,13 @@ describe("manipulation", function() {
         it("should check if element has parent", function() {
             expect(div.remove().remove()).toBe(div);
         });
+
+        it("does nothing for empty nodes", function() {
+            var empty = ugma.mock();
+
+            expect(empty.remove()).toBe(empty);
+        });
+
     });
 
     describe("append", function() {
@@ -76,8 +83,8 @@ describe("manipulation", function() {
             expect(root.get().toLowerCase()).toEqual("<span></span>abc");
         });
     });
-    
-    
+
+
 
     describe("append, prepend, after, before", function() {
         var checkStrategies = {
@@ -112,7 +119,7 @@ describe("manipulation", function() {
 
         it("should accept document fragment", function() {
             _forIn(checkStrategies, function(checkMethod, strategy) {
-                  var arg =  createDivFragment(strategy);
+                var arg = createDivFragment(strategy);
 
 
                 expect(checkMethod(div[strategy](arg))).toHaveClass(strategy);
@@ -211,28 +218,35 @@ describe("manipulation", function() {
             div = ugma.query("#test");
         });
 
+        it("should replaceWith", function() {
+            var root = ugma.add("<div>").set("before-<div></div>after");
+            var div = root.query("div");
+            expect(div.replaceWith("<span>span-</span><b>bold-</b>")).toEqual(div);
+            expect(root.get("textContent")).toEqual("before-span-bold-after");
+        });
+
         it("should accept html string", function() {
             expect(div.replaceWith(createDivHtml("replace"))).toBe(div);
 
             expectToBeReplaced("test", "replace");
         });
-        
-        it("should accept document fragment", function() {         
+
+        it("should accept document fragment", function() {
             div.replaceWith(createDivFragment("replace"));
             expectToBeReplaced("test", "replace");
         });
     });
-   
-   function createDivFragment(className) {
+
+    function createDivFragment(className) {
         var fragment = document.createDocumentFragment(),
             el = document.createElement("div");
- 
+
         el.className = className;
 
         fragment.appendChild(el);
         return fragment;
     }
-    
+
     function createDivHtml(className) {
         return "<div class='" + className + "'></div>";
     }
@@ -254,5 +268,4 @@ describe("manipulation", function() {
             callback.call(thisPtr, obj[prop], prop, obj);
         }
     }
-
 });

@@ -7,23 +7,27 @@ import { minErr } from "../minErr";
 implement({
     // Find parent element filtered by optional selector 
     // Following the Element#closest specs  
+    //
     // https://dom.spec.whatwg.org/#dom-element-closest 
     closest(selector) {
         if (selector && !is(selector, "string")) minErr("closest()", ERROR_MSG[1]);
 
-        var matcher = SelectorMatcher(selector),
-            currentNode = this[0];
+        var matches = SelectorMatcher(selector),
+            parentNode = this[0];
 
-        if (!matcher) {
-            currentNode = currentNode.parentElement;
+        if (!matches) {
+            parentNode = parentNode.parentElement;
         }
 
-        for (; currentNode; currentNode = currentNode.parentElement) {
-            if (currentNode.nodeType === 1 && (!matcher || matcher(currentNode))) {
+        for (; parentNode; parentNode = parentNode.parentElement) {
+            if (parentNode.nodeType === 1 && 
+               ( // document has no .matches 
+                !matches || 
+                matches(parentNode))) {
                 break;
             }
         }
 
-        return Element(currentNode);
+        return Element(parentNode);
     }
 }, null, () => () => new Node());
