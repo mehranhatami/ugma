@@ -52,45 +52,42 @@ function uClass() {
 }
 
 Element = uClass({
-            constructor(node) {
+    constructor(node) {
 
-                if (this) {
-                    if (node) {
-                        this[0] = node;
-                        // use a generated property to store a reference
-                        // to the wrapper for circular object binding
-                        node["<%= pkg.codename %>"] = this;
+            if (this) {
+                if (node) {
+                    this[0] = node;
+                    // use a generated property to store a reference
+                    // to the wrapper for circular object binding
+                    node["<%= pkg.codename %>"] = this;
 
-                        this._ = {};
-                    }
-                } else if (node) {
-                    // create a wrapper only once for each native element
-                    return node["<%= pkg.codename %>"] || new Element(node);
-                    } else {
-                        return new Node();
-                    }
-                },
-                // returns current running version
-                version: "<%= pkg.version %>",
-                    // returns current running codename on this build
-                    codename: "<%= pkg.codename %>",
-                    toString() {
-                        var node = this[0];
-                        return node && node.tagName ? "<" + node.tagName.toLowerCase() + ">" : "";
-                    }
-            });
+                    this._ = {};
+                }
+            } else {
+                // create a wrapper only once for each native element
+                return node ? node["<%= pkg.codename %>"] || new Element(node) : new Node();
+            }
+        },
+        // returns current running version
+        version: "<%= pkg.version %>",
+        // returns current running codename on this build
+        codename: "<%= pkg.codename %>",
+        toString() { return "<" + this[0].tagName.toLowerCase() + ">" }
+});
 
-        Document = uClass(Element, {
-            constructor: function(node) {
-                return Element.call(this, node.documentElement);
-            },
-            toString() { return "#document"}
-        }); Node = uClass(Element, {
-            constructor: function() {},
-            toString() {return ""}
-        });
+Document = uClass(Element, {
+    constructor: function(node) {
+        return Element.call(this, node.documentElement);
+    },
+    toString() { return "#document" }
+});
 
-        // Set a new document, and define a local copy of ugma
-        var ugma = new Document(document);
-        
+Node = uClass(Element, {
+    constructor: function() {},
+    toString() { return "" }
+});
+
+// Set a new document, and define a local copy of ugma
+var ugma = new Document(document);
+
 export { Element, Node, Document, ugma };
