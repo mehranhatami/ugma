@@ -81,17 +81,6 @@ describe("matches", function() {
             expect(link.matches(":hidden")).toBe(false);
             expect(link.matches(":visible")).toBe(true);
 
-            link.hide(function() {
-                expect(link.matches(":hidden")).toBe(true);
-                expect(link.matches(":visible")).toBe(false);
-
-                link.show(function() {
-                    expect(link.matches(":hidden")).toBe(false);
-                    expect(link.matches(":visible")).toBe(true);
-
-                    done();
-                });
-            });
         });
     });
 });
