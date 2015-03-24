@@ -3,15 +3,13 @@ import { RETURN_THIS, BOOLS } from "../const";
 
 var BOOLEANS = {};
 
-each(BOOLS, (value) => {
-  BOOLEANS[value.toLowerCase()] = value;
-});
+each(BOOLS, (value) => BOOLEANS[value.toLowerCase()] = value);
 
 implement({
     // Clear a property/attribute on the node
     clear(name) {
 
-        var node = this[0],
+        let node = this[0],
             lower = name.toLowerCase();
             
         if (BOOLEANS[lower]) {

@@ -126,7 +126,7 @@ import { Document, Element, Node } from "./core";
  }
 
  // Faster alternative then slice.call
- export function convertArgs(arg) {
+ export function sliceArgs(arg) {
      var i = arg.length,
          args = new Array(i || 0);
      while (i--) {

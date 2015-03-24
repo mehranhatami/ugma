@@ -1,7 +1,7 @@
 import { RETURN_THIS } from "../const";
 import { ugma, Element } from "../core";
 import { minErr } from "../minErr";
-import { implement, isArray, trim, each, is } from "../helpers";
+import { implement, isArray, trim, each, is, sliceArgs } from "../helpers";
 
 // https://dom.spec.whatwg.org
 // 
@@ -36,8 +36,10 @@ implement({
     remove: ["", false, true, (node) => {
         node.parentNode.removeChild(node);
     }]
-}, (methodName, adjacentHTML, native, requiresParent, strategy) => function(...contents) {
-    var node = this[0];
+}, (methodName, adjacentHTML, native, requiresParent, strategy) => function() {
+    
+      var contents = sliceArgs(arguments),
+          node = this[0];
 
     if (requiresParent && !node.parentNode) return this;
 

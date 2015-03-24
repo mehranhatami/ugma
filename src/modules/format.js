@@ -3,9 +3,9 @@ import { is } from "../helpers";
 
 var reVar = /\{([\w\-]+)\}/g;
 
-  // 'format' a placeholder value with it's original content 
-    // @example
-    // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
+// 'format' a placeholder value with it's original content 
+// @example
+// ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
 ugma.format = function(tmpl, varMap) {
     if (!is(tmpl, "string")) tmpl = String(tmpl);
 

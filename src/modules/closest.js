@@ -4,11 +4,11 @@ import { ERROR_MSG } from "../const";
 import { implement, is } from "../helpers";
 import { minErr } from "../minErr";
 
+// Reference: https://dom.spec.whatwg.org/#dom-element-closest 
+
 implement({
     // Find parent element filtered by optional selector 
     // Following the Element#closest specs  
-    //
-    // https://dom.spec.whatwg.org/#dom-element-closest 
     closest(selector) {
         if (selector && !is(selector, "string")) minErr("closest()", ERROR_MSG[1]);
 
