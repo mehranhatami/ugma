@@ -1,6 +1,6 @@
 import { RETURN_THIS, ERROR_MSG } from "../const";
 import EventHandler from "../util/eventhandler";
-import { implement, isArray, keys, each, forOwn, is } from "../helpers";
+import { implement, isArray, keys, each, forOwn, is, inArray } from "../helpers";
 import { minErr } from "../minErr";
 
 implement({
@@ -39,23 +39,21 @@ implement({
         var node = this[0],
             parts,
             namespace,
-            eventListener,
-            types = type.indexOf(" ") >= 0 ? type.split(" ") : [type],
+            types = inArray(type, " ") >= -1 ? type.split(" ") : [type],
             i = types.length,
+            handler,
             handlers = this._._events || (this._._events = []);
 
         // Handle space separated event names.
         while (i--) {
 
+            type = types[i];
+
             parts = type.split(".");
             type = parts[0] || null;
             namespace = parts[1] || null;
 
-
-
-            type = types[i];
-
-            var handler = EventHandler(this, type, selector, callback, args, single, namespace);
+            handler = EventHandler(this, type, selector, callback, args, single, namespace);
 
             node.addEventListener(handler._type || type, handler, !!handler.capturing);
 

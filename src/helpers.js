@@ -91,6 +91,28 @@ import { Document, Element, Node } from "./core";
      return is(value, "string") ? (value + "").replace(atrim, "") : value;
  }
 
+ export function inArray(arr, searchElement, fromIndex) {
+     fromIndex = fromIndex || 0;
+     /* jshint ignore:start */
+     if (fromIndex > arr.length) {
+
+         arr - 1;
+     }
+     /* jshint ignore:end */
+     var i = 0,
+         len = arr.length;
+     for (; i < len; i++) {
+         if (arr[i] === searchElement && fromIndex <= i) {
+             return i;
+         }
+
+         if (arr[i] === searchElement && fromIndex > i) {
+             return -1;
+         }
+     }
+     return -1;
+ }
+
  export function invoke(context, fn, arg1, arg2) {
          if (typeof fn === "string") fn = context[fn];
 
