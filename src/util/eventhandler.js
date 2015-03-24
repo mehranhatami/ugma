@@ -7,17 +7,17 @@ import eventhooks from "./eventhooks";
 function getEventProperty(name, e, type, node, target, currentTarget) {
 
     if (is(name, "number")) {
-        
+
         var args = e["__" + "<%= pkg.codename %>" + "__"];
 
         return args ? args[name] : void 0;
     }
 
-    if (name === "type")              return type;
-    if (name === "defaultPrevented")  return e.defaultPrevented;
-    if (name === "target")            return Element(target);
-    if (name === "currentTarget")     return Element(currentTarget);
-    if (name === "relatedTarget")     return Element(e.relatedTarget);
+    if (name === "type")               return type;
+    if (name === "defaultPrevented")   return e.defaultPrevented;
+    if (name === "target")             return Element(target);
+    if (name === "currentTarget")      return Element(currentTarget);
+    if (name === "relatedTarget")      return Element(e.relatedTarget);
 
     var value = e[name];
 
@@ -26,7 +26,7 @@ function getEventProperty(name, e, type, node, target, currentTarget) {
     return value;
 }
 
-function EventHandler(type, selector, callback, props, el, once) {
+function EventHandler(el, type, selector, callback, props, once, namespace) {
     var node = el[0],
         hook = eventhooks[type],
         matcher = SelectorMatcher(selector, node),
@@ -67,6 +67,7 @@ function EventHandler(type, selector, callback, props, el, once) {
     if (hook) handler = hook(handler, el) || handler;
 
     handler.type = type;
+    handler.namespace = namespace;
     handler.callback = callback;
     handler.selector = selector;
 

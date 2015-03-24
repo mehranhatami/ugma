@@ -5,7 +5,7 @@ import cssHooks from "../util/csshooks";
 import { adjustCSS } from "../util/adjustCSS";
 
  implement({
-     // Get and set the style property on a DOM Node
+     //Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
      css(name, value) {
          
          var len = arguments.length,

@@ -37,14 +37,26 @@ implement({
 
         // http://jsperf.com/string-indexof-vs-split
         var node = this[0],
+            parts,
+            namespace,
+            eventListener,
             types = type.indexOf(" ") >= 0 ? type.split(" ") : [type],
             i = types.length,
             handlers = this._._events || (this._._events = []);
+
         // Handle space separated event names.
         while (i--) {
+
+            parts = type.split(".");
+            type = parts[0] || null;
+            namespace = parts[1] || null;
+
+
+
             type = types[i];
 
-            var handler = EventHandler(type, selector, callback, args, this, single);
+            var handler = EventHandler(this, type, selector, callback, args, single, namespace);
+
             node.addEventListener(handler._type || type, handler, !!handler.capturing);
 
             // store event entry

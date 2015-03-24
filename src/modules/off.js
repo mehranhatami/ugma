@@ -17,6 +17,10 @@ implement({
 
         var self = this,
             node = this[0],
+            parts,
+            namespace,
+            handlers,
+
             removeHandler = (handler) => {
 
                 // Cancel previous frame if it exists
@@ -29,10 +33,16 @@ implement({
                 node.removeEventListener((handler._type || handler.type), handler, !!handler.capturing);
             };
 
+        parts = type.split(".");
+        type = parts[0] || null;
+        namespace = parts[1] || null;
+
+
         this._._events = filter(this._._events, (handler) => {
 
             if (type !== handler.type ||
                 selector && selector !== handler.selector ||
+                namespace && namespace !== handler.namespace ||
                 callback && callback !== handler.callback) {
                 return true;
             }
