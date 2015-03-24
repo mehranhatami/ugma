@@ -45,33 +45,12 @@ describe("matches", function() {
         expect(link.matches("div a")).toBe(true);
     });
 
-    it("returns false for empty nodes", function() {
-        expect(ugma.mock().matches("a")).toBe(false);
-        expect(ugma.mock().matches("*")).toBe(false);
-    });
-
     it("should throw error if the argument is ommited or not a string", function() {
         expect(function() { link.matches(); }).toThrow();
         expect(function() { link.matches(1); }).toThrow();
     });
 
     describe(":visible and :hidden", function() {
-        it("should change depending on visibility", function(done) {
-            expect(link.matches(":hidden")).toBe(false);
-            expect(link.matches(":visible")).toBe(true);
-
-            link.hide(function() {
-                expect(link.matches(":hidden")).toBe(true);
-                expect(link.matches(":visible")).toBe(false);
-
-                link.show(function() {
-                    expect(link.matches(":hidden")).toBe(false);
-                    expect(link.matches(":visible")).toBe(true);
-
-                    done();
-                });
-            });
-        });
 
         it("should respect CSS property visibility", function() {
             expect(link.matches(":hidden")).toBe(false);
