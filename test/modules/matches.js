@@ -50,37 +50,4 @@ describe("matches", function() {
         expect(function() { link.matches(1); }).toThrow();
     });
 
-    describe(":visible and :hidden", function() {
-
-        it("should respect CSS property visibility", function() {
-            expect(link.matches(":hidden")).toBe(false);
-
-            link.css("visibility", "hidden");
-            expect(link.matches(":hidden")).toBe(true);
-
-            link.css("visibility", "visible");
-            expect(link.matches(":hidden")).toBe(false);
-
-            link.css("visibility", "inherit");
-            expect(link.matches(":hidden")).toBe(false);
-        });
-
-        it("should respect CSS property display", function() {
-            expect(link.matches(":hidden")).toBe(false);
-
-            link.css("display", "none");
-            expect(link.matches(":hidden")).toBe(true);
-
-            link.css("display", "block");
-            expect(link.matches(":hidden")).toBe(false);
-        });
-
-        it("should support block elements as well", function(done) {
-            link.css("display", "block");
-
-            expect(link.matches(":hidden")).toBe(false);
-            expect(link.matches(":visible")).toBe(true);
-
-        });
-    });
 });
