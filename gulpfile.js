@@ -4,22 +4,20 @@ const gulpif = require("gulp-if");
 const gutil = require("gulp-util");
 const pkg = require("./package.json");
 const compile = require("./task/compile");
-const traceur = require('gulp-traceur');
+const es6transpiler = require("gulp-es6-transpiler");
 const jshint = require("gulp-jshint");
+const jscs = require("gulp-jscs");
 const mkdirp = require('mkdirp');
 const argv = require("yargs").argv;
 const clean = require("gulp-clean");
 const uglify = require("gulp-uglify");
 const rename = require("gulp-rename");
-const bump = require("gulp-bump");
-const replace = require("gulp-replace");
 const git = require("gulp-git");
 const filter = require("gulp-filter");
 const tag_version = require("gulp-tag-version");
 const plumber = require("gulp-plumber");
 const header = require("gulp-header");
 const notify = require("gulp-notify");
-const jscs = require("gulp-jscs");
 const karma = require("karma").server;
 const karmaConfig = require.resolve("./conf/karma.conf");
 
@@ -48,17 +46,9 @@ gulp.task("lint", function() {
 
 // compile - but not minify - your build
 gulp.task("compile", function() {
-    var version = argv.tag,
-        dest = version ? "dist/" : "build/";
-
-    if (version) {
-        pkg.version = version;
-    } else {
-        version = pkg.version;
-    }
+   
         // Write the generated sourcemap
-     mkdirp.sync(dest);
-
+     mkdirp.sync("build/");
 
     return gulp.src(["modules/*.js", "emmet/*.js", "util/*.js", "*.js"], {
             cwd: "./src"
@@ -68,8 +58,7 @@ gulp.task("compile", function() {
         .pipe(jshint.reporter("jshint-stylish"))
         .pipe(jshint.reporter("fail"))
         .pipe(compile("ugma.js", pkg))
-        .pipe(traceur())
-        .pipe(gulpif(dest === "dist/", replace(/\/\*([\s\S]*?)\*\/\s+/gm, "")))
+        .pipe(es6transpiler())
         .pipe(header(banner = [
             "/**",
             " * <%= pkg.description %> <%= pkg.version %>",
@@ -84,7 +73,7 @@ gulp.task("compile", function() {
             pkg: pkg
         }))
         //        .pipe(browserify())
-        .pipe(gulp.dest(dest));
+        .pipe(gulp.dest("build/"));
 });
 
 // compiles and run linting to check code quality
@@ -141,18 +130,8 @@ gulp.task("dev", ["compile", "lint"], function() {
     });
 });
 
-
-// 'bump' the version number
-gulp.task("bump", function() {
-    return gulp.src(["./*.json"])
-        .pipe(bump({
-            version: argv.tag
-        }))
-        .pipe(gulp.dest("./"));
-});
-
 // make a public release
-gulp.task("publish", ["bump", "compress"], function(done) {
+gulp.task("publish", ["compress"], function(done) {
     var version = argv.tag;
 
     if (!version) throw new gutil.PluginError("release", "You need to specify --tag parameter");

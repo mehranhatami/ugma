@@ -1,10 +1,10 @@
 module.exports = function(config) {
-    "use strict";
 
+//var traceurOptions = require('/config').traceur;
     config.set({
         basePath: "..",
         singleRun: true,
-        frameworks: ["jasmine"],
+        frameworks: ['jasmine'],
         browsers: ["PhantomJS"],
         preprocessors: {
             "build/ugma.js": "coverage"
@@ -17,19 +17,6 @@ module.exports = function(config) {
             "./test/lib/jasmine-tools.js",
             "./build/ugma.js",
             "./test/modules/**/*.js"
-        ],
-        // default configuration, not required 
-        traceurPreprocessor: {
-            // options passed to the traceur-compiler 
-            // see traceur --longhelp for list of options 
-            options: {
-                sourceMaps: false,
-                modules: 'amd'
-            },
-            // custom filename transformation function 
-            transformPath: function(path) {
-                return path.replace(/\.es6$/, '.js');
-            }
-        }
+        ]
     });
 };
