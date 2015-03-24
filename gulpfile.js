@@ -3,7 +3,7 @@ var gulp = require("gulp"),
     gutil = require("gulp-util"),
     pkg = require("./package.json"),
     compile = require("./task/compile"),
-    es6transpiler = require("gulp-es6-transpiler"),
+    traceur = require('gulp-traceur'),    
     jshint = require("gulp-jshint"),
     argv = require("yargs").argv,
     clean = require("gulp-clean"),
@@ -58,7 +58,7 @@ gulp.task("compile", function() {
         .pipe(jshint.reporter("jshint-stylish"))
         .pipe(jshint.reporter("fail"))
         .pipe(compile("ugma.js", pkg))
-        .pipe(es6transpiler())
+        .pipe(traceur())
         .pipe(gulpif(dest === "dist/", replace(/\/\*([\s\S]*?)\*\/\s+/gm, "")))
         .pipe(header(banner + "\n", { pkg: pkg }))
 //        .pipe(browserify())
