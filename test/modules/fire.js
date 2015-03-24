@@ -32,7 +32,7 @@ describe("fire", function() {
     it("should trigger native methods if they exist", function() {
         input.fire("focus");
 
-        expect(input.is(":focus")).toBe(true);
+        expect(input.matches(":focus")).toBe(true);
 
         expect(input[0]).toBe(document.activeElement);
     });

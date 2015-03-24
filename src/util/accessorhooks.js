@@ -1,5 +1,5 @@
 import { trim, each, forOwn, every } from "../helpers";
-import { DOCUMENT, FOCUSABLE, BOOLS } from "../const";
+import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -106,16 +106,6 @@ each(BOOLS, function(key) {
     };
 });
 
-// shortCuts
-forOwn({
-    html:  "innerHTML",
-    text:  "textContext",
-    val:   "value",
-    attr:  "attribute",
-}, function(key, value) {
-    accessorHooks.get[key] = (node) => node[value];
-});
-
 // properties written as camelCase
 each((
    // 6.4.3 The tabindex attribute
@@ -143,7 +133,7 @@ each((
     accessorHooks.get[key.toLowerCase()] = (node) => node[key];
 });
 
-/*
+    var MSApp = WINDOW.MSApp;
     // Use a 'hook' for innerHTML because of Win8 apps
     accessorHooks.set.innerHTML = (node, value) => {
         // Win8 apps: Allow all html to be inserted
@@ -153,6 +143,6 @@ each((
             });
         }
         node.innerHTML = value;
-    };*/
+    };
 
 export default accessorHooks;

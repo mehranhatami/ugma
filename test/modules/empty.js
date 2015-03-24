@@ -7,7 +7,7 @@ describe("empty", function() {
 
   it("should write a value", function() {
       var element = ugma.add("<div>abc</div>");
-      expect(element.empty() == element).toBeTruthy();
+      expect(element.empty() === element).toBeTruthy();
       expect(element).toBeEmpty();
     });
 
@@ -22,5 +22,10 @@ describe("empty", function() {
         expect(input).toHaveProp("value", "foo");
         expect(input.empty()).toBe(input);
         expect(input).toBeEmpty();
+    });
+
+    it("does nothing for empty nodes", function() {
+        var empty = ugma.mock();
+        expect(empty.empty()).toBe(empty);
     });
 });
