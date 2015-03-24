@@ -60,6 +60,8 @@
     "gulp-util": "^3.0.4",
     "gulp-gzip": "^1.0.0",
     "gulp-traceur": "^0.17.0",
+    "gulp-jscs": "^1.4.0",
+    "gulp-notify": "^2.1.0",
     "jshint-stylish": "^1.0.1",
     "karma": "^0.12.31",
     "karma-coverage": "^0.2.7",

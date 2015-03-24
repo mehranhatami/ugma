@@ -1,43 +1,47 @@
-var gulp = require("gulp"),
-    gulpif = require("gulp-if"),
-    gutil = require("gulp-util"),
-    pkg = require("./package.json"),
-    compile = require("./task/compile"),
-    traceur = require('gulp-traceur'),    
-    jshint = require("gulp-jshint"),
-    argv = require("yargs").argv,
-    clean = require("gulp-clean"),
-    uglify = require("gulp-uglify"),
-    rename = require("gulp-rename"),
-    bump = require("gulp-bump"),
-    replace = require("gulp-replace"),
-    git = require("gulp-git"),
-    filter = require("gulp-filter"),
-    tag_version = require("gulp-tag-version"),
-    plumber = require("gulp-plumber"),
-    header = require("gulp-header"),
-    gzip = require( "gulp-gzip" ),
-    karma = require("karma").server,
-    karmaConfig = require.resolve("./conf/karma.conf"),
+var gulp = require("gulp");
 
-    banner = [
-    "/**",
-    " * <%= pkg.description %> <%= pkg.version %>",
-    " * <%= pkg.repository.url %>",
-    " * ",
-    " * Copyright 2014 - " + new Date().getFullYear() + " <%= pkg.author %>",
-    " * Released under the <%= pkg.license %> license",
-    " * ",
-    " * Build date: <%= new Date().toUTCString() %>",
-    
-    " */"
-].join("\n");
+const gulpif = require("gulp-if");
+const gutil = require("gulp-util");
+const pkg = require("./package.json");
+const compile = require("./task/compile");
+const traceur = require('gulp-traceur');
+const jshint = require("gulp-jshint");
+const argv = require("yargs").argv;
+const clean = require("gulp-clean");
+const uglify = require("gulp-uglify");
+const rename = require("gulp-rename");
+const bump = require("gulp-bump");
+const replace = require("gulp-replace");
+const git = require("gulp-git");
+const filter = require("gulp-filter");
+const tag_version = require("gulp-tag-version");
+const plumber = require("gulp-plumber");
+const header = require("gulp-header");
+const notify = require("gulp-notify");
+const jscs = require("gulp-jscs");
+const karma = require("karma").server;
+const karmaConfig = require.resolve("./conf/karma.conf");
+
+// Send a notification when JSHint fails,
+// so that we know when the changes didn't build
+function jshintNotify(file) {
+  if (!file.jshint) { return; }
+  return file.jshint.success ? false : 'JSHint failed';
+}
+
+function jscsNotify(file) {
+  if (!file.jscs) { return; }
+  return file.jscs.success ? false : 'JSRC failed';
+}
 
 // lint testing your build 
 gulp.task("lint", function() {
     return gulp.src(["test/modules/**/*.js"])
         .pipe(jshint(require("./conf/jshintrc-test")))
         .pipe(jshint.reporter("jshint-stylish"))
+        .pipe(notify(jshintNotify))
+        .pipe(jscs())
+        .pipe(notify(jscsNotify))
         .pipe(gulpif(process.env.TRAVIS_JOB_NUMBER, jshint.reporter("fail")));
 });
 
@@ -52,7 +56,9 @@ gulp.task("compile", function() {
         version = pkg.version;
     }
 
-    return gulp.src(["modules/*.js", "emmet/*.js", "util/*.js", "*.js"], {cwd: "./src"})
+    return gulp.src(["modules/*.js", "emmet/*.js", "util/*.js", "*.js"], {
+            cwd: "./src"
+        })
         .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
         .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter("jshint-stylish"))
@@ -60,14 +66,28 @@ gulp.task("compile", function() {
         .pipe(compile("ugma.js", pkg))
         .pipe(traceur())
         .pipe(gulpif(dest === "dist/", replace(/\/\*([\s\S]*?)\*\/\s+/gm, "")))
-        .pipe(header(banner + "\n", { pkg: pkg }))
-//        .pipe(browserify())
+        .pipe(header(banner = [
+            "/**",
+            " * <%= pkg.description %> <%= pkg.version %>",
+            " * <%= pkg.repository.url %>",
+            " * ",
+            " * Copyright 2014 - " + new Date().getFullYear() + " <%= pkg.author %>",
+            " * Released under the <%= pkg.license %> license",
+            " * ",
+            " * Build date: <%= new Date().toUTCString() %>",
+            " */"
+        ].join("\n") + "\n", {
+            pkg: pkg
+        }))
+        //        .pipe(browserify())
         .pipe(gulp.dest(dest));
 });
 
 // compiles and run linting to check code quality
 gulp.task("test", ["compile", "lint"], function(done) {
-    var config = {preprocessors: []};
+    var config = {
+        preprocessors: []
+    };
 
     if (process.env.TRAVIS_JOB_NUMBER) {
         config = {
@@ -88,28 +108,19 @@ gulp.task("test", ["compile", "lint"], function(done) {
     config.configFile = karmaConfig;
 
     karma.start(config, function(resultCode) {
-       done(resultCode ? new gutil.PluginError("karma", "Tests failed") : null);
+        done(resultCode ? new gutil.PluginError("karma", "Tests failed") : null);
     });
 });
 
 // make a minified version
-gulp.task("minify", ["test", "zipped"], function() {
+gulp.task("minify", ["test"], function() {
     var dest = argv.tag ? "dist/" : "build/";
 
     return gulp.src(dest + "ugma.js")
-        .pipe(uglify({preserveComments: "some"}))
+        .pipe(uglify({
+            preserveComments: "some"
+        }))
         .pipe(rename("ugma.min.js"))
-        .pipe(gulp.dest(dest));
-});
-
-// make a minified version
-gulp.task("zipped", ["test"], function() {
-    var dest = argv.tag ? "dist/" : "build/";
-
-    return gulp.src(dest + "ugma.js")
-        .pipe(uglify({preserveComments: "some"}))
-        .pipe(rename("ugma.min.js"))
-        .pipe(gzip())
         .pipe(gulp.dest(dest));
 });
 
@@ -130,7 +141,9 @@ gulp.task("dev", ["compile", "lint"], function() {
 // 'bump' the version number
 gulp.task("bump", function() {
     return gulp.src(["./*.json"])
-        .pipe(bump({version: argv.tag}))
+        .pipe(bump({
+            version: argv.tag
+        }))
         .pipe(gulp.dest("./"));
 });
 
@@ -146,7 +159,9 @@ gulp.task("publish", ["bump", "compress"], function(done) {
         .pipe(tag_version())
         .on("end", function() {
             git.push("origin", "master", {}, function() {
-                git.push("origin", "master", {args: "--tags"}, done);
+                git.push("origin", "master", {
+                    args: "--tags"
+                }, done);
             });
         });
 });
