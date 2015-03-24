@@ -15,12 +15,12 @@ var pseudos = {
             /* jshint ignore:end */
             return node.selected === true;
         },
-        ":enabled": (node) => node.disabled === false,
-        ":disabled": (node) => node.disabled === true,
+        ":enabled": (node) =>  !node.disabled,
+        ":disabled": (node) => node.disabled,
         // In CSS3, :checked should return both checked and selected elements
         // http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 
-        ":checked": (node) => (node.nodeName === "INPUT" && !!node.checked) || (node.nodeName === "OPTION" && !!node.selected),
+        ":checked": (node) => !!("checked" in node ? node.checked : node.selected),
 
         ":focus": (node) => node === node.ownerDocument.activeElement,
 
