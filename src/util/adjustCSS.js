@@ -42,4 +42,4 @@ export function adjustCSS(root, prop, parts, computed) {
 
         return adjusted;
     }
-};
+}
