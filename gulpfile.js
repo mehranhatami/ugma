@@ -6,6 +6,7 @@ const pkg = require("./package.json");
 const compile = require("./task/compile");
 const traceur = require('gulp-traceur');
 const jshint = require("gulp-jshint");
+const mkdirp = require('mkdirp');
 const argv = require("yargs").argv;
 const clean = require("gulp-clean");
 const uglify = require("gulp-uglify");
@@ -23,7 +24,7 @@ const karma = require("karma").server;
 const karmaConfig = require.resolve("./conf/karma.conf");
 
 // Send a notification when JSHint fails,
-// so that we know when the changes didn't build
+// so that you know your changes didn't build
 function jshintNotify(file) {
   if (!file.jshint) { return; }
   return file.jshint.success ? false : 'JSHint failed';
@@ -55,6 +56,9 @@ gulp.task("compile", function() {
     } else {
         version = pkg.version;
     }
+        // Write the generated sourcemap
+     mkdirp.sync(dest);
+
 
     return gulp.src(["modules/*.js", "emmet/*.js", "util/*.js", "*.js"], {
             cwd: "./src"
