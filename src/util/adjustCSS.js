@@ -1,7 +1,7 @@
 import { DOCUMENT, WINDOW, RCSSNUM } from "../const";
 import { Document, Element, Node } from "../core";
 
-export const adjustCSS = function (root, prop, parts, computed) {
+export function adjustCSS(root, prop, parts, computed) {
 
     var adjusted,
         scale = 1,

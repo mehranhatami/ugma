@@ -1,7 +1,7 @@
 import { computeStyle, forOwn } from "../helpers";
 import { FOCUSABLE } from "../const";
 
-var pseudos = {
+var pseudoClasses = {
 
         ":input": (node) => FOCUSABLE.test(node.nodeName),
 
@@ -24,10 +24,9 @@ var pseudos = {
 
         ":focus": (node) => node === node.ownerDocument.activeElement,
 
-        ":visible": (node) => !pseudos[":hidden"](node),
+        ":visible": (node) => !pseudoClasses[":hidden"](node),
 
-        ":hidden": (node) => ((node.style.visibility === "hidden" || node.style.display === "none"))
-
+        ":hidden": (node) => (node.style.visibility === "hidden" || node.style.display === "none")
     };
 
 function createButtonPseudo(type) {
@@ -46,11 +45,11 @@ function createInputPseudo(type) {
 
 // Add button/input type pseudos
 forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, (key, value) => {
-    pseudos[":" + key] = createInputPseudo(key);
+    pseudoClasses[":" + key] = createInputPseudo(key);
 });
 
 forOwn({ submit: true, reset: true }, (key, value) => {
-    pseudos[":" + key] = createButtonPseudo(key);
+    pseudoClasses[":" + key] = createButtonPseudo(key);
 });
 
-export default pseudos;
+export default pseudoClasses;

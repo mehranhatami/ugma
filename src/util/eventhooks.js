@@ -27,8 +27,8 @@ if (!INTERNET_EXPLORER || INTERNET_EXPLORER > 9) {
         eventHooks[name] = DebouncedWrapper;
     });
 }
-    // Support: Firefox, Chrome, Safari
-    // Create 'bubbling' focus and blur events
+// Support: Firefox, Chrome, Safari
+// Create 'bubbling' focus and blur events
 
 /* istanbul ignore if */
 if ("onfocusin" in DOCUMENT.documentElement) {
@@ -50,29 +50,28 @@ if (DOCUMENT.createElement("input").validity) {
         handler.capturing = true;
     };
 }
-    // Support: IE9
-    if (INTERNET_EXPLORER < 10) {
+// Support: IE9
+if (INTERNET_EXPLORER < 10) {
 
-        var capturedNode, capturedNodeValue;
+    var capturedNode, capturedNodeValue;
 
-        // IE9 doesn't fire oninput when text is deleted, so use
-        // onselectionchange event to detect such cases
-        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-        DOCUMENT.attachEvent("onselectionchange", function() {
-            if (capturedNode && capturedNode.value !== capturedNodeValue) {
-                capturedNodeValue = capturedNode.value;
-                // trigger custom event that capture
-                ugma.native(capturedNode).fire("input");
-            }
-        });
-
-        // input event fix via propertychange
-        DOCUMENT.attachEvent("onfocusin", function() {
-            capturedNode = WINDOW.event.srcElement;
+    // IE9 doesn't fire oninput when text is deleted, so use
+    // onselectionchange event to detect such cases
+    // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
+    DOCUMENT.attachEvent("onselectionchange", function() {
+        if (capturedNode && capturedNode.value !== capturedNodeValue) {
             capturedNodeValue = capturedNode.value;
-        });
-    }
+            // trigger custom event that capture
+            ugma.native(capturedNode).fire("input");
+        }
+    });
 
+    // input event fix via propertychange
+    DOCUMENT.attachEvent("onfocusin", function() {
+        capturedNode = WINDOW.event.srcElement;
+        capturedNodeValue = capturedNode.value;
+    });
+}
 
 /* istanbul ignore if */
 

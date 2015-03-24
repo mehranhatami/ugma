@@ -2,41 +2,33 @@ import { slice, map, is } from "../helpers";
 import { WINDOW } from "../const";
 import { Element } from "../core";
 import SelectorMatcher from "./selectormatcher";
-import HOOK from "./eventhooks";
+import eventhooks from "./eventhooks";
 
 function getEventProperty(name, e, type, node, target, currentTarget) {
+
     if (is(name, "number")) {
+        
         var args = e["__" + "<%= pkg.codename %>" + "__"];
 
         return args ? args[name] : void 0;
     }
 
-    switch (name) {
-        case "type":
-            return type;
-        case "defaultPrevented":
-            // Android 2.3 use returnValue instead of defaultPrevented
-            return "defaultPrevented" in e ? e.defaultPrevented : e.returnValue === false;
-        case "target":
-            return Element(target);
-        case "currentTarget":
-            return Element(currentTarget);
-        case "relatedTarget":
-            return Element(e.relatedTarget);
-    }
+    if (name === "type")              return type;
+    if (name === "defaultPrevented")  return e.defaultPrevented;
+    if (name === "target")            return Element(target);
+    if (name === "currentTarget")     return Element(currentTarget);
+    if (name === "relatedTarget")     return Element(e.relatedTarget);
 
     var value = e[name];
 
-    if (typeof value === "function") {
-        return () => value.apply(e, arguments);
-    }
+    if (typeof value === "function") return () => value.apply(e, arguments);
 
     return value;
 }
 
 function EventHandler(type, selector, callback, props, el, once) {
     var node = el[0],
-        hook = HOOK[type],
+        hook = eventhooks[type],
         matcher = SelectorMatcher(selector, node),
         handler = (e) => {
             e = e || WINDOW.event;

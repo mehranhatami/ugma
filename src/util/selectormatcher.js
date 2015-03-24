@@ -6,7 +6,7 @@ import { is, map } from "../helpers";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
-var rquickIs = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
+var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
     matchesMethod = map(VENDOR_PREFIXES.concat(null), function(p) {
         return (p ? p.toLowerCase() + "M" : "m") + "atchesSelector";
     }).reduceRight(function(propName, p) {
@@ -31,29 +31,28 @@ var rquickIs = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
         return false;
     };
 
-
 export default function(selector, context) {
 
     if (is(selector, "string")) {
 
-        var quick = rquickIs.exec(selector);
+        var matches = quickMatch.exec(selector);
 
-        if (quick) {
-            if (quick[1]) quick[1] = quick[1].toLowerCase();
-            if (quick[3]) quick[3] = quick[3].split("=");
-            if (quick[4]) quick[4] = " " + quick[4] + " ";
+        if (matches) {
+            if (matches[1]) matches[1] = matches[1].toLowerCase();
+            if (matches[3]) matches[3] = matches[3].split("=");
+            if (matches[4]) matches[4] = " " + matches[4] + " ";
         }
 
         return function(node) {
             var result, found;
 
             for (; node && node.nodeType === 1; node = node.parentNode) {
-                if (quick) {
+                if (matches) {
                     result = (
-                        (!quick[1] || node.nodeName.toLowerCase() === quick[1]) &&
-                        (!quick[2] || node.id === quick[2]) &&
-                        (!quick[3] || (quick[3][1] ? node.getAttribute(quick[3][0]) === quick[3][1] : node.hasAttribute(quick[3][0]))) &&
-                        (!quick[4] || (" " + node.className + " ").indexOf(quick[4]) >= 0)
+                        (!matches[1] || node.nodeName.toLowerCase() === matches[1]) &&
+                        (!matches[2] || node.id === matches[2]) &&
+                        (!matches[3] || (matches[3][1] ? node.getAttribute(matches[3][0]) === matches[3][1] : node.hasAttribute(matches[3][0]))) &&
+                        (!matches[4] || (" " + node.className + " ").indexOf(matches[4]) >= 0)
                     );
                 } else {
                     result = matchesMethod ? node[matchesMethod](selector) : query(node, selector);
