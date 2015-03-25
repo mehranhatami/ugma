@@ -13,14 +13,12 @@ var dispatcher = DOCUMENT.createElement("a"),
 implement({
     // Make a safe method/function call
     dispatch(method, ...args) {
-   var methodType = typeof method,
-        el = this,
-        node = this[0],
+   var  node = this[0],
         handler, result, e;
 
     if (node) {
         if (is(method, "function")) {
-            handler = () => { result = method.apply(el, args) };
+            handler = () => { result = method.apply(this, args) };
         } else if (is(method, "string")) {
             handler = () => { result = node[method].apply(node, args) };
         } else {
