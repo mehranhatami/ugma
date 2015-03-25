@@ -24,7 +24,6 @@ describe("map", function() {
     it("returns empty array for dummy nodes", function() {
         var spy = jasmine.createSpy("spy").and.returnValue("ok");
 
-        expect(ugma.mock().map(spy)).toEqual([]);
         expect(ugma.query("foo").map(spy)).toEqual([]);
 
         expect(spy).not.toHaveBeenCalled();
