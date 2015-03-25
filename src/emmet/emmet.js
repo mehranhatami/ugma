@@ -10,38 +10,32 @@ import operators from "../emmet/operators";
 
 // Reference: https://github.com/emmetio/emmet
 
-var reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-    reDot = /\./g,
-    tagCache = {
-        "": ""
-    };
-    
-ugma.emmet = function(template, varMap) {
+var abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
+    dot = /\./g,
+    tagCache = { "": "" };
+
+ugma.emmet = function(template, args) {
 
     if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
 
-    if (varMap) template = ugma.format(template, varMap);
+    if (args) template = ugma.format(template, args);
     // If it's already cached, return the cached result
     if (template in tagCache) return tagCache[template];
 
     var stack = [],
-        output = [],
-        matched = template.match(reParse);
+        output = [];
 
-    each(matched, function(str) {
+    each(template.match(abbreviation), function(str) {
 
-        let op = str[0];
-
-        if (operators[op]) {
+        if (operators[str[0]]) {
             if (str !== "(") {
                 // for ^ operator need to skip > str.length times
-                for (let i = 0, n = (op === "^" ? str.length : 1); i < n; ++i) {
-                    while (stack[0] !== op && operators[stack[0]] >= operators[op]) {
+                for (let i = 0, n = (str[0] === "^" ? str.length : 1); i < n; ++i) {
+                    while (stack[0] !== str[0] && operators[stack[0]] >= operators[str[0]]) {
                         let head = stack.shift();
-
                         output.push(head);
                         // for ^ operator stop shifting when the first > is found
-                        if (op === "^" && head === ">") break;
+                        if (str[0] === "^" && head === ">") break;
                     }
                 }
             }
@@ -50,15 +44,15 @@ ugma.emmet = function(template, varMap) {
                 stack.shift(); // remove "(" symbol from stack
             } else {
                 // handle values inside of `...` and [...] sections
-                if (op === "[" || op === "`") {
+                if (str[0] === "[" || str[0] === "`") {
                     output.push(str.slice(1, -1));
                 }
                 // handle multiple classes, e.g. a.one.two
-                if (op === ".") {
-                    output.push(str.slice(1).replace(reDot, " "));
+                if (str[0] === ".") {
+                    output.push(str.slice(1).replace(dot, " "));
                 }
 
-                stack.unshift(op);
+                stack.unshift(str[0]);
             }
         } else {
             output.push(str);

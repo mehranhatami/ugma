@@ -11,7 +11,7 @@ import operators from "../emmet/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
-var reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
+var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     charMap = {
         "&": "&amp;",
         "<": "&lt;",
@@ -20,18 +20,18 @@ var reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
         "'": "&#039;"
     },
     // filter for escaping unsafe XML characters: <, >, &, ', "
-     escapeChars = (str)  => str.replace(/[&<>"']/g, (ch) => charMap[ch]);
+    escapeChars = (str) => str.replace(/[&<>"']/g, (ch) => charMap[ch]);
 
 function process(template) {
 
     var stack = [];
 
     each(template, function(str) {
-       
+
         if (str in operators) {
-       
-       let value = stack.shift(),
-            node = stack.shift();
+
+            let value = stack.shift(),
+                node = stack.shift();
 
             if (is(node, "string")) {
                 node = [processTag(node)];
@@ -46,7 +46,7 @@ function process(template) {
             } else if (str === "#") { // id
                 value = injection(" id=\"" + value + "\"");
             } else if (str === "[") { // id
-                value = injection(value.replace(reAttr, parseAttr));
+                value = injection(value.replace(attributes, parseAttr));
             } else if (str === "*") { // universal selector 
                 node = indexing(+value, node.join(""));
             } else if (str === "`") { // Back tick

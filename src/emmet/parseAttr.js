@@ -1,8 +1,8 @@
 import { is, inArray } from "../helpers";
 
-function parseAttr(_, name, value, rawValue) {
-    // try to detemnie which kind of quotes to use
-    var quote = value && inArray(value, "\"") >= 0 ? "'" : "\"";
+function parseAttr(quote, name, value, rawValue) {
+    // try to determine which kind of quotes to use
+    quote = value && inArray(value, "\"") >= 0 ? "'" : "\"";
 
     if (is(rawValue, "string")) {
         value = rawValue;
@@ -11,5 +11,4 @@ function parseAttr(_, name, value, rawValue) {
     }
     return " " + name + "=" + quote + value + quote;
 }
-
 export { parseAttr };
