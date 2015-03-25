@@ -23,14 +23,16 @@ var reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     // filter for escaping unsafe XML characters: <, >, &, ', "
      escapeChars = (str)  => str.replace(/[&<>"']/g, (ch) => charMap[ch]);
 
-function process(output) {
+function process(template) {
 
     var stack = [];
 
-    each(output, function(str) {
+    each(template, function(str) {
+       
         if (str in operators) {
-            let value = stack.shift();
-            let node = stack.shift();
+       
+       let value = stack.shift(),
+            node = stack.shift();
 
             if (is(node, "string")) {
                 node = [processTag(node)];
@@ -68,14 +70,14 @@ function process(output) {
         stack.unshift(str);
     });
 
-    if (output.length === 1) {
+    if (template.length === 1) {
         // handle single tag case
-        output = processTag(stack[0]);
+        template = processTag(stack[0]);
     } else {
-        output = stack[0].join("");
+        template = stack[0].join("");
     }
 
-    return output;
+    return template;
 }
 
 export { process };
