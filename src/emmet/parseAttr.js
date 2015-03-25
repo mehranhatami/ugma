@@ -1,6 +1,6 @@
 import { is, inArray } from "../helpers";
 
-export function parseAttr(_, name, value, rawValue) {
+function parseAttr(_, name, value, rawValue) {
     // try to detemnie which kind of quotes to use
     var quote = value && inArray(value, "\"") >= 0 ? "'" : "\"";
 
@@ -11,3 +11,5 @@ export function parseAttr(_, name, value, rawValue) {
     }
     return " " + name + "=" + quote + value + quote;
 }
+
+export { parseAttr };

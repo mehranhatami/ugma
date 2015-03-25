@@ -13,14 +13,15 @@ import operators from "../emmet/operators";
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-    badChars = /[&<>"']/g,
     charMap = {
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         "\"": "&quot;",
         "'": "&#039;"
-    };
+    },
+    // filter for escaping unsafe XML characters: <, >, &, ', "
+     escapeChars = (str)  => str.replace(/[&<>"']/g, (ch) => charMap[ch]);
 
 function process(output) {
 
@@ -31,7 +32,7 @@ function process(output) {
             let value = stack.shift();
             let node = stack.shift();
 
-            if (typeof node === "string") {
+            if (is(node, "string")) {
                 node = [processTag(node)];
             }
 
@@ -50,7 +51,7 @@ function process(output) {
             } else if (str === "`") { // Back tick
                 stack.unshift(node);
                 // escape unsafe HTML symbols
-                node = [value.replace(badChars, (ch) => charMap[ch])];
+                node = [escapeChars(value)];
             } else { /* ">", "+", "^" */
                 value = is(value, "string") ? processTag(value) : value.join("");
 

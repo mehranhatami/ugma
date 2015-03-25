@@ -8,19 +8,15 @@ import operators from "../emmet/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
+// Reference: https://github.com/emmetio/emmet
+
 var reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
     reDot = /\./g,
-    badChars = /[&<>"']/g,
-    charMap = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "\"": "&quot;",
-        "'": "&#039;"
-    },
     tagCache = {
         "": ""
     };
+    
+    
 
 ugma.emmet = function(template, varMap) {
 
