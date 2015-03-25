@@ -2,33 +2,14 @@ import { ugma } from "../core";
 import { is, each } from "../helpers";
 import { ERROR_MSG } from "../const";
 import { minErr } from "../minErr";
-
-// emmet parser modules
-import { parseAttr } from "../emmet/parseAttr";
-import { injection } from "../emmet/injection";
-import { processTag } from "../emmet/processTag";
-import { indexing } from "../emmet/indexing";
+// emmet modules
+import { process } from "../emmet/process";
+import operators from "../emmet/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
-var // operator type / priority object
-    operators = {
-        "(": 1,
-        ")": 2,
-        "^": 3,
-        ">": 4,
-        "+": 5,
-        "*": 6,
-        "`": 7,
-        "[": 8,
-        ".": 8,
-        "#": 8
-    },
-    reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-    reAttr = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
+
+var reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
     reDot = /\./g,
-    tagCache = {
-        "": ""
-    },
     badChars = /[&<>"']/g,
     charMap = {
         "&": "&amp;",
@@ -36,6 +17,9 @@ var // operator type / priority object
         ">": "&gt;",
         "\"": "&quot;",
         "'": "&#039;"
+    },
+    tagCache = {
+        "": ""
     };
 
 ugma.emmet = function(template, varMap) {
@@ -91,65 +75,12 @@ ugma.emmet = function(template, varMap) {
 
     output = output.concat(stack);
 
-    // transform RPN into html nodes
-
-    stack = [];
-
-    each(output, function(str) {
-        if (str in operators) {
-            let value = stack.shift();
-            let node = stack.shift();
-
-            if (typeof node === "string") {
-                node = [processTag(node)];
-            }
-
-            if (is(node, "undefined") || is(value, "undefined")) {
-                minErr("emmet()", ERROR_MSG[4]);
-            }
-
-            if (str === ".") { // class
-                value = injection(" class=\"" + value + "\"");
-            } else if (str === "#") { // id
-                value = injection(" id=\"" + value + "\"");
-            } else if (str === "[") { // id
-                value = injection(value.replace(reAttr, parseAttr));
-            } else if (str === "*") { // universal selector 
-                node = indexing(+value, node.join(""));
-            } else if (str === "`") { // Back tick
-                stack.unshift(node);
-                // escape unsafe HTML symbols
-                node = [value.replace(badChars, (ch) => charMap[ch])];
-            } else { /* ">", "+", "^" */
-                value = is(value, "string") ? processTag(value) : value.join("");
-
-                if (str === ">") {
-                    value = injection(value, true);
-                } else {
-                    node.push(value);
-                }
-            }
-
-            str = is(value, "function") ? node.map(value) : node;
-        }
-
-        stack.unshift(str);
-    });
-
-    if (output.length === 1) {
-        // handle single tag case
-        output = processTag(stack[0]);
-    } else {
-        output = stack[0].join("");
-    }
-
-    return output;
+    return process(output);
 };
 
 // populate empty tag names with result
 each("area base br col hr img input link meta param command keygen source".split(" "), (tag) => {
     tagCache[tag] = "<" + tag + ">";
 });
-
 
 export default tagCache;

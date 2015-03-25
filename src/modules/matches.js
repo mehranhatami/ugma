@@ -8,14 +8,10 @@ import pseudoClasses from "../util/pseudoClasses";
 implement({
     // Check if the element matches a selector against an element
     matches(selector) {
-
-        if (selector && is(selector, "string")) {
+        if (!selector || !is(selector, "string")) minErr("matches()", ERROR_MSG[1]);
             // compare a match with CSS pseudos selectors 
             // e.g "link.matches(":enabled") or "link.matches(":checked")
             var checker = pseudoClasses[selector] ||  SelectorMatcher(selector);
             return !!checker(this[0]);
-        }
-       // Throw
-        minErr("matches()", ERROR_MSG[1]);
     }
 }, null, () => RETURN_FALSE);
