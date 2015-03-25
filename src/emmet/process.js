@@ -1,4 +1,3 @@
-import { ugma } from "../core";
 import { is, each } from "../helpers";
 import { ERROR_MSG } from "../const";
 import { minErr } from "../minErr";

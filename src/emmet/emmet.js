@@ -16,17 +16,13 @@ var reParse = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
         "": ""
     };
     
-    
-
 ugma.emmet = function(template, varMap) {
 
     if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
 
     if (varMap) template = ugma.format(template, varMap);
-    // If already cached, return the cached result
+    // If it's already cached, return the cached result
     if (template in tagCache) return tagCache[template];
-
-    // transform template string into RPN
 
     var stack = [],
         output = [],
