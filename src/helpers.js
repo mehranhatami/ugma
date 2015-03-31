@@ -1,5 +1,5 @@
 import { DOCUMENT, WINDOW } from "./const";
-import { Document, nodeTree, Node } from "./core";
+import { domTree, nodeTree, Node } from "./core";
 
  // jshint unused:false
  // Save a reference to some core methods
@@ -135,7 +135,7 @@ import { Document, nodeTree, Node } from "./core";
 
      forOwn(obj, (method, func) => {
          var args = [method].concat(func);
-         (mixin ? nodeTree : Document).prototype[method] = callback.apply(null, args);
+         (mixin ? nodeTree : domTree).prototype[method] = callback.apply(null, args);
 
          if (mixin) {
              Node.prototype[method] = mixin.apply(null, args);

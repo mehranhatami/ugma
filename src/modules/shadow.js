@@ -1,6 +1,6 @@
 import { implement } from "../helpers";
 import { WINDOW, INTERNET_EXPLORER, RETURN_FALSE } from "../const";
-import { Document, ugma } from "../core";
+import { domTree, ugma } from "../core";
 
     // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
     // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
@@ -56,7 +56,7 @@ implement({
                 ctx.css("position", "relative");
             }
             // store new context root internally and invoke callback
-            callback(data[1] = new Document(object.contentDocument));
+            callback(data[1] = new domTree(object.contentDocument));
         };
 
         this.before(ctx);

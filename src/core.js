@@ -2,7 +2,7 @@
 
 import { forOwn } from "./helpers";
 
-var nodeTree, Node, Document;
+var nodeTree, Node, domTree;
 
 function uClass() {
     let len = arguments.length,
@@ -72,7 +72,7 @@ nodeTree = uClass({
         toString() { return "<" + this[0].tagName.toLowerCase() + ">" }
 });
 
-Document = uClass(nodeTree, {
+domTree = uClass(nodeTree, {
     constructor: function(node) {
         return nodeTree.call(this, node.documentElement);
     },
@@ -85,6 +85,6 @@ Node = uClass(nodeTree, {
 });
 
 // Set a new document, and define a local copy of ugma
-var ugma = new Document(document);
+var ugma = new domTree(document);
 
-export { nodeTree, Node, Document, ugma };
+export { nodeTree, Node, domTree, ugma };
