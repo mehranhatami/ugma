@@ -17,9 +17,8 @@ implement({
         unsubscribe(name, callback) {
             var subscription = this._._subscription;
 
-            if (subscription[name]) {
-                subscription[name] = filter(subscription[name], (cb) => cb !== callback);
-            }
+            if (subscription[name]) subscription[name] = filter(subscription[name], (cb) => cb !== callback);
+
             return this;
         }
 }, null, () => RETURN_THIS);

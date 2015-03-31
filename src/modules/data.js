@@ -13,9 +13,7 @@ implement({
                 var data = this._;
                 // If no data was found internally, try to fetch any
                 // data from the HTML5 data-* attribute
-                if (!(key in data)) {
-                    data[key] = dataAttr(this[0], "data-" + key);
-                }
+                if (!(key in data)) data[key] = dataAttr(this[0], "data-" + key);
 
                 return data[key];
                 // Sets multiple values

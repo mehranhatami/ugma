@@ -37,7 +37,6 @@ implement({
         type = parts[0] || null;
         namespace = parts[1] || null;
 
-
         this._._events = filter(this._._events, (handler) => {
 
             if (type !== handler.type ||

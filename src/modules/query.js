@@ -55,7 +55,9 @@ implement({
     var node = this[0],
         quickMatch = rquick.exec(selector),
         result, old, nid, context;
+    
     if (quickMatch) {
+    
         if (quickMatch[1]) {
             // speed-up: "TAG"
             result = node.getElementsByTagName(selector);
@@ -64,6 +66,7 @@ implement({
             result = node.getElementsByClassName(quickMatch[2]);
         }
         if (result && !all) result = result[0];
+    
     } else {
 
         if (node !== node.ownerDocument.documentElement) {
@@ -73,6 +76,6 @@ implement({
         }
     }
 
-
     return all ? map(result, nodeTree) : nodeTree(result);
+    
 }, (methodName, all) => () => all ? [] : new dummyTree());

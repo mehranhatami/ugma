@@ -50,24 +50,18 @@ import { adjustCSS } from "../util/adjustCSS";
          if (len === 2 && is(name, "string")) {
              var ret, setter = cssHooks.set[name] || cssHooks._default(name, style);
 
-             if (is(value, "function")) {
-                 value = value(this);
-             }
+             if (is(value, "function")) value = value(this);
 
              if (value == null) value = "";
 
              // Convert '+=' or '-=' to relative numbers
              if (value !== "" && (ret = RCSSNUM.exec(value)) && ret[1]) {
 
-                 if (!computed) {
-                     computed = computeStyle(node);
-                 }
+                 if (!computed) computed = computeStyle(node);
 
                  value = adjustCSS(this, setter, ret, computed);
 
-                 if (ret && ret[3]) {
-                     value += ret[3];
-                 }
+                 if (ret && ret[3]) value += ret[3];
              }
 
              if (is(setter, "function")) {
@@ -86,10 +80,8 @@ import { adjustCSS } from "../util/adjustCSS";
          return this;
      }
  }, null, () => function(name) {
-     if (arguments.length === 1 && isArray(name)) {
-         return {};
-     }
-     if (arguments.length !== 1 || !is(name, "string")) {
-         return this;
-     }
+
+     if (arguments.length === 1 && isArray(name)) return {};
+
+     if (arguments.length !== 1 || !is(name, "string")) return this;
  });

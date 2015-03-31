@@ -113,7 +113,6 @@ var each = (arr, callback) => {
         try {
             return fn.call(context, arg1, arg2);
         } catch (err) {
-            /* istanbul ignore next */
             WINDOW.setTimeout(() => {
                 throw err;
             }, 1);
@@ -121,24 +120,17 @@ var each = (arr, callback) => {
             return false;
         }
     },
-    // internal method to extend our uClass with methods - either 
-    // Element prototype or Document prototype
-
+    // internal method to extend ugma with methods - either 
+    // the nodeTree or the domTree
     implement = (obj, callback, mixin) => {
 
-        if (!callback) {
-            callback = function(method, strategy) {
-                return strategy;
-            };
-        }
+        if (!callback) callback = (method, strategy)  => strategy;
 
         forOwn(obj, (method, func) => {
             var args = [method].concat(func);
             (mixin ? nodeTree : domTree).prototype[method] = callback.apply(null, args);
 
-            if (mixin) {
-                dummyTree.prototype[method] = mixin.apply(null, args);
-            }
+            if (mixin) dummyTree.prototype[method] = mixin.apply(null, args);
         });
     },
 
@@ -180,9 +172,7 @@ var each = (arr, callback) => {
     },
 
     injectElement = (node) => {
-        if (node && node.nodeType === 1) {
-            return node.ownerDocument.head.appendChild(node);
-        }
+        if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild(node);
     };
 
 export { each, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };
