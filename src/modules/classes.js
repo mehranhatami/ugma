@@ -65,8 +65,6 @@ implement({
 
             if (!is(token, "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
 
-
-
             return strategy(this, trim(token));
         };
     } else {

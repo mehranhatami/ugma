@@ -5,7 +5,7 @@ import { dataAttr } from "../util/dataAttr";
 import accessorhooks from "../util/accessorhooks";
 
 implement({
-    // Get property or attribute value by name
+    // Get HTML5 Custom Data Attributes, property or attribute value by name
     get(name) {
         var node = this[0],
             hook = accessorhooks.get[name];
@@ -14,11 +14,15 @@ implement({
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
+
+            // if HTML5 Custom Data Attributes (data-*), try to fetch the
+            // data from the HTML5 data-* attribute
             if (/^data-/.test(name)) {
                 return dataAttr(node, name);
+                // properties
             } else if (name in node) {
                 return node[name];
-                // get attribute
+                // attributes
             } else {
                 return node.getAttribute(name);
             }
@@ -34,4 +38,4 @@ implement({
             minErr("get()", ERROR_MSG[4]);
         }
     }
-}, null, () => function() {});
+}, null, () => () => {});

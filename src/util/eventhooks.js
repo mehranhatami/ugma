@@ -1,48 +1,24 @@
 import { DOCUMENT, WINDOW, INTERNET_EXPLORER } from "../const";
 import { ugma } from "../core";
-import { each, forOwn } from "../helpers";
+import { each } from "../helpers";
 import { DebouncedWrapper } from "../util/DebouncedWrapper";
 
 var eventHooks = {};
 
-// Create mouseenter/leave events using mouseover/out and event-time checks
-// Support: Chrome 15+
-forOwn({
-    "mouseenter": "mouseover",
-    "mouseleave": "mouseout"
-}, function(original, fixed) {
-    eventHooks[original] = function(handler) {
-        // FIXME! It's working, but need to be re-factored
-        handler._type = fixed;
-        handler.capturing = false;
-    };
-});
-
-// Support: IE10+
-// IE9 doesn't have native rAF, so skip frameevents for
-// that browser
-if (!INTERNET_EXPLORER || INTERNET_EXPLORER > 9) {
-    // Special events for the frame events 'hook'
+ // Special events for the frame events 'hook'
     each(("touchmove mousewheel scroll mousemove drag").split(" "), function(name) {
         eventHooks[name] = DebouncedWrapper;
     });
-}
+
 // Support: Firefox, Chrome, Safari
 // Create 'bubbling' focus and blur events
 
-/* istanbul ignore if */
 if ("onfocusin" in DOCUMENT.documentElement) {
-    eventHooks.focus = (handler) => {
-        handler._type = "focusin";
-    };
-    eventHooks.blur = (handler) => {
-        handler._type = "focusout";
-    };
+    eventHooks.focus = (handler) => { handler._type = "focusin" };
+    eventHooks.blur = (handler) => { handler._type = "focusout" };
 } else {
     // firefox doesn't support focusin/focusout events
-    eventHooks.focus = eventHooks.blur = (handler) => {
-        handler.capturing = true;
-    };
+    eventHooks.focus = eventHooks.blur = (handler) => { handler.capturing = true };
 }
 /* istanbul ignore else */
 if (DOCUMENT.createElement("input").validity) {
