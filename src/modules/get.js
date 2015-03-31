@@ -19,10 +19,10 @@ implement({
             // data from the HTML5 data-* attribute
             if (/^data-/.test(name)) {
                 return dataAttr(node, name);
-                // properties
+                // If no DOM object property method is present... 
             } else if (name in node) {
                 return node[name];
-                // attributes
+               //... fallback to the getAttribute method
             } else {
                 return node.getAttribute(name);
             }

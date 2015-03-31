@@ -101,7 +101,9 @@ each(BOOLS, function(key) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
     accessorHooks.set[key.toLowerCase()] = (node, value) => {
+      // If the user is setting the value to false, completely remove the attribute
         node[key] = !!value ? true : false;
+        // // otherwise set the attribute value
         node[!!value ? "setAttribute" : "removeAttribute"](value);
     };
 });
