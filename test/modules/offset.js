@@ -16,13 +16,6 @@ describe("offset", function() {
         expect(result.left).toBe(0);
     });
 
-    it("should return nothing on disconnected node", function() {
-      // Simulates a browser without gBCR on elements, we just want to return 0,0,0,0
-  	  var result = ugma.native( document.createElement("div") ).offset();
-        expect(result).not.toBeDefined();
-    });
-
-  
     it("should return object with valid properties", function() {
         var offset = link.offset();
 
