@@ -6,7 +6,7 @@ import { DebouncedWrapper } from "../util/DebouncedWrapper";
 var eventHooks = {};
 
  // Special events for the frame events 'hook'
-    each(("touchmove mousewheel scroll mousemove drag").split(" "), function(name) {
+    each(("touchmove mousewheel scroll mousemove drag").split(" "), (name) => {
         eventHooks[name] = DebouncedWrapper;
     });
 
@@ -34,7 +34,7 @@ if (INTERNET_EXPLORER < 10) {
     // IE9 doesn't fire oninput when text is deleted, so use
     // onselectionchange event to detect such cases
     // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-    DOCUMENT.attachEvent("onselectionchange", function() {
+    DOCUMENT.attachEvent("onselectionchange", () => {
         if (capturedNode && capturedNode.value !== capturedNodeValue) {
             capturedNodeValue = capturedNode.value;
             // trigger custom event that capture
@@ -43,7 +43,7 @@ if (INTERNET_EXPLORER < 10) {
     });
 
     // input event fix via propertychange
-    DOCUMENT.attachEvent("onfocusin", function() {
+    DOCUMENT.attachEvent("onfocusin", () => {
         capturedNode = WINDOW.event.srcElement;
         capturedNodeValue = capturedNode.value;
     });
