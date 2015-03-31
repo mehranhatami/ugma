@@ -41,8 +41,8 @@ describe("set", function() {
       checkbox.set("checked", "lala");
       expect(checkbox.get("checked")).toBe(true);
 
-      checkbox.set("checked", null);
-      expect(checkbox.get("checked")).toBe(false);
+      
+      expect(checkbox.set("checked", null)).not.toHaveAttr("checked");
     });
 
     it("should return reference to 'this'", function() {
