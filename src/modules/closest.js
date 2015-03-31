@@ -14,16 +14,14 @@ implement({
 
         var matches = SelectorMatcher(selector),
             parentNode = this[0];
-
+        
+        // document has no .matches
         if (!matches) {
             parentNode = parentNode.parentElement;
         }
 
         for (; parentNode; parentNode = parentNode.parentElement) {
-            if (parentNode.nodeType === 1 && 
-               ( // document has no .matches 
-                !matches || 
-                matches(parentNode))) {
+            if (parentNode.nodeType === 1 && (!matches || matches(parentNode))) {
                 break;
             }
         }

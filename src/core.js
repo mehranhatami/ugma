@@ -69,18 +69,23 @@ nodeTree = uClass({
         version: "<%= pkg.version %>",
         // returns current running codename on this build
         codename: "<%= pkg.codename %>",
-        toString() { return "<" + this[0].tagName.toLowerCase() + ">" }
+        toString() { return "<" + this[0].tagName.toLowerCase() + ">"},
+
+        // Create a ugma wrapper object for a native DOM element or a
+        // jQuery element. E.g. (ugma.native($('#foo')[0]))
+        native(node) {
+            var nodeType = node && node.nodeType;
+            return (nodeType === 9 ? domTree : nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
+        }
 });
 
 domTree = uClass(nodeTree, {
-    constructor: function(node) {
-        return nodeTree.call(this, node.documentElement);
-    },
-    toString() { return "#document" }
+    constructor(node) { return nodeTree.call(this, node.documentElement) },
+    toString() { return "#document"}
 });
 
 dummyTree = uClass(nodeTree, {
-    constructor: function() {},
+    constructor() {},
     toString() { return "" }
 });
 
