@@ -1,4 +1,4 @@
-import { Element, Node } from "../core";
+import { nodeTree, Node } from "../core";
 import SelectorMatcher from "../util/selectormatcher";
 import { ERROR_MSG } from "../const";
 import { implement, is } from "../helpers";
@@ -28,6 +28,6 @@ implement({
             }
         }
 
-        return Element(parentNode);
+        return nodeTree(parentNode);
     }
 }, null, () => () => new Node());

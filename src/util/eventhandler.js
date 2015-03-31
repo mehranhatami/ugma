@@ -1,6 +1,6 @@
 import { slice, map, is } from "../helpers";
 import { WINDOW } from "../const";
-import { Element } from "../core";
+import { nodeTree } from "../core";
 import SelectorMatcher from "./selectormatcher";
 import eventhooks from "./eventhooks";
 
@@ -15,9 +15,9 @@ function getEventProperty(name, e, type, node, target, currentTarget) {
 
     if (name === "type")               return type;
     if (name === "defaultPrevented")   return e.defaultPrevented;
-    if (name === "target")             return Element(target);
-    if (name === "currentTarget")      return Element(currentTarget);
-    if (name === "relatedTarget")      return Element(e.relatedTarget);
+    if (name === "target")             return nodeTree(target);
+    if (name === "currentTarget")      return nodeTree(currentTarget);
+    if (name === "relatedTarget")      return nodeTree(e.relatedTarget);
 
     var value = e[name];
 

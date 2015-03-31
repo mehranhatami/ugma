@@ -1,6 +1,6 @@
 import { implement } from "../helpers";
 import { minErr } from "../minErr";
-import { Element } from "../core";
+import { nodeTree } from "../core";
 import { RETURN_FALSE } from "../const";
 
 implement({
@@ -13,7 +13,7 @@ implement({
         var reference = this[0],
             nodeType = other.nodeType;
 
-        if (other instanceof Element ||
+        if (other instanceof nodeTree ||
            (other && nodeType === 1)) {
 
             other = (nodeType === 1) ? other : other[0];

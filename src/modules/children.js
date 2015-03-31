@@ -1,12 +1,12 @@
 import { minErr } from "../minErr";
-import { Element, Node } from "../core";
+import { nodeTree, Node } from "../core";
 import SelectorMatcher from "../util/selectormatcher";
 import { implement, map, filter, is } from "../helpers";
 
 implement({
-        // returns the first child node in a collection of children
+    // returns the first child node in a collection of children
     child: false,
-        // returns all child nodes in a collection of children
+    // returns all child nodes in a collection of children
     children: true
 
 }, (methodName, all) => function(selector) {
@@ -21,10 +21,10 @@ implement({
     if (all) {
         if (matcher) children = filter(children, matcher);
 
-        return map(children, Element);
+        return map(children, nodeTree);
     } else {
         if (selector < 0) selector = children.length + selector;
 
-        return Element(children[selector]);
+        return nodeTree(children[selector]);
     }
 }, (methodName, all) => () => all ? [] : new Node());

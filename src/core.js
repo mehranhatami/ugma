@@ -2,7 +2,7 @@
 
 import { forOwn } from "./helpers";
 
-var Element, Node, Document;
+var nodeTree, Node, Document;
 
 function uClass() {
     let len = arguments.length,
@@ -48,7 +48,7 @@ function uClass() {
     return Class;
 }
 
-Element = uClass({
+nodeTree = uClass({
     constructor(node) {
 
             if (this) {
@@ -62,7 +62,7 @@ Element = uClass({
                 }
             } else {
                 // create a wrapper only once for each native element
-                return node ? node["<%= pkg.codename %>"] || new Element(node) : new Node();
+                return node ? node["<%= pkg.codename %>"] || new nodeTree(node) : new Node();
             }
         },
         // returns current running version
@@ -72,14 +72,14 @@ Element = uClass({
         toString() { return "<" + this[0].tagName.toLowerCase() + ">" }
 });
 
-Document = uClass(Element, {
+Document = uClass(nodeTree, {
     constructor: function(node) {
-        return Element.call(this, node.documentElement);
+        return nodeTree.call(this, node.documentElement);
     },
     toString() { return "#document" }
 });
 
-Node = uClass(Element, {
+Node = uClass(nodeTree, {
     constructor: function() {},
     toString() { return "" }
 });
@@ -87,4 +87,4 @@ Node = uClass(Element, {
 // Set a new document, and define a local copy of ugma
 var ugma = new Document(document);
 
-export { Element, Node, Document, ugma };
+export { nodeTree, Node, Document, ugma };

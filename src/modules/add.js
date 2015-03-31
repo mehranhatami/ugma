@@ -1,13 +1,13 @@
 import { ERROR_MSG } from "../const";
 import { minErr } from "../minErr";
-import { ugma, Element } from "../core";
+import { ugma, nodeTree } from "../core";
 import tagCache from "../emmet/emmet";
 import { implement, reduce, is, trim } from "../helpers";
 
 implement({
-    // Create a new Element from Emmet or HTML string in memory
+    // Create a new nodeTree from Emmet or HTML string in memory
     add: "",
-    // Create a new array of Element from Emmet or HTML string in memory
+    // Create a new array of nodeTree from Emmet or HTML string in memory
     addAll: "All"
 
 }, (methodName, all) => function(value, varMap) {
@@ -23,7 +23,7 @@ implement({
 
             nodes = doc.createElement(value);
 
-            if (all) nodes = [new Element(nodes)];
+            if (all) nodes = [new nodeTree(nodes)];
         } else {
             value = trim(value);
             // handle vanila HTML strings
@@ -48,17 +48,17 @@ implement({
                     sandbox.removeChild(el); // detach element from the sandbox
 
                     if (el.nodeType === 1) {
-                        nodes.push(new Element(el));
+                        nodes.push(new nodeTree(el));
                     }
                 }
             }
         }
-        return all ? nodes : Element(nodes);
+        return all ? nodes : nodeTree(nodes);
     }
 
     if (value.nodeType !== 1) {
         minErr("add()", "Not supported");
     }
 
-    return Element(value);
+    return nodeTree(value);
 });

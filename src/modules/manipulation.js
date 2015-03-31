@@ -1,5 +1,5 @@
 import { RETURN_THIS } from "../const";
-import { ugma, Element } from "../core";
+import { ugma, nodeTree } from "../core";
 import { minErr } from "../minErr";
 import { implement, isArray, trim, each, is, sliceArgs } from "../helpers";
 
@@ -55,7 +55,7 @@ implement({
         // Handle native DOM elements 
         // e.g. link.append(document.createElement('li'));
         if (native && content.nodeType === 1) {
-            content = Element(content);
+            content = nodeTree(content);
         }
 
         if (is(content, "function")) {

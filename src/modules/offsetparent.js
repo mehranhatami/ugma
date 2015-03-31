@@ -1,5 +1,5 @@
 import { implement } from "../helpers";
-import { Element } from "../core";
+import { nodeTree } from "../core";
 import { RETURN_FALSE, HTML } from "../const";
 
 implement({
@@ -18,12 +18,12 @@ implement({
             offsetParent = node.offsetParent || HTML,
             isInline = this.css("display") === "inline";
         if (!isInline && offsetParent) {
-            return Element(offsetParent);
+            return nodeTree(offsetParent);
         }
-        while (offsetParent && Element(offsetParent).css("position") === "static") {
+        while (offsetParent && nodeTree(offsetParent).css("position") === "static") {
             offsetParent = offsetParent.offsetParent;
         }
 
-        return Element(offsetParent);
+        return nodeTree(offsetParent);
     }
 }, null, () => RETURN_FALSE);

@@ -1,5 +1,5 @@
 import { DOCUMENT, WINDOW } from "./const";
-import { Document, Element, Node } from "./core";
+import { Document, nodeTree, Node } from "./core";
 
  // jshint unused:false
  // Save a reference to some core methods
@@ -78,10 +78,6 @@ import { Document, Element, Node } from "./core";
          typeof obj === type;
  }
 
- export function isSVG(variable) {
-     return WINDOW.SVGElement && (variable instanceof WINDOW.SVGElement);
- }
-
  // Support: Android<4.1
  // Make sure we trim BOM and NBSP
  var atrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
@@ -139,7 +135,7 @@ import { Document, Element, Node } from "./core";
 
      forOwn(obj, (method, func) => {
          var args = [method].concat(func);
-         (mixin ? Element : Document).prototype[method] = callback.apply(null, args);
+         (mixin ? nodeTree : Document).prototype[method] = callback.apply(null, args);
 
          if (mixin) {
              Node.prototype[method] = mixin.apply(null, args);
