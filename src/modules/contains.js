@@ -8,23 +8,20 @@ implement({
     // context object, and false otherwise (including when other is null).
     //
     // Reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
-    contains(other) {
-        // let reference be the context object.
-        var reference = this[0],
-            nodeType = other.nodeType;
+    contains(element) {
+        var reference = this[0];
 
-        if (other instanceof nodeTree ||
-           (other && nodeType === 1)) {
-
-            other = (nodeType === 1) ? other : other[0];
+        if (element instanceof nodeTree) {
+            var otherNode = element[0];
 
             // If other and reference are the same object, return zero.
-            if (other === reference) return 0;
-
-            return reference.contains ?
-                reference.contains(other) !== null :
-                !!(reference.compareDocumentPosition(other) & 16);
+            if (reference === otherNode) {
+                return 0;
+            }
+            return !!(element instanceof nodeTree &&
+                (reference === otherNode || reference.compareDocumentPosition(otherNode) & 16));
         }
+
         minErr("contains()", "Comparing position against non-Node values is not allowed.");
     }
 }, null, () => RETURN_FALSE);
