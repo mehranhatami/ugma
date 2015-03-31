@@ -8,19 +8,16 @@ describe("clear", function() {
         link = ugma.query("#test");
     });
 
-    it("should read boolean values", function() {
+    it("should clear attributes / properties", function() {
 
         it("should clear attribute", function() {
             expect(link.clear("id")).not.toHaveAttr("id");
             expect(link.clear("href")).not.toHaveAttr("href");
         });
 
-
-        it("should empty the html inside an element", function() {
-            expect(ugma.add("div").set({
-                innerHTML: "<p>foo bar</p>"
-            }).clear("innerHTML")[0].innerHTML).toEqual("");
+        it("should set and clear checked boolean attribute", function() {
+            expect(link.set("checked", "checked")).toHaveAttr("checked");
+            expect(link.clear("checked")).not.toHaveAttr("checked");
         });
-
     });
 });
