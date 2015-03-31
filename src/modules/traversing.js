@@ -1,4 +1,4 @@
-import { nodeTree, Node } from "../core";
+import { nodeTree, dummyTree } from "../core";
 import SelectorMatcher from "../util/selectormatcher";
 import { ERROR_MSG } from "../const";
 import { implement, is, map } from "../helpers";
@@ -36,4 +36,4 @@ implement({
     }
 
     return all ? map(descendants, nodeTree) : nodeTree(currentNode);
-}, (methodName) => () => methodName.slice(-3) === "All" ? [] : new Node());
+}, (methodName) => () => methodName.slice(-3) === "All" ? [] : new dummyTree());

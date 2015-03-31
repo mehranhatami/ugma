@@ -1,5 +1,5 @@
 import { minErr } from "../minErr";
-import { nodeTree, Node } from "../core";
+import { nodeTree, dummyTree } from "../core";
 import SelectorMatcher from "../util/selectormatcher";
 import { implement, map, filter, is } from "../helpers";
 
@@ -27,4 +27,4 @@ implement({
 
         return nodeTree(children[selector]);
     }
-}, (methodName, all) => () => all ? [] : new Node());
+}, (methodName, all) => () => all ? [] : new dummyTree());

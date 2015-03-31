@@ -2,7 +2,7 @@
 
 import { forOwn } from "./helpers";
 
-var nodeTree, Node, domTree;
+var nodeTree, dummyTree, domTree;
 
 function uClass() {
     let len = arguments.length,
@@ -62,7 +62,7 @@ nodeTree = uClass({
                 }
             } else {
                 // create a wrapper only once for each native element
-                return node ? node["<%= pkg.codename %>"] || new nodeTree(node) : new Node();
+                return node ? node["<%= pkg.codename %>"] || new nodeTree(node) : new dummyTree();
             }
         },
         // returns current running version
@@ -79,7 +79,7 @@ domTree = uClass(nodeTree, {
     toString() { return "#document" }
 });
 
-Node = uClass(nodeTree, {
+dummyTree = uClass(nodeTree, {
     constructor: function() {},
     toString() { return "" }
 });
@@ -87,4 +87,4 @@ Node = uClass(nodeTree, {
 // Set a new document, and define a local copy of ugma
 var ugma = new domTree(document);
 
-export { nodeTree, Node, domTree, ugma };
+export { nodeTree, dummyTree, domTree, ugma };

@@ -1,5 +1,5 @@
 import { DOCUMENT, ugma, ERROR_MSG, HTML } from "../const";
-import { nodeTree, Node } from "../core";
+import { nodeTree, dummyTree } from "../core";
 import { minErr } from "../minErr";
 import { is, map, implement, invoke } from "../helpers";
 
@@ -75,4 +75,4 @@ implement({
 
 
     return all ? map(result, nodeTree) : nodeTree(result);
-}, (methodName, all) => () => all ? [] : new Node());
+}, (methodName, all) => () => all ? [] : new dummyTree());

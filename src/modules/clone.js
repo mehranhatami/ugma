@@ -1,5 +1,5 @@
 import { ugma } from "../const";
-import { nodeTree, Node } from "../core";
+import { nodeTree, dummyTree } from "../core";
 import { minErr } from "../minErr";
 import { implement, is } from "../helpers";
 
@@ -12,4 +12,4 @@ implement({
         if (!is(deep, "boolean")) minErr("clone()", "The object can not be cloned.");
         return new nodeTree(this[0].cloneNode(deep));
     }
-}, null, () => () => new Node());
+}, null, () => () => new dummyTree());
