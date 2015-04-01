@@ -65,9 +65,6 @@ nodeTree = uClass({
                 return node ? node[ "<%= pkg.codename %>" ] || new nodeTree( node ) : new dummyTree();
             }
         },
-        // Current version of the library. Keep in sync with `package.json`.
-        version: "<%= pkg.version %>",
-        codename: "<%= pkg.codename %>",
         toString() { return "<" + this[ 0 ].tagName + ">" },
 
         // Create a ugma wrapper object for a native DOM element or a
