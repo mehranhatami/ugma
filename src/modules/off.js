@@ -1,7 +1,7 @@
-import { RETURN_THIS, ERROR_MSG } from "../const";
-import { ugma } from "../core";
-import { implement, is, filter } from "../helpers";
-import { minErr } from "../minErr";
+import { RETURN_THIS, ERROR_MSG   } from "../const";
+import { ugma                     } from "../core";
+import { implement, is, filter    } from "../helpers";
+import { minErr                   } from "../minErr";
 
 implement({
 
@@ -21,7 +21,7 @@ implement({
             namespace,
             handlers,
 
-            removeHandler = (handler) => {
+            removeHandler = ( handler ) => {
 
                 // Cancel previous frame if it exists
                 if (self._._raf) {
@@ -34,8 +34,8 @@ implement({
             };
 
         parts = type.split(".");
-        type = parts[0] || null;
-        namespace = parts[1] || null;
+        type = parts[ 0 ] || null;
+        namespace = parts[ 1 ] || null;
 
         this._._events = filter(this._._events, (handler) => {
 

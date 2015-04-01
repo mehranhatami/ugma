@@ -1,11 +1,11 @@
-import { DOCUMENT, ugma, ERROR_MSG, HTML } from "../const";
-import { nodeTree, dummyTree } from "../core";
-import { minErr } from "../minErr";
-import { is, map, implement, invoke } from "../helpers";
+import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
+import { nodeTree, dummyTree               } from "../core";
+import { minErr                            } from "../minErr";
+import { is, map, implement, invoke        } from "../helpers";
 
-var rsibling = /[\x20\t\r\n\f]*[+~>]/,
-    rquick = DOCUMENT.getElementsByClassName ? /^(?:(\w+)|\.([\w\-]+))$/ : /^(?:(\w+))$/,
-    rescape = /'|\\/g;
+var siblings = /[\x20\t\r\n\f]*[+~>]/,
+    fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
+    rescape  = /'|\\/g;
 
 implement({
     // Find the first matched element by css selector
@@ -17,7 +17,7 @@ implement({
     if (typeof selector !== "string") minErr();
 
     var node = this[ 0 ],
-        quickMatch = rquick.exec(selector),
+        quickMatch = fasting.exec(selector),
         result, old, nid, context;
 
     if (quickMatch) {
@@ -29,7 +29,8 @@ implement({
             result = node.getElementsByClassName( quickMatch[ 2 ] );
         }
 
-        if (result && !all) result = result[ 0 ];
+        if ( result && !all ) result = result[ 0 ];
+        
     } else {
         old = true;
         context = node;
@@ -47,7 +48,7 @@ implement({
 
             nid = "[id='" + nid + "'] ";
             
-            context = rsibling.test(selector) ? node.parentNode : node;
+            context = siblings.test(selector) ? node.parentNode : node;
             
             selector = nid + selector.split(",").join("," + nid);
         }

@@ -1,12 +1,12 @@
-import { DOCUMENT, WINDOW, INTERNET_EXPLORER } from "../const";
-import { ugma } from "../core";
-import { each } from "../helpers";
-import { DebouncedWrapper } from "../util/DebouncedWrapper";
+import { DOCUMENT, WINDOW, INTERNET_EXPLORER  } from "../const";
+import { ugma                                 } from "../core";
+import { each                                 } from "../helpers";
+import { DebouncedWrapper                     } from "../util/DebouncedWrapper";
 
 var eventHooks = {};
 
  // Special events for the frame events 'hook'
-    each(("touchmove mousewheel scroll mousemove drag").split(" "), (name) => {
+    each(("touchmove mousewheel scroll mousemove drag").split(" "), ( name ) => {
         eventHooks[name] = DebouncedWrapper;
     });
 
@@ -14,8 +14,8 @@ var eventHooks = {};
 // Create 'bubbling' focus and blur events
 
 if ("onfocusin" in DOCUMENT.documentElement) {
-    eventHooks.focus = (handler) => { handler._type = "focusin" };
-    eventHooks.blur = (handler) => { handler._type = "focusout" };
+    eventHooks.focus = ( handler ) => { handler._type = "focusin" };
+    eventHooks.blur = ( handler ) => { handler._type = "focusout" };
 } else {
     // firefox doesn't support focusin/focusout events
     eventHooks.focus = eventHooks.blur = (handler) => { handler.capturing = true };

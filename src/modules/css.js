@@ -1,16 +1,16 @@
-import { ERROR_MSG, RCSSNUM } from "../const";
-import { implement, isArray, computeStyle, is, map, forOwn, each } from "../helpers";
-import { minErr } from "../minErr";
-import cssHooks from "../util/csshooks";
-import { adjustCSS } from "../util/adjustCSS";
+import { ERROR_MSG, RCSSNUM                                       } from "../const";
+import { implement, isArray, computeStyle, is, map, forOwn, each  } from "../helpers";
+import { minErr                                                   } from "../minErr";
+import   cssHooks                                                   from "../util/csshooks";
+import { adjustCSS                                                } from "../util/adjustCSS";
 
  implement({
      //Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
      css(name, value) {
          
          var len = arguments.length,
-             node = this[0],
-             pseudoElement = value && value[0] === ":",
+             node = this[ 0 ],
+             pseudoElement = value && value[ 0 ] === ":",
              style = node.style,
              computed;
 
@@ -34,7 +34,7 @@ import { adjustCSS } from "../util/adjustCSS";
                  return value;
              };
 
-             if (is(name, "string")) {
+             if ( is(name, "string") ) {
 
                  return getValue(name);
 
@@ -47,21 +47,21 @@ import { adjustCSS } from "../util/adjustCSS";
              }
          }
 
-         if (len === 2 && is(name, "string")) {
+         if ( len === 2 && is(name, "string") ) {
              var ret, setter = cssHooks.set[name] || cssHooks._default(name, style);
 
              if (is(value, "function")) value = value(this);
 
-             if (value == null) value = "";
+             if ( value == null ) value = "";
 
              // Convert '+=' or '-=' to relative numbers
-             if (value !== "" && (ret = RCSSNUM.exec(value)) && ret[1]) {
+             if (value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ]) {
 
                  if (!computed) computed = computeStyle(node);
 
-                 value = adjustCSS(this, setter, ret, computed);
+                 value = adjustCSS( this, setter, ret, computed );
 
-                 if (ret && ret[3]) value += ret[3];
+                 if (ret && ret[ 3 ]) value += ret[ 3 ];
              }
 
              if (is(setter, "function")) {
@@ -70,11 +70,13 @@ import { adjustCSS } from "../util/adjustCSS";
                  style[setter] = is(value, "number") ? value + "px" : value + ""; // cast to string; 
              }
          } else if (len === 1 && name && is(name, "object")) {
+             
              forOwn(name, (key, value) => {
                  this.css(key, value);
              });
+             
          } else {
-             minErr("css()", ERROR_MSG[4]);
+             minErr("css()", ERROR_MSG[ 4 ]);
          }
 
          return this;

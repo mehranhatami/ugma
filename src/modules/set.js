@@ -1,9 +1,9 @@
-import { implement, invoke, isArray, each, is, forOwn } from "../helpers";
-import { minErr } from "../minErr";
-import { ERROR_MSG, RETURN_THIS } from "../const";
-import accessorhooks from "../util/accessorhooks";
+import { implement, invoke, isArray, each, is, forOwn  } from "../helpers";
+import { minErr                                        } from "../minErr";
+import { ERROR_MSG, RETURN_THIS                        } from "../const";
+import   accessorhooks                                   from "../util/accessorhooks";
 
-function getTagName(node) {
+function getTagName( node ) {
     var tag = node.tagName;
     return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
 }
@@ -12,10 +12,10 @@ implement({
     // Set  erty/attribute value by name
     set(name, value) {
 
-        var node = this[0];
+        var node = this[ 0 ];
 
         if (arguments.length === 1) {
-            if (is(name, "function")) {
+            if ( is(name, "function") ) {
                 value = name;
             } else {
                 value = name == null ? "" : name + "";
@@ -23,7 +23,7 @@ implement({
 
             if (value !== "[object Object]") {
 
-                if (getTagName(node)) {
+                if (getTagName( node )) {
                     name = "value";
                 } else {
                     name = "innerHTML";
@@ -32,34 +32,34 @@ implement({
         }
 
         var hook = accessorhooks.set[name],
-            subscription = (this._._subscription || {})[name],
+            subscription = ( this._._subscription || {} )[ name ],
             previousValue;
 
         // grab the previous value if it's already a subscription on this attribute / property,
         if (subscription) {
-            previousValue = this.get(name);
+            previousValue = this.get( name );
         }
 
         if (is(name, "string")) {
             
             if (is(value, "function")) {
-                value = value(this);
+                value = value( this );
             }
 
             if (hook) {
                 hook(node, value);
             } else if (value == null) {
                 // removes an attribute from an HTML element.
-                node.removeAttribute(name || name.toLowerCase());
+                node.removeAttribute( name || name.toLowerCase() );
             } else if (name in node) {
-                node[name] = value;
+                node[ name ] = value;
             } else {
                 // node's attribute
-                node.setAttribute(name, value);
+                node.setAttribute( name, value );
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
-        } else if (isArray(name)) {
+        } else if (isArray( name )) {
             each(name, (key) => { this.set(key, value) });
             //	Set multiple values at once:
             //  e.g
@@ -68,14 +68,14 @@ implement({
             //	    "tabIndex": -1
             //		});
         } else if (is(name, "object")) {
-            forOwn(name, (key, value) => { this.set(key, name[key]) });
+            forOwn(name, (key, value) => { this.set(key, name[ key ]) });
         } else {
-            minErr("set()", ERROR_MSG[6]);
+            minErr("set()", ERROR_MSG[ 6 ]);
         }
 
         if (subscription && previousValue !== value) {
             // Trigger all relevant attribute / nameerty changes.
-            each(subscription, (w) => { invoke(this, w, value, previousValue) });
+            each(subscription, ( cb ) => { invoke(this, cb, value, previousValue) });
         }
 
         return this;

@@ -1,11 +1,11 @@
 import { implement } from "../helpers";
-import { WINDOW } from "../const";
+import { WINDOW    } from "../const";
 
 implement({
     // Calculates offset of the current element
     offset() {
 
-        var node = this[0],
+        var node = this[ 0 ],
             docEl = node.ownerDocument.documentElement,
             clientTop = docEl.clientTop,
             clientLeft = docEl.clientLeft,

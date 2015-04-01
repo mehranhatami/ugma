@@ -1,5 +1,5 @@
 import { ugma } from "../core";
-import { is } from "../helpers";
+import { is   } from "../helpers";
 
 var reVar = /\{([\w\-]+)\}/g;
 
@@ -9,15 +9,15 @@ var reVar = /\{([\w\-]+)\}/g;
 ugma.format = function(tmpl, varMap) {
     if (!is(tmpl, "string")) tmpl = String(tmpl);
 
-    if (!varMap || !is(varMap, "object")) varMap = {};
+    if ( !varMap || !is(varMap, "object") ) varMap = {};
 
     return tmpl.replace(reVar, (x, name, index) => {
-        if (name in varMap) {
-            x = varMap[name];
+        if ( name in varMap ) {
+            x = varMap[ name ];
 
-            if (is(x, "function")) x = x(index);
+            if ( is(x, "function") ) x = x( index );
 
-            x = String(x);
+            x = String( x );
         }
 
         return x;
