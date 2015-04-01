@@ -29,17 +29,12 @@ export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
-// Browser
-const userAgent = WINDOW.navigator.userAgent;
+// Internet Explorer
 
 export const INTERNET_EXPLORER = document.documentMode;
-export const GINGERBREAD = /Android 2\.3\.[3-7]/i.test(userAgent);
-export const ANDROID = /Android/i.test(userAgent);
-export const CHROME = window.chrome;
 
-// Prefixes
+// Vendor prefixes
 export const VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
-export const WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
 
 // css
 export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
