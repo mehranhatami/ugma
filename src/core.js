@@ -68,7 +68,7 @@ nodeTree = uClass({
         // Current version of the library. Keep in sync with `package.json`.
         version: "<%= pkg.version %>",
         codename: "<%= pkg.codename %>",
-        toString() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" },
+        toString() { return "<" + this[ 0 ].tagName + ">" },
 
         // Create a ugma wrapper object for a native DOM element or a
         // jQuery element. E.g. (ugma.native($('#foo')[0]))

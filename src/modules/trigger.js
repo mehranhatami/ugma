@@ -16,9 +16,9 @@ implement({
 
         if ( hook ) handler = hook( handler ) || handler;
 
-        eventType = handler._type || type;
+        eventType = handler._eventType || type;
     } else {
-        minErr("fire()", ERROR_MSG[ 1] );
+        minErr("trigger()", ERROR_MSG[ 1 ] );
     }
     // Handles triggering the appropriate event callbacks.
     e = node.ownerDocument.createEvent("HTMLEvents");

@@ -31,15 +31,15 @@ var pseudoClasses = {
 
 function createButtonPseudo( type ) {
     return ( node ) => {
-        var name = node.nodeName.toLowerCase();
-        return (name === "input" || name === "button") && node.type === type;
+        var name = node.nodeName;
+        return (name === "INPUT" || name === "BUTTON") && node.type === type;
     };
 }
 
 function createInputPseudo( type ) {
     return ( node ) => {
-        var name = node.nodeName.toLowerCase();
-        return name === "input" && node.type === type;
+        var name = node.nodeName;
+        return name === "INPUT" && node.type === type;
     };
 }
 

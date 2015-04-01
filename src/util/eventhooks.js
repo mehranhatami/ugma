@@ -7,22 +7,22 @@ var eventHooks = {};
 
  // Special events for the frame events 'hook'
     each(("touchmove mousewheel scroll mousemove drag").split(" "), ( name ) => {
-        eventHooks[name] = DebouncedWrapper;
+        eventHooks[ name ] = DebouncedWrapper;
     });
 
 // Support: Firefox, Chrome, Safari
 // Create 'bubbling' focus and blur events
 
 if ("onfocusin" in DOCUMENT.documentElement) {
-    eventHooks.focus = ( handler ) => { handler._type = "focusin" };
-    eventHooks.blur = ( handler ) => { handler._type = "focusout" };
+    eventHooks.focus = ( handler ) => { handler._eventType = "focusin" };
+    eventHooks.blur = ( handler ) => { handler._eventType = "focusout" };
 } else {
     // firefox doesn't support focusin/focusout events
-    eventHooks.focus = eventHooks.blur = (handler) => { handler.capturing = true };
+    eventHooks.focus = eventHooks.blur = ( handler ) => { handler.capturing = true };
 }
 /* istanbul ignore else */
-if (DOCUMENT.createElement("input").validity) {
-    eventHooks.invalid = (handler) => {
+if (DOCUMENT.createElement( "input" ).validity) {
+    eventHooks.invalid = ( handler ) => {
         handler.capturing = true;
     };
 }
@@ -38,7 +38,7 @@ if (INTERNET_EXPLORER < 10) {
         if (capturedNode && capturedNode.value !== capturedNodeValue) {
             capturedNodeValue = capturedNode.value;
             // trigger custom event that capture
-            ugma.native(capturedNode).trigger("input");
+            ugma.native( capturedNode ).trigger( "input" );
         }
     });
 

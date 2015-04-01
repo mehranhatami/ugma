@@ -6,8 +6,8 @@ import { minErr                   } from "../minErr";
 implement({
 
     // Remove one or many callbacks.
-    off(type, selector, callback) {
-        if (typeof type !== "string") minErr("off()", ERROR_MSG[7]);
+    off(eventType, selector, callback) {
+        if ( !is(eventType,"string" ) ) minErr("off()", ERROR_MSG[ 7 ] );
 
         if (callback === void 0) {
             callback = selector;
@@ -28,16 +28,16 @@ implement({
                     self._._raf = null;
                 }
                 // Remove the listener
-                node.removeEventListener( ( handler._type || handler.type ), handler, !!handler.capturing );
+                node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
             };
 
-        parts = type.split( "." );
-        type = parts[ 0 ] || null;
+        parts = eventType.split( "." );
+        eventType = parts[ 0 ] || null;
         namespace = parts[ 1 ] || null;
 
         this._._events = filter(this._._events, (handler) => {
 
-            var skip = type !== handler.type;
+            var skip = eventType !== handler.eventType;
 
             skip = skip || selector && selector !== handler.selector;
             skip = skip || namespace && namespace !== handler.namespace;

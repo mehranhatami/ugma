@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 01 Apr 2015 09:00:11 GMT
+ * Build date: Wed, 01 Apr 2015 13:23:04 GMT
  */
 (function() {
     "use strict";
@@ -20,15 +20,13 @@
     var helpers$$isArray = Array.isArray;
     var helpers$$keys = Object.keys;
 
-    // Invokes the `callback` function once for each item in `arr` collection, which can only 
-    // be an array.
+    // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
     var helpers$$each = function(arr, callback)  {
-            if (arr && callback) {
+            if ( arr && callback ) {
                 var index = -1,
                     length = arr.length;
-    
-                while (++index < length) {
-                    if (callback(arr[index], index, arr) === false) {
+                while ( ++index < length ) {
+                    if (callback( arr[ index ], index, arr) === false ) {
                         break;
                     }
                 }
@@ -39,39 +37,40 @@
         // Create a new array with the results of calling a provided function 
         // on every element in this array.
         helpers$$map = function(collection, callback)  {
-            if (collection) {
-                var result = [];
-                helpers$$each(collection, function(value, key)  {
-                    result.push(callback(value, key));
+            var arr = collection || [],
+                result = [];
+                helpers$$each( arr, function( value, key )  {
+                    result.push( callback( value, key ) );
                 });
                 return result;
-            }
-            return null;
         },
-        // Iterates over own enumerable properties of an object, executing 
-        // the callback for each property.
+        // Iterates over own enumerable properties of an object, executing  the callback for each property.
         helpers$$forOwn = function(obj, callback)  {
-            if (obj) {
-                var index = -1,
-                    props = Object.keys(obj),
+            if ( obj ) {
+                var key,
+                    index = -1,
+                    props = Object.keys( obj ),
                     length = props.length;
     
-                while (++index < length) {
-                    var key = props[index];
-                    if (callback(key, obj[key], obj) === false) {
+                while ( ++index < length ) {
+                    
+                    key = props[ index ];
+                    
+                    if (callback( key, obj[ key ], obj ) === false) {
                         break;
                     }
                 }
             }
             return obj;
         },
-        // create a new array with all elements that pass the test implemented 
-        // by the provided function.
-        helpers$$filter = function(collection, predicate)  {
-            var result = [];
-            helpers$$forOwn(collection, function(index, value)  {
-                if (predicate(value, index, collection)) {
-                    result.push(value);
+        // create a new array with all elements that pass the test implemented by the provided function.
+        helpers$$filter = function( collection, predicate )  {
+            var arr = collection || [],
+                result = [];
+                
+            helpers$$forOwn( arr, function( index, value )  {
+                if ( predicate( value, index, arr ) ) {
+                    result.push( value );
                 }
             });
             return result;
@@ -79,21 +78,13 @@
     
         // is() returns a boolean for if typeof obj is exactly type.
         helpers$$is = function(obj, type)  {
-            // Support: IE11
             // Avoid a Chakra JIT bug in compatibility modes of IE 11.
             // https://github.com/jashkenas/underscore/issues/1621 for more details.
-            return type === "function" ?
-                typeof obj === type || false :
-                typeof obj === type;
+            return type === "function" ? typeof obj === type || false : typeof obj === type;
         },
     
-        // Support: Android<4.1
-        // Make sure we trim BOM and NBSP
-        helpers$$atrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-    
-        // Support: Android<4.1
-        helpers$$trim = function(value)  {
-            return helpers$$is(value, "string") ? (value + "").replace(helpers$$atrim, "") : value;
+        helpers$$trim = function( value )  {
+           return helpers$$is(value, "string") ? value.trim() : value;
         },
     
         helpers$$inArray = function(arr, searchElement, fromIndex)  {
@@ -106,27 +97,26 @@
             /* jshint ignore:end */
             var i = 0,
                 len = arr.length;
-            for (; i < len; i++) {
-                if (arr[i] === searchElement && fromIndex <= i) {
+                
+            for ( ; i < len; i++ ) {
+                if (arr[ i ] === searchElement && fromIndex <= i ) {
                     return i;
                 }
     
-                if (arr[i] === searchElement && fromIndex > i) {
+                if (arr[ i ] === searchElement && fromIndex > i ) {
                     return -1;
                 }
             }
             return -1;
         },
     
-        helpers$$invoke = function(context, fn, arg1, arg2)  {
-            if (typeof fn === "string") fn = context[fn];
+        helpers$$invoke = function( context, fn, arg1, arg2 )  {
+            if (helpers$$is(fn, "string")) fn = context[ fn ];
     
             try {
-                return fn.call(context, arg1, arg2);
+                return fn.call( context, arg1, arg2 );
             } catch (err) {
-                WINDOW.setTimeout(function()  {
-                    throw err;
-                }, 1);
+                WINDOW.setTimeout( function()  { throw err }, 1 );
     
                 return false;
             }
@@ -135,22 +125,23 @@
         // the nodeTree or the domTree
         helpers$$implement = function(obj, callback, mixin)  {
     
-            if (!callback) callback = function(method, strategy)   {return strategy};
+            if ( !callback ) callback = function( method, strategy )   {return strategy};
     
             helpers$$forOwn(obj, function(method, func)  {
-                var args = [method].concat(func);
-                (mixin ? core$$nodeTree : core$$domTree).prototype[method] = callback.apply(null, args);
+                var args = [ method] .concat( func );
+                ( mixin ? core$$nodeTree : core$$domTree).prototype[ method ] = callback.apply( null, args );
     
-                if (mixin) core$$dummyTree.prototype[method] = mixin.apply(null, args);
+                if ( mixin ) core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
             });
         },
     
         // Faster alternative then slice.call
         helpers$$sliceArgs = function(arg)  {
             var i = arg.length,
-                args = new Array(i || 0);
+                args = new Array( i || 0 );
+                
             while (i--) {
-                args[i] = arg[i];
+                args[ i ] = arg[ i ];
             }
             return args;
         },
@@ -163,7 +154,7 @@
         helpers$$camelize = function(prop)  {
             return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
                 return offset ? letter.toUpperCase() : letter;
-            }).replace(helpers$$mozHack, "Moz$1");
+            }).replace( helpers$$mozHack, "Moz$1" );
         },
     
         // getComputedStyle takes a pseudoClass as an optional argument, so do we
@@ -175,43 +166,43 @@
             // IE throws on elements created in popups
             // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
             if (node.ownerDocument.defaultView.opener) {
-                return (node.ownerDocument.defaultView ||
+                return ( node.ownerDocument.defaultView ||
                     // This will work if the ownerDocument is a shadow DOM element
                     DOCUMENT.defaultView).getComputedStyle(node, pseudoElement);
             }
-            return WINDOW.getComputedStyle(node, pseudoElement);
+            return WINDOW.getComputedStyle( node, pseudoElement );
         },
     
-        helpers$$injectElement = function(node)  {
-            if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild(node);
+        helpers$$injectElement = function( node )  {
+            if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild( node );
         };
 
     var core$$nodeTree, core$$dummyTree, core$$domTree;
 
     function core$$uClass() {
         var len = arguments.length,
-            body = arguments[len - 1],
-            SuperClass = len > 1 ? arguments[0] : null,
+            body = arguments[ len - 1 ],
+            SuperClass = len > 1 ? arguments[ 0 ] : null,
             Class, SuperClassEmpty,
     
             // helper for merging two object with each other
             extend = function(obj, extension, preserve)  {
     
                 // failsave if something goes wrong
-                if (!obj || !extension) return obj || extension || {};
+                if ( !obj || !extension ) return obj || extension || {};
     
-                helpers$$forOwn(extension, function(prop, func)  {
+                helpers$$forOwn( extension, function( prop, func )  {
                     // if preserve is set to true, obj will not be overwritten by extension if
                     // obj has already a method key
-                    obj[prop] = (preserve === false && !(prop in obj)) ? func : func;
+                    obj[ prop ] = (preserve === false && !( prop in obj ) ) ? func : func;
     
-                    if (preserve && extension.toString !== Object.prototype.toString) {
+                    if ( preserve && extension.toString !== Object.prototype.toString ) {
                         obj.toString = extension.toString;
                     }
                 });
             };
     
-        if (body.constructor === "[object Object]") {
+        if ( body.constructor === "[object Object]" ) {
             Class = function()  {};
         } else {
             Class = body.constructor;
@@ -224,10 +215,10 @@
             Class.prototype = new SuperClassEmpty();
             Class.prototype.constructor = Class;
             Class.Super = SuperClass;
-            extend(Class, SuperClass, false);
+            extend( Class, SuperClass, false );
         }
     
-        extend(Class.prototype, body);
+        extend( Class.prototype, body );
     
         return Class;
     }
@@ -235,36 +226,36 @@
     core$$nodeTree = core$$uClass({
         constructor: function(node) {
     
-                if (this) {
-                    if (node) {
-                        this[0] = node;
+                if ( this ) {
+                    if ( node ) {
+                        this[ 0 ] = node;
                         // use a generated property to store a reference
                         // to the wrapper for circular object binding
-                        node["trackira"] = this;
+                        node[ "trackira" ] = this;
     
                         this._ = {};
                     }
                 } else {
                     // create a wrapper only once for each native element
-                    return node ? node["trackira"] || new core$$nodeTree(node) : new core$$dummyTree();
+                    return node ? node[ "trackira" ] || new core$$nodeTree( node ) : new core$$dummyTree();
                 }
             },
             // Current version of the library. Keep in sync with `package.json`.
             version: "0.0.1",
             codename: "trackira",
-            toString: function() { return "<" + this[0].tagName.toLowerCase() + ">"},
+            toString: function() { return "<" + this[ 0 ].tagName + ">" },
     
             // Create a ugma wrapper object for a native DOM element or a
             // jQuery element. E.g. (ugma.native($('#foo')[0]))
             native: function(node) {
                 var nodeType = node && node.nodeType;
-                return (nodeType === 9 ? core$$domTree : core$$nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
+                return ( nodeType === 9 ? core$$domTree : core$$nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
             }
     });
 
     core$$domTree = core$$uClass(core$$nodeTree, {
-        constructor: function(node) { return core$$nodeTree.call(this, node.documentElement) },
-        toString: function() { return "#document"}
+        constructor: function(node) { return core$$nodeTree.call( this, node.documentElement ) },
+        toString: function() { return "#document" }
     });
 
     core$$dummyTree = core$$uClass(core$$nodeTree, {
@@ -273,14 +264,9 @@
     });
 
     // Set a new document, and define a local copy of ugma
-    var core$$ugma = new core$$domTree(document);
+    var core$$ugma = new core$$domTree( document );
 
-    var objectTypes = {
-        "function": true,
-        "object": true
-    };
-
-    var WINDOW = (objectTypes[typeof window] && window) || this;
+    var WINDOW = window;
     var DOCUMENT = document;
     var HTML = DOCUMENT.documentElement;
 
@@ -293,21 +279,14 @@
         7: "The first argument need to be a string"
     };
 
-    var RETURN_THIS = function() {return this};
+    var RETURN_THIS = function() { return this };
     var RETURN_TRUE = function()  {return true};
     var RETURN_FALSE = function()  {return false};
     var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
-    // Browser
-    var userAgent = WINDOW.navigator.userAgent;
-
     var INTERNET_EXPLORER = document.documentMode;
-    var GINGERBREAD = /Android 2\.3\.[3-7]/i.test(userAgent);
-    var ANDROID = /Android/i.test(userAgent);
-    var CHROME = window.chrome;
 
-    var VENDOR_PREFIXES = ["Webkit", "Moz", "ms", "O"];
-    var WEBKIT_PREFIX = WINDOW.WebKitAnimationEvent ? "-webkit-" : "";
+    var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
 
     var RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
@@ -322,13 +301,13 @@
         // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
         // use the arrow method here. And the function will fail BIG TIME !!
         var wrapper = function() {
-            this.message = module ? (msg ? msg : ERROR_MSG[4]) +
-                (module.length > 4 ? " -> Module: " + module : " -> Core ") : ERROR_MSG[1];
+            this.message = module ? ( msg ? msg : ERROR_MSG[ 4 ] ) +
+                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : ERROR_MSG[ 1 ];
             // use the name on the framework
             this.name = "ugma";
         };
-        wrapper.prototype = Object.create(Error.prototype);
-        throw new wrapper(module, msg);
+        wrapper.prototype = Object.create( Error.prototype );
+        throw new wrapper( module, msg );
     }
 
     function emmet$parseAttr$$parseAttr(quote, name, value, rawValue) {
@@ -578,9 +557,9 @@
     /* es6-transpiler has-iterators:false, has-generators: false */
 
     var util$selectormatcher$$quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-        util$selectormatcher$$matchesMethod = helpers$$map(VENDOR_PREFIXES.concat(null), function(p) {
+        util$selectormatcher$$matchesMethod = helpers$$map(VENDOR_PREFIXES.concat(null), function(p)  {
             return (p ? p.toLowerCase() + "M" : "m") + "atchesSelector";
-        }).reduceRight(function(propName, p) {
+        }).reduceRight(function(propName, p)  {
             return propName ||
                 // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
                 (HTML.matches && "matches" ||
@@ -832,14 +811,14 @@
 
     // Don't automatically add 'px' to these possibly-unitless properties
     helpers$$each(("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
-        "color richness volume counter-increment float reflect stop-opacity " +
-        "float fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
+        "color richness volume counter-increment float reflect stop-opacity float " +
+        "fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
         // SVG-related properties
-        "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), function(propName)  {
+        "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), function( propName )  {
         var stylePropName = helpers$$camelize(propName);
     
         util$csshooks$$cssHooks.get[ propName ] = stylePropName;
-        util$csshooks$$cssHooks.set[ propName ] = function(value, style)  {
+        util$csshooks$$cssHooks.set[ propName ] = function( value, style )  {
             style[stylePropName] = value + "";
         };
     });
@@ -1005,13 +984,13 @@
    
         if (arguments.length !== 1 || !helpers$$is(name, "string")) return this;
     }});var util$dataAttr$$multiDash = /([A-Z])/g,
-        util$dataAttr$$dataAttr = function(node, key)  {
+        util$dataAttr$$dataAttr = function( node, key )  {
     
         // convert from camel case to dash-separated value
     
         key = key.replace( util$dataAttr$$multiDash, "-$&" ).toLowerCase();
     
-        var value = node.getAttribute(key);
+        var value = node.getAttribute( key );
     
         if (value != null) {
     
@@ -1146,7 +1125,7 @@
     
                     return (node === doc.documentElement ? doc : node).title;
                 },
-                option: function( node )  {return helpers$$trim(node.value)},
+                option: function( node )  {return helpers$$trim( node.value )},
                 select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
                 undefined: function(node)  {
                     switch (node.tagName) {
@@ -1160,26 +1139,26 @@
                             return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                     }
                 },
-                type: function(node)  {return node.getAttribute("type") || node.type}
+                type: function( node )  {return node.getAttribute("type") || node.type}
             },
     
             set: {
-                lang: function(node, value)  {
+                lang: function( node, value )  {
                     // correct locale browser language before setting the attribute             
                     // e.g. from zh_CN to zh-cn, from en_US to en-us
                     node.setAttribute("lang", value.replace( util$accessorhooks$$langFix, "-").toLowerCase() );
                 },
     
-                style: function(node, value)  {
+                style: function( node, value )  {
                     node.style.cssText = value;
                 },
-                title: function(node, value)  {
+                title: function( node, value )  {
                     var doc = node.ownerDocument;
     
                     (node === doc.documentElement ? doc : node).title = value;
                 },
-                value: function(node, value)  {
-                    if (node.tagName === "SELECT") {
+                value: function( node, value )  {
+                    if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
                         if (helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
                             node.selectedIndex = -1;
@@ -1504,53 +1483,53 @@
 
     var util$pseudoClasses$$pseudoClasses = {
     
-            ":input": function(node)  {return FOCUSABLE.test(node.nodeName)},
+            ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
     
-            ":selected": function(node)  {
+            ":selected": function( node )  {
                 // Accessing this property makes selected-by-default
                 // options in Safari work properly
                 /* jshint ignore:start */
-                if (node.parentNode) {
+                if ( node.parentNode ) {
                     node.parentNode.selectedIndex;
                 }
                 /* jshint ignore:end */
                 return node.selected === true;
             },
-            ":enabled": function(node)   {return !node.disabled},
-            ":disabled": function(node)  {return node.disabled},
+            ":enabled": function( node )   {return !node.disabled},
+            ":disabled": function( node )  {return node.disabled},
             // In CSS3, :checked should return both checked and selected elements
             // http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
     
-            ":checked": function(node)  {return !!("checked" in node ? node.checked : node.selected)},
+            ":checked": function( node )  {return !!("checked" in node ? node.checked : node.selected)},
     
-            ":focus": function(node)  {return node === node.ownerDocument.activeElement},
+            ":focus": function( node )  {return node === node.ownerDocument.activeElement},
     
-            ":visible": function(node)  {return !util$pseudoClasses$$pseudoClasses[":hidden"](node)},
+            ":visible": function( node )  {return !util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
     
-            ":hidden": function(node)  {return node.style.visibility === "hidden" || node.style.display === "none"} 
+            ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
         };
 
-    function util$pseudoClasses$$createButtonPseudo(type) {
-        return function(node)  {
-            var name = node.nodeName.toLowerCase();
-            return (name === "input" || name === "button") && node.type === type;
+    function util$pseudoClasses$$createButtonPseudo( type ) {
+        return function( node )  {
+            var name = node.nodeName;
+            return (name === "INPUT" || name === "BUTTON") && node.type === type;
         };
     }
 
-    function util$pseudoClasses$$createInputPseudo(type) {
-        return function(node)  {
-            var name = node.nodeName.toLowerCase();
-            return name === "input" && node.type === type;
+    function util$pseudoClasses$$createInputPseudo( type ) {
+        return function( node )  {
+            var name = node.nodeName;
+            return name === "INPUT" && node.type === type;
         };
     }
 
     // Add button/input type pseudos
-    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function(key, value)  {
-        util$pseudoClasses$$pseudoClasses[":" + key] = util$pseudoClasses$$createInputPseudo(key);
+    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
+        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createInputPseudo( key );
     });
 
-    helpers$$forOwn({ submit: true, reset: true }, function(key, value)  {
-        util$pseudoClasses$$pseudoClasses[":" + key] = util$pseudoClasses$$createButtonPseudo(key);
+    helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
+        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createButtonPseudo( key );
     });
 
     var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
@@ -1568,8 +1547,8 @@
     helpers$$implement({
     
         // Remove one or many callbacks.
-        off: function(type, selector, callback) {
-            if (typeof type !== "string") minErr$$minErr("off()", ERROR_MSG[7]);
+        off: function(eventType, selector, callback) {
+            if ( !helpers$$is(eventType,"string" ) ) minErr$$minErr("off()", ERROR_MSG[ 7 ] );
     
             if (callback === void 0) {
                 callback = selector;
@@ -1590,16 +1569,16 @@
                         self._._raf = null;
                     }
                     // Remove the listener
-                    node.removeEventListener( ( handler._type || handler.type ), handler, !!handler.capturing );
+                    node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
                 };
     
-            parts = type.split( "." );
-            type = parts[ 0 ] || null;
+            parts = eventType.split( "." );
+            eventType = parts[ 0 ] || null;
             namespace = parts[ 1 ] || null;
     
             this._._events = helpers$$filter(this._._events, function(handler)  {
     
-                var skip = type !== handler.type;
+                var skip = eventType !== handler.eventType;
     
                 skip = skip || selector && selector !== handler.selector;
                 skip = skip || namespace && namespace !== handler.namespace;
@@ -1690,8 +1669,8 @@
     // Create 'bubbling' focus and blur events
 
     if ("onfocusin" in DOCUMENT.documentElement) {
-        util$eventhooks$$eventHooks.focus = function( handler )  { handler._type = "focusin" };
-        util$eventhooks$$eventHooks.blur = function( handler )  { handler._type = "focusout" };
+        util$eventhooks$$eventHooks.focus = function( handler )  { handler._eventType = "focusin" };
+        util$eventhooks$$eventHooks.blur = function( handler )  { handler._eventType = "focusout" };
     } else {
         // firefox doesn't support focusin/focusout events
         util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function(handler)  { handler.capturing = true };
@@ -1727,7 +1706,7 @@
 
     var util$eventhooks$$default = util$eventhooks$$eventHooks;
 
-    function util$eventhandler$$getEventProperty(name, e, type, node, target, currentTarget) {
+    function util$eventhandler$$getEventProperty(name, e, eventType, node, target, currentTarget) {
     
         if ( helpers$$is(name, "number") ) {
     
@@ -1736,7 +1715,7 @@
             return args ? args[name] : void 0;
         }
     
-        if (name === "type")               return type;
+        if (name === "type")               return eventType;
         if (name === "defaultPrevented")   return e.defaultPrevented;
         if (name === "target")             return core$$nodeTree(target);
         if (name === "currentTarget")      return core$$nodeTree(currentTarget);
@@ -1744,19 +1723,19 @@
     
         var value = e[name];
     
-        if (typeof value === "function") return function()  {return value.apply(e, arguments)};
+        if ( helpers$$is(value, "function") ) return function()  {return value.apply(e, arguments)};
     
         return value;
     }
 
-    function util$eventhandler$$EventHandler(el, type, selector, callback, props, once, namespace) {
+    function util$eventhandler$$EventHandler(el, eventType, selector, callback, props, once, namespace) {
         var node = el[ 0 ],
-            hook = util$eventhooks$$default[ type ],
+            hook = util$eventhooks$$default[ eventType ],
             matcher = util$selectormatcher$$default( selector, node ),
             handler = function(e)  {
                 e = e || WINDOW.event;
                 // early stop in case of default action
-                if ( util$eventhandler$$EventHandler.skip === type ) return;
+                if ( util$eventhandler$$EventHandler.skip === eventType ) return;
                 var eventTarget = e.target || node.ownerDocument.documentElement;
                 // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
                 // @see http://www.quirksmode.org/js/events_properties.html
@@ -1772,11 +1751,11 @@
                 if ( !currentTarget ) return;
     
                 // off callback even if it throws an exception later
-                if ( once ) el.off( type, callback );
+                if ( once ) el.off( eventType, callback );
     
                 if ( props ) {
                     args = helpers$$map(args, function( name )  {return util$eventhandler$$getEventProperty(
-                        name, e, type, node, eventTarget, currentTarget)});
+                        name, e, eventType, node, eventTarget, currentTarget)});
                 } else {
                     args = helpers$$slice.call(e["__" + "trackira" + "__"] || [ 0 ], 1);
                 }
@@ -1789,7 +1768,7 @@
     
         if (hook) handler = hook(handler, el) || handler;
     
-        handler.type       = type;
+        handler.eventType       = eventType;
         handler.namespace  = namespace;
         handler.callback   = callback;
         handler.selector   = selector;
@@ -1807,9 +1786,9 @@
         // the callback is invoked, it will be removed.
         once: true
     
-    }, function(method, single)  {return function(type, selector, args, callback) {var this$0 = this;
+    }, function(method, single)  {return function(eventType, selector, args, callback) {var this$0 = this;
     
-        if ( helpers$$is(type, "string") ) {
+        if ( helpers$$is(eventType, "string") ) {
             if ( helpers$$is(args, "function") ) {
                 callback = args;
     
@@ -1835,37 +1814,37 @@
             var node = this[ 0 ],
                 parts,
                 namespace,
-                types = helpers$$inArray(type, " ") >= -1 ? type.split(" ") : [type],
-                i = types.length,
+                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [eventType],
+                i = eventTypes.length,
                 handler,
                 handlers = this._._events || ( this._._events = [] );
     
             // Handle space separated event names.
             while (i--) {
     
-                type = types[i];
+                eventType = eventTypes[i];
                 // handle namespace
-                parts = type.split( "." );
-                type = parts[ 0 ] || null;
+                parts = eventType.split( "." );
+                eventType = parts[ 0 ] || null;
                 namespace = parts[ 1 ] || null;
     
-                handler = util$eventhandler$$default(this, type, selector, callback, args, single, namespace);
+                handler = util$eventhandler$$default(this, eventType, selector, callback, args, single, namespace);
     
-                node.addEventListener(handler._type || type, handler, !!handler.capturing);
+                node.addEventListener(handler._eventType || eventType, handler, !!handler.capturing);
     
                 // store event entry
                 handlers.push( handler );
             }
     
-        } else if ( helpers$$is(type, "object") ) {
+        } else if ( helpers$$is(eventType, "object") ) {
     
-            if ( helpers$$isArray( type ) ) {
+            if ( helpers$$isArray( eventType ) ) {
     
-                helpers$$each( type, function( name )  {
+                helpers$$each( eventType, function( name )  {
                     this$0[ method ]( name, selector, args, callback);
                 });
             } else {
-                helpers$$forOwn(type, function(name, value)  {
+                helpers$$forOwn(eventType, function(name, value)  {
                     this$0[ method ](name, selector, args, value);
                 });
             }
@@ -2228,7 +2207,7 @@
     
             if ( hook ) handler = hook( handler ) || handler;
     
-            eventType = handler._type || type;
+            eventType = handler._eventType || type;
         } else {
             minErr$$minErr("fire()", ERROR_MSG[ 1] );
         }
@@ -2274,7 +2253,7 @@
 
     // Runs ugma in *noConflict* mode, returning the original `ugma` namespace.
     core$$ugma.noConflict = function() {
-        if (WINDOW.ugma === core$$ugma) {
+        if ( WINDOW.ugma === core$$ugma ) {
             WINDOW.ugma = outro$$_ugma;
         }
     

@@ -11,9 +11,9 @@ implement({
     // the callback is invoked, it will be removed.
     once: true
 
-}, (method, single) => function(type, selector, args, callback) {
+}, (method, single) => function(eventType, selector, args, callback) {
 
-    if ( is(type, "string") ) {
+    if ( is(eventType, "string") ) {
         if ( is(args, "function") ) {
             callback = args;
 
@@ -39,37 +39,37 @@ implement({
         var node = this[ 0 ],
             parts,
             namespace,
-            types = inArray(type, " ") >= -1 ? type.split(" ") : [type],
-            i = types.length,
+            eventTypes = inArray(eventType, " ") >= -1 ? eventType.split(" ") : [eventType],
+            i = eventTypes.length,
             handler,
             handlers = this._._events || ( this._._events = [] );
 
         // Handle space separated event names.
         while (i--) {
 
-            type = types[i];
+            eventType = eventTypes[i];
             // handle namespace
-            parts = type.split( "." );
-            type = parts[ 0 ] || null;
+            parts = eventType.split( "." );
+            eventType = parts[ 0 ] || null;
             namespace = parts[ 1 ] || null;
 
-            handler = EventHandler(this, type, selector, callback, args, single, namespace);
+            handler = EventHandler(this, eventType, selector, callback, args, single, namespace);
 
-            node.addEventListener(handler._type || type, handler, !!handler.capturing);
+            node.addEventListener(handler._eventType || eventType, handler, !!handler.capturing);
 
             // store event entry
             handlers.push( handler );
         }
 
-    } else if ( is(type, "object") ) {
+    } else if ( is(eventType, "object") ) {
 
-        if ( isArray( type ) ) {
+        if ( isArray( eventType ) ) {
 
-            each( type, ( name ) => {
+            each( eventType, ( name ) => {
                 this[ method ]( name, selector, args, callback);
             });
         } else {
-            forOwn(type, (name, value) => {
+            forOwn(eventType, (name, value) => {
                 this[ method ](name, selector, args, value);
             });
         }

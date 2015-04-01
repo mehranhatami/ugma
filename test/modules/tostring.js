@@ -1,4 +1,4 @@
-describe("Node", function() {
+describe("toString", function() {
     "use strict";
 
     it("should have overloaded toString", function() {
@@ -6,8 +6,8 @@ describe("Node", function() {
             input = ugma.add("input"),
             spans = ugma.addAll("i+b");
 
-        expect(link.toString()).toBe("<a>");
-        expect(input.toString()).toBe("<input>");
-        expect(spans.toString()).toBe("<i>,<b>");
+        expect(link.toString()).toBe("<A>");
+        expect(input.toString()).toBe("<INPUT>");
+        expect(spans.toString()).toBe("<I>,<B>");
     });
 });
