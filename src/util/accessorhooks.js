@@ -96,8 +96,10 @@ var langFix = /_/g,
     }
     input = null;
 }());
-// Booleans
-each(BOOLS, function(key) {
+
+// Attributes that are booleans
+each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function(key) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
     accessorHooks.set[key.toLowerCase()] = (node, value) => {

@@ -97,12 +97,9 @@ describe("get", function() {
     });
 
     it("should normalize the case of boolean attributes", function() {
-        var input = ugma.add("<input readonly>");
-        expect(input.get("readonly")).toBeTruthy();
-        expect(input.get("readOnly")).toBeTruthy();
 
 
-        input.set("readonly", false);
+        input.set("readonly", null);
         expect(input[0].getAttribute("readonly")).toBe(null);
 
         input.set("readOnly", "READonly");

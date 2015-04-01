@@ -14,19 +14,19 @@ implement({
         if (hook) return hook(node, name);
 
         if (is(name, "string")) {
-
-            // if HTML5 Custom Data Attributes (data-*), try to fetch the
-            // data from the HTML5 data-* attribute
+            
+            // try to fetch HTML5 `data-*` attribute
             if (/^data-/.test(name)) {
                 return dataAttr(node, name);
-                // If no DOM object property method is present... 
+            // if no DOM object property method is present... 
             } else if (name in node) {
                 return node[name];
-               //... fallback to the getAttribute method
+            //... fallback to the getAttribute method
             } else {
                 return node.getAttribute(name);
             }
-
+          // Non-existent / attributes properties return null
+          return null;
         } else if (isArray(name)) {
             var obj = {};
             each(name, (key) => {
