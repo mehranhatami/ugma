@@ -6,7 +6,7 @@ function parseAttr(quote, name, value, rawValue) {
 
     if (is(rawValue, "string")) {
         value = rawValue;
-    } else if (!is(value, "string")) {
+    } else if ( !is(value, "string") ) {
         value = name;
     }
     return " " + name + "=" + quote + value + quote;

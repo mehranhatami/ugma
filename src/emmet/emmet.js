@@ -1,17 +1,16 @@
-import { ugma } from "../core";
-import { is, each } from "../helpers";
-import { ERROR_MSG } from "../const";
-import { minErr } from "../minErr";
-// emmet modules
-import { process } from "../emmet/process";
-import operators from "../emmet/operators";
+import { ugma       } from "../core";
+import { is, each   } from "../helpers";
+import { ERROR_MSG  } from "../const";
+import { minErr     } from "../minErr";
+import { process    } from "../emmet/process";
+import operators      from "../emmet/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 // Reference: https://github.com/emmetio/emmet
 
-var abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-    dot = /\./g,
+var dot = /\./g,
+    abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
     tagCache = { "": "" };
 
 ugma.emmet = function(template, args) {
@@ -19,49 +18,49 @@ ugma.emmet = function(template, args) {
     if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
 
     if (args) template = ugma.format(template, args);
-    // If it's already cached, return the cached result
+
     if (template in tagCache) return tagCache[template];
 
     var stack = [],
         output = [];
 
-    each(template.match(abbreviation), function(str) {
+    each(template.match(abbreviation), (str) => {
 
-        if (operators[str[0]]) {
+        if ( operators[ str[ 0 ] ] ) {
             if (str !== "(") {
                 // for ^ operator need to skip > str.length times
-                for (let i = 0, n = (str[0] === "^" ? str.length : 1); i < n; ++i) {
-                    while (stack[0] !== str[0] && operators[stack[0]] >= operators[str[0]]) {
+                for ( let i = 0, n = (str[ 0 ] === "^" ? str.length : 1); i < n; ++i ) {
+                    while (stack[ 0 ] !== str[ 0 ] && operators[ stack[ 0 ] ] >= operators[ str[ 0 ] ] ) {
                         let head = stack.shift();
-                        output.push(head);
+                        output.push( head );
                         // for ^ operator stop shifting when the first > is found
-                        if (str[0] === "^" && head === ">") break;
+                        if (str[ 0 ] === "^" && head === ">") break;
                     }
                 }
             }
 
-            if (str === ")") {
+            if ( str === ")" ) {
                 stack.shift(); // remove "(" symbol from stack
             } else {
                 // handle values inside of `...` and [...] sections
-                if (str[0] === "[" || str[0] === "`") {
-                    output.push(str.slice(1, -1));
+                if (str[ 0 ] === "[" || str[ 0 ] === "`") {
+                    output.push(str.slice(1, -1) );
                 }
                 // handle multiple classes, e.g. a.one.two
-                if (str[0] === ".") {
-                    output.push(str.slice(1).replace(dot, " "));
+                if (str[ 0 ] === ".") {
+                    output.push( str.slice(1).replace(dot, " ") );
                 }
 
-                stack.unshift(str[0]);
+                stack.unshift( str[ 0 ] );
             }
         } else {
-            output.push(str);
+            output.push( str );
         }
     });
 
-    output = output.concat(stack);
+    output = output.concat( stack );
 
-    return process(output);
+    return process( output );
 };
 
 // populate empty tag names with result

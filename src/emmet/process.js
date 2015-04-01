@@ -1,50 +1,48 @@
-import { is, each } from "../helpers";
-import { ERROR_MSG } from "../const";
-import { minErr } from "../minErr";
-
-// emmet modules
-import { parseAttr } from "../emmet/parseAttr";
-import { injection } from "../emmet/injection";
-import { processTag } from "../emmet/processTag";
-import { indexing } from "../emmet/indexing";
-import operators from "../emmet/operators";
+import { is, each   }   from "../helpers";
+import { ERROR_MSG  }   from "../const";
+import { minErr     }   from "../minErr";
+import { parseAttr  }   from "../emmet/parseAttr";
+import { injection  }   from "../emmet/injection";
+import { processTag }   from "../emmet/processTag";
+import { indexing   }   from "../emmet/indexing";
+import operators        from "../emmet/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-    charMap = {
-        "&": "&amp;",
+    charMap = { 
+        "&": "&amp;", 
         "<": "&lt;",
         ">": "&gt;",
         "\"": "&quot;",
         "'": "&#039;"
     },
     // filter for escaping unsafe XML characters: <, >, &, ', "
-    escapeChars = (str) => str.replace(/[&<>"']/g, (ch) => charMap[ch]);
-
-function process(template) {
+    escapeChars = ( str ) => str.replace( /[&<>"']/g, ( ch ) => charMap[ ch ]),
+    process = ( template ) => {
 
     var stack = [];
 
-    each(template, function(str) {
+    each(template, (str) => {
 
-        if (str in operators) {
+        if ( str in operators ) {
 
             let value = stack.shift(),
                 node = stack.shift();
 
-            if (is(node, "string")) {
-                node = [processTag(node)];
+            if ( is( node, "string" ) ) {
+                
+                node = [ processTag( node ) ];
             }
 
-            if (is(node, "undefined") || is(value, "undefined")) {
-                minErr("emmet()", ERROR_MSG[4]);
+            if ( is( node, "undefined" ) || is(value, "undefined") ) {
+                minErr("emmet()", ERROR_MSG[4] );
             }
 
-            if (str === ".") { // class
-                value = injection(" class=\"" + value + "\"");
-            } else if (str === "#") { // id
+            if (str === "#") { // id
                 value = injection(" id=\"" + value + "\"");
+            } else if (str === ".") { // class
+                value = injection(" class=\"" + value + "\"");
             } else if (str === "[") { // id
                 value = injection(value.replace(attributes, parseAttr));
             } else if (str === "*") { // universal selector 
@@ -69,14 +67,7 @@ function process(template) {
         stack.unshift(str);
     });
 
-    if (template.length === 1) {
-        // handle single tag case
-        template = processTag(stack[0]);
-    } else {
-        template = stack[0].join("");
-    }
-
-    return template;
-}
+    return template.length === 1 ? processTag(stack[0]) : stack[0].join("");
+};
 
 export { process };
