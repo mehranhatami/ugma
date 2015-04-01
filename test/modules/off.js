@@ -25,23 +25,23 @@ describe("off", function() {
     });
     
     it("should remove event callback", function() {
-        input.on("click", spy).off("click", null).fire("click");
+        input.on("click", spy).off("click", null).trigger("click");
         expect(spy).not.toHaveBeenCalled();
 
-        input.on("click", spy).off("click", spy).fire("click");
+        input.on("click", spy).off("click", spy).trigger("click");
         expect(spy).not.toHaveBeenCalled();
 
-        input.on("click", "a", spy).off("click", "a", spy).fire("click");
+        input.on("click", "a", spy).off("click", "a", spy).trigger("click");
         expect(spy).not.toHaveBeenCalled();
     });
 
     it("supports selector argument", function() {
         link.on("click", spy).on("click", "input", spy);
-        input.fire("click");
+        input.trigger("click");
         expect(spy.calls.count()).toBe(2);
 
         link.off("click", "input", spy);
-        input.fire("click");
+        input.trigger("click");
         expect(spy.calls.count()).toBe(3);
     });
 
@@ -50,7 +50,7 @@ describe("off", function() {
         spyOn(obj, "test2");
 
         link.on("click", obj.test).on("click", obj.test2).off("click");
-        input.fire("click");
+        input.trigger("click");
 
         expect(obj.test).not.toHaveBeenCalled();
         expect(obj.test2).not.toHaveBeenCalled();

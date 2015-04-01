@@ -5,8 +5,7 @@ import { minErr                   } from "../minErr";
 
 implement({
 
-    // Remove an event handler, or all event listeners if no
-    // arguments
+    // Remove one or many callbacks.
     off(type, selector, callback) {
         if (typeof type !== "string") minErr("off()", ERROR_MSG[7]);
 
@@ -20,31 +19,33 @@ implement({
             parts,
             namespace,
             handlers,
-
             removeHandler = ( handler ) => {
 
                 // Cancel previous frame if it exists
-                if (self._._raf) {
-                    ugma.cancelFrame(self._._raf);
+                if ( self._._raf ) {
+                    ugma.cancelFrame( self._._raf );
                     // Zero out rAF id used during the animation
                     self._._raf = null;
                 }
                 // Remove the listener
-                node.removeEventListener((handler._type || handler.type), handler, !!handler.capturing);
+                node.removeEventListener( ( handler._type || handler.type ), handler, !!handler.capturing );
             };
 
-        parts = type.split(".");
+        parts = type.split( "." );
         type = parts[ 0 ] || null;
         namespace = parts[ 1 ] || null;
 
         this._._events = filter(this._._events, (handler) => {
 
-            if (type !== handler.type ||
-                selector && selector !== handler.selector ||
-                namespace && namespace !== handler.namespace ||
-                callback && callback !== handler.callback) {
-                return true;
-            }
+            var skip = type !== handler.type;
+
+            skip = skip || selector && selector !== handler.selector;
+            skip = skip || namespace && namespace !== handler.namespace;
+            skip = skip || callback && callback !== handler.callback;
+
+            // Bail out if listener isn't listening.
+            if (skip) return true;
+
             removeHandler(handler);
         });
 

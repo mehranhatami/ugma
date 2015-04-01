@@ -1,4 +1,4 @@
-describe("fire", function() {
+describe("trigger", function() {
     "use strict";
 
     var input, callback;
@@ -15,7 +15,7 @@ describe("fire", function() {
         var events = ["click", "focus", "blur", "change"], i;
 
         for (i = 0; i < 3; ++i) {
-            input.on(events[i], callback).fire(events[i]);
+            input.on(events[i], callback).trigger(events[i]);
 
             expect(callback.calls.count()).toBe(i + 1);
         }
@@ -24,13 +24,13 @@ describe("fire", function() {
     it("should trigger native handlers", function() {
         input[0].onclick = callback.and.returnValue(false);
 
-        input.fire("click");
+        input.trigger("click");
 
         expect(callback).toHaveBeenCalled();
     });
 
     it("should trigger native methods if they exist", function() {
-        input.fire("focus");
+        input.trigger("focus");
 
         expect(input.matches(":focus")).toBe(true);
 
@@ -39,7 +39,7 @@ describe("fire", function() {
 
     describe("custom events", function() {
         it("should be allowed", function() {
-            input.on("my:click", callback).fire("my:click");
+            input.on("my:click", callback).trigger("my:click");
 
             expect(callback).toHaveBeenCalled();
         });
@@ -58,38 +58,38 @@ describe("fire", function() {
             });
 
             input.on("my:click", callback);
-            input.fire("my:click", data1);
+            input.trigger("my:click", data1);
             expect(callback.calls.count()).toBe(1);
 
             input.on("click", callback);
-            input.fire("click", data1, data2);
+            input.trigger("click", data1, data2);
             expect(callback.calls.count()).toBe(2);
         });
 
-        it("ignore event fire arguments when event props are specified", function() {
+        it("ignore event trigger arguments when event props are specified", function() {
             var spy = jasmine.createSpy("on");
 
             input.on("my:test", ["target"], spy);
-            input.fire("my:test", 123);
+            input.trigger("my:test", 123);
 
             expect(spy).toHaveBeenCalledWith(input);
         });
     });
 
     it("should return false if default action was prevented", function() {
-        expect(input.fire("focus")).toBe(true);
+        expect(input.trigger("focus")).toBe(true);
 
         input.on("focus", function() { return false });
 
-        expect(input.fire("focus")).toBe(false);
+        expect(input.trigger("focus")).toBe(false);
     });
 
     it("should return true for empty node", function() {
-        expect(ugma.query("some-node").fire("click")).toBe(true);
+        expect(ugma.query("some-node").trigger("click")).toBe(true);
     });
 
     it("should throw error if arguments are invalid", function() {
-        expect(function() { input.fire(1); }).toThrow();
+        expect(function() { input.trigger(1); }).toThrow();
     });
 
 });

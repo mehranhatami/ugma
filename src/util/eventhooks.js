@@ -38,7 +38,7 @@ if (INTERNET_EXPLORER < 10) {
         if (capturedNode && capturedNode.value !== capturedNodeValue) {
             capturedNodeValue = capturedNode.value;
             // trigger custom event that capture
-            ugma.native(capturedNode).fire("input");
+            ugma.native(capturedNode).trigger("input");
         }
     });
 

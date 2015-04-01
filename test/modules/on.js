@@ -18,7 +18,7 @@ describe("on", function() {
     });
 
     it("should accept single callback with the element as 'this' by default", function() {
-        input.on("focus", spy).fire("focus");
+        input.on("focus", spy).trigger("focus");
 
         spy.and.callFake(function() {
             expect(this).toEqual(input);
@@ -30,10 +30,10 @@ describe("on", function() {
     it("should accept optional event filter", function() {
         ugma.once("focus", "input", spy);
 
-        link.fire("focus");
+        link.trigger("focus");
         expect(spy).not.toHaveBeenCalled();
 
-        input.fire("focus");
+        input.trigger("focus");
         expect(spy).toHaveBeenCalled();
     });
 
@@ -45,7 +45,7 @@ describe("on", function() {
         });
 
         ugma.once("click", "a", ["currentTarget"], spy);
-        link.query("i").fire("click");
+        link.query("i").trigger("click");
         expect(spy).toHaveBeenCalled();
     });
 
@@ -55,23 +55,23 @@ describe("on", function() {
 
         input.on({focus: spy, click: otherSpy});
 
-        input.fire("focus");
+        input.trigger("focus");
         expect(spy).toHaveBeenCalled();
 
-        input.fire("click");
+        input.trigger("click");
         expect(otherSpy).toHaveBeenCalled();
 
         input.on(["focus", "click"], arraySpy);
 
-        input.fire("focus");
-        input.fire("click");
+        input.trigger("focus");
+        input.trigger("click");
         expect(arraySpy.calls.count()).toBe(2);
     });
 
     it("should prevent default if handler returns false", function() {
         spy.and.returnValue(false);
 
-        link.on("click", spy).fire("click");
+        link.on("click", spy).trigger("click");
         expect(spy).toHaveBeenCalled();
         expect(location.hash).not.toBe("#test");
     });
@@ -85,7 +85,7 @@ describe("on", function() {
                 expect(relatedTarget).toBeMock();
             });
 
-            input.on("click", ["target", "currentTarget", "relatedTarget"], spy).fire("click");
+            input.on("click", ["target", "currentTarget", "relatedTarget"], spy).trigger("click");
             expect(spy).toHaveBeenCalled();
 
             spy.and.callFake(function(type, defaultPrevented, shiftKey) {
@@ -94,20 +94,20 @@ describe("on", function() {
                 expect(shiftKey).toBeFalsy();
             });
 
-            input.on("focus", ["type", "defaultPrevented", "shiftKey"], spy).fire("focus");
+            input.on("focus", ["type", "defaultPrevented", "shiftKey"], spy).trigger("focus");
             expect(spy).toHaveBeenCalled();
         });
 
         it("handle numbers as event argument index", function() {
             input.on("my:test", [1, 3, "target"], spy);
-            input.fire("my:test", 123, 555, "testing");
+            input.trigger("my:test", 123, 555, "testing");
 
             expect(spy).toHaveBeenCalledWith(123, "testing", input);
         });
 
         it("can use zero to access event type",  function() {
             input.on("focus", [0, "target"], spy);
-            input.fire("focus");
+            input.trigger("focus");
 
             expect(spy).toHaveBeenCalledWith("focus", input);
         });
@@ -119,7 +119,7 @@ describe("on", function() {
                 cancel();
             });
 
-            link.on("click", ["preventDefault"], spy).fire("click");
+            link.on("click", ["preventDefault"], spy).trigger("click");
             expect(spy).toHaveBeenCalled();
             expect(location.hash).not.toBe("#test");
         });
@@ -134,7 +134,7 @@ describe("on", function() {
             });
 
             link.closest().on("click", parentSpy);
-            link.on("click", ["stopPropagation"], spy).fire("click");
+            link.on("click", ["stopPropagation"], spy).trigger("click");
             expect(spy).toHaveBeenCalled();
             expect(parentSpy).not.toHaveBeenCalled();
         });
@@ -142,48 +142,48 @@ describe("on", function() {
 
     it("should fix some non-bubbling events", function() {
         ugma.once("focus", spy);
-        input.fire("focus");
+        input.trigger("focus");
         expect(spy).toHaveBeenCalled();
 
         ugma.once("invalid", spy);
-        input.fire("invalid");
+        input.trigger("invalid");
         expect(spy.calls.count()).toBe(2);
     });
 
     it("should fix input event", function() {
-        input.on("input", spy).fire("input");
+        input.on("input", spy).trigger("input");
         expect(spy).toHaveBeenCalled();
 
         ugma.on("input", "a", spy);
-        input.fire("input");
+        input.trigger("input");
         expect(spy.calls.count()).toBe(2);
 
         ugma.on("input", "input", spy);
-        input.fire("input");
+        input.trigger("input");
         expect(spy.calls.count()).toBe(4);
     });
 
     it("should fix submit event", function() {
         spy.and.returnValue(false);
 
-        form.on("submit", spy).fire("submit");
+        form.on("submit", spy).trigger("submit");
         expect(spy).toHaveBeenCalled();
 
         ugma.on("submit", "a", spy);
-        form.fire("submit");
+        form.trigger("submit");
         expect(spy.calls.count()).toBe(2);
 
         ugma.on("submit", "form", spy);
-        form.fire("submit");
+        form.trigger("submit");
         expect(spy.calls.count()).toBe(4);
     });
 
     it("should fix reset event", function() {
-        form.on("reset", spy).fire("reset");
+        form.on("reset", spy).trigger("reset");
         expect(spy.calls.count()).toBe(1);
 
         ugma.on("reset", spy);
-        form.fire("reset");
+        form.trigger("reset");
         expect(spy.calls.count()).toBe(3);
     });
 
@@ -197,7 +197,7 @@ describe("on", function() {
             expect(defaultPrevented).toBe(true);
         });
 
-        input.fire("custom:on");
+        input.trigger("custom:on");
         expect(spy).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
     });
@@ -206,7 +206,7 @@ describe("on", function() {
         var spy = jasmine.createSpy("callback");
 
         ugma.once("custom:event1", ["target", "defaultPrevented"], spy);
-        ugma.fire("custom:event1");
+        ugma.trigger("custom:event1");
 
         var args = spy.calls.allArgs()[0];
 
@@ -215,7 +215,7 @@ describe("on", function() {
 
         spy.calls.reset();
         ugma.once("custom:event2", "ul > li", spy);
-        ugma.fire("custom:event2");
+        ugma.trigger("custom:event2");
         expect(spy).not.toHaveBeenCalled();
     });
 
@@ -236,10 +236,10 @@ describe("on", function() {
                 expect(this).toBe(input);
             });
 
-            input.once("focus", spy).fire("focus");
+            input.once("focus", spy).trigger("focus");
             expect(spy).toHaveBeenCalled();
 
-            input.fire("focus");
+            input.trigger("focus");
             expect(spy.calls.count()).toBe(1);
         });
 

@@ -48,7 +48,7 @@ implement({
         while (i--) {
 
             type = types[i];
-
+            // handle namespace
             parts = type.split( "." );
             type = parts[ 0 ] || null;
             namespace = parts[ 1 ] || null;

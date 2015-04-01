@@ -1,7 +1,9 @@
 import { DOCUMENT, WINDOW } from "./const";
 import { domTree, nodeTree, dummyTree } from "./core";
+
 // jshint unused:false
-// Save a reference to some core methods
+
+// Create local references to Array.prototype methods we'll want to use later.
 var arrayProto = Array.prototype;
 
 export const every = arrayProto.every;

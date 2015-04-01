@@ -65,9 +65,8 @@ nodeTree = uClass({
                 return node ? node["<%= pkg.codename %>"] || new nodeTree(node) : new dummyTree();
             }
         },
-        // returns current running version
+        // Current version of the library. Keep in sync with `package.json`.
         version: "<%= pkg.version %>",
-        // returns current running codename on this build
         codename: "<%= pkg.codename %>",
         toString() { return "<" + this[0].tagName.toLowerCase() + ">"},
 

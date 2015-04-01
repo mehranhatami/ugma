@@ -5,12 +5,14 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 01 Apr 2015 04:39:26 GMT
+ * Build date: Wed, 01 Apr 2015 09:00:11 GMT
  */
 (function() {
     "use strict";
+
     // jshint unused:false
-    // Save a reference to some core methods
+
+    // Create local references to Array.prototype methods we'll want to use later.
     var helpers$$arrayProto = Array.prototype;
 
     var helpers$$every = helpers$$arrayProto.every;
@@ -247,9 +249,8 @@
                     return node ? node["trackira"] || new core$$nodeTree(node) : new core$$dummyTree();
                 }
             },
-            // returns current running version
+            // Current version of the library. Keep in sync with `package.json`.
             version: "0.0.1",
-            // returns current running codename on this build
             codename: "trackira",
             toString: function() { return "<" + this[0].tagName.toLowerCase() + ">"},
     
@@ -1109,174 +1110,7 @@
         extend: function(mixins, global) {
             return mixins ? global ? helpers$$implement(mixins) : helpers$$implement(mixins, null, function()  {return RETURN_THIS}) : false;
         }
-    });function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
-        var debouncing;
-        return function( e )  {
-            if ( !debouncing ) {
-                debouncing = true;
-                node._._raf = core$$ugma.requestFrame( function()  {
-                    handler( e );
-                    debouncing = false;
-                });
-            }
-        };
-    }
-
-    var util$eventhooks$$eventHooks = {};
-
-    // Special events for the frame events 'hook'
-    helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[name] = util$DebouncedWrapper$$DebouncedWrapper;
     });
-
-    // Support: Firefox, Chrome, Safari
-    // Create 'bubbling' focus and blur events
-
-    if ("onfocusin" in DOCUMENT.documentElement) {
-        util$eventhooks$$eventHooks.focus = function( handler )  { handler._type = "focusin" };
-        util$eventhooks$$eventHooks.blur = function( handler )  { handler._type = "focusout" };
-    } else {
-        // firefox doesn't support focusin/focusout events
-        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function(handler)  { handler.capturing = true };
-    }
-    /* istanbul ignore else */
-    if (DOCUMENT.createElement("input").validity) {
-        util$eventhooks$$eventHooks.invalid = function(handler)  {
-            handler.capturing = true;
-        };
-    }
-    // Support: IE9
-    if (INTERNET_EXPLORER < 10) {
-    
-        var util$eventhooks$$capturedNode, util$eventhooks$$capturedNodeValue;
-    
-        // IE9 doesn't fire oninput when text is deleted, so use
-        // onselectionchange event to detect such cases
-        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-        DOCUMENT.attachEvent("onselectionchange", function()  {
-            if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
-                util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
-                // trigger custom event that capture
-                core$$ugma.native(util$eventhooks$$capturedNode).fire("input");
-            }
-        });
-    
-        // input event fix via propertychange
-        DOCUMENT.attachEvent("onfocusin", function()  {
-            util$eventhooks$$capturedNode = WINDOW.event.srcElement;
-            util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
-        });
-    }
-
-    var util$eventhooks$$default = util$eventhooks$$eventHooks;
-
-    function util$eventhandler$$getEventProperty(name, e, type, node, target, currentTarget) {
-    
-        if ( helpers$$is(name, "number") ) {
-    
-            var args = e["__" + "trackira" + "__"];
-    
-            return args ? args[name] : void 0;
-        }
-    
-        if (name === "type")               return type;
-        if (name === "defaultPrevented")   return e.defaultPrevented;
-        if (name === "target")             return core$$nodeTree(target);
-        if (name === "currentTarget")      return core$$nodeTree(currentTarget);
-        if (name === "relatedTarget")      return core$$nodeTree(e.relatedTarget);
-    
-        var value = e[name];
-    
-        if (typeof value === "function") return function()  {return value.apply(e, arguments)};
-    
-        return value;
-    }
-
-    function util$eventhandler$$EventHandler(el, type, selector, callback, props, once, namespace) {
-        var node = el[ 0 ],
-            hook = util$eventhooks$$default[ type ],
-            matcher = util$selectormatcher$$default( selector, node ),
-            handler = function(e)  {
-                e = e || WINDOW.event;
-                // early stop in case of default action
-                if ( util$eventhandler$$EventHandler.skip === type ) return;
-                var eventTarget = e.target || node.ownerDocument.documentElement;
-                // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
-                // @see http://www.quirksmode.org/js/events_properties.html
-                eventTarget = eventTarget.nodeType === 3 ? eventTarget.parentNode : eventTarget;
-                // Test whether delegated events match the provided `selector` (filter),
-                // if this is a event delegation, else use current DOM node as the `currentTarget`.
-                var currentTarget = matcher &&
-                    // Don't process clicks on disabled elements
-                    (eventTarget.disabled !== true || e.type !== "click") ? matcher( eventTarget ) : node,
-                    args = props || [];
-    
-                // early stop for late binding or when target doesn't match selector
-                if ( !currentTarget ) return;
-    
-                // off callback even if it throws an exception later
-                if ( once ) el.off( type, callback );
-    
-                if ( props ) {
-                    args = helpers$$map(args, function( name )  {return util$eventhandler$$getEventProperty(
-                        name, e, type, node, eventTarget, currentTarget)});
-                } else {
-                    args = helpers$$slice.call(e["__" + "trackira" + "__"] || [ 0 ], 1);
-                }
-    
-                // prevent default if handler returns false
-                if (callback.apply( el, args ) === false) {
-                    e.preventDefault();
-                }
-            };
-    
-        if (hook) handler = hook(handler, el) || handler;
-    
-        handler.type       = type;
-        handler.namespace  = namespace;
-        handler.callback   = callback;
-        handler.selector   = selector;
-    
-        return handler;
-    }
-
-    var util$eventhandler$$default = util$eventhandler$$EventHandler;
-
-    helpers$$implement({
-        // Trigger one or many events, firing all bound callbacks. 
-        fire: function(type) {
-        var node = this[0],
-            e, eventType, canContinue;
-    
-        if (helpers$$is(type, "string")) {
-            var hook = util$eventhooks$$default[type],
-                handler = {};
-    
-            if (hook) handler = hook(handler) || handler;
-    
-            eventType = handler._type || type;
-        } else {
-            minErr$$minErr("fire()", ERROR_MSG[1]);
-        }
-        // Handles triggering the appropriate event callbacks.
-        e = node.ownerDocument.createEvent("HTMLEvents");
-        e["__" + "trackira" + "__"] = arguments;
-        e.initEvent(eventType, true, true);
-        canContinue = node.dispatchEvent(e);
-    
-        // call native function to trigger default behavior
-        if (canContinue && node[type]) {
-            // prevent re-triggering of the current event
-            util$eventhandler$$default.skip = type;
-    
-            helpers$$invoke(node, type);
-    
-            util$eventhandler$$default.skip = null;
-        }
-    
-        return canContinue;
-    }
-    }, null, function()  {return RETURN_TRUE});
 
     var modules$format$$reVar = /\{([\w\-]+)\}/g;
 
@@ -1733,8 +1567,7 @@
 
     helpers$$implement({
     
-        // Remove an event handler, or all event listeners if no
-        // arguments
+        // Remove one or many callbacks.
         off: function(type, selector, callback) {
             if (typeof type !== "string") minErr$$minErr("off()", ERROR_MSG[7]);
     
@@ -1748,31 +1581,33 @@
                 parts,
                 namespace,
                 handlers,
-    
                 removeHandler = function( handler )  {
     
                     // Cancel previous frame if it exists
-                    if (self._._raf) {
-                        core$$ugma.cancelFrame(self._._raf);
+                    if ( self._._raf ) {
+                        core$$ugma.cancelFrame( self._._raf );
                         // Zero out rAF id used during the animation
                         self._._raf = null;
                     }
                     // Remove the listener
-                    node.removeEventListener((handler._type || handler.type), handler, !!handler.capturing);
+                    node.removeEventListener( ( handler._type || handler.type ), handler, !!handler.capturing );
                 };
     
-            parts = type.split(".");
+            parts = type.split( "." );
             type = parts[ 0 ] || null;
             namespace = parts[ 1 ] || null;
     
             this._._events = helpers$$filter(this._._events, function(handler)  {
     
-                if (type !== handler.type ||
-                    selector && selector !== handler.selector ||
-                    namespace && namespace !== handler.namespace ||
-                    callback && callback !== handler.callback) {
-                    return true;
-                }
+                var skip = type !== handler.type;
+    
+                skip = skip || selector && selector !== handler.selector;
+                skip = skip || namespace && namespace !== handler.namespace;
+                skip = skip || callback && callback !== handler.callback;
+    
+                // Bail out if listener isn't listening.
+                if (skip) return true;
+    
                 removeHandler(handler);
             });
     
@@ -1831,7 +1666,138 @@
     
             return core$$nodeTree(offsetParent);
         }
-    }, null, function()  {return RETURN_FALSE});
+    }, null, function()  {return RETURN_FALSE});function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
+        var debouncing;
+        return function( e )  {
+            if ( !debouncing ) {
+                debouncing = true;
+                node._._raf = core$$ugma.requestFrame( function()  {
+                    handler( e );
+                    debouncing = false;
+                });
+            }
+        };
+    }
+
+    var util$eventhooks$$eventHooks = {};
+
+    // Special events for the frame events 'hook'
+    helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
+        util$eventhooks$$eventHooks[name] = util$DebouncedWrapper$$DebouncedWrapper;
+    });
+
+    // Support: Firefox, Chrome, Safari
+    // Create 'bubbling' focus and blur events
+
+    if ("onfocusin" in DOCUMENT.documentElement) {
+        util$eventhooks$$eventHooks.focus = function( handler )  { handler._type = "focusin" };
+        util$eventhooks$$eventHooks.blur = function( handler )  { handler._type = "focusout" };
+    } else {
+        // firefox doesn't support focusin/focusout events
+        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function(handler)  { handler.capturing = true };
+    }
+    /* istanbul ignore else */
+    if (DOCUMENT.createElement("input").validity) {
+        util$eventhooks$$eventHooks.invalid = function(handler)  {
+            handler.capturing = true;
+        };
+    }
+    // Support: IE9
+    if (INTERNET_EXPLORER < 10) {
+    
+        var util$eventhooks$$capturedNode, util$eventhooks$$capturedNodeValue;
+    
+        // IE9 doesn't fire oninput when text is deleted, so use
+        // onselectionchange event to detect such cases
+        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
+        DOCUMENT.attachEvent("onselectionchange", function()  {
+            if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
+                util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
+                // trigger custom event that capture
+                core$$ugma.native(util$eventhooks$$capturedNode).trigger("input");
+            }
+        });
+    
+        // input event fix via propertychange
+        DOCUMENT.attachEvent("onfocusin", function()  {
+            util$eventhooks$$capturedNode = WINDOW.event.srcElement;
+            util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
+        });
+    }
+
+    var util$eventhooks$$default = util$eventhooks$$eventHooks;
+
+    function util$eventhandler$$getEventProperty(name, e, type, node, target, currentTarget) {
+    
+        if ( helpers$$is(name, "number") ) {
+    
+            var args = e["__" + "trackira" + "__"];
+    
+            return args ? args[name] : void 0;
+        }
+    
+        if (name === "type")               return type;
+        if (name === "defaultPrevented")   return e.defaultPrevented;
+        if (name === "target")             return core$$nodeTree(target);
+        if (name === "currentTarget")      return core$$nodeTree(currentTarget);
+        if (name === "relatedTarget")      return core$$nodeTree(e.relatedTarget);
+    
+        var value = e[name];
+    
+        if (typeof value === "function") return function()  {return value.apply(e, arguments)};
+    
+        return value;
+    }
+
+    function util$eventhandler$$EventHandler(el, type, selector, callback, props, once, namespace) {
+        var node = el[ 0 ],
+            hook = util$eventhooks$$default[ type ],
+            matcher = util$selectormatcher$$default( selector, node ),
+            handler = function(e)  {
+                e = e || WINDOW.event;
+                // early stop in case of default action
+                if ( util$eventhandler$$EventHandler.skip === type ) return;
+                var eventTarget = e.target || node.ownerDocument.documentElement;
+                // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
+                // @see http://www.quirksmode.org/js/events_properties.html
+                eventTarget = eventTarget.nodeType === 3 ? eventTarget.parentNode : eventTarget;
+                // Test whether delegated events match the provided `selector` (filter),
+                // if this is a event delegation, else use current DOM node as the `currentTarget`.
+                var currentTarget = matcher &&
+                    // Don't process clicks on disabled elements
+                    (eventTarget.disabled !== true || e.type !== "click") ? matcher( eventTarget ) : node,
+                    args = props || [];
+    
+                // early stop for late binding or when target doesn't match selector
+                if ( !currentTarget ) return;
+    
+                // off callback even if it throws an exception later
+                if ( once ) el.off( type, callback );
+    
+                if ( props ) {
+                    args = helpers$$map(args, function( name )  {return util$eventhandler$$getEventProperty(
+                        name, e, type, node, eventTarget, currentTarget)});
+                } else {
+                    args = helpers$$slice.call(e["__" + "trackira" + "__"] || [ 0 ], 1);
+                }
+    
+                // prevent default if handler returns false
+                if (callback.apply( el, args ) === false) {
+                    e.preventDefault();
+                }
+            };
+    
+        if (hook) handler = hook(handler, el) || handler;
+    
+        handler.type       = type;
+        handler.namespace  = namespace;
+        handler.callback   = callback;
+        handler.selector   = selector;
+    
+        return handler;
+    }
+
+    var util$eventhandler$$default = util$eventhandler$$EventHandler;
 
     helpers$$implement({
         // Bind an event to a callback function for one or more events to 
@@ -1878,7 +1844,7 @@
             while (i--) {
     
                 type = types[i];
-    
+                // handle namespace
                 parts = type.split( "." );
                 type = parts[ 0 ] || null;
                 namespace = parts[ 1 ] || null;
@@ -2249,6 +2215,42 @@
     
         return all ? helpers$$map(descendants, core$$nodeTree) : core$$nodeTree(currentNode);
     }}, function(methodName)  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$$dummyTree()}});
+
+    helpers$$implement({
+        // Trigger one or many events, firing all bound callbacks. 
+        trigger: function(type) {
+        var node = this[ 0 ],
+            e, eventType, canContinue;
+    
+        if ( helpers$$is(type, "string") ) {
+            var hook = util$eventhooks$$default[ type ],
+                handler = {};
+    
+            if ( hook ) handler = hook( handler ) || handler;
+    
+            eventType = handler._type || type;
+        } else {
+            minErr$$minErr("fire()", ERROR_MSG[ 1] );
+        }
+        // Handles triggering the appropriate event callbacks.
+        e = node.ownerDocument.createEvent("HTMLEvents");
+        e[ "__" + "trackira" + "__" ] = arguments;
+        e.initEvent( eventType, true, true );
+        canContinue = node.dispatchEvent( e );
+    
+        // call native function to trigger default behavior
+        if (canContinue && node[ type ]) {
+            // prevent re-triggering of the current event
+            util$eventhandler$$default.skip = type;
+    
+            helpers$$invoke( node, type );
+    
+            util$eventhandler$$default.skip = null;
+        }
+    
+        return canContinue;
+    }
+    }, null, function()  {return RETURN_TRUE});
 
     helpers$$implement({
         // Read or write inner content of the element
