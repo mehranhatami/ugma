@@ -34,7 +34,6 @@ describe("css", function() {
             expect(link.css("font-size")).toBeTruthy();
         });
 
-
         it("should handle opacity", function() {
             link.css({
                 "opacity": ""
@@ -98,9 +97,7 @@ describe("css", function() {
 
             expect(hidden.css("width")).toBe("10px");
 
-            hidden.css({
-                width: "-=9"
-            });
+            hidden.css({ width: "-=9" });
 
             expect(hidden.css("width")).toBe("1px");
 

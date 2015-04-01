@@ -8,6 +8,15 @@ describe("add", function() {
 
         expect(el).toHaveTag("em");
     });
+
+  it("should allow construction of <option> elements", function() {
+      var nodes = ugma.add("<option>");
+      expect(nodes[0].nodeName.toLowerCase()).toBe("option");
+    });
+
+
+
+
     
     it("should add single ugma element if parameter is not an HTML string", function() {
         var link = ugma.add(ugma.format("<a id=\"{id}\" title=\"{title}\"></a>", {id: "b", title: "c"}));
