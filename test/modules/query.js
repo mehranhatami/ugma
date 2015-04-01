@@ -1,7 +1,7 @@
 describe("query", function() {
     "use strict";
 
-    it("should query an element by id", function() {
+    it("should find an element by id", function() {
         jasmine.sandbox.set("<a id='test'>test</a>");
         expect(ugma.query("#test")).toHaveId("test");
 
@@ -69,8 +69,12 @@ describe("query", function() {
 
         jasmine.sandbox.set("<div class=test><a data-attr='2'>test</a></div>");
         expect(ugma.query(".test").query("[data-attr='2']")).toHaveAttr("data-attr");
-
-        // TODO: make a cotext bug fix test
+        
+        jasmine.sandbox.set("<div id=test><a data-attr2='2'></a></div><a data-attr1='1'></a><a data-attr3='3'></a>");
+        expect(ugma.query("#test").query("> [data-attr2='2']")).toHaveAttr("data-attr2");
+        expect(ugma.query("#test").query("+ [data-attr1='1']")).toHaveAttr("data-attr1");
+        expect(ugma.query("#test").query("~ [data-attr3='3']")).toHaveAttr("data-attr3");
+ 
     });
 
     it("should return at least empty element(s)", function() {
@@ -88,17 +92,12 @@ describe("query", function() {
         expect(foo[0].querySelectorAll("div span").length).toBe(1);
 
         expect(foo.queryAll("div span").length).toBe(0);
-//        expect(foo.get("id")).toBeFalsy();
+        expect(foo.get("id")).toBeFalsy();
     });
 
     it("should throw error if the first argument is not a string", function() {
         expect(function() { ugma.query(1); }).toThrow();
     });
-    
-     it("should throw error if the first argument is not a string", function() {
-        expect(function() { ugma.query(1); }).toThrow();
-    });
-
 
     it("should not throw error if selector is not valid", function() {
         jasmine.clock().install();
