@@ -1,7 +1,14 @@
 import { filter, map, keys, camelize, each, forOwn   } from "../helpers";
 import { VENDOR_PREFIXES, HTML                       } from "../const";
 
-var cssHooks = { get: {}, set: {} },
+var UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
+    "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
+    "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
+    "overflow rotate3d border-right-color border-top-color text-decoration-color text-emphasis-color " +
+    // SVG-related properties
+    "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+    
+    cssHooks = { get: {}, set: {} },
     directions = ["Top", "Right", "Bottom", "Left"],
     shortHand = {
         font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
@@ -13,11 +20,7 @@ var cssHooks = { get: {}, set: {} },
     };
 
 // Don't automatically add 'px' to these possibly-unitless properties
-each(("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
-    "color richness volume counter-increment float reflect stop-opacity float " +
-    "fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
-    // SVG-related properties
-    "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), ( propName ) => {
+each(UnitlessNumber, ( propName ) => {
     var stylePropName = camelize(propName);
 
     cssHooks.get[ propName ] = stylePropName;

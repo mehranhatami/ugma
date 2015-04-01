@@ -1,6 +1,6 @@
 import { CUSTOM_EVENT_TYPE, RETURN_TRUE, ERROR_MSG      } from "../const";
-import   EventHandler from "../util/eventhandler";
-import   eventhooks from "../util/eventhooks";
+import   EventHandler                                     from "../util/eventhandler";
+import   eventhooks                                       from "../util/eventhooks";
 import { implement, invoke, is                          } from "../helpers";
 import { minErr                                         } from "../minErr";
 
