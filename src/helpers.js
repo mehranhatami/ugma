@@ -1,5 +1,5 @@
-import { DOCUMENT, WINDOW } from "./const";
-import { domTree, nodeTree, dummyTree } from "./core";
+import { DOCUMENT, WINDOW              } from "./const";
+import { domTree, nodeTree, dummyTree  } from "./core";
 
 // jshint unused:false
 
@@ -11,15 +11,13 @@ export const slice = arrayProto.slice;
 export const isArray = Array.isArray;
 export const keys = Object.keys;
 
-// Invokes the `callback` function once for each item in `arr` collection, which can only 
-// be an array.
+// Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
 var each = (arr, callback) => {
-        if (arr && callback) {
+        if ( arr && callback ) {
             var index = -1,
                 length = arr.length;
-
-            while (++index < length) {
-                if (callback(arr[index], index, arr) === false) {
+            while ( ++index < length ) {
+                if (callback( arr[ index ], index, arr) === false ) {
                     break;
                 }
             }
@@ -30,39 +28,40 @@ var each = (arr, callback) => {
     // Create a new array with the results of calling a provided function 
     // on every element in this array.
     map = (collection, callback) => {
-        if (collection) {
-            var result = [];
-            each(collection, (value, key) => {
-                result.push(callback(value, key));
+        var arr = collection || [],
+            result = [];
+            each( arr, ( value, key ) => {
+                result.push( callback( value, key ) );
             });
             return result;
-        }
-        return null;
     },
-    // Iterates over own enumerable properties of an object, executing 
-    // the callback for each property.
+    // Iterates over own enumerable properties of an object, executing  the callback for each property.
     forOwn = (obj, callback) => {
-        if (obj) {
-            var index = -1,
-                props = Object.keys(obj),
+        if ( obj ) {
+            var key,
+                index = -1,
+                props = Object.keys( obj ),
                 length = props.length;
 
-            while (++index < length) {
-                var key = props[index];
-                if (callback(key, obj[key], obj) === false) {
+            while ( ++index < length ) {
+                
+                key = props[ index ];
+                
+                if (callback( key, obj[ key ], obj ) === false) {
                     break;
                 }
             }
         }
         return obj;
     },
-    // create a new array with all elements that pass the test implemented 
-    // by the provided function.
-    filter = (collection, predicate) => {
-        var result = [];
-        forOwn(collection, (index, value) => {
-            if (predicate(value, index, collection)) {
-                result.push(value);
+    // create a new array with all elements that pass the test implemented by the provided function.
+    filter = ( collection, predicate ) => {
+        var arr = collection || [],
+            result = [];
+            
+        forOwn( arr, ( index, value ) => {
+            if ( predicate( value, index, arr ) ) {
+                result.push( value );
             }
         });
         return result;
@@ -70,21 +69,13 @@ var each = (arr, callback) => {
 
     // is() returns a boolean for if typeof obj is exactly type.
     is = (obj, type) => {
-        // Support: IE11
         // Avoid a Chakra JIT bug in compatibility modes of IE 11.
         // https://github.com/jashkenas/underscore/issues/1621 for more details.
-        return type === "function" ?
-            typeof obj === type || false :
-            typeof obj === type;
+        return type === "function" ? typeof obj === type || false : typeof obj === type;
     },
 
-    // Support: Android<4.1
-    // Make sure we trim BOM and NBSP
-    atrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-
-    // Support: Android<4.1
-    trim = (value) => {
-        return is(value, "string") ? (value + "").replace(atrim, "") : value;
+    trim = ( value ) => {
+       return is(value, "string") ? value.trim() : value;
     },
 
     inArray = (arr, searchElement, fromIndex) => {
@@ -97,27 +88,26 @@ var each = (arr, callback) => {
         /* jshint ignore:end */
         var i = 0,
             len = arr.length;
-        for (; i < len; i++) {
-            if (arr[i] === searchElement && fromIndex <= i) {
+            
+        for ( ; i < len; i++ ) {
+            if (arr[ i ] === searchElement && fromIndex <= i ) {
                 return i;
             }
 
-            if (arr[i] === searchElement && fromIndex > i) {
+            if (arr[ i ] === searchElement && fromIndex > i ) {
                 return -1;
             }
         }
         return -1;
     },
 
-    invoke = (context, fn, arg1, arg2) => {
-        if (typeof fn === "string") fn = context[fn];
+    invoke = ( context, fn, arg1, arg2 ) => {
+        if (is(fn, "string")) fn = context[ fn ];
 
         try {
-            return fn.call(context, arg1, arg2);
+            return fn.call( context, arg1, arg2 );
         } catch (err) {
-            WINDOW.setTimeout(() => {
-                throw err;
-            }, 1);
+            WINDOW.setTimeout( () => { throw err }, 1 );
 
             return false;
         }
@@ -126,22 +116,23 @@ var each = (arr, callback) => {
     // the nodeTree or the domTree
     implement = (obj, callback, mixin) => {
 
-        if (!callback) callback = (method, strategy)  => strategy;
+        if ( !callback ) callback = ( method, strategy )  => strategy;
 
         forOwn(obj, (method, func) => {
-            var args = [method].concat(func);
-            (mixin ? nodeTree : domTree).prototype[method] = callback.apply(null, args);
+            var args = [ method] .concat( func );
+            ( mixin ? nodeTree : domTree).prototype[ method ] = callback.apply( null, args );
 
-            if (mixin) dummyTree.prototype[method] = mixin.apply(null, args);
+            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
         });
     },
 
     // Faster alternative then slice.call
     sliceArgs = (arg) => {
         var i = arg.length,
-            args = new Array(i || 0);
+            args = new Array( i || 0 );
+            
         while (i--) {
-            args[i] = arg[i];
+            args[ i ] = arg[ i ];
         }
         return args;
     },
@@ -154,7 +145,7 @@ var each = (arr, callback) => {
     camelize = (prop) => {
         return prop && prop.replace(reDash, (_, separator, letter, offset) => {
             return offset ? letter.toUpperCase() : letter;
-        }).replace(mozHack, "Moz$1");
+        }).replace( mozHack, "Moz$1" );
     },
 
     // getComputedStyle takes a pseudoClass as an optional argument, so do we
@@ -166,15 +157,15 @@ var each = (arr, callback) => {
         // IE throws on elements created in popups
         // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
         if (node.ownerDocument.defaultView.opener) {
-            return (node.ownerDocument.defaultView ||
+            return ( node.ownerDocument.defaultView ||
                 // This will work if the ownerDocument is a shadow DOM element
                 DOCUMENT.defaultView).getComputedStyle(node, pseudoElement);
         }
-        return WINDOW.getComputedStyle(node, pseudoElement);
+        return WINDOW.getComputedStyle( node, pseudoElement );
     },
 
-    injectElement = (node) => {
-        if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild(node);
+    injectElement = ( node ) => {
+        if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild( node );
     };
 
 export { each, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };

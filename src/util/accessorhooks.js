@@ -12,7 +12,7 @@ var langFix = /_/g,
 
                 return (node === doc.documentElement ? doc : node).title;
             },
-            option: ( node ) => trim(node.value),
+            option: ( node ) => trim( node.value ),
             select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
             undefined: (node) => {
                 switch (node.tagName) {
@@ -26,26 +26,26 @@ var langFix = /_/g,
                         return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                 }
             },
-            type: (node) => node.getAttribute("type") || node.type
+            type: ( node ) => node.getAttribute("type") || node.type
         },
 
         set: {
-            lang: (node, value) => {
+            lang: ( node, value ) => {
                 // correct locale browser language before setting the attribute             
                 // e.g. from zh_CN to zh-cn, from en_US to en-us
                 node.setAttribute("lang", value.replace( langFix, "-").toLowerCase() );
             },
 
-            style: (node, value) => {
+            style: ( node, value ) => {
                 node.style.cssText = value;
             },
-            title: (node, value) => {
+            title: ( node, value ) => {
                 var doc = node.ownerDocument;
 
                 (node === doc.documentElement ? doc : node).title = value;
             },
-            value: (node, value) => {
-                if (node.tagName === "SELECT") {
+            value: ( node, value ) => {
+                if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
                     if (every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
                         node.selectedIndex = -1;

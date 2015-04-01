@@ -1,11 +1,11 @@
 var multiDash = /([A-Z])/g,
-    dataAttr = (node, key) => {
+    dataAttr = ( node, key ) => {
 
     // convert from camel case to dash-separated value
 
     key = key.replace( multiDash, "-$&" ).toLowerCase();
 
-    var value = node.getAttribute(key);
+    var value = node.getAttribute( key );
 
     if (value != null) {
 

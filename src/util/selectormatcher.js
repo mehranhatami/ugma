@@ -7,9 +7,9 @@ import { is, map                         } from "../helpers";
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-    matchesMethod = map(VENDOR_PREFIXES.concat(null), function(p) {
+    matchesMethod = map(VENDOR_PREFIXES.concat(null), (p) => {
         return (p ? p.toLowerCase() + "M" : "m") + "atchesSelector";
-    }).reduceRight(function(propName, p) {
+    }).reduceRight((propName, p) => {
         return propName ||
             // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
             (HTML.matches && "matches" ||

@@ -14,14 +14,14 @@ var cssHooks = { get: {}, set: {} },
 
 // Don't automatically add 'px' to these possibly-unitless properties
 each(("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
-    "color richness volume counter-increment float reflect stop-opacity " +
-    "float fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
+    "color richness volume counter-increment float reflect stop-opacity float " +
+    "fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
     // SVG-related properties
-    "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), (propName) => {
+    "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), ( propName ) => {
     var stylePropName = camelize(propName);
 
     cssHooks.get[ propName ] = stylePropName;
-    cssHooks.set[ propName ] = (value, style) => {
+    cssHooks.set[ propName ] = ( value, style ) => {
         style[stylePropName] = value + "";
     };
 });
