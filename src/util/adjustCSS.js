@@ -1,5 +1,5 @@
 import { DOCUMENT, WINDOW, RCSSNUM } from "../const";
-import { Document, Element, Node } from "../core";
+import { Document, Element, Node   } from "../core";
 
 export function adjustCSS(root, prop, parts, computed) {
 
@@ -7,16 +7,16 @@ export function adjustCSS(root, prop, parts, computed) {
         scale = 1,
         maxIterations = 20,
         currentValue = function() {
-            return parseFloat(computed[prop]);
+            return parseFloat( computed[ prop ] );
         },
         initial = currentValue(),
-        unit = parts && parts[3] || "",
+        unit = parts && parts[ 3 ] || "",
         // Starting value computation is required for potential unit mismatches
-        initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec(computed[prop]);
+        initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec( computed[ prop ] );
 
-    if (initialInUnit && initialInUnit[3] !== unit) {
+    if (initialInUnit && initialInUnit[ 3 ] !== unit) {
 
-        unit = unit || initialInUnit[3];
+        unit = unit || initialInUnit[ 3 ];
 
         parts = parts || [];
 
@@ -38,7 +38,7 @@ export function adjustCSS(root, prop, parts, computed) {
 
     if (parts) {
         // Apply relative offset (+=/-=) if specified
-        adjusted = parts[1] ? (+initialInUnit || +initial || 0) + (parts[1] + 1) * parts[2] : +parts[2];
+        adjusted = parts[ 1 ] ? (+initialInUnit || +initial || 0) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
 
         return adjusted;
     }

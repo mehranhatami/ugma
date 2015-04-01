@@ -1,16 +1,17 @@
-import { ugma } from "../core";
-import { implement, each } from "../helpers";
-import { DOCUMENT, WINDOW } from "../const";
-import { minErr } from "../minErr";
+import { ugma              } from "../core";
+import { implement, each   } from "../helpers";
+import { DOCUMENT, WINDOW  } from "../const";
+import { minErr            } from "../minErr";
 
 var callbacks = [],
     readyState = DOCUMENT.readyState,
     pageLoaded = () => {
         //  safely trigger stored callbacks
-        if (callbacks) callbacks = each(callbacks((func) => ugma.dispatch, ugma));
+        if ( callbacks ) callbacks = each( callbacks( ( func ) => ugma.dispatch, ugma) );
     };
 
 callbacks = callbacks.forEach(ugma.dispatch, ugma);
+
 // Support: IE9
 if (DOCUMENT.attachEvent ? readyState === "complete" : readyState !== "loading") {
     // use setTimeout to make sure that the dispatch method exists
@@ -19,15 +20,15 @@ if (DOCUMENT.attachEvent ? readyState === "complete" : readyState !== "loading")
     WINDOW.addEventListener("load", pageLoaded, false);
     DOCUMENT.addEventListener("DOMContentLoaded", pageLoaded, false);
 }
+
 implement({
-
     ready: function(callback) {
-        if (typeof callback !== "function") minErr();
+        if ( typeof callback !== "function" ) minErr();
 
-        if (callbacks) {
-            callbacks.push(callback);
+        if ( callbacks ) {
+            callbacks.push( callback );
         } else {
-            ugma.dispatch(callback);
+            ugma.dispatch( callback );
         }
     }
 });

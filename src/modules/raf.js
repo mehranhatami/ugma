@@ -1,6 +1,6 @@
-import { WINDOW, VENDOR_PREFIXES } from "../const";
-import { ugma } from "../core";
-import { each } from "../helpers";
+import { WINDOW, VENDOR_PREFIXES    } from "../const";
+import { ugma                       } from "../core";
+import { each                       } from "../helpers";
 
     var global = WINDOW;
     // Test if we are within a foreign domain. Use raf from the top if possible.
@@ -10,6 +10,7 @@ import { each } from "../helpers";
         global.top.name;
         global = global.top;
     } catch (e) {}
+    
     /* jshint ignore:end */
     // Works around a iOS6 bug
     var raf = global.requestAnimationFrame,
@@ -17,22 +18,22 @@ import { each } from "../helpers";
         lastTime = 0;
 
     if (!(raf && !craf)) {
-        each(VENDOR_PREFIXES, (prefix) => {
+        each(VENDOR_PREFIXES, ( prefix ) => {
             prefix = prefix.toLowerCase();
-            raf = raf || WINDOW[prefix + "RequestAnimationFrame"];
-            craf = craf || WINDOW[prefix + "CancelAnimationFrame"];
+            raf = raf || WINDOW[ prefix + "RequestAnimationFrame" ];
+            craf = craf || WINDOW[ prefix + "CancelAnimationFrame" ];
         });
     }
 
     // Executes a callback in the next frame
-    ugma.requestFrame = (callback) => {
+    ugma.requestFrame = ( callback ) => {
         /* istanbul ignore else */
         if (raf) {
             return raf.call(global, callback);
         } else {
             // Dynamically set delay on a per-tick basis to match 60fps.
             var currTime = Date.now(),
-                timeDelay = Math.max(0, 16 - (currTime - lastTime)); // 1000 / 60 = 16.666
+                timeDelay = Math.max( 0, 16 - (currTime - lastTime)); // 1000 / 60 = 16.666
 
             lastTime = currTime + timeDelay;
 
@@ -48,9 +49,9 @@ import { each } from "../helpers";
     // Cancel a scheduled frame
     ugma.cancelFrame = (frameId) => {
         /* istanbul ignore else */
-        if (craf) {
+        if ( craf ) {
             craf.call(global, frameId);
         } else {
-            global.clearTimeout(frameId);
+            global.clearTimeout( frameId );
         }
     };

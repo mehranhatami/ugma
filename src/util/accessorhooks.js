@@ -1,4 +1,4 @@
-import { trim, each, forOwn, every } from "../helpers";
+import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
@@ -6,24 +6,24 @@ var langFix = /_/g,
 
         get: {
 
-            style: (node) => node.style.cssText,
-            title: (node) => {
+            style: ( node ) => node.style.cssText,
+            title: ( node ) => {
                 var doc = node.ownerDocument;
 
                 return (node === doc.documentElement ? doc : node).title;
             },
-            option: (node) => trim(node.value),
-            select: (node) => ~node.selectedIndex ? node.options[node.selectedIndex].value : "",
+            option: ( node ) => trim(node.value),
+            select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
             undefined: (node) => {
                 switch (node.tagName) {
                     case "SELECT":
-                        return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                        return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
                     case "OPTION":
                         // Support: IE<11
                         // option.value not trimmed
-                        return trim(node[node.hasAttribute("value") ? "value" : "text"]);
+                        return trim( node[ node.hasAttribute("value") ? "value" : "text" ] );
                     default:
-                        return node[node.type && "value" in node ? "value" : "innerHTML"];
+                        return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                 }
             },
             type: (node) => node.getAttribute("type") || node.type
@@ -33,7 +33,7 @@ var langFix = /_/g,
             lang: (node, value) => {
                 // correct locale browser language before setting the attribute             
                 // e.g. from zh_CN to zh-cn, from en_US to en-us
-                node.setAttribute("lang", value.replace(langFix, "-").toLowerCase());
+                node.setAttribute("lang", value.replace( langFix, "-").toLowerCase() );
             },
 
             style: (node, value) => {
@@ -47,7 +47,7 @@ var langFix = /_/g,
             value: (node, value) => {
                 if (node.tagName === "SELECT") {
                     // selectbox has special case
-                    if (every.call(node.options, (o) => !(o.selected = o.value === value))) {
+                    if (every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
                         node.selectedIndex = -1;
                     }
                 } else {
@@ -67,7 +67,7 @@ var langFix = /_/g,
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
     if (input.value !== "") {
-        accessorHooks.get.checked = (node) => {
+        accessorHooks.get.checked = ( node ) => {
             return node.getAttribute("value") === null ? "on" : node.value;
         };
     }
@@ -99,14 +99,14 @@ var langFix = /_/g,
 
 // Attributes that are booleans
 each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function(key) {
+      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
-    accessorHooks.set[key.toLowerCase()] = (node, value) => {
+    accessorHooks.set[ key.toLowerCase() ] = ( node, value ) => {
       // If the user is setting the value to false, completely remove the attribute
-        node[key] = !!value ? true : false;
+        node[ key ] = !!value ? true : false;
         // // otherwise set the attribute value
-        node[!!value ? "setAttribute" : "removeAttribute"](value);
+        node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
     };
 });
 
@@ -133,8 +133,8 @@ each((
     "encType "          +
     "readOnly  "        +
     "vAlign  "          +
-    "longDesc").split(" "), function(key) {
-    accessorHooks.get[key.toLowerCase()] = (node) => node[key];
+    "longDesc").split(" "), function( key ) {
+    accessorHooks.get[ key.toLowerCase() ] = ( node ) => node[ key ];
 });
 
     var MSApp = WINDOW.MSApp;

@@ -1,12 +1,12 @@
-import { slice, map, is } from "../helpers";
-import { WINDOW } from "../const";
-import { nodeTree } from "../core";
-import SelectorMatcher from "./selectormatcher";
-import eventhooks from "./eventhooks";
+import { slice, map, is        } from "../helpers";
+import { WINDOW                } from "../const";
+import { nodeTree              } from "../core";
+import   SelectorMatcher         from "./selectormatcher";
+import   eventhooks              from "./eventhooks";
 
 function getEventProperty(name, e, type, node, target, currentTarget) {
 
-    if (is(name, "number")) {
+    if ( is(name, "number") ) {
 
         var args = e["__" + "<%= pkg.codename %>" + "__"];
 
@@ -27,13 +27,13 @@ function getEventProperty(name, e, type, node, target, currentTarget) {
 }
 
 function EventHandler(el, type, selector, callback, props, once, namespace) {
-    var node = el[0],
-        hook = eventhooks[type],
-        matcher = SelectorMatcher(selector, node),
+    var node = el[ 0 ],
+        hook = eventhooks[ type ],
+        matcher = SelectorMatcher( selector, node ),
         handler = (e) => {
             e = e || WINDOW.event;
             // early stop in case of default action
-            if (EventHandler.skip === type) return;
+            if ( EventHandler.skip === type ) return;
             var eventTarget = e.target || node.ownerDocument.documentElement;
             // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
             // @see http://www.quirksmode.org/js/events_properties.html
@@ -42,34 +42,34 @@ function EventHandler(el, type, selector, callback, props, once, namespace) {
             // if this is a event delegation, else use current DOM node as the `currentTarget`.
             var currentTarget = matcher &&
                 // Don't process clicks on disabled elements
-                (eventTarget.disabled !== true || e.type !== "click") ? matcher(eventTarget) : node,
+                (eventTarget.disabled !== true || e.type !== "click") ? matcher( eventTarget ) : node,
                 args = props || [];
 
             // early stop for late binding or when target doesn't match selector
-            if (!currentTarget) return;
+            if ( !currentTarget ) return;
 
             // off callback even if it throws an exception later
-            if (once) el.off(type, callback);
+            if ( once ) el.off( type, callback );
 
-            if (props) {
-                args = map(args, (name) => getEventProperty(
+            if ( props ) {
+                args = map(args, ( name ) => getEventProperty(
                     name, e, type, node, eventTarget, currentTarget));
             } else {
-                args = slice.call(e["__" + "<%= pkg.codename %>" + "__"] || [0], 1);
+                args = slice.call(e["__" + "<%= pkg.codename %>" + "__"] || [ 0 ], 1);
             }
 
             // prevent default if handler returns false
-            if (callback.apply(el, args) === false) {
+            if (callback.apply( el, args ) === false) {
                 e.preventDefault();
             }
         };
 
     if (hook) handler = hook(handler, el) || handler;
 
-    handler.type = type;
-    handler.namespace = namespace;
-    handler.callback = callback;
-    handler.selector = selector;
+    handler.type       = type;
+    handler.namespace  = namespace;
+    handler.callback   = callback;
+    handler.selector   = selector;
 
     return handler;
 }

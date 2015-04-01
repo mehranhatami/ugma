@@ -1,5 +1,5 @@
-import { implement } from "../helpers";
-import { nodeTree } from "../core";
+import { implement          } from "../helpers";
+import { nodeTree           } from "../core";
 import { RETURN_FALSE, HTML } from "../const";
 
 implement({
@@ -14,13 +14,15 @@ implement({
     //
     // This logic, however, is not guaranteed and can change at any point in the future
     offsetParent(other) {
-        var node = this[0],
+        var node = this[ 0 ],
             offsetParent = node.offsetParent || HTML,
-            isInline = this.css("display") === "inline";
+            isInline = this.css( "display" ) === "inline";
+
         if (!isInline && offsetParent) {
-            return nodeTree(offsetParent);
+            return nodeTree( offsetParent );
         }
-        while (offsetParent && nodeTree(offsetParent).css("position") === "static") {
+
+        while ( offsetParent && nodeTree(offsetParent).css( "position" ) === "static" ) {
             offsetParent = offsetParent.offsetParent;
         }
 
