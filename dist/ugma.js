@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 01 Apr 2015 13:23:04 GMT
+ * Build date: Wed, 01 Apr 2015 16:32:28 GMT
  */
 (function() {
     "use strict";
@@ -18,15 +18,14 @@
     var helpers$$every = helpers$$arrayProto.every;
     var helpers$$slice = helpers$$arrayProto.slice;
     var helpers$$isArray = Array.isArray;
-    var helpers$$keys = Object.keys;
 
-    // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-    var helpers$$each = function(arr, callback)  {
+    var // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+        helpers$$each = function(arr, callback)  {
             if ( arr && callback ) {
                 var index = -1,
                     length = arr.length;
                 while ( ++index < length ) {
-                    if (callback( arr[ index ], index, arr) === false ) {
+                    if ( callback( arr[ index ], index, arr ) === false) {
                         break;
                     }
                 }
@@ -39,39 +38,8 @@
         helpers$$map = function(collection, callback)  {
             var arr = collection || [],
                 result = [];
-                helpers$$each( arr, function( value, key )  {
-                    result.push( callback( value, key ) );
-                });
-                return result;
-        },
-        // Iterates over own enumerable properties of an object, executing  the callback for each property.
-        helpers$$forOwn = function(obj, callback)  {
-            if ( obj ) {
-                var key,
-                    index = -1,
-                    props = Object.keys( obj ),
-                    length = props.length;
-    
-                while ( ++index < length ) {
-                    
-                    key = props[ index ];
-                    
-                    if (callback( key, obj[ key ], obj ) === false) {
-                        break;
-                    }
-                }
-            }
-            return obj;
-        },
-        // create a new array with all elements that pass the test implemented by the provided function.
-        helpers$$filter = function( collection, predicate )  {
-            var arr = collection || [],
-                result = [];
-                
-            helpers$$forOwn( arr, function( index, value )  {
-                if ( predicate( value, index, arr ) ) {
-                    result.push( value );
-                }
+            helpers$$each(arr, function( value, key )  {
+                result.push( callback( value, key ) );
             });
             return result;
         },
@@ -83,38 +51,77 @@
             return type === "function" ? typeof obj === type || false : typeof obj === type;
         },
     
+        // Iterates over own enumerable properties of an object, executing  the callback for each property.
+        helpers$$forOwn = function(obj, callback)  {
+    
+            if (obj) {
+                var keys = function( obj )  {
+                        if ( !helpers$$is(obj, "object") ) return [];
+                        var key, keys = [];
+                        for ( key in obj ) keys.push( key );
+                        return keys;
+                    },
+                    key,
+                    index = -1,
+                    props = keys( obj ),
+                    length = props.length;
+    
+                while (++index < length) {
+    
+                    key = props[ index ];
+    
+                    if ( callback( key, obj[ key ], obj ) === false) {
+                        break;
+                    }
+                }
+            }
+            return obj;
+        },
+        // create a new array with all elements that pass the test implemented by the provided function.
+        helpers$$filter = function( collection, predicate )  {
+            var arr = collection || [],
+                result = [];
+    
+            helpers$$forOwn( arr, function( index, value )  {
+                if ( predicate( value, index, arr ) ) {
+                    result.push( value );
+                }
+            });
+            return result;
+        },
+    
         helpers$$trim = function( value )  {
-           return helpers$$is(value, "string") ? value.trim() : value;
+            return helpers$$is( value, "string" ) ? value.trim() : value;
         },
     
         helpers$$inArray = function(arr, searchElement, fromIndex)  {
             fromIndex = fromIndex || 0;
             /* jshint ignore:start */
-            if (fromIndex > arr.length) {
+            if ( fromIndex > arr.length ) {
     
                 arr - 1;
             }
             /* jshint ignore:end */
             var i = 0,
                 len = arr.length;
-                
+    
             for ( ; i < len; i++ ) {
-                if (arr[ i ] === searchElement && fromIndex <= i ) {
+                if ( arr[ i ] === searchElement && fromIndex <= i ) {
                     return i;
                 }
     
-                if (arr[ i ] === searchElement && fromIndex > i ) {
+                if ( arr[ i ] === searchElement && fromIndex > i ) {
                     return -1;
                 }
             }
             return -1;
         },
     
-        helpers$$invoke = function( context, fn, arg1, arg2 )  {
-            if (helpers$$is(fn, "string")) fn = context[ fn ];
+        helpers$$invoke = function(context, fn, arg1, arg2)  {
+            if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
     
             try {
-                return fn.call( context, arg1, arg2 );
+                return fn.call(context, arg1, arg2);
             } catch (err) {
                 WINDOW.setTimeout( function()  { throw err }, 1 );
     
@@ -125,21 +132,21 @@
         // the nodeTree or the domTree
         helpers$$implement = function(obj, callback, mixin)  {
     
-            if ( !callback ) callback = function( method, strategy )   {return strategy};
+            if (!callback) callback = function(method, strategy)  {return strategy};
     
-            helpers$$forOwn(obj, function(method, func)  {
+            helpers$$forOwn(obj, function( method, func)  {
                 var args = [ method] .concat( func );
-                ( mixin ? core$$nodeTree : core$$domTree).prototype[ method ] = callback.apply( null, args );
+                (mixin ? core$$nodeTree : core$$domTree).prototype[ method ] = callback.apply(null, args);
     
-                if ( mixin ) core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
+                if (mixin) core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
             });
         },
     
         // Faster alternative then slice.call
         helpers$$sliceArgs = function(arg)  {
             var i = arg.length,
-                args = new Array( i || 0 );
-                
+                args = new Array(i || 0);
+    
             while (i--) {
                 args[ i ] = arg[ i ];
             }
@@ -151,15 +158,15 @@
     
         // Convert dashed to camelCase
         // Support: IE9-11+
-        helpers$$camelize = function(prop)  {
+        helpers$$camelize = function( prop )  {
             return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
                 return offset ? letter.toUpperCase() : letter;
-            }).replace( helpers$$mozHack, "Moz$1" );
+            }).replace (helpers$$mozHack, "Moz$1" );
         },
     
         // getComputedStyle takes a pseudoClass as an optional argument, so do we
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
-        helpers$$computeStyle = function(node, pseudoElement)  {
+        helpers$$computeStyle = function( node, pseudoElement )  {
             /* istanbul ignore if */
             pseudoElement = pseudoElement ? pseudoElement : "";
             // Support: IE<=11+, Firefox<=30+
@@ -168,13 +175,13 @@
             if (node.ownerDocument.defaultView.opener) {
                 return ( node.ownerDocument.defaultView ||
                     // This will work if the ownerDocument is a shadow DOM element
-                    DOCUMENT.defaultView).getComputedStyle(node, pseudoElement);
+                    DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
             }
-            return WINDOW.getComputedStyle( node, pseudoElement );
+            return WINDOW.getComputedStyle(node, pseudoElement);
         },
     
-        helpers$$injectElement = function( node )  {
-            if (node && node.nodeType === 1) return node.ownerDocument.head.appendChild( node );
+        helpers$$injectElement = function(node)  {
+            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
         };
 
     var core$$nodeTree, core$$dummyTree, core$$domTree;
@@ -240,9 +247,6 @@
                     return node ? node[ "trackira" ] || new core$$nodeTree( node ) : new core$$dummyTree();
                 }
             },
-            // Current version of the library. Keep in sync with `package.json`.
-            version: "0.0.1",
-            codename: "trackira",
             toString: function() { return "<" + this[ 0 ].tagName + ">" },
     
             // Create a ugma wrapper object for a native DOM element or a
@@ -624,24 +628,24 @@
         children: true
     
     }, function(methodName, all)  {return function(selector) {
-            if (selector && (!helpers$$is(selector, all ? "string" : "number"))) {
-                minErr$$minErr(methodName + "()", selector + " is not a " + (all ? " string" : " number") + " value");
+            if (selector && (!helpers$$is(selector, all ? "string" : "number") ) ) {
+                minErr$$minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
             }
     
-        var node = this[0],
-            matcher = util$selectormatcher$$default(selector),
+        var node = this[ 0 ],
+            matcher = util$selectormatcher$$default( selector ),
             children = node.children;
     
         if (all) {
-            if (matcher) children = helpers$$filter(children, matcher);
+            if ( matcher ) children = helpers$$filter( children, matcher );
     
-            return helpers$$map(children, core$$nodeTree);
+            return helpers$$map( children, core$$nodeTree );
         } else {
-            if (selector < 0) selector = children.length + selector;
+            if ( selector < 0 ) selector = children.length + selector;
     
-            return core$$nodeTree(children[selector]);
+            return core$$nodeTree( children[ selector ] );
         }
-    }}, function(methodName, all)  {return function()  {return all ? [] : new core$$dummyTree()}});
+    }}, function( methodName, all )  {return function()  {return all ? [] : new core$$dummyTree()}} );
 
     /* es6-transpiler has-iterators:false, has-generators: false */
     var modules$classes$$reClass = /[\n\t\r]/g,
@@ -798,7 +802,14 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
-    var util$csshooks$$cssHooks = { get: {}, set: {} },
+    var util$csshooks$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
+        "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
+        "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
+        "overflow rotate3d border-right-color border-top-color text-decoration-color text-emphasis-color " +
+        // SVG-related properties
+        "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+        
+        util$csshooks$$cssHooks = { get: {}, set: {} },
         util$csshooks$$directions = ["Top", "Right", "Bottom", "Left"],
         util$csshooks$$shortHand = {
             font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
@@ -810,11 +821,7 @@
         };
 
     // Don't automatically add 'px' to these possibly-unitless properties
-    helpers$$each(("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
-        "color richness volume counter-increment float reflect stop-opacity float " +
-        "fill-opacity font-weight line-height opacity orphans widows z-index zoom " +
-        // SVG-related properties
-        "stop-opacity stroke-mitrelimit stroke-opacity fill-opacity").split(" "), function( propName )  {
+    helpers$$each(util$csshooks$$UnitlessNumber, function( propName )  {
         var stylePropName = helpers$$camelize(propName);
     
         util$csshooks$$cssHooks.get[ propName ] = stylePropName;
@@ -1662,7 +1669,7 @@
 
     // Special events for the frame events 'hook'
     helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[name] = util$DebouncedWrapper$$DebouncedWrapper;
+        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
     });
 
     // Support: Firefox, Chrome, Safari
@@ -1673,11 +1680,11 @@
         util$eventhooks$$eventHooks.blur = function( handler )  { handler._eventType = "focusout" };
     } else {
         // firefox doesn't support focusin/focusout events
-        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function(handler)  { handler.capturing = true };
+        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function( handler )  { handler.capturing = true };
     }
     /* istanbul ignore else */
-    if (DOCUMENT.createElement("input").validity) {
-        util$eventhooks$$eventHooks.invalid = function(handler)  {
+    if (DOCUMENT.createElement( "input" ).validity) {
+        util$eventhooks$$eventHooks.invalid = function( handler )  {
             handler.capturing = true;
         };
     }
@@ -1693,7 +1700,7 @@
             if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
                 util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
                 // trigger custom event that capture
-                core$$ugma.native(util$eventhooks$$capturedNode).trigger("input");
+                core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
             }
         });
     
@@ -2209,7 +2216,7 @@
     
             eventType = handler._eventType || type;
         } else {
-            minErr$$minErr("fire()", ERROR_MSG[ 1] );
+            minErr$$minErr("trigger()", ERROR_MSG[ 1 ] );
         }
         // Handles triggering the appropriate event callbacks.
         e = node.ownerDocument.createEvent("HTMLEvents");
@@ -2247,6 +2254,8 @@
     }, null, function()  {return function() {
         if (arguments.length) return this;
     }});
+    // Current codename on the framework.
+    core$$ugma.version = "trackira";
 
     // Map over 'ugma' in case of overwrite
     var outro$$_ugma = WINDOW.ugma;
@@ -2261,4 +2270,7 @@
     };
 
     WINDOW.ugma = core$$ugma;
+
+    // Current version of the library. Keep in sync with `package.json`.
+    core$$ugma.version = "0.0.1";
 })();
