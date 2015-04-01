@@ -57,7 +57,6 @@ describe("get", function() {
         expect(input.get("form").nodeType).toBe(1);
     });
 
-
     it("should get property type of an input element", function() {
         expect(input.get("type")).toEqual("email");
 
@@ -75,7 +74,6 @@ describe("get", function() {
 
         checkbox.set("checked", "checked");
         expect(checkbox.get("checked")).toBeTruthy();
-
 
         checkbox[0].checked = true;
         expect(checkbox.get("checked")).toBeTruthy();
@@ -97,7 +95,6 @@ describe("get", function() {
     });
 
     it("should normalize the case of boolean attributes", function() {
-
 
         input.set("readonly", null);
         expect(input[0].getAttribute("readonly")).toBe(null);
@@ -153,6 +150,7 @@ describe("get", function() {
     });
 
     it("should handle HTML5 boolean attributes", function() {
+   
         txt.set({
             "autofocus": true,
             "required": true

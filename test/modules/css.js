@@ -34,6 +34,7 @@ describe("css", function() {
             expect(link.css("font-size")).toBeTruthy();
         });
 
+
         it("should handle opacity", function() {
             link.css({
                 "opacity": ""

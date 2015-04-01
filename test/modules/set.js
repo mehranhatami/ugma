@@ -25,24 +25,23 @@ describe("set", function() {
         txt = ugma.query("#text1");
     });
 
+    it("should set boolean element property", function() {
 
-     it("should set boolean element property", function() {
-         
-       var checkbox = ugma.add("<input type='checkbox'>");  
-         
-      expect(checkbox.get("checked")).toBe(false);
+        var checkbox = ugma.add("<input type='checkbox'>");
 
-      checkbox.set("checked", true);
-      expect(checkbox.get("checked")).toBe(true);
+        expect(checkbox.get("checked")).toBe(false);
 
-      checkbox.set("checked", "");
-      expect(checkbox.get("checked")).toBe(false);
+        checkbox.set("checked", true);
+        expect(checkbox.get("checked")).toBe(true);
 
-      checkbox.set("checked", "lala");
-      expect(checkbox.get("checked")).toBe(true);
+        checkbox.set("checked", "");
+        expect(checkbox.get("checked")).toBe(false);
 
-      
-      expect(checkbox.set("checked", null)).not.toHaveAttr("checked");
+        checkbox.set("checked", "lala");
+        expect(checkbox.get("checked")).toBe(true);
+
+
+        expect(checkbox.set("checked", null)).not.toHaveAttr("checked");
     });
 
     it("should return reference to 'this'", function() {
@@ -190,13 +189,11 @@ describe("set", function() {
             expect(table.first().last().first().get("className")).toEqual("cell");
         });
 
-
         it("should set the text of an element", function() {
             var div = ugma.add("div").set("textContent", "some text content");
             expect(div.get("textContent")).toEqual("some text content");
             expect(div[0].innerHTML).toEqual("some text content");
         });
-
 
         it("should set the style attribute of an element", function() {
             var style = "font-size:12px;line-height:23px;";
@@ -205,14 +202,14 @@ describe("set", function() {
             expect(div[0].style.fontSize).toEqual("12px");
         });
 
-
         it("should set multiple attributes of an element", function() {
             link.set({
-                id: "some_id",
+                id: "apple",
                 "title": "some_title",
                 "innerHTML": "some_content"
             });
-            expect(link[0].id).toEqual("some_id");
+
+            expect(link[0].id).toEqual("apple");
             expect(link[0].title).toEqual("some_title");
             expect(link[0].innerHTML).toEqual("some_content");
         });
@@ -227,7 +224,6 @@ describe("set", function() {
             expect(link[0].defer).toBeTruthy();
         });
 
-
         it("should set various attributes of a table element", function() {
             var table = ugma.add("table").set({
                 border: "2",
@@ -240,7 +236,6 @@ describe("set", function() {
             expect(table.get("cellSpacing")).toBe("4");
             expect(table[0].align).toEqual("center");
         });
-
 
         it("should replace child element(s) from node with provided element", function() {
             var div = ugma.add("div>a+a");
@@ -256,7 +251,7 @@ describe("set", function() {
             expect(input).toHaveProp("value", "bar");
         });
 
-        it("should accept function", function() {
+        it("should call the function and update the attribute with the return value", function() {
             var spy = jasmine.createSpy("set").and.returnValue("ok");
 
             link.set(spy);
@@ -268,25 +263,30 @@ describe("set", function() {
             expect(input).toHaveProp("value", "ok");
         });
 
+        it("should set a falsey value and not an empty string", function() {
+            expect(input.set({
+                value: false
+            }).get("value")).toEqual("false");
+            expect(input.set({
+                value: 0
+            }).get("value")).toEqual("0");
+        });
 
-        it("should set a falsey value and not an empty string", function(){
-			expect(input.set({value: false}).get("value")).toEqual("false");
-			expect(input.set({value: 0}).get("value")).toEqual("0");
-		});
-        
-		it("should set the selected option for a select element to matching string w/o falsy matches", function(){
-			var form = ugma.add("form");
-			form.set("innerHTML", "<select>"+
-				"<option value=''>no value</option>"+
-				"<option value='0'>value 0</option>"+
-				"<option value='1'>value 1</option>"+
-				"</select>");
-			expect(form.query("select").set("value", 0).get("value")).toEqual("");
-		});
-        
-        it("should set the type of a button", function(){
-			expect(ugma.add("button").set({type: "button"}).get("type")).toEqual("submit");
-		});
+        it("should set the selected option for a select element to matching string w/o falsy matches", function() {
+            var form = ugma.add("form");
+            form.set("innerHTML", "<select>" +
+                "<option value=''>no value</option>" +
+                "<option value='0'>value 0</option>" +
+                "<option value='1'>value 1</option>" +
+                "</select>");
+            expect(form.query("select").set("value", 0).get("value")).toEqual("");
+        });
+
+        it("should set the type of a button", function() {
+            expect(ugma.add("button").set({
+                type: "button"
+            }).get("type")).toEqual("submit");
+        });
 
         it("accept object with overriden toString", function() {
             function Type() {
