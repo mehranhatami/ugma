@@ -37,25 +37,25 @@ describe("manipulation", function() {
         it("should append text", function() {
             var root = ugma.native(document.createElement("div"));
             expect(root.append("text")).toEqual(root);
-            expect(root[0].innerHTML).toEqual("text");
+            expect(root.get()).toEqual("text");
         });
     });
 
     describe("prepend", function() {
 
         it("should prepend to empty", function() {
-            var root = ugma.native(document.createElement("div"));
+            var root = ugma.render(document.createElement("div"));
             expect(root.append("<span>abc</span>")).toEqual(root);
-            expect(root[0].innerHTML.toLowerCase()).toEqual("<span>abc</span>");
+            expect(root.get()).toEqual("<span>abc</span>");
         });
 
         it("should prepend to content", function() {
-            var root = ugma.render("<div>text</div>");
+            var root = ugma.render("div>`text`");
             expect(root.prepend("<span>abc</span>")).toEqual(root);
-            expect(root.get().toLowerCase()).toEqual("<span>abc</span>text");
+            expect(root.get()).toEqual("<span>abc</span>text");
         });
         it("should prepend text to content", function() {
-            var root = ugma.render("<div>text</div>");
+            var root = ugma.render("div>`text`");
             expect(root.prepend("abc")).toEqual(root);
             expect(root.get().toLowerCase()).toEqual("abctext");
         });
@@ -63,7 +63,7 @@ describe("manipulation", function() {
 
     describe("after", function() {
         it("should after", function() {
-            var root = ugma.render("<div><span></span></div>");
+            var root = ugma.render("div>span");
             var span = root.query("span");
             expect(span.after("<i></i><b></b>")).toEqual(span);
             expect(root.get().toLowerCase()).toEqual("<span></span><i></i><b></b>");
@@ -76,8 +76,6 @@ describe("manipulation", function() {
             expect(root.get().toLowerCase()).toEqual("<span></span>abc");
         });
     });
-
-
 
     describe("append, prepend, after, before", function() {
         var checkStrategies = {
@@ -212,11 +210,21 @@ describe("manipulation", function() {
         });
 
         it("should replaceWith", function() {
-            var root = ugma.render("<div>").set("before-<div></div>after");
+            var root = ugma.render("div").set("before-<div></div>after");
             var div = root.query("div");
             expect(div.replaceWith("<span>span-</span><b>bold-</b>")).toEqual(div);
+            // text
             expect(root.get("textContent")).toEqual("before-span-bold-after");
+            // innerHTML
+            expect(root.get()).toEqual("before-<span>span-</span><b>bold-</b>after");
         });
+        
+         it("should replaceWith text", function() {
+       var root = ugma.render("div").set("before-<div></div>after");
+     var div = root.query("div");
+      expect(div.replaceWith("text-")).toEqual(div);
+      expect(root.get("textContent")).toEqual("before-after");
+    });
 
         it("should accept html string", function() {
             expect(div.replaceWith(createDivHtml("replace"))).toBe(div);

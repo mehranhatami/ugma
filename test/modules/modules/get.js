@@ -16,6 +16,7 @@ describe("get", function() {
         tabIndex = ugma.query("#tabindex");
     });
 
+
     it("should return nodes outerHTML", function() {
       expect(tabIndex.get("outerHTML")).not.toBeUndefined();
     });
@@ -171,12 +172,12 @@ describe("get", function() {
     });
 
     it("should read element property", function() {
-        var elm = ugma.render("<div class='foo'>a</div>");
+        var elm = ugma.render("div.foo>`a`");
         expect(elm.get("className")).toBe("foo");
     });
 
     it("should set element property to a value", function() {
-        var elm = ugma.render("<div class='foo'>a</div>");
+        var elm = ugma.render("div.foo>`a`");
         elm.set("className", "bar");
         expect(elm[0].className).toBe("bar");
         expect(elm.get("className")).toBe("bar");
@@ -351,7 +352,7 @@ describe("get", function() {
     });
 
     it("should return null for non-existing attributes", function() {
-      var elm = ugma.render("<div class='any'>a</div>");
+      var elm = ugma.render("div.any>`a`");
       expect(elm.get("non-existing")).toBeNull();
     });
     

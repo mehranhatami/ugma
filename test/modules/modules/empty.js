@@ -23,5 +23,5 @@ describe("empty", function() {
         expect(input.empty()).toBe(input);
         expect(input).toBeEmpty();
     });
-
+    
 });

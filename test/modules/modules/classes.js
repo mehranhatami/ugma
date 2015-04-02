@@ -126,7 +126,7 @@ describe("classes manipulation", function() {
 
     describe("removeClass", function() {
         it("should correctly remove middle class", function() {
-            var element = ugma.render("<div class='foo bar baz'></div>");
+            var element = ugma.render("div.foo.bar.baz");
             expect(element.hasClass("bar")).toBe(true);
 
             element.removeClass("bar");
@@ -138,6 +138,7 @@ describe("classes manipulation", function() {
     });
 
     describe("addClass, removeClass", function() {
+        
         it("should return reference to 'this'", function() {
             expect(link.addClass("test2")).toBe(link);
             expect(link.removeClass("test2")).toBe(link);

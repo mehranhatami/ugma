@@ -5,12 +5,12 @@ describe("core", function() {
         expect(typeof ugma).toBe("object");
     });
 
-    it("should be nodeType 1 for ugma", function() {
+    it("should be nodeType 1", function() {
         expect(ugma[0].nodeType).toBe(1);
     });
 
     it("should have a overloaded toString", function() {
         expect(ugma.toString()).toBe("#document");
-        expect(typeof ugma.toString()).toBe("string");        
+        expect(typeof ugma.toString()).toBe("string");
     });
- });    
+});
