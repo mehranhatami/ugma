@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 01 Apr 2015 16:32:28 GMT
+ * Build date: Thu, 02 Apr 2015 04:50:36 GMT
  */
 (function() {
     "use strict";
@@ -136,9 +136,9 @@
     
             helpers$$forOwn(obj, function( method, func)  {
                 var args = [ method] .concat( func );
-                (mixin ? core$$nodeTree : core$$domTree).prototype[ method ] = callback.apply(null, args);
+                (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
     
-                if (mixin) core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
+                if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
             });
         },
     
@@ -184,9 +184,9 @@
             if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
         };
 
-    var core$$nodeTree, core$$dummyTree, core$$domTree;
+    var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree;
 
-    function core$$uClass() {
+    function core$core$$uClass() {
         var len = arguments.length,
             body = arguments[ len - 1 ],
             SuperClass = len > 1 ? arguments[ 0 ] : null,
@@ -230,7 +230,7 @@
         return Class;
     }
 
-    core$$nodeTree = core$$uClass({
+    core$core$$nodeTree = core$core$$uClass({
         constructor: function(node) {
     
                 if ( this ) {
@@ -244,7 +244,7 @@
                     }
                 } else {
                     // create a wrapper only once for each native element
-                    return node ? node[ "trackira" ] || new core$$nodeTree( node ) : new core$$dummyTree();
+                    return node ? node[ "trackira" ] || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
                 }
             },
             toString: function() { return "<" + this[ 0 ].tagName + ">" },
@@ -253,22 +253,22 @@
             // jQuery element. E.g. (ugma.native($('#foo')[0]))
             native: function(node) {
                 var nodeType = node && node.nodeType;
-                return ( nodeType === 9 ? core$$domTree : core$$nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
+                return ( nodeType === 9 ? core$core$$domTree : core$core$$nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
             }
     });
 
-    core$$domTree = core$$uClass(core$$nodeTree, {
-        constructor: function(node) { return core$$nodeTree.call( this, node.documentElement ) },
+    core$core$$domTree = core$core$$uClass(core$core$$nodeTree, {
+        constructor: function(node) { return core$core$$nodeTree.call( this, node.documentElement ) },
         toString: function() { return "#document" }
     });
 
-    core$$dummyTree = core$$uClass(core$$nodeTree, {
+    core$core$$dummyTree = core$core$$uClass(core$core$$nodeTree, {
         constructor: function() {},
         toString: function() { return "" }
     });
 
     // Set a new document, and define a local copy of ugma
-    var core$$ugma = new core$$domTree( document );
+    var core$core$$ugma = new core$core$$domTree( document );
 
     var WINDOW = window;
     var DOCUMENT = document;
@@ -313,248 +313,6 @@
         wrapper.prototype = Object.create( Error.prototype );
         throw new wrapper( module, msg );
     }
-
-    function emmet$parseAttr$$parseAttr(quote, name, value, rawValue) {
-        // try to determine which kind of quotes to use
-        quote = value && helpers$$inArray(value, "\"") >= 0 ? "'" : "\"";
-    
-        if (helpers$$is(rawValue, "string")) {
-            value = rawValue;
-        } else if ( !helpers$$is(value, "string") ) {
-            value = name;
-        }
-        return " " + name + "=" + quote + value + quote;
-    }
-    function emmet$injection$$injection(term, adjusted) {
-        return function(html)  {
-             // find index of where to inject the term
-             var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
-             // inject the term into the HTML string
-             return html.slice( 0, index ) + term + html.slice( index );
-         };
-     }
-
-    // return tag's from tagCache with <code>tag</code> type
-    function emmet$processTag$$processTag(tag) {
-        return emmet$emmet$$default[tag] || (emmet$emmet$$default[tag] = "<" + tag + "></" + tag + ">");
-    }
-
-    var emmet$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
-        emmet$indexing$$reDollar = /\$/g,
-        emmet$indexing$$indexing = function(num, term)  {
-        var stricted = num >= 1800 ? /* max 1800 HTML elements */ 1800 : (num <= 0 ? 1 : num),
-            result = new Array( stricted ),
-            i = 0;
-    
-        for (; i < stricted; ++i) {
-            result[ i ] = term.replace( emmet$indexing$$reIndex, function(expr, fmt, sign, base )  {
-                var index = (sign ? stricted - i - 1 : i) + (base ? +base : 1);
-                // handle zero-padded index values, like $$$ etc.
-                return ( fmt + index ).slice( -fmt.length ).replace( emmet$indexing$$reDollar, "0");
-            });
-        }
-        return result;
-    };
-
-    var emmet$operators$$default = {
-        "(" : 1,
-        ")" : 2,
-        "^" : 3,
-        ">" : 4,
-        "+" : 5,
-        "*" : 6,
-        "`" : 7,
-        "[" : 8,
-        "." : 8,
-        "#" : 8
-    };
-
-    /* es6-transpiler has-iterators:false, has-generators: false */
-
-    var emmet$process$$attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-        emmet$process$$charMap = { 
-            "&": "&amp;", 
-            "<": "&lt;",
-            ">": "&gt;",
-            "\"": "&quot;",
-            "'": "&#039;"
-        },
-        // filter for escaping unsafe XML characters: <, >, &, ', "
-        emmet$process$$escapeChars = function( str )  {return str.replace( /[&<>"']/g, function( ch )  {return emmet$process$$charMap[ ch ]})},
-        emmet$process$$process = function( template )  {
-    
-        var stack = [];
-    
-        helpers$$each(template, function(str)  {
-    
-            if ( str in emmet$operators$$default ) {
-    
-                var value = stack.shift(),
-                    node = stack.shift();
-    
-                if ( helpers$$is( node, "string" ) ) {
-                    
-                    node = [ emmet$processTag$$processTag( node ) ];
-                }
-    
-                if ( helpers$$is( node, "undefined" ) || helpers$$is(value, "undefined") ) {
-                    minErr$$minErr("emmet()", ERROR_MSG[4] );
-                }
-    
-                if (str === "#") { // id
-                    value = emmet$injection$$injection(" id=\"" + value + "\"");
-                } else if (str === ".") { // class
-                    value = emmet$injection$$injection(" class=\"" + value + "\"");
-                } else if (str === "[") { // id
-                    value = emmet$injection$$injection(value.replace(emmet$process$$attributes, emmet$parseAttr$$parseAttr));
-                } else if (str === "*") { // universal selector 
-                    node = emmet$indexing$$indexing(+value, node.join(""));
-                } else if (str === "`") { // Back tick
-                    stack.unshift(node);
-                    // escape unsafe HTML symbols
-                    node = [emmet$process$$escapeChars(value)];
-                } else { /* ">", "+", "^" */
-                    value = helpers$$is(value, "string") ? emmet$processTag$$processTag(value) : value.join("");
-    
-                    if (str === ">") {
-                        value = emmet$injection$$injection(value, true);
-                    } else {
-                        node.push(value);
-                    }
-                }
-    
-                str = helpers$$is(value, "function") ? node.map(value) : node;
-            }
-    
-            stack.unshift(str);
-        });
-    
-        return template.length === 1 ? emmet$processTag$$processTag(stack[0]) : stack[0].join("");
-    };
-
-    /* es6-transpiler has-iterators:false, has-generators: false */
-
-    // Reference: https://github.com/emmetio/emmet
-
-    var emmet$emmet$$dot = /\./g,
-        emmet$emmet$$abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
-        emmet$emmet$$tagCache = { "": "" };
-
-    core$$ugma.emmet = function(template, args) {
-    
-        if (!helpers$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
-    
-        if (args) template = core$$ugma.format(template, args);
-    
-        if (template in emmet$emmet$$tagCache) return emmet$emmet$$tagCache[template];
-    
-        var stack = [],
-            output = [];
-    
-        helpers$$each(template.match(emmet$emmet$$abbreviation), function(str)  {
-    
-            if ( emmet$operators$$default[ str[ 0 ] ] ) {
-                if (str !== "(") {
-                    // for ^ operator need to skip > str.length times
-                    for ( var i = 0, n = (str[ 0 ] === "^" ? str.length : 1); i < n; ++i ) {
-                        while (stack[ 0 ] !== str[ 0 ] && emmet$operators$$default[ stack[ 0 ] ] >= emmet$operators$$default[ str[ 0 ] ] ) {
-                            var head = stack.shift();
-                            output.push( head );
-                            // for ^ operator stop shifting when the first > is found
-                            if (str[ 0 ] === "^" && head === ">") break;
-                        }
-                    }
-                }
-    
-                if ( str === ")" ) {
-                    stack.shift(); // remove "(" symbol from stack
-                } else {
-                    // handle values inside of `...` and [...] sections
-                    if (str[ 0 ] === "[" || str[ 0 ] === "`") {
-                        output.push(str.slice(1, -1) );
-                    }
-                    // handle multiple classes, e.g. a.one.two
-                    if (str[ 0 ] === ".") {
-                        output.push( str.slice(1).replace(emmet$emmet$$dot, " ") );
-                    }
-    
-                    stack.unshift( str[ 0 ] );
-                }
-            } else {
-                output.push( str );
-            }
-        });
-    
-        output = output.concat( stack );
-    
-        return emmet$process$$process( output );
-    };
-
-    // populate empty tag names with result
-    helpers$$each("area base br col hr img input link meta param command keygen source".split(" "), function(tag)  {
-        emmet$emmet$$tagCache[tag] = "<" + tag + ">";
-    });
-
-    var emmet$emmet$$default = emmet$emmet$$tagCache;
-
-    helpers$$implement({
-        // Create a new nodeTree from Emmet or HTML string in memory
-        add: "",
-        // Create a new array of nodeTree from Emmet or HTML string in memory
-        addAll: "All"
-    
-    }, function(methodName, all)  {return function(value, varMap) {
-    
-        if (helpers$$is(value, "string")) {
-    
-            var doc = this[ 0 ].ownerDocument,
-                sandbox = this._._sandbox || (this._._sandbox = doc.createElement( "div" ));
-    
-            var nodes, el;
-    
-            if (value && value in emmet$emmet$$default) {
-    
-                nodes = doc.createElement( value );
-    
-                if (all) nodes = [ new core$$nodeTree( nodes ) ];
-            } else {
-                value = helpers$$trim( value );
-                // handle vanila HTML strings
-                // e.g. <div id="foo" class="bar"></div>
-                if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3) {
-    
-                    value = varMap ? core$$ugma.format(value, varMap) : value;
-    
-                } else { // emmet strings
-                    value = core$$ugma.emmet( value, varMap );
-                }
-    
-                sandbox.innerHTML = value; // parse input HTML string
-    
-                nodes = all ? [] : null;
-    
-                if (sandbox.childNodes.length === 1 && sandbox.firstChild.nodeType === 1) {
-                    nodes = sandbox.removeChild( sandbox.firstChild );
-                } else {
-    
-                    for (; el = sandbox.firstChild;) {
-                        sandbox.removeChild( el ); // detach element from the sandbox
-    
-                        if (el.nodeType === 1) {
-                            nodes.push( new core$$nodeTree( el ) );
-                        }
-                    }
-                }
-            }
-            return all ? nodes : core$$nodeTree( nodes );
-        }
-    
-        if (value.nodeType !== 1) {
-            minErr$$minErr("add()", "Not supported");
-        }
-    
-        return core$$nodeTree(value);
-    }});
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -639,13 +397,13 @@
         if (all) {
             if ( matcher ) children = helpers$$filter( children, matcher );
     
-            return helpers$$map( children, core$$nodeTree );
+            return helpers$$map( children, core$core$$nodeTree );
         } else {
             if ( selector < 0 ) selector = children.length + selector;
     
-            return core$$nodeTree( children[ selector ] );
+            return core$core$$nodeTree( children[ selector ] );
         }
-    }}, function( methodName, all )  {return function()  {return all ? [] : new core$$dummyTree()}} );
+    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
     /* es6-transpiler has-iterators:false, has-generators: false */
     var modules$classes$$reClass = /[\n\t\r]/g,
@@ -749,9 +507,9 @@
             
             if (!helpers$$is(deep, "boolean")) minErr$$minErr("clone()", "The object can not be cloned.");
             
-            return new core$$nodeTree( this[ 0 ].cloneNode(deep) );
+            return new core$core$$nodeTree( this[ 0 ].cloneNode(deep) );
         }
-    }, null, function()  {return function()  {return new core$$dummyTree()}});
+    }, null, function()  {return function()  {return new core$core$$dummyTree()}});
 
     // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
@@ -775,9 +533,9 @@
                 }
             }
     
-            return core$$nodeTree(parentNode);
+            return core$core$$nodeTree(parentNode);
         }
-    }, null, function()  {return function()  {return new core$$dummyTree()}});
+    }, null, function()  {return function()  {return new core$core$$dummyTree()}});
 
     helpers$$implement({
         // The contains(other) method returns true if other is an inclusive descendant of the 
@@ -787,18 +545,18 @@
         contains: function(element) {
             var reference = this[ 0 ];
     
-            if ( element instanceof core$$nodeTree ) {
+            if ( element instanceof core$core$$nodeTree ) {
                 var otherNode = element[ 0 ];
     
                 // If other and reference are the same object, return zero.
-                if (reference === otherNode) {
+                if ( reference === otherNode ) {
                     return 0;
                 }
-                return !!(element instanceof core$$nodeTree &&
+                return !!( element instanceof core$core$$nodeTree &&
                     ( reference === otherNode || reference.compareDocumentPosition( otherNode ) & 16 ) );
             }
     
-            minErr$$minErr("contains()", "Comparing position against non-Node values is not allowed.");
+            minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
         }
     }, null, function()  {return RETURN_FALSE});
 
@@ -1052,36 +810,36 @@
         }
     }, null, function()  {return RETURN_THIS});
 
-    var modules$dispatch$$dispatcher = DOCUMENT.createElement("a"),
+    var modules$dispatch$$dispatcher = DOCUMENT.createElement( "a" ),
         modules$dispatch$$safePropName = "onpropertychange";
     // for modern browsers use late binding for safe calls
     // dispatcher MUST have handleEvent property before registering
-    modules$dispatch$$dispatcher[modules$dispatch$$safePropName = "handleEvent"] = null;
-    modules$dispatch$$dispatcher.addEventListener(modules$dispatch$$safePropName, modules$dispatch$$dispatcher, false);
+    modules$dispatch$$dispatcher[ modules$dispatch$$safePropName = "handleEvent" ] = null;
+    modules$dispatch$$dispatcher.addEventListener( modules$dispatch$$safePropName, modules$dispatch$$dispatcher, false );
 
 
     helpers$$implement({
         // Make a safe method/function call
         dispatch: function(method) {var SLICE$0 = Array.prototype.slice;var args = SLICE$0.call(arguments, 1);var this$0 = this;
-       var  node = this[0],
+       var  node = this[ 0 ],
             handler, result, e;
     
         if (node) {
-            if (helpers$$is(method, "function")) {
-                handler = function()  { result = method.apply(this$0, args) };
+            if ( helpers$$is(method, "function" ) ) {
+                handler = function()  { result = method.apply( this$0, args ) };
             } else if (helpers$$is(method, "string")) {
-                handler = function()  { result = node[method].apply(node, args) };
+                handler = function()  { result = node[ method ].apply( node, args ) };
             } else {
-                minErr$$minErr("dispatch()", ERROR_MSG[1]);
+                minErr$$minErr( "dispatch()", ERROR_MSG [1 ] );
             }
             // register safe invokation handler
-            modules$dispatch$$dispatcher[modules$dispatch$$safePropName] = handler;
+            modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = handler;
             // make a safe call
-                e = DOCUMENT.createEvent("HTMLEvents");
-                e.initEvent(modules$dispatch$$safePropName, false, false);
-                modules$dispatch$$dispatcher.dispatchEvent(e);
+                e = DOCUMENT.createEvent( "HTMLEvents" );
+                e.initEvent( modules$dispatch$$safePropName, false, false );
+                modules$dispatch$$dispatcher.dispatchEvent( e );
             // cleanup references
-            modules$dispatch$$dispatcher[modules$dispatch$$safePropName] = null;
+            modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = null;
         }
     
        return result;
@@ -1097,29 +855,6 @@
             return mixins ? global ? helpers$$implement(mixins) : helpers$$implement(mixins, null, function()  {return RETURN_THIS}) : false;
         }
     });
-
-    var modules$format$$reVar = /\{([\w\-]+)\}/g;
-
-    // 'format' a placeholder value with it's original content 
-    // @example
-    // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
-    core$$ugma.format = function(tmpl, varMap) {
-        if (!helpers$$is(tmpl, "string")) tmpl = String(tmpl);
-    
-        if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
-    
-        return tmpl.replace(modules$format$$reVar, function(x, name, index)  {
-            if ( name in varMap ) {
-                x = varMap[ name ];
-    
-                if ( helpers$$is(x, "function") ) x = x( index );
-    
-                x = String( x );
-            }
-    
-            return x;
-        });
-    };
 
     var util$accessorhooks$$langFix = /_/g,
         util$accessorhooks$$accessorHooks = {
@@ -1418,7 +1153,7 @@
     
         if (requiresParent && !node.parentNode) return this;
     
-        if ((methodName === "after" || methodName === "before") && this === core$$ugma) {
+        if ((methodName === "after" || methodName === "before") && this === core$core$$ugma) {
              minErr$$minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
         }
         
@@ -1430,7 +1165,7 @@
             // Handle native DOM elements 
             // e.g. link.append(document.createElement('li'));
             if (native && content.nodeType === 1) {
-                content = core$$nodeTree( content );
+                content = core$core$$nodeTree( content );
             }
     
             if (helpers$$is(content, "function")) {
@@ -1446,7 +1181,7 @@
                 if (helpers$$is(fragment, "string")) {
                     fragment += helpers$$trim(content);
                 } else {
-                    content = core$$ugma.addAll(content);
+                    content = core$core$$ugma.renderAll(content);
                 }
             } else if (content._) {
                 content = [content];
@@ -1459,7 +1194,7 @@
                 if (helpers$$isArray(content)) {
                     if (helpers$$is(fragment, "string")) {
                         // append existing string to fragment
-                        content = core$$ugma.addAll( fragment ).concat( content );
+                        content = core$core$$ugma.renderAll( fragment ).concat( content );
                         // fallback to document fragment strategy
                         fragment = node.ownerDocument.createDocumentFragment();
                     }
@@ -1571,7 +1306,7 @@
     
                     // Cancel previous frame if it exists
                     if ( self._._raf ) {
-                        core$$ugma.cancelFrame( self._._raf );
+                        core$core$$ugma.cancelFrame( self._._raf );
                         // Zero out rAF id used during the animation
                         self._._raf = null;
                     }
@@ -1643,21 +1378,21 @@
                 isInline = this.css( "display" ) === "inline";
     
             if (!isInline && offsetParent) {
-                return core$$nodeTree( offsetParent );
+                return core$core$$nodeTree( offsetParent );
             }
     
-            while ( offsetParent && core$$nodeTree(offsetParent).css( "position" ) === "static" ) {
+            while ( offsetParent && core$core$$nodeTree(offsetParent).css( "position" ) === "static" ) {
                 offsetParent = offsetParent.offsetParent;
             }
     
-            return core$$nodeTree(offsetParent);
+            return core$core$$nodeTree(offsetParent);
         }
     }, null, function()  {return RETURN_FALSE});function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
         var debouncing;
         return function( e )  {
             if ( !debouncing ) {
                 debouncing = true;
-                node._._raf = core$$ugma.requestFrame( function()  {
+                node._._raf = core$core$$ugma.requestFrame( function()  {
                     handler( e );
                     debouncing = false;
                 });
@@ -1700,7 +1435,7 @@
             if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
                 util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
                 // trigger custom event that capture
-                core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
+                core$core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
             }
         });
     
@@ -1724,9 +1459,9 @@
     
         if (name === "type")               return eventType;
         if (name === "defaultPrevented")   return e.defaultPrevented;
-        if (name === "target")             return core$$nodeTree(target);
-        if (name === "currentTarget")      return core$$nodeTree(currentTarget);
-        if (name === "relatedTarget")      return core$$nodeTree(e.relatedTarget);
+        if (name === "target")             return core$core$$nodeTree(target);
+        if (name === "currentTarget")      return core$core$$nodeTree(currentTarget);
+        if (name === "relatedTarget")      return core$core$$nodeTree(e.relatedTarget);
     
         var value = e[name];
     
@@ -1917,9 +1652,9 @@
             if (!old) node.removeAttribute("id");
         }
     
-            return all ? helpers$$map(result, core$$nodeTree) : core$$nodeTree(result);
+            return all ? helpers$$map(result, core$core$$nodeTree) : core$core$$nodeTree(result);
             
-    }}, function(methodName, all)  {return function()  {return all ? [] : new core$$dummyTree()}});
+    }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$dummyTree()}});
 
     var modules$raf$$global = WINDOW;
     // Test if we are within a foreign domain. Use raf from the top if possible.
@@ -1936,7 +1671,7 @@
         modules$raf$$craf = modules$raf$$global.cancelAnimationFrame,
         modules$raf$$lastTime = 0;
 
-    if (!(modules$raf$$raf && !modules$raf$$craf)) {
+    if (!( modules$raf$$raf && !modules$raf$$craf ) ) {
         helpers$$each(VENDOR_PREFIXES, function( prefix )  {
             prefix = prefix.toLowerCase();
             modules$raf$$raf = modules$raf$$raf || WINDOW[ prefix + "RequestAnimationFrame" ];
@@ -1945,7 +1680,7 @@
     }
 
     // Executes a callback in the next frame
-    core$$ugma.requestFrame = function( callback )  {
+    core$core$$ugma.requestFrame = function( callback )  {
         /* istanbul ignore else */
         if (modules$raf$$raf) {
             return modules$raf$$raf.call(modules$raf$$global, callback);
@@ -1956,20 +1691,20 @@
 
             modules$raf$$lastTime = currTime + timeDelay;
 
-            return modules$raf$$global.setTimeout(function()  {
-                callback(currTime + timeDelay);
+            return modules$raf$$global.setTimeout( function()  {
+                callback(currTime + timeDelay );
             }, timeDelay);
         }
     };
 
     // Works around a rare bug in Safari 6 where the first request is never invoked.
-    core$$ugma.requestFrame(function() {return function() {}});
+    core$core$$ugma.requestFrame( function() { return function() {} } );
 
     // Cancel a scheduled frame
-    core$$ugma.cancelFrame = function(frameId)  {
+    core$core$$ugma.cancelFrame = function( frameId )  {
         /* istanbul ignore else */
         if ( modules$raf$$craf ) {
-            modules$raf$$craf.call(modules$raf$$global, frameId);
+            modules$raf$$craf.call( modules$raf$$global, frameId );
         } else {
             modules$raf$$global.clearTimeout( frameId );
         }
@@ -1979,28 +1714,28 @@
         modules$ready$$readyState = DOCUMENT.readyState,
         modules$ready$$pageLoaded = function()  {
             //  safely trigger stored callbacks
-            if ( modules$ready$$callbacks ) modules$ready$$callbacks = helpers$$each( modules$ready$$callbacks( function( func )  {return core$$ugma.dispatch}, core$$ugma) );
+            if ( modules$ready$$callbacks ) modules$ready$$callbacks = helpers$$each( modules$ready$$callbacks( function( func )  {return core$core$$ugma.dispatch}, core$core$$ugma) );
         };
 
-    modules$ready$$callbacks = modules$ready$$callbacks.forEach(core$$ugma.dispatch, core$$ugma);
+    modules$ready$$callbacks = modules$ready$$callbacks.forEach( core$core$$ugma.dispatch, core$core$$ugma );
 
     // Support: IE9
-    if (DOCUMENT.attachEvent ? modules$ready$$readyState === "complete" : modules$ready$$readyState !== "loading") {
+    if ( DOCUMENT.attachEvent ? modules$ready$$readyState === "complete" : modules$ready$$readyState !== "loading" ) {
         // use setTimeout to make sure that the dispatch method exists
-        WINDOW.setTimeout(modules$ready$$pageLoaded, 0);
+        WINDOW.setTimeout( modules$ready$$pageLoaded, 0 );
     } else {
-        WINDOW.addEventListener("load", modules$ready$$pageLoaded, false);
-        DOCUMENT.addEventListener("DOMContentLoaded", modules$ready$$pageLoaded, false);
+        WINDOW.addEventListener( "load", modules$ready$$pageLoaded, false );
+        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded, false );
     }
 
     helpers$$implement({
-        ready: function(callback) {
-            if ( typeof callback !== "function" ) minErr$$minErr();
+        ready: function( callback ) {
+            if ( !helpers$$is( callback, "function") ) minErr$$minErr();
     
             if ( modules$ready$$callbacks ) {
                 modules$ready$$callbacks.push( callback );
             } else {
-                core$$ugma.dispatch( callback );
+                core$core$$ugma.dispatch( callback );
             }
         }
     });
@@ -2083,6 +1818,7 @@
             return this;
         }
     }, null, function()  {return RETURN_THIS});
+
     // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
     // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
     //
@@ -2105,45 +1841,45 @@
     //        
     var modules$shadow$$MUTATION_WRAPPER = "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
 
-    if (INTERNET_EXPLORER) {
-        modules$shadow$$MUTATION_WRAPPER = modules$shadow$$MUTATION_WRAPPER.replace("position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace("data=`about:blank` ", "");
+    if ( INTERNET_EXPLORER ) {
+        modules$shadow$$MUTATION_WRAPPER = modules$shadow$$MUTATION_WRAPPER.replace( "position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace( "data=`about:blank` ", "" );
     }
 
     // Chrome/Safari/Opera have serious bug with tabbing to the <object> tree:
     // https://code.google.com/p/chromium/issues/detail?id=255150
     helpers$$implement({
         shadow: function(name) {var callback = arguments[1];if(callback === void 0)callback = function()  {};
-            var contexts = this._._shadow || (this._._shadow = {}),
+            var contexts = this._._shadow || ( this._._shadow = {} ),
                 data = contexts[name] || [];
     
-            if (data[0]) {
+            if (data[ 0 ] ) {
                 // callback is always async
-                WINDOW.setTimeout(function()  { callback(data[1]) }, 1);
+                WINDOW.setTimeout(function()  { callback(data[ 1 ] ) }, 1 );
     
-                return data[0];
+                return data[ 0 ];
             }
     
-            var ctx = core$$ugma.add(modules$shadow$$MUTATION_WRAPPER),
+            var ctx = core$core$$ugma.render(modules$shadow$$MUTATION_WRAPPER),
                 object = ctx.get("firstChild");
             // set onload handler before adding element to the DOM
             object.onload = function()  {
                 // apply user-defined styles for the context
-                if (ctx.addClass(name).css("position") === "static") ctx.css("position", "relative");
+                if ( ctx.addClass(name).css("position") === "static" ) ctx.css("position", "relative");
     
                 // store new context root internally and invoke callback
-                callback(data[1] = new core$$domTree(object.contentDocument));
+                callback( data[ 1 ] = new core$core$$domTree( object.contentDocument ) );
             };
     
-            this.before(ctx);
+            this.before( ctx );
     
-            if (INTERNET_EXPLORER) object.data = "about:blank";
+            if ( INTERNET_EXPLORER ) object.data = "about:blank";
     
             // store context data internally
-            contexts[name] = data;
+            contexts[ name ] = data;
     
-            return data[0] = ctx;
+            return data[ 0 ] = ctx;
         }
-    }, null, function()  {return function()  {return RETURN_FALSE}});
+    }, null, function()  {return function()  {return RETURN_FALSE}} );
 
     helpers$$implement({
         // Subscribe on particular properties / attributes, and get notified if they are changing
@@ -2199,8 +1935,8 @@
             }
         }
     
-        return all ? helpers$$map(descendants, core$$nodeTree) : core$$nodeTree(currentNode);
-    }}, function(methodName)  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$$dummyTree()}});
+        return all ? helpers$$map(descendants, core$core$$nodeTree) : core$core$$nodeTree(currentNode);
+    }}, function(methodName)  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}});
 
     helpers$$implement({
         // Trigger one or many events, firing all bound callbacks. 
@@ -2254,23 +1990,286 @@
     }, null, function()  {return function() {
         if (arguments.length) return this;
     }});
+
+    var template$format$$reVar = /\{([\w\-]+)\}/g;
+
+    // 'format' a placeholder value with it's original content 
+    // @example
+    // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
+    core$core$$ugma.format = function(template, varMap) {
+        if (!helpers$$is(template, "string")) template = String(template);
+    
+        if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
+    
+        return template.replace(template$format$$reVar, function(placeholder, name, index)  {
+            if ( name in varMap ) {
+                placeholder = varMap[ name ];
+    
+                if ( helpers$$is(placeholder, "function") ) placeholder = placeholder( index );
+    
+                placeholder = String( placeholder );
+            }
+    
+            return placeholder;
+        });
+    };var template$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
+        template$indexing$$reDollar = /\$/g,
+        template$indexing$$indexing = function(num, term)  {
+        var stricted = num >= 1800 ? /* max 1800 HTML elements */ 1800 : (num <= 0 ? 1 : num),
+            result = new Array( stricted ),
+            i = 0;
+    
+        for (; i < stricted; ++i) {
+            result[ i ] = term.replace( template$indexing$$reIndex, function(expr, fmt, sign, base )  {
+                var index = (sign ? stricted - i - 1 : i) + (base ? +base : 1);
+                // handle zero-padded index values, like $$$ etc.
+                return ( fmt + index ).slice( -fmt.length ).replace( template$indexing$$reDollar, "0");
+            });
+        }
+        return result;
+    };
+
+    function template$injection$$injection(term, adjusted) {
+        return function(html)  {
+             // find index of where to inject the term
+             var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
+             // inject the term into the HTML string
+             return html.slice( 0, index ) + term + html.slice( index );
+         };
+     }
+
+    var template$operators$$default = {
+        "(" : 1,
+        ")" : 2,
+        "^" : 3,
+        ">" : 4,
+        "+" : 5,
+        "*" : 6,
+        "`" : 7,
+        "[" : 8,
+        "." : 8,
+        "#" : 8
+    };
+
+    function template$parseAttr$$parseAttr(quote, name, value, rawValue) {
+        // try to determine which kind of quotes to use
+        quote = value && helpers$$inArray(value, "\"") >= 0 ? "'" : "\"";
+    
+        if (helpers$$is(rawValue, "string")) {
+            value = rawValue;
+        } else if ( !helpers$$is(value, "string") ) {
+            value = name;
+        }
+        return " " + name + "=" + quote + value + quote;
+    }
+
+    /* es6-transpiler has-iterators:false, has-generators: false */
+
+    // Reference: https://github.com/emmetio/emmet
+
+    var template$template$$dot = /\./g,
+        template$template$$abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
+        template$template$$tagCache = { "": "" };
+
+    core$core$$ugma.template = function(template, args) {
+    
+        if (!helpers$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
+    
+        if (args) template = core$core$$ugma.format(template, args);
+    
+        if (template in template$template$$tagCache) return template$template$$tagCache[template];
+    
+        var stack = [],
+            output = [];
+    
+        helpers$$each(template.match(template$template$$abbreviation), function(str)  {
+    
+            if ( template$operators$$default[ str[ 0 ] ] ) {
+                if (str !== "(") {
+                    // for ^ operator need to skip > str.length times
+                    for ( var i = 0, n = (str[ 0 ] === "^" ? str.length : 1); i < n; ++i ) {
+                        while (stack[ 0 ] !== str[ 0 ] && template$operators$$default[ stack[ 0 ] ] >= template$operators$$default[ str[ 0 ] ] ) {
+                            var head = stack.shift();
+                            output.push( head );
+                            // for ^ operator stop shifting when the first > is found
+                            if (str[ 0 ] === "^" && head === ">") break;
+                        }
+                    }
+                }
+    
+                if ( str === ")" ) {
+                    stack.shift(); // remove "(" symbol from stack
+                } else {
+                    // handle values inside of `...` and [...] sections
+                    if (str[ 0 ] === "[" || str[ 0 ] === "`") {
+                        output.push(str.slice(1, -1) );
+                    }
+                    // handle multiple classes, e.g. a.one.two
+                    if (str[ 0 ] === ".") {
+                        output.push( str.slice(1).replace(template$template$$dot, " ") );
+                    }
+    
+                    stack.unshift( str[ 0 ] );
+                }
+            } else {
+                output.push( str );
+            }
+        });
+    
+        output = output.concat( stack );
+    
+        return template$process$$process( output );
+    };
+
+    // populate empty tag names with result
+    helpers$$each("area base br col hr img input link meta param command keygen source".split(" "), function(tag)  {
+        template$template$$tagCache[tag] = "<" + tag + ">";
+    });
+
+    var template$template$$default = template$template$$tagCache;
+    // return tag's from tagCache with <code>tag</code> type
+    function template$processTag$$processTag(tag) {
+        return template$template$$default[tag] || (template$template$$default[tag] = "<" + tag + "></" + tag + ">");
+    }
+
+    /* es6-transpiler has-iterators:false, has-generators: false */
+
+    var template$process$$attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
+        template$process$$charMap = { 
+            "&": "&amp;", 
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#039;"
+        },
+        // filter for escaping unsafe XML characters: <, >, &, ', "
+        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"']/g, function( ch )  {return template$process$$charMap[ ch ]})},
+        template$process$$process = function( template )  {
+    
+        var stack = [];
+    
+        helpers$$each(template, function(str)  {
+    
+            if ( str in template$operators$$default ) {
+    
+                var value = stack.shift(),
+                    node = stack.shift();
+    
+                if ( helpers$$is( node, "string" ) ) {
+                    
+                    node = [ template$processTag$$processTag( node ) ];
+                }
+    
+                if ( helpers$$is( node, "undefined" ) || helpers$$is(value, "undefined") ) {
+                    minErr$$minErr("emmet()", ERROR_MSG[ 4 ] );
+                }
+    
+                if (str === "#") { // id
+                    value = template$injection$$injection(" id=\"" + value + "\"");
+                } else if (str === ".") { // class
+                    value = template$injection$$injection(" class=\"" + value + "\"");
+                } else if (str === "[") { // id
+                    value = template$injection$$injection(value.replace(template$process$$attributes, template$parseAttr$$parseAttr));
+                } else if (str === "*") { // universal selector 
+                    node = template$indexing$$indexing(+value, node.join(""));
+                } else if (str === "`") { // Back tick
+                    stack.unshift(node);
+                    // escape unsafe HTML symbols
+                    node = [template$process$$escapeChars(value)];
+                } else { /* ">", "+", "^" */
+                    value = helpers$$is(value, "string") ? template$processTag$$processTag(value) : value.join("");
+    
+                    if (str === ">") {
+                        value = template$injection$$injection(value, true);
+                    } else {
+                        node.push(value);
+                    }
+                }
+    
+                str = helpers$$is(value, "function") ? node.map(value) : node;
+            }
+    
+            stack.unshift( str );
+        });
+    
+        return template.length === 1 ? template$processTag$$processTag( stack[ 0 ] ) : stack[ 0 ].join( "" );
+    };
+
+    helpers$$implement({
+        // Create a new nodeTree from Emmet or HTML string in memory
+        render: "",
+        // Create a new array of nodeTree from Emmet or HTML string in memory
+        renderAll: "All"
+    
+    }, function(methodName, all)  {return function(value, varMap) {
+    
+        if (helpers$$is(value, "string")) {
+    
+            var doc = this[ 0 ].ownerDocument,
+                sandbox = this._._sandbox || (this._._sandbox = doc.createElement( "div" ));
+    
+            var nodes, el;
+    
+            if (value && value in template$template$$default) {
+    
+                nodes = doc.createElement( value );
+    
+                if (all) nodes = [ new core$core$$nodeTree( nodes ) ];
+            } else {
+                value = helpers$$trim( value );
+                // handle vanila HTML strings
+                // e.g. <div id="foo" class="bar"></div>
+                if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3) {
+    
+                    value = varMap ? core$core$$ugma.format(value, varMap) : value;
+    
+                } else { // emmet strings
+                    value = core$core$$ugma.template( value, varMap );
+                }
+    
+                sandbox.innerHTML = value; // parse input HTML string
+    
+                nodes = all ? [] : null;
+    
+                if (sandbox.childNodes.length === 1 && sandbox.firstChild.nodeType === 1) {
+                    nodes = sandbox.removeChild( sandbox.firstChild );
+                } else {
+    
+                    for (; el = sandbox.firstChild;) {
+                        sandbox.removeChild( el ); // detach element from the sandbox
+    
+                        if (el.nodeType === 1) {
+                            nodes.push( new core$core$$nodeTree( el ) );
+                        }
+                    }
+                }
+            }
+            return all ? nodes : core$core$$nodeTree( nodes );
+        }
+    
+        if (value.nodeType !== 1) {
+            minErr$$minErr(methodName + "()", "Not supported");
+        }
+    
+        return core$core$$nodeTree(value);
+    }});
     // Current codename on the framework.
-    core$$ugma.version = "trackira";
+    core$core$$ugma.version = "trackira";
+
+    // Current version of the library. Keep in sync with `package.json`.
+    core$core$$ugma.version = "0.0.1";
 
     // Map over 'ugma' in case of overwrite
     var outro$$_ugma = WINDOW.ugma;
 
     // Runs ugma in *noConflict* mode, returning the original `ugma` namespace.
-    core$$ugma.noConflict = function() {
-        if ( WINDOW.ugma === core$$ugma ) {
+    core$core$$ugma.noConflict = function() {
+        if ( WINDOW.ugma === core$core$$ugma ) {
             WINDOW.ugma = outro$$_ugma;
         }
     
-        return core$$ugma;
+        return core$core$$ugma;
     };
 
-    WINDOW.ugma = core$$ugma;
-
-    // Current version of the library. Keep in sync with `package.json`.
-    core$$ugma.version = "0.0.1";
+    WINDOW.ugma = core$core$$ugma;
 })();
