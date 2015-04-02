@@ -54,7 +54,7 @@ describe("traversing", function() {
 
     describe("next", function() {
         it("should return next sibling", function() {
-            var element = ugma.add("<div><b>b</b><i>i</i></div>");
+            var element = ugma.render("<div><b>b</b><i>i</i></div>");
             var b = element.query("b");
             var i = element.query("i");
             expect(b.next()).toEqual(i);

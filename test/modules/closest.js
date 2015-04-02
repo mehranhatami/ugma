@@ -10,7 +10,7 @@
      });
 
      it("should return closest parent or an empty set when no parent", function() {
-         var parent = ugma.add("<div><p>abc</p></div>"),
+         var parent = ugma.render("<div><p>abc</p></div>"),
              child = parent.query("p");
 
          expect(parent.closest()).toBeTruthy();
@@ -18,7 +18,7 @@
      });
 
      it("should return empty set when no parent", function() {
-         var element = ugma.add("<div>abc</div>");
+         var element = ugma.render("<div>abc</div>");
          expect(element.closest()).toBeTruthy();
      });
 

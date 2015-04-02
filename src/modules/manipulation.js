@@ -71,7 +71,7 @@ implement({
             if (is(fragment, "string")) {
                 fragment += trim(content);
             } else {
-                content = ugma.addAll(content);
+                content = ugma.renderAll(content);
             }
         } else if (content._) {
             content = [content];
@@ -84,7 +84,7 @@ implement({
             if (isArray(content)) {
                 if (is(fragment, "string")) {
                     // append existing string to fragment
-                    content = ugma.addAll( fragment ).concat( content );
+                    content = ugma.renderAll( fragment ).concat( content );
                     // fallback to document fragment strategy
                     fragment = node.ownerDocument.createDocumentFragment();
                 }

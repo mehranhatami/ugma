@@ -22,7 +22,7 @@ describe("get", function() {
     
     it("should return a CSS string representing the Element's styles", function() {
         var style = "font-size:12px;color:rgb(255,255,255)";
-        var myElement = ugma.add("div").set("style", style);
+        var myElement = ugma.render("div").set("style", style);
         expect(myElement.get("style").toLowerCase().replace(/\s/g, "").replace(/;$/, "")).toMatch(/(font-size:12px;color:rgb\(255,255,255\))|(color:rgb\(255,255,255\);font-size:12px)/);
     });
 
@@ -47,7 +47,7 @@ describe("get", function() {
     });
 
     it("should return the nodes's tagName", function() {
-        var myElement = ugma.add("div");
+        var myElement = ugma.render("div");
         expect(myElement.get("tagName")).toEqual("DIV");
     });
 
@@ -117,21 +117,21 @@ describe("get", function() {
     });
 
     it("should get an absolute href", function() {
-        var link = ugma.add("a").set({
+        var link = ugma.render("a").set({
             href: "http://google.com/"
         });
         expect(link.get("href")).toEqual("http://google.com/");
     });
 
     it("should get an absolute href to the same domain", function() {
-        var link = ugma.add("a").set({
+        var link = ugma.render("a").set({
             href: window.location.href
         });
         expect(link.get("href")).toEqual(window.location.href);
     });
 
     it("should return '' when attribute is missing", function() {
-        var link = ugma.add("a");
+        var link = ugma.render("a");
         expect(link.get("href")).toBe("");
     });
 
@@ -164,19 +164,19 @@ describe("get", function() {
     });
 
     it("should return undefined for non-existing attributes on input", function() {
-        var elm = ugma.add("input");
+        var elm = ugma.render("input");
         expect(elm.get("readonly")).toBeFalsy();
         expect(elm.get("readOnly")).toBeFalsy();
         expect(elm.get("disabled")).toBeFalsy();
     });
 
     it("should read element property", function() {
-        var elm = ugma.add("<div class='foo'>a</div>");
+        var elm = ugma.render("<div class='foo'>a</div>");
         expect(elm.get("className")).toBe("foo");
     });
 
     it("should set element property to a value", function() {
-        var elm = ugma.add("<div class='foo'>a</div>");
+        var elm = ugma.render("<div class='foo'>a</div>");
         elm.set("className", "bar");
         expect(elm[0].className).toBe("bar");
         expect(elm.get("className")).toBe("bar");
@@ -265,10 +265,10 @@ describe("get", function() {
     });
 
     it("handles select as undefined key", function() {
-        var select = ugma.add("<select><option>a2</option><option>a3</option></select>");
+        var select = ugma.render("<select><option>a2</option><option>a3</option></select>");
         expect(select.get()).toBe("a2");
 
-        select = ugma.add("<select><option>a2</option><option selected>a3</option></select>");
+        select = ugma.render("<select><option>a2</option><option selected>a3</option></select>");
         expect(select.get()).toBe("a3");
 
         select.set("selectedIndex", -1);
@@ -276,10 +276,10 @@ describe("get", function() {
     });
 
     it("handles select as defined key", function() {
-        var select = ugma.add("<select><option>a2</option><option>a3</option></select>");
+        var select = ugma.render("<select><option>a2</option><option>a3</option></select>");
         expect(select.get("select")).toBe("a2");
 
-        select = ugma.add("<select><option>a2</option><option selected>a3</option></select>");
+        select = ugma.render("<select><option>a2</option><option selected>a3</option></select>");
         expect(select.get("select")).toBe("a3");
 
         select.set("selectedIndex", -1);
@@ -287,27 +287,27 @@ describe("get", function() {
     });
 
     it("handles option as undefined key", function() {
-        var select = ugma.add("<select><option value='a1'>a2</option><option selected>a3</option></select>");
+        var select = ugma.render("<select><option value='a1'>a2</option><option selected>a3</option></select>");
         expect(select.child(0).get()).toBe("a1");
         expect(select.child(1).get()).toBe("a3");
     });
 
     it("handles option as defined key", function() {
-        var select = ugma.add("<select><option value='a1'>a2</option><option selected>a3</option></select>");
+        var select = ugma.render("<select><option value='a1'>a2</option><option selected>a3</option></select>");
         expect(select.child(0).get("option")).toBe("a1");
         expect(select.child(1).get("option")).toBe("a3");
     });
 
     it("handles different tags", function() {
-        var div = ugma.add("div>a+a"),
-            input = ugma.add("input[value=foo]");
+        var div = ugma.render("div>a+a"),
+            input = ugma.render("input[value=foo]");
 
         expect(div.value().toLowerCase()).toBe("<a></a><a></a>");
         expect(input.get()).toBe("foo");
     });
 
     it("handles textarea", function() {
-        var textarea = ugma.add("textarea");
+        var textarea = ugma.render("textarea");
 
         expect(textarea.get()).toBe("");
         textarea.set("value", "123");
@@ -333,7 +333,7 @@ describe("get", function() {
     });
 
     it("should normalize the case of boolean attributes", function() {
-        var elm = ugma.add("input");
+        var elm = ugma.render("input");
         expect(elm.get("readonly")).toBeFalsy();
         expect(elm.get("readOnly")).toBeFalsy();
         expect(elm.get("disabled")).toBeFalsy();
@@ -346,12 +346,12 @@ describe("get", function() {
     });
 
     it("should get the value of a option element when it does not have the value attribute", function() {
-        var select = ugma.add("select").set("innerHTML", "<option>s</option>");
+        var select = ugma.render("select").set("innerHTML", "<option>s</option>");
         expect(select.query("option").get("value")).toEqual("s");
     });
 
     it("should return null for non-existing attributes", function() {
-      var elm = ugma.add("<div class='any'>a</div>");
+      var elm = ugma.render("<div class='any'>a</div>");
       expect(elm.get("non-existing")).toBeNull();
     });
     
@@ -365,7 +365,7 @@ describe("get", function() {
     }); 
 
     it("should return the text of the selected option for a select element", function() {
-        var form = ugma.add("form");
+        var form = ugma.render("form");
         form.set("innerHTML", "<select>" +
             "<option>value 1</option>" +
             "<option>value 2</option>" +
@@ -381,7 +381,7 @@ describe("get", function() {
 
     describe("custom data-* attributes", function() {
         beforeEach(function() {
-            input = ugma.add("<input data-a1=\"x\" data-a2='{\"a\":\"b\",\"c\":1,\"d\":null}' data-a3=\"1=2=3\" data-a4=\"/url?q=:q\" data-camel-cased=\"test\" data-a101-value=\"numbered\"/>");
+            input = ugma.render("<input data-a1=\"x\" data-a2='{\"a\":\"b\",\"c\":1,\"d\":null}' data-a3=\"1=2=3\" data-a4=\"/url?q=:q\" data-camel-cased=\"test\" data-a101-value=\"numbered\"/>");
         });
 
         it("should read an appropriate data-* attribute if it exists", function() {
@@ -399,7 +399,7 @@ describe("get", function() {
 
     describe("values", function() {
         it("should read, write value", function() {
-            var input = ugma.add("<input type='text'/>");
+            var input = ugma.render("<input type='text'/>");
             expect(input.set("value", "abc")).toEqual(input);
             expect(input[0].value).toEqual("abc");
             expect(input.get("value")).toEqual("abc");

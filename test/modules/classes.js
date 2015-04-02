@@ -126,7 +126,7 @@ describe("classes manipulation", function() {
 
     describe("removeClass", function() {
         it("should correctly remove middle class", function() {
-            var element = ugma.add("<div class='foo bar baz'></div>");
+            var element = ugma.render("<div class='foo bar baz'></div>");
             expect(element.hasClass("bar")).toBe(true);
 
             element.removeClass("bar");

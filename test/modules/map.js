@@ -2,7 +2,7 @@ describe("map", function() {
     var el;
 
     beforeEach(function() {
-        el = ugma.add("a");
+        el = ugma.render("a");
     });
 
     it("applies function and returns array", function() {

@@ -2,11 +2,11 @@ describe("empty", function() {
     var div;
 
     beforeEach(function() {
-        div = ugma.add("div>a+a");
+        div = ugma.render("div>a+a");
     });
 
   it("should write a value", function() {
-      var element = ugma.add("<div>abc</div>");
+      var element = ugma.render("<div>abc</div>");
       expect(element.empty() === element).toBeTruthy();
       expect(element).toBeEmpty();
     });
@@ -18,7 +18,7 @@ describe("empty", function() {
     });
 
     it("should set text input value to empty string", function () {
-        var input = ugma.add("input[value=foo]");
+        var input = ugma.render("input[value=foo]");
         expect(input).toHaveProp("value", "foo");
         expect(input.empty()).toBe(input);
         expect(input).toBeEmpty();

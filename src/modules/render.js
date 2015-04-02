@@ -6,9 +6,9 @@ import { implement, reduce, is, trim       } from "../helpers";
 
 implement({
     // Create a new nodeTree from Emmet or HTML string in memory
-    add: "",
+    render: "",
     // Create a new array of nodeTree from Emmet or HTML string in memory
-    addAll: "All"
+    renderAll: "All"
 
 }, (methodName, all) => function(value, varMap) {
 
@@ -57,7 +57,7 @@ implement({
     }
 
     if (value.nodeType !== 1) {
-        minErr("add()", "Not supported");
+        minErr(methodName + "()", "Not supported");
     }
 
     return nodeTree(value);

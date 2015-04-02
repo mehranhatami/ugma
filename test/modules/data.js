@@ -108,6 +108,6 @@ describe("data", function() {
     });
 
     it("should add and remove data on SVGs", function() {
-        expect(ugma.add("<svg><rect></rect></svg>").data("svg-level", 1).data("svg-level")).toEqual(1);
+        expect(ugma.render("<svg><rect></rect></svg>").data("svg-level", 1).data("svg-level")).toEqual(1);
     });
 });

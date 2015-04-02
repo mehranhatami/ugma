@@ -27,7 +27,7 @@ describe("set", function() {
 
     it("should set boolean element property", function() {
 
-        var checkbox = ugma.add("<input type='checkbox'>");
+        var checkbox = ugma.render("<input type='checkbox'>");
 
         expect(checkbox.get("checked")).toBe(false);
 
@@ -160,7 +160,7 @@ describe("set", function() {
         });
 
         it("should set select value properly", function() {
-            var select = ugma.add("<select><option>AM</option><option>PM</option></select>");
+            var select = ugma.render("<select><option>AM</option><option>PM</option></select>");
 
             expect(select.get()).toBe("AM");
             select.set("PM");
@@ -172,7 +172,7 @@ describe("set", function() {
         it("should set the html of select", function() {
             var html = "<option>option 1</option><option selected='selected'>option 2</option>";
 
-            var select = ugma.add("select").set("innerHTML", html);
+            var select = ugma.render("select").set("innerHTML", html);
 
             expect(select.children().length).toEqual(2);
             expect(select[0].options.length).toEqual(2);
@@ -182,7 +182,7 @@ describe("set", function() {
         it("should set the html of table", function() {
             var html = "<tbody><tr><td>cell 1</td><td>cell 2</td></tr><tr><td class='cell'>cell 1</td><td>cell 2</td></tr></tbody>";
 
-            var table = ugma.add("table").set("innerHTML", html);
+            var table = ugma.render("table").set("innerHTML", html);
 
             expect(table.children().length).toEqual(1);
             expect(table.first().first().children().length).toEqual(2);
@@ -190,14 +190,14 @@ describe("set", function() {
         });
 
         it("should set the text of an element", function() {
-            var div = ugma.add("div").set("textContent", "some text content");
+            var div = ugma.render("div").set("textContent", "some text content");
             expect(div.get("textContent")).toEqual("some text content");
             expect(div[0].innerHTML).toEqual("some text content");
         });
 
         it("should set the style attribute of an element", function() {
             var style = "font-size:12px;line-height:23px;";
-            var div = ugma.add("div").set("style", style);
+            var div = ugma.render("div").set("style", style);
             expect(div[0].style.lineHeight).toEqual("23px");
             expect(div[0].style.fontSize).toEqual("12px");
         });
@@ -225,7 +225,7 @@ describe("set", function() {
         });
 
         it("should set various attributes of a table element", function() {
-            var table = ugma.add("table").set({
+            var table = ugma.render("table").set({
                 border: "2",
                 cellpadding: "3",
                 cellspacing: "4",
@@ -238,15 +238,15 @@ describe("set", function() {
         });
 
         it("should replace child element(s) from node with provided element", function() {
-            var div = ugma.add("div>a+a");
+            var div = ugma.render("div>a+a");
             expect(div[0].childNodes.length).toBe(2);
-            expect(div.value(ugma.add("b"))).toBe(div);
+            expect(div.value(ugma.render("b"))).toBe(div);
             expect(div[0].childNodes.length).toBe(1);
             expect(div.child(0)).toHaveTag("b");
         });
 
         it("should set value of text input to provided string value", function() {
-            var input = ugma.add("input[value=foo]");
+            var input = ugma.render("input[value=foo]");
             expect(input.value("bar")).toBe(input);
             expect(input).toHaveProp("value", "bar");
         });
@@ -273,7 +273,7 @@ describe("set", function() {
         });
 
         it("should set the selected option for a select element to matching string w/o falsy matches", function() {
-            var form = ugma.add("form");
+            var form = ugma.render("form");
             form.set("innerHTML", "<select>" +
                 "<option value=''>no value</option>" +
                 "<option value='0'>value 0</option>" +
@@ -283,7 +283,7 @@ describe("set", function() {
         });
 
         it("should set the type of a button", function() {
-            expect(ugma.add("button").set({
+            expect(ugma.render("button").set({
                 type: "button"
             }).get("type")).toEqual("submit");
         });
@@ -303,7 +303,7 @@ describe("set", function() {
         });
 
         it("should add/remove boolean attributes", function() {
-            var select = ugma.add("select");
+            var select = ugma.render("select");
             select.set("multiple", false);
             expect(select.get("multiple")).not.toBeUndefined();
 

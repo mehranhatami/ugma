@@ -4,13 +4,13 @@ describe("value", function() {
     var div, input;
 
     beforeEach(function() {
-        div = ugma.add("div>a+a");
-        input = ugma.add("input[value=foo]");
+        div = ugma.render("div>a+a");
+        input = ugma.render("input[value=foo]");
     });
 
     it("should replace child element(s) from node with provided element", function() {
         expect(div[0].childNodes.length).toBe(2);
-        expect(div.value(ugma.add("b"))).toBe(div);
+        expect(div.value(ugma.render("b"))).toBe(div);
         expect(div[0].childNodes.length).toBe(1);
         expect(div.child(0)).toHaveTag("b");
     });
@@ -25,11 +25,11 @@ describe("value", function() {
     });
 
      it("should set value of text input to string value of provided element", function () {
-         expect(input.value(ugma.add("div"))).toBe(input);
+         expect(input.value(ugma.render("div"))).toBe(input);
      });
      
      it("supports array of elements", function() {
-        var content = ugma.addAll("b*5");
+        var content = ugma.renderAll("b*5");
 
         expect(div[0].childNodes.length).toBe(2);
         div.value(content);

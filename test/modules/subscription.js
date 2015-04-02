@@ -2,7 +2,7 @@ describe("subscribe", function() {
     var link;
 
     beforeEach(function() {
-        link = ugma.add("<a href=\"url\" title=\"text\"></a>");
+        link = ugma.render("<a href=\"url\" title=\"text\"></a>");
     });
 
     it("should execute callback after the setter call", function(done) {
@@ -58,7 +58,7 @@ describe("subscribe", function() {
 
     it("should work for the value shortcut", function(done) {
         var spy = jasmine.createSpy("watcher"),
-            input = ugma.add("input");
+            input = ugma.render("input");
 
         spy.and.callFake(function() {
             expect(spy).toHaveBeenCalledWith("test1", "");

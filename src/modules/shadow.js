@@ -41,7 +41,7 @@ implement({
             return data[0];
         }
 
-        var ctx = ugma.add(MUTATION_WRAPPER),
+        var ctx = ugma.render(MUTATION_WRAPPER),
             object = ctx.get("firstChild");
         // set onload handler before adding element to the DOM
         object.onload = () => {

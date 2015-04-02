@@ -11,12 +11,12 @@ describe("matches", function() {
     });
 
     it("should work on disconnected nodes - #1", function() {
-        expect(ugma.add("div").matches("div")).toBe(true);
+        expect(ugma.render("div").matches("div")).toBe(true);
     });
     
     it("should work on disconnected nodes - #2", function() {
         // unselected option
-        expect(link.append(ugma.add("option").set("value", "fooBar")).matches(":selected")).toBe(false);
+        expect(link.append(ugma.render("option").set("value", "fooBar")).matches(":selected")).toBe(false);
       
         ugma.query("option").set("selected", true);
         

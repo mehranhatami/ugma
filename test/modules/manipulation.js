@@ -5,11 +5,11 @@ describe("manipulation", function() {
         var div;
 
         beforeEach(function() {
-            div = ugma.add("div>a+a");
+            div = ugma.render("div>a+a");
         });
 
         it("should remove", function() {
-            var root = ugma.add("<div><span>abc</span></div>");
+            var root = ugma.render("<div><span>abc</span></div>");
             var span = root.query("span");
             expect(span.remove()).toEqual(span);
             expect(root.get()).toEqual("");
@@ -50,12 +50,12 @@ describe("manipulation", function() {
         });
 
         it("should prepend to content", function() {
-            var root = ugma.add("<div>text</div>");
+            var root = ugma.render("<div>text</div>");
             expect(root.prepend("<span>abc</span>")).toEqual(root);
             expect(root.get().toLowerCase()).toEqual("<span>abc</span>text");
         });
         it("should prepend text to content", function() {
-            var root = ugma.add("<div>text</div>");
+            var root = ugma.render("<div>text</div>");
             expect(root.prepend("abc")).toEqual(root);
             expect(root.get().toLowerCase()).toEqual("abctext");
         });
@@ -63,14 +63,14 @@ describe("manipulation", function() {
 
     describe("after", function() {
         it("should after", function() {
-            var root = ugma.add("<div><span></span></div>");
+            var root = ugma.render("<div><span></span></div>");
             var span = root.query("span");
             expect(span.after("<i></i><b></b>")).toEqual(span);
             expect(root.get().toLowerCase()).toEqual("<span></span><i></i><b></b>");
         });
 
         it("should allow taking text", function() {
-            var root = ugma.add("<div><span></span></div>");
+            var root = ugma.render("<div><span></span></div>");
             var span = root.query("span");
             span.after("abc");
             expect(root.get().toLowerCase()).toEqual("<span></span>abc");
@@ -147,9 +147,9 @@ describe("manipulation", function() {
 
         it("should accept ugmaElement", function() {
             _forIn(checkStrategies, function(checkMethod, strategy) {
-                //var arg = ugma.add(createDiv(strategy));
-                var arg = ugma.add(createDivHtml(strategy)),
-                    otherDiv = ugma.add("div");
+                //var arg = ugma.render(createDiv(strategy));
+                var arg = ugma.render(createDivHtml(strategy)),
+                    otherDiv = ugma.render("div");
 
                 expect(checkMethod(div[strategy](arg))).toHaveClass(strategy);
 
@@ -163,7 +163,7 @@ describe("manipulation", function() {
         it("should accept native DOM elements", function() {
             _forIn(checkStrategies, function(checkMethod, strategy) {
                 var arg = createDivHtml(strategy),
-                    otherDiv = ugma.add("div");
+                    otherDiv = ugma.render("div");
 
                 expect(checkMethod(div[strategy](arg))).toHaveClass(strategy);
 
@@ -212,7 +212,7 @@ describe("manipulation", function() {
         });
 
         it("should replaceWith", function() {
-            var root = ugma.add("<div>").set("before-<div></div>after");
+            var root = ugma.render("<div>").set("before-<div></div>after");
             var div = root.query("div");
             expect(div.replaceWith("<span>span-</span><b>bold-</b>")).toEqual(div);
             expect(root.get("textContent")).toEqual("before-span-bold-after");
@@ -249,7 +249,7 @@ describe("manipulation", function() {
     }
 
     function createArray(className) {
-        return ugma.addAll("i.{0}+b.{0}", [className]);
+        return ugma.renderAll("i.{0}+b.{0}", [className]);
     }
 
     function expectToBeReplaced(id) {

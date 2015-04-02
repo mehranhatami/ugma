@@ -15,13 +15,13 @@ describe("format", function() {
 
    it("should not throw errors in some cases", function() {
        expect(function() {
-           ugma.format("test {0}", undefined)
+           ugma.format("test {0}", undefined);
        }).not.toThrow();
        expect(function() {
-           ugma.format("test {0}", null)
+           ugma.format("test {0}", null);
        }).not.toThrow();
        expect(function() {
-           ugma.format("test {0}", "090")
+           ugma.format("test {0}", "090");
        }).not.toThrow();
    });
 
@@ -33,7 +33,7 @@ describe("format", function() {
        function Foo() {}
 
        Foo.prototype.toString = function() {
-           return "bar"
+           return "bar";
        };
 
        expect(ugma.format(new Foo())).toBe("bar");

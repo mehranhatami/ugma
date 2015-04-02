@@ -31,7 +31,7 @@ describe("query", function() {
     });
 
  it("should find child by name", function() {
-      var root = ugma.add("<div><div>text</div></div>");
+      var root = ugma.render("<div><div>text</div></div>");
       var innerDiv = root.queryAll("div");
       expect(innerDiv.length).toEqual(1);
       expect(innerDiv[0].get("textContent")).toEqual("text");
