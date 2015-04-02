@@ -1,6 +1,6 @@
 import { minErr                        } from "../minErr";
 import { implement, isArray, each, is  } from "../helpers";
-import { dataAttr                      } from "../util/dataAttr";
+import { readData                      } from "../util/readData";
 import   accessorhooks                   from "../util/accessorhooks";
 
 implement({
@@ -16,7 +16,7 @@ implement({
             
             // try to fetch HTML5 `data-*` attribute
             if (/^data-/.test( name ) ) {
-                return dataAttr(node, name);
+                return readData(node, name);
             // if no DOM object property method is present... 
             } else if (name in node) {
                 return node[ name ];

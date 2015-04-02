@@ -1,5 +1,6 @@
 var multiDash = /([A-Z])/g,
-    dataAttr = ( node, key ) => {
+    // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
+    readData = ( node, key ) => {
 
     // convert from camel case to dash-separated value
 
@@ -7,10 +8,10 @@ var multiDash = /([A-Z])/g,
 
     var value = node.getAttribute( key );
 
-    if (value != null) {
+    if ( value != null ) {
 
         // try to recognize and parse object notation syntax
-        if (value[ 0 ] === "{" && value[ value.length - 1 ] === "}") {
+        if ( value[ 0 ] === "{" && value[ value.length - 1 ] === "}" ) {
             try {
                 value = JSON.parse( value );
             } catch ( err ) {}
@@ -20,4 +21,4 @@ var multiDash = /([A-Z])/g,
     return value;
 };
 
-export { dataAttr };
+export { readData };

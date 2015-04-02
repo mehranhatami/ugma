@@ -62,6 +62,7 @@ implement({
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
         } else if (isArray( name )) {
             each(name, ( key ) => { this.set(key, value) } );
+        // Set the value (with attr map support)
         } else if ( is( name, "object" ) ) {
             forOwn( name, ( key, value ) => { this.set( key, name[ key ] ) } );
         } else {
