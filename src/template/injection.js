@@ -1,5 +1,5 @@
 function injection(term, adjusted) {
-    return (html) => {
+    return ( html ) => {
          // find index of where to inject the term
          var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
          // inject the term into the HTML string

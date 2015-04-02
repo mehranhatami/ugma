@@ -1,18 +1,17 @@
 var reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
     reDollar = /\$/g,
-    indexing = (num, term) => {
-    var stricted = num >= 1800 ? /* max 1800 HTML elements */ 1800 : (num <= 0 ? 1 : num),
-        result = new Array( stricted ),
-        i = 0;
+    indexing = ( num, term ) => {
+        var index = num = num >= 1600 ? /* max 1600 HTML elements */ 1600 : ( num <= 0 ? 1 : num ),
+            result = new Array( index );
 
-    for (; i < stricted; ++i) {
-        result[ i ] = term.replace( reIndex, (expr, fmt, sign, base ) => {
-            var index = (sign ? stricted - i - 1 : i) + (base ? +base : 1);
-            // handle zero-padded index values, like $$$ etc.
-            return ( fmt + index ).slice( -fmt.length ).replace( reDollar, "0");
-        });
-    }
-    return result;
-};
-
+        while (index--) {
+            result[ index ] = term.replace( reIndex, ( expr, fmt, sign, base ) => {
+                var pos = ( sign ? num - index - 1 : index ) + ( base ? +base : 1 );
+                // handle zero-padded index values, like $$$ etc.
+                return ( fmt + pos ).slice( -fmt.length ).replace( reDollar, "0" );
+            });
+        }
+        return result;
+    };
+    
 export { indexing };

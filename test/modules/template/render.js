@@ -1,7 +1,7 @@
 describe("render", function() {
     "use strict";
-    
-     it("should create new DOM element if the first argument is native element", function() {
+
+    it("should create new DOM element if the first argument is native element", function() {
         var el = ugma.render(document.createElement("em"));
 
         jasmine.sandbox.set(el);
@@ -9,17 +9,16 @@ describe("render", function() {
         expect(el).toHaveTag("em");
     });
 
-  it("should allow construction of <option> elements", function() {
-      var nodes = ugma.render("<option>");
-      expect(nodes[0].nodeName.toLowerCase()).toBe("option");
+    it("should allow construction of <option> elements", function() {
+        var nodes = ugma.render("<option>");
+        expect(nodes[0].nodeName.toLowerCase()).toBe("option");
     });
 
-
-
-
-    
     it("should render single ugma element if parameter is not an HTML string", function() {
-        var link = ugma.render(ugma.format("<a id=\"{id}\" title=\"{title}\"></a>", {id: "b", title: "c"}));
+        var link = ugma.render(ugma.format("<a id=\"{id}\" title=\"{title}\"></a>", {
+            id: "b",
+            title: "c"
+        }));
 
         jasmine.sandbox.set(link);
 
@@ -38,7 +37,6 @@ describe("render", function() {
 
         expect(ugma.renderAll("a+b").length).toBe(2);
     });
-    
 
     it("should accept empty strings", function() {
         var el = ugma.render("");
@@ -71,15 +69,21 @@ describe("render", function() {
     });
 
     it("should throw error if argument is invalid", function() {
-        expect(function() { ugma.render(2); }).toThrow();
-        // expect(function() { ugma.render(null); }).toThrow();
-        expect(function() { ugma.render({}); }).toThrow();
+        expect(function() {
+            ugma.render(2);
+        }).toThrow();
+        expect(function() {
+            ugma.render(null);
+        }).toThrow();
+        expect(function() {
+            ugma.render({});
+        }).toThrow();
     });
 
-    it("should create an element with type='email'", function(){
-		var el = ugma.render("input").set("type", "email");
-		expect(el.get("type").match(/email|text/)).toBeTruthy();
-	});
+    it("should create an element with type='email'", function() {
+        var el = ugma.render("input").set("type", "email");
+        expect(el.get("type").match(/email|text/)).toBeTruthy();
+    });
 
     describe("renderAll", function() {
         it("should always return array of elements", function() {

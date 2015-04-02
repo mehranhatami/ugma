@@ -12,53 +12,52 @@ implement({
 
 }, (methodName, all) => function(value, varMap) {
 
-    if (is(value, "string")) {
+    // Create native DOM elements
+    // e.g. "document.createElement('div')"
+    if (value.nodeType === 1) return nodeTree(value);
 
-        var doc = this[ 0 ].ownerDocument,
-            sandbox = this._._sandbox || (this._._sandbox = doc.createElement( "div" ));
 
-        var nodes, el;
+    var doc = this[0].ownerDocument,
+        sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
 
-        if (value && value in tagCache) {
+    var nodes, el;
 
-            nodes = doc.createElement( value );
+    if ( value && value in tagCache ) {
 
-            if (all) nodes = [ new nodeTree( nodes ) ];
-        } else {
-            value = trim( value );
-            // handle vanila HTML strings
-            // e.g. <div id="foo" class="bar"></div>
-            if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3) {
+        nodes = doc.createElement( value );
 
-                value = varMap ? ugma.format(value, varMap) : value;
+        if ( all ) nodes = [ new nodeTree( nodes ) ];
 
-            } else { // emmet strings
-                value = ugma.template( value, varMap );
-            }
+    } else {
 
-            sandbox.innerHTML = value; // parse input HTML string
+        value = trim( value );
 
-            nodes = all ? [] : null;
+        // handle vanila HTML strings
+        // e.g. <div id="foo" class="bar"></div>
+        if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3 ) {
 
-            if (sandbox.childNodes.length === 1 && sandbox.firstChild.nodeType === 1) {
-                nodes = sandbox.removeChild( sandbox.firstChild );
-            } else {
+            value = varMap ? ugma.format( value, varMap ) : value;
 
-                for (; el = sandbox.firstChild;) {
-                    sandbox.removeChild( el ); // detach element from the sandbox
+        } else { // emmet strings
+            value = ugma.template( value, varMap );
+        }
 
-                    if (el.nodeType === 1) {
-                        nodes.push( new nodeTree( el ) );
-                    }
+        sandbox.innerHTML = value; // parse input HTML string
+
+        for ( nodes = all ? [] : null; el = sandbox.firstChild; ) {
+            sandbox.removeChild( el ); // detach element from the sandbox
+
+            if (el.nodeType === 1) {
+
+                if ( all ) {
+                    nodes.push( new nodeTree( el ) );
+                } else {
+                    nodes = el;
+
+                    break; // stop early, because need only the first element
                 }
             }
         }
-        return all ? nodes : nodeTree( nodes );
     }
-
-    if (value.nodeType !== 1) {
-        minErr(methodName + "()", "Not supported");
-    }
-
-    return nodeTree(value);
+    return all ? nodes : nodeTree( nodes );
 });

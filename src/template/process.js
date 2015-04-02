@@ -21,7 +21,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     escapeChars = ( str ) => str.replace( /[&<>"']/g, ( ch ) => charMap[ ch ]),
     process = ( template ) => {
 
-    var stack = [];
+    let stack = [];
 
     each(template, (str) => {
 
