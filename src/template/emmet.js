@@ -1,9 +1,9 @@
-import { ugma       } from "../core";
+import { ugma       } from "../core/core";
 import { is, each   } from "../helpers";
 import { ERROR_MSG  } from "../const";
 import { minErr     } from "../minErr";
-import { process    } from "../emmet/process";
-import operators      from "../emmet/operators";
+import { process    } from "../template/process";
+import operators      from "../template/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 

@@ -1,5 +1,5 @@
 import { RETURN_THIS, ERROR_MSG   } from "../const";
-import { ugma                     } from "../core";
+import { ugma                     } from "../core/core";
 import { implement, is, filter    } from "../helpers";
 import { minErr                   } from "../minErr";
 

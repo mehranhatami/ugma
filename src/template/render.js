@@ -1,7 +1,7 @@
 import { ERROR_MSG                         } from "../const";
 import { minErr                            } from "../minErr";
-import { ugma, nodeTree                    } from "../core";
-import   tagCache                            from "../emmet/emmet";
+import { ugma, nodeTree                    } from "../core/core";
+import   tagCache                            from "../template/emmet";
 import { implement, reduce, is, trim       } from "../helpers";
 
 implement({

@@ -1,6 +1,6 @@
 import { slice, map, is        } from "../helpers";
 import { WINDOW                } from "../const";
-import { nodeTree              } from "../core";
+import { nodeTree              } from "../core/core";
 import   SelectorMatcher         from "./selectormatcher";
 import   eventhooks              from "./eventhooks";
 

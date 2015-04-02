@@ -4,7 +4,7 @@ module.exports = function(config) {
     config.set({
         basePath: "..",
         singleRun: true,
-        frameworks: ['jasmine'],
+        frameworks:  ["jasmine-ajax", "jasmine"],
         browsers: ["PhantomJS"],
         preprocessors: {
             "build/ugma.js": "coverage"

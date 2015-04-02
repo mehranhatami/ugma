@@ -1,6 +1,7 @@
-import { implement } from "../helpers";
-import { WINDOW, INTERNET_EXPLORER, RETURN_FALSE } from "../const";
-import { domTree, ugma } from "../core";
+import { implement                                  } from "../helpers";
+import { WINDOW, INTERNET_EXPLORER, RETURN_FALSE    } from "../const";
+import { domTree, ugma                              } from "../core/core";
+
 // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
 // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
 //
@@ -23,22 +24,22 @@ import { domTree, ugma } from "../core";
 //        
 var MUTATION_WRAPPER = "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
 
-if (INTERNET_EXPLORER) {
-    MUTATION_WRAPPER = MUTATION_WRAPPER.replace("position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace("data=`about:blank` ", "");
+if ( INTERNET_EXPLORER ) {
+    MUTATION_WRAPPER = MUTATION_WRAPPER.replace( "position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace( "data=`about:blank` ", "" );
 }
 
 // Chrome/Safari/Opera have serious bug with tabbing to the <object> tree:
 // https://code.google.com/p/chromium/issues/detail?id=255150
 implement({
-    shadow(name, callback = () => {}) {
-        var contexts = this._._shadow || (this._._shadow = {}),
+    shadow( name, callback = () => {} ) {
+        var contexts = this._._shadow || ( this._._shadow = {} ),
             data = contexts[name] || [];
 
-        if (data[0]) {
+        if (data[ 0 ] ) {
             // callback is always async
-            WINDOW.setTimeout(() => { callback(data[1]) }, 1);
+            WINDOW.setTimeout(() => { callback(data[ 1 ] ) }, 1 );
 
-            return data[0];
+            return data[ 0 ];
         }
 
         var ctx = ugma.render(MUTATION_WRAPPER),
@@ -46,19 +47,19 @@ implement({
         // set onload handler before adding element to the DOM
         object.onload = () => {
             // apply user-defined styles for the context
-            if (ctx.addClass(name).css("position") === "static") ctx.css("position", "relative");
+            if ( ctx.addClass(name).css("position") === "static" ) ctx.css("position", "relative");
 
             // store new context root internally and invoke callback
-            callback(data[1] = new domTree(object.contentDocument));
+            callback( data[ 1 ] = new domTree( object.contentDocument ) );
         };
 
-        this.before(ctx);
+        this.before( ctx );
 
-        if (INTERNET_EXPLORER) object.data = "about:blank";
+        if ( INTERNET_EXPLORER ) object.data = "about:blank";
 
         // store context data internally
-        contexts[name] = data;
+        contexts[ name ] = data;
 
-        return data[0] = ctx;
+        return data[ 0 ] = ctx;
     }
-}, null, () => () => RETURN_FALSE);
+}, null, () => () => RETURN_FALSE );

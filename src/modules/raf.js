@@ -1,5 +1,5 @@
 import { WINDOW, VENDOR_PREFIXES    } from "../const";
-import { ugma                       } from "../core";
+import { ugma                       } from "../core/core";
 import { each                       } from "../helpers";
 
     var global = WINDOW;
@@ -17,7 +17,7 @@ import { each                       } from "../helpers";
         craf = global.cancelAnimationFrame,
         lastTime = 0;
 
-    if (!(raf && !craf)) {
+    if (!( raf && !craf ) ) {
         each(VENDOR_PREFIXES, ( prefix ) => {
             prefix = prefix.toLowerCase();
             raf = raf || WINDOW[ prefix + "RequestAnimationFrame" ];
@@ -37,20 +37,20 @@ import { each                       } from "../helpers";
 
             lastTime = currTime + timeDelay;
 
-            return global.setTimeout(() => {
-                callback(currTime + timeDelay);
+            return global.setTimeout( () => {
+                callback(currTime + timeDelay );
             }, timeDelay);
         }
     };
 
     // Works around a rare bug in Safari 6 where the first request is never invoked.
-    ugma.requestFrame(function() {return function() {}});
+    ugma.requestFrame( function() { return function() {} } );
 
     // Cancel a scheduled frame
-    ugma.cancelFrame = (frameId) => {
+    ugma.cancelFrame = ( frameId ) => {
         /* istanbul ignore else */
         if ( craf ) {
-            craf.call(global, frameId);
+            craf.call( global, frameId );
         } else {
             global.clearTimeout( frameId );
         }

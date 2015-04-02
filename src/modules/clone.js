@@ -1,5 +1,5 @@
 import { ugma                 } from "../const";
-import { nodeTree, dummyTree  } from "../core";
+import { nodeTree, dummyTree  } from "../core/core";
 import { minErr               } from "../minErr";
 import { implement, is        } from "../helpers";
 

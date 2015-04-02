@@ -50,7 +50,7 @@ gulp.task("compile", function() {
         // Write the generated sourcemap
      mkdirp.sync("build/");
 
-    return gulp.src(["modules/*.js", "emmet/*.js", "util/*.js", "*.js"], {
+    return gulp.src(["modules/*.js", "template/*.js", "core/*.js", "util/*.js", "*.js"], {
             cwd: "./src"
         })
         .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
@@ -119,7 +119,7 @@ gulp.task("minify", ["test"], function() {
 
 // create a dev version
 gulp.task("dev", ["compile", "lint"], function() {
-    gulp.watch(["src/modules/*.js", "src/emmet/*.js", "src/util/*.js", "src/*.js"], ["compile"]);
+    gulp.watch(["src/modules/*.js", "src/template/*.js", "src/core/*.js", "src/util/*.js", "src/*.js"], ["compile"]);
     gulp.watch(["test/modules/**/*.js"], ["lint"]);
 
     karma.start({

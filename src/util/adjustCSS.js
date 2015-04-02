@@ -1,5 +1,5 @@
 import { DOCUMENT, WINDOW, RCSSNUM } from "../const";
-import { Document, Element, Node   } from "../core";
+import { Document, Element, Node   } from "../core/core";
 
 export function adjustCSS(root, prop, parts, computed) {
 

@@ -1,5 +1,5 @@
 import { implement          } from "../helpers";
-import { nodeTree           } from "../core";
+import { nodeTree           } from "../core/core";
 import { RETURN_FALSE, HTML } from "../const";
 
 implement({

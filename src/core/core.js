@@ -1,6 +1,6 @@
 /* globals window, document */
 
-import { forOwn } from "./helpers";
+import { forOwn } from "../helpers";
 
 var nodeTree, dummyTree, domTree;
 

@@ -1,11 +1,11 @@
 import { is, each   }   from "../helpers";
 import { ERROR_MSG  }   from "../const";
 import { minErr     }   from "../minErr";
-import { parseAttr  }   from "../emmet/parseAttr";
-import { injection  }   from "../emmet/injection";
-import { processTag }   from "../emmet/processTag";
-import { indexing   }   from "../emmet/indexing";
-import operators        from "../emmet/operators";
+import { parseAttr  }   from "../template/parseAttr";
+import { injection  }   from "../template/injection";
+import { processTag }   from "../template/processTag";
+import { indexing   }   from "../template/indexing";
+import operators        from "../template/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -36,7 +36,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
             }
 
             if ( is( node, "undefined" ) || is(value, "undefined") ) {
-                minErr("emmet()", ERROR_MSG[4] );
+                minErr("emmet()", ERROR_MSG[ 4 ] );
             }
 
             if (str === "#") { // id
@@ -64,10 +64,10 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
             str = is(value, "function") ? node.map(value) : node;
         }
 
-        stack.unshift(str);
+        stack.unshift( str );
     });
 
-    return template.length === 1 ? processTag(stack[0]) : stack[0].join("");
+    return template.length === 1 ? processTag( stack[ 0 ] ) : stack[ 0 ].join( "" );
 };
 
 export { process };

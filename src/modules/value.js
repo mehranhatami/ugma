@@ -1,5 +1,4 @@
 import { implement, isArray  } from "../helpers";
-import { Element             } from "../core";
 
 implement({
     // Read or write inner content of the element

@@ -1,5 +1,5 @@
 import { DOCUMENT, WINDOW              } from "./const";
-import { domTree, nodeTree, dummyTree  } from "./core";
+import { domTree, nodeTree, dummyTree  } from "./core/core";
 
 // jshint unused:false
 
