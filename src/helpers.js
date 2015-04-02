@@ -10,17 +10,16 @@ export const every = arrayProto.every;
 export const slice = arrayProto.slice;
 export const isArray = Array.isArray;
 
-var // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-    each = (arr, callback) => {
-        if ( arr && callback ) {
-            var index = -1,
+// Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+var each = (collection, callback) => {
+            var arr = collection || [],
+                index = -1,
                 length = arr.length;
             while ( ++index < length ) {
                 if ( callback( arr[ index ], index, arr ) === false) {
                     break;
                 }
             }
-        }
         return arr;
     },
 
@@ -37,24 +36,16 @@ var // Invokes the `callback` function once for each item in `arr` collection, w
 
     // is() returns a boolean for if typeof obj is exactly type.
     is = (obj, type) => {
-        // Avoid a Chakra JIT bug in compatibility modes of IE 11.
-        // https://github.com/jashkenas/underscore/issues/1621 for more details.
-        return type === "function" ? typeof obj === type || false : typeof obj === type;
+        return typeof obj === type;
     },
 
     // Iterates over own enumerable properties of an object, executing  the callback for each property.
-    forOwn = (obj, callback) => {
+    forOwn = (object, callback) => {
 
-        if (obj) {
-            var keys = ( obj ) => {
-                    if ( !is(obj, "object") ) return [];
-                    var key, keys = [];
-                    for ( key in obj ) keys.push( key );
-                    return keys;
-                },
+            var obj = object || {},
                 key,
                 index = -1,
-                props = keys( obj ),
+                props = Object.keys( obj ),
                 length = props.length;
 
             while (++index < length) {
@@ -65,7 +56,6 @@ var // Invokes the `callback` function once for each item in `arr` collection, w
                     break;
                 }
             }
-        }
         return obj;
     },
     // create a new array with all elements that pass the test implemented by the provided function.

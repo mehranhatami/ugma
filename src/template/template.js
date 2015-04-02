@@ -13,28 +13,28 @@ var dot = /\./g,
     abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
     tagCache = { "": "" };
 
-ugma.template = function(template, args) {
+ugma.template = function( template, args ) {
 
     if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
 
-    if (args) template = ugma.format(template, args);
+    if ( args ) template = ugma.format( template, args );
 
-    if (template in tagCache) return tagCache[template];
+    if ( template in tagCache ) return tagCache[ template ];
 
     var stack = [],
         output = [];
 
-    each(template.match(abbreviation), (str) => {
+    each(template.match( abbreviation ), ( str ) => {
 
         if ( operators[ str[ 0 ] ] ) {
-            if (str !== "(") {
+            if ( str !== "(" ) {
                 // for ^ operator need to skip > str.length times
-                for ( let i = 0, n = (str[ 0 ] === "^" ? str.length : 1); i < n; ++i ) {
-                    while (stack[ 0 ] !== str[ 0 ] && operators[ stack[ 0 ] ] >= operators[ str[ 0 ] ] ) {
+                for ( let i = 0, n = (str[ 0 ] === "^" ? str.length : 1 ); i < n; ++i ) {
+                    while ( stack[ 0 ] !== str[ 0 ] && operators[ stack[ 0 ] ] >= operators[ str[ 0 ] ] ) {
                         let head = stack.shift();
                         output.push( head );
                         // for ^ operator stop shifting when the first > is found
-                        if (str[ 0 ] === "^" && head === ">") break;
+                        if ( str[ 0 ] === "^" && head === ">" ) break;
                     }
                 }
             }
@@ -43,12 +43,12 @@ ugma.template = function(template, args) {
                 stack.shift(); // remove "(" symbol from stack
             } else {
                 // handle values inside of `...` and [...] sections
-                if (str[ 0 ] === "[" || str[ 0 ] === "`") {
-                    output.push(str.slice(1, -1) );
+                if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) {
+                    output.push( str.slice(1, -1) );
                 }
                 // handle multiple classes, e.g. a.one.two
-                if (str[ 0 ] === ".") {
-                    output.push( str.slice(1).replace(dot, " ") );
+                if ( str[ 0 ] === "." ) {
+                    output.push( str.slice( 1 ).replace( dot, " ") );
                 }
 
                 stack.unshift( str[ 0 ] );
@@ -64,8 +64,6 @@ ugma.template = function(template, args) {
 };
 
 // populate empty tag names with result
-each("area base br col hr img input link meta param command keygen source".split(" "), (tag) => {
-    tagCache[tag] = "<" + tag + ">";
-});
+each( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" });
 
 export default tagCache;

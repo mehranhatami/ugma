@@ -3,10 +3,11 @@ import { minErr                                        } from "../minErr";
 import { ERROR_MSG, RETURN_THIS                        } from "../const";
 import   accessorhooks                                   from "../util/accessorhooks";
 
-function getTagName( node ) {
-    var tag = node.tagName;
+ var objectTag = "[object Object]",
+     getTagName = ( node ) => {
+     var tag = node.tagName;
     return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
-}
+};
 
 implement({
     // Set  erty/attribute value by name
@@ -21,9 +22,9 @@ implement({
                 value = name == null ? "" : name + "";
             }
 
-            if (value !== "[object Object]") {
+            if ( value !== objectTag ) {
 
-                if (getTagName( node )) {
+                if ( getTagName( node ) ) {
                     name = "value";
                 } else {
                     name = "innerHTML";
@@ -36,22 +37,22 @@ implement({
             previousValue;
 
         // grab the previous value if it's already a subscription on this attribute / property,
-        if (subscription) {
+        if ( subscription ) {
             previousValue = this.get( name );
         }
 
-        if (is(name, "string")) {
+        if ( is(name, "string" ) ) {
             
             if (is(value, "function")) {
                 value = value( this );
             }
 
-            if (hook) {
-                hook(node, value);
-            } else if (value == null) {
+            if ( hook ) {
+                hook( node, value );
+            } else if ( value == null ) {
                 // removes an attribute from an HTML element.
                 node.removeAttribute( name || name.toLowerCase() );
-            } else if (name in node) {
+            } else if ( name in node ) {
                 node[ name ] = value;
             } else {
                 // node's attribute
@@ -60,15 +61,9 @@ implement({
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");
         } else if (isArray( name )) {
-            each(name, (key) => { this.set(key, value) });
-            //	Set multiple values at once:
-            //  e.g
-            //	link.set({
-            //	   "foo": "bar",
-            //	    "tabIndex": -1
-            //		});
-        } else if (is(name, "object")) {
-            forOwn(name, (key, value) => { this.set(key, name[ key ]) });
+            each(name, ( key ) => { this.set(key, value) } );
+        } else if ( is( name, "object" ) ) {
+            forOwn( name, ( key, value ) => { this.set( key, name[ key ] ) } );
         } else {
             minErr("set()", ERROR_MSG[ 6 ]);
         }
