@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 14:23:32 GMT
+ * Build date: Thu, 02 Apr 2015 15:06:55 GMT
  */
 (function() {
     "use strict";
@@ -603,7 +603,7 @@
     };
 
     var util$csshooks$$default = util$csshooks$$cssHooks;
-    function util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
+    function $$$util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
     
         var adjusted,
             scale = 1,
@@ -701,7 +701,7 @@
    
                     if (!computed) computed = helpers$$computeStyle(node);
    
-                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed );
+                    value = $$$util$adjustCSS$$adjustCSS( this, setter, ret, computed );
    
                     if (ret && ret[ 3 ]) value += ret[ 3 ];
                 }
@@ -728,19 +728,20 @@
         if (arguments.length === 1 && helpers$$isArray(name)) return {};
    
         if (arguments.length !== 1 || !helpers$$is(name, "string")) return this;
-    }});var util$dataAttr$$multiDash = /([A-Z])/g,
-        util$dataAttr$$dataAttr = function( node, key )  {
+    }});var util$readData$$multiDash = /([A-Z])/g,
+        // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
+        util$readData$$readData = function( node, key )  {
     
         // convert from camel case to dash-separated value
     
-        key = key.replace( util$dataAttr$$multiDash, "-$&" ).toLowerCase();
+        key = key.replace( util$readData$$multiDash, "-$&" ).toLowerCase();
     
         var value = node.getAttribute( key );
     
-        if (value != null) {
+        if ( value != null ) {
     
             // try to recognize and parse object notation syntax
-            if (value[ 0 ] === "{" && value[ value.length - 1 ] === "}") {
+            if ( value[ 0 ] === "{" && value[ value.length - 1 ] === "}" ) {
                 try {
                     value = JSON.parse( value );
                 } catch ( err ) {}
@@ -757,30 +758,30 @@
             
             var len = arguments.length;
             
-            if (len === 1) {
-                if (helpers$$is(key, "string")) {
+            if ( len === 1 ) {
+                if ( helpers$$is( key, "string" ) ) {
     
                     var data = this._;
                     // If no data was found internally, try to fetch any
                     // data from the HTML5 data-* attribute
-                    if ( !(key in data) ) data[ key ] = util$dataAttr$$dataAttr( this[ 0 ], "data-" + key );
+                    if ( !( key in data ) ) data[ key ] = util$readData$$readData( this[ 0 ], "data-" + key );
     
                     return data[ key ];
                     
-                 // Sets multiple values
-                } else if (key && helpers$$is(key, "object")) {
+                // Set the value (with attr map support)
+                } else if ( key && helpers$$is( key, "object" ) ) {
                  
-                    if (helpers$$isArray( key )) {
+                    if ( helpers$$isArray( key ) ) {
                         return this.data( helpers$$map(key, function( key )  {return key} ) );
                     } else {
-                        return helpers$$forOwn(key, function(key, value)  {
-                            this$0.data(key, value);
+                        return helpers$$forOwn( key, function( key, value )  {
+                            this$0.data( key, value );
                         });
                     }
                 }
-            } else if (len === 2) {
+            } else if ( len === 2 ) {
                 // delete the private property if the value is 'null' or 'undefined'
-                if (value === null || value === undefined) {
+                if ( value === null || value === undefined ) {
                     delete this._[ key ];
                 } else {
                     this._[ key ] = value;
@@ -788,7 +789,7 @@
             }
             return this;
         }
-    }, null, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_THIS} );
 
     var modules$dispatch$$dispatcher = DOCUMENT.createElement( "a" ),
         modules$dispatch$$safePropName = "onpropertychange";
@@ -846,30 +847,29 @@
                 title: function( node )  {
                     var doc = node.ownerDocument;
     
-                    return (node === doc.documentElement ? doc : node).title;
+                    return ( node === doc.documentElement ? doc : node ).title;
                 },
-                option: function( node )  {return helpers$$trim( node.value )},
-                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
-                undefined: function(node)  {
-                    switch (node.tagName) {
-                        case "SELECT":
-                            return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
-                        case "OPTION":
-                            // Support: IE<11
-                            // option.value not trimmed
-                            return helpers$$trim( node[ node.hasAttribute("value") ? "value" : "text" ] );
-                        default:
-                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+                option: function( node )  { 
+                    // Support: IE<11
+                    // option.value not trimmed
+                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+                },
+                select: function( node )  {return ~node.selectedIndex ? node.options[node.selectedIndex].value : ""},
+                undefined: function( node )  {
+                    switch ( node.tagName ) {
+                        case "SELECT": return util$accessorhooks$$accessorHooks.get.select( node );
+                        case "OPTION": return util$accessorhooks$$accessorHooks.get.option( node );
+                        default:       return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                     }
                 },
-                type: function( node )  {return node.getAttribute("type") || node.type}
+                type: function( node )  {return node.getAttribute( "type" ) || node.type}
             },
     
             set: {
                 lang: function( node, value )  {
                     // correct locale browser language before setting the attribute             
                     // e.g. from zh_CN to zh-cn, from en_US to en-us
-                    node.setAttribute("lang", value.replace( util$accessorhooks$$langFix, "-").toLowerCase() );
+                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
                 },
     
                 style: function( node, value )  {
@@ -878,12 +878,12 @@
                 title: function( node, value )  {
                     var doc = node.ownerDocument;
     
-                    (node === doc.documentElement ? doc : node).title = value;
+                    ( node === doc.documentElement ? doc : node ).title = value;
                 },
                 value: function( node, value )  {
                     if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
-                        if (helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
+                        if ( helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
                             node.selectedIndex = -1;
                         }
                     } else {
@@ -896,7 +896,7 @@
 
     // Support: IE<=11+    
     (function() {
-        var input = DOCUMENT.createElement("input");
+        var input = DOCUMENT.createElement( "input" );
     
         input.type = "checkbox";
     
@@ -909,19 +909,19 @@
         }
         // Support: IE<=11+
         // An input loses its value after becoming a radio
-        input = DOCUMENT.createElement("input");
+        input = DOCUMENT.createElement( "input" );
         input.value = "t";
         input.type = "radio";
     
         // Setting the type on a radio button after the value resets the value in IE9
         if (input.value !== "t") {
     
-            util$accessorhooks$$accessorHooks.set.type = function(node, value)  {
+            util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
                 if (value === "radio" &&
-                    node.nodeName === "INPUT") {
+                    node.nodeName === "INPUT" ) {
                     var val = node.value;
-                    node.setAttribute("type", value);
-                    if (val) {
+                    node.setAttribute( "type", value );
+                    if ( val ) {
                         node.value = val;
                     }
                     return value;
@@ -999,7 +999,7 @@
                 
                 // try to fetch HTML5 `data-*` attribute
                 if (/^data-/.test( name ) ) {
-                    return util$dataAttr$$dataAttr(node, name);
+                    return util$readData$$readData(node, name);
                 // if no DOM object property method is present... 
                 } else if (name in node) {
                     return node[ name ];
@@ -1204,7 +1204,7 @@
         }
     }, null, function()  {return function()  {return []}} );
 
-    var util$pseudoClasses$$pseudoClasses = {
+    var $$$util$pseudoClasses$$pseudoClasses = {
     
             ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
     
@@ -1227,19 +1227,19 @@
     
             ":focus": function( node )  {return node === node.ownerDocument.activeElement},
     
-            ":visible": function( node )  {return !util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
+            ":visible": function( node )  {return !$$$util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
     
             ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
         };
 
-    function util$pseudoClasses$$createButtonPseudo( type ) {
+    function $$$util$pseudoClasses$$createButtonPseudo( type ) {
         return function( node )  {
             var name = node.nodeName;
             return (name === "INPUT" || name === "BUTTON") && node.type === type;
         };
     }
 
-    function util$pseudoClasses$$createInputPseudo( type ) {
+    function $$$util$pseudoClasses$$createInputPseudo( type ) {
         return function( node )  {
             var name = node.nodeName;
             return name === "INPUT" && node.type === type;
@@ -1248,21 +1248,21 @@
 
     // Add button/input type pseudos
     helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
-        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createInputPseudo( key );
+        $$$util$pseudoClasses$$pseudoClasses[ ":" + key ] = $$$util$pseudoClasses$$createInputPseudo( key );
     });
 
     helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
-        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createButtonPseudo( key );
+        $$$util$pseudoClasses$$pseudoClasses[ ":" + key ] = $$$util$pseudoClasses$$createButtonPseudo( key );
     });
 
-    var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
+    var $$$util$pseudoClasses$$default = $$$util$pseudoClasses$$pseudoClasses;
     helpers$$implement({
         // Check if the element matches a selector against an element
         matches: function(selector) {
             if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );
                 // compare a match with CSS pseudos selectors 
                 // e.g "link.matches(":enabled") or "link.matches(":checked")
-                var checker = util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
+                var checker = $$$util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
                 return !!checker( this[ 0 ] );
         }
     }, null, function()  {return RETURN_FALSE} );
@@ -1368,7 +1368,7 @@
     
             return core$core$$nodeTree(offsetParent);
         }
-    }, null, function()  {return RETURN_FALSE});function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
+    }, null, function()  {return RETURN_FALSE});function $$$util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
         var debouncing;
         return function( e )  {
             if ( !debouncing ) {
@@ -1385,7 +1385,7 @@
 
     // Special events for the frame events 'hook'
     helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
+        util$eventhooks$$eventHooks[ name ] = $$$util$DebouncedWrapper$$DebouncedWrapper;
     });
 
     // Support: Firefox, Chrome, Safari
@@ -1775,6 +1775,7 @@
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");
             } else if (helpers$$isArray( name )) {
                 helpers$$each(name, function( key )  { this$0.set(key, value) } );
+            // Set the value (with attr map support)
             } else if ( helpers$$is( name, "object" ) ) {
                 helpers$$forOwn( name, function( key, value )  { this$0.set( key, name[ key ] ) } );
             } else {
@@ -1946,20 +1947,20 @@
     }, null, function()  {return RETURN_TRUE} );
 
     helpers$$implement({
-        // Read or write inner content of the element
+        // Read or write inner content of an element
         value: function(val) {
-            if (arguments.length === 0) {
+            if ( arguments.length === 0 ) {
                 return this.get();
             }
     
             if (val._ || helpers$$isArray( val ) ) {
-                return this.set( "" ).append(val);
+                return this.set( "" ).append( val );
             }
     
            return this.set( val );
         }
     }, null, function()  {return function() {
-        if (arguments.length) return this;
+        if ( arguments.length ) return this;
     }});
 
     helpers$$implement({
@@ -2322,6 +2323,112 @@
 
     // Current version of the library. Keep in sync with `package.json`.
     core$core$$ugma.version = "0.0.1";
+    function util$adjustcss$$adjustCSS(root, prop, parts, computed) {
+    
+        var adjusted,
+            scale = 1,
+            maxIterations = 20,
+            currentValue = function() {
+                return parseFloat( computed[ prop ] );
+            },
+            initial = currentValue(),
+            unit = parts && parts[ 3 ] || "",
+            // Starting value computation is required for potential unit mismatches
+            initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec( computed[ prop ] );
+    
+        if (initialInUnit && initialInUnit[ 3 ] !== unit) {
+    
+            unit = unit || initialInUnit[ 3 ];
+    
+            parts = parts || [];
+    
+            // Iteratively approximate from a nonzero starting point
+            initialInUnit = +initial || 1;
+    
+            do {
+                // If previous iteration zeroed out, double until we get *something*.
+                // Use string for doubling so we don't accidentally see scale as unchanged below
+                scale = scale || ".5";
+    
+                // Adjust and apply
+                initialInUnit = initialInUnit / scale;
+                root.css(prop, initialInUnit + unit);
+    
+                // Break the loop if scale is unchanged or perfect, or if we've just had enough.
+            } while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
+        }
+    
+        if (parts) {
+            // Apply relative offset (+=/-=) if specified
+            adjusted = parts[ 1 ] ? (+initialInUnit || +initial || 0) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
+    
+            return adjusted;
+        }
+    }function util$debouncedwrapper$$DebouncedWrapper( handler, node ) {
+        var debouncing;
+        return function( e )  {
+            if ( !debouncing ) {
+                debouncing = true;
+                node._._raf = core$core$$ugma.requestFrame( function()  {
+                    handler( e );
+                    debouncing = false;
+                });
+            }
+        };
+    }
+
+    var util$pseudoclasses$$pseudoClasses = {
+    
+            ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
+    
+            ":selected": function( node )  {
+                // Accessing this property makes selected-by-default
+                // options in Safari work properly
+                /* jshint ignore:start */
+                if ( node.parentNode ) {
+                    node.parentNode.selectedIndex;
+                }
+                /* jshint ignore:end */
+                return node.selected === true;
+            },
+            ":enabled": function( node )   {return !node.disabled},
+            ":disabled": function( node )  {return node.disabled},
+            // In CSS3, :checked should return both checked and selected elements
+            // http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
+    
+            ":checked": function( node )  {return !!("checked" in node ? node.checked : node.selected)},
+    
+            ":focus": function( node )  {return node === node.ownerDocument.activeElement},
+    
+            ":visible": function( node )  {return !util$pseudoclasses$$pseudoClasses[ ":hidden" ](node)},
+    
+            ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
+        };
+
+    function util$pseudoclasses$$createButtonPseudo( type ) {
+        return function( node )  {
+            var name = node.nodeName;
+            return (name === "INPUT" || name === "BUTTON") && node.type === type;
+        };
+    }
+
+    function util$pseudoclasses$$createInputPseudo( type ) {
+        return function( node )  {
+            var name = node.nodeName;
+            return name === "INPUT" && node.type === type;
+        };
+    }
+
+    // Add button/input type pseudos
+    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
+        util$pseudoclasses$$pseudoClasses[ ":" + key ] = util$pseudoclasses$$createInputPseudo( key );
+    });
+
+    helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
+        util$pseudoclasses$$pseudoClasses[ ":" + key ] = util$pseudoclasses$$createButtonPseudo( key );
+    });
+
+    var util$pseudoclasses$$default = util$pseudoclasses$$pseudoClasses;
 
     // Map over 'ugma' in case of overwrite
     var outro$$_ugma = WINDOW.ugma;
