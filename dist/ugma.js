@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 15:06:55 GMT
+ * Build date: Thu, 02 Apr 2015 15:19:36 GMT
  */
 (function() {
     "use strict";
@@ -603,7 +603,7 @@
     };
 
     var util$csshooks$$default = util$csshooks$$cssHooks;
-    function $$$util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
+    function util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
     
         var adjusted,
             scale = 1,
@@ -701,7 +701,7 @@
    
                     if (!computed) computed = helpers$$computeStyle(node);
    
-                    value = $$$util$adjustCSS$$adjustCSS( this, setter, ret, computed );
+                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed );
    
                     if (ret && ret[ 3 ]) value += ret[ 3 ];
                 }
@@ -1204,7 +1204,7 @@
         }
     }, null, function()  {return function()  {return []}} );
 
-    var $$$util$pseudoClasses$$pseudoClasses = {
+    var util$pseudoClasses$$pseudoClasses = {
     
             ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
     
@@ -1227,19 +1227,19 @@
     
             ":focus": function( node )  {return node === node.ownerDocument.activeElement},
     
-            ":visible": function( node )  {return !$$$util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
+            ":visible": function( node )  {return !util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
     
             ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
         };
 
-    function $$$util$pseudoClasses$$createButtonPseudo( type ) {
+    function util$pseudoClasses$$createButtonPseudo( type ) {
         return function( node )  {
             var name = node.nodeName;
             return (name === "INPUT" || name === "BUTTON") && node.type === type;
         };
     }
 
-    function $$$util$pseudoClasses$$createInputPseudo( type ) {
+    function util$pseudoClasses$$createInputPseudo( type ) {
         return function( node )  {
             var name = node.nodeName;
             return name === "INPUT" && node.type === type;
@@ -1248,21 +1248,21 @@
 
     // Add button/input type pseudos
     helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
-        $$$util$pseudoClasses$$pseudoClasses[ ":" + key ] = $$$util$pseudoClasses$$createInputPseudo( key );
+        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createInputPseudo( key );
     });
 
     helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
-        $$$util$pseudoClasses$$pseudoClasses[ ":" + key ] = $$$util$pseudoClasses$$createButtonPseudo( key );
+        util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createButtonPseudo( key );
     });
 
-    var $$$util$pseudoClasses$$default = $$$util$pseudoClasses$$pseudoClasses;
+    var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
     helpers$$implement({
         // Check if the element matches a selector against an element
         matches: function(selector) {
             if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );
                 // compare a match with CSS pseudos selectors 
                 // e.g "link.matches(":enabled") or "link.matches(":checked")
-                var checker = $$$util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
+                var checker = util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
                 return !!checker( this[ 0 ] );
         }
     }, null, function()  {return RETURN_FALSE} );
@@ -1368,7 +1368,7 @@
     
             return core$core$$nodeTree(offsetParent);
         }
-    }, null, function()  {return RETURN_FALSE});function $$$util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
+    }, null, function()  {return RETURN_FALSE});function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
         var debouncing;
         return function( e )  {
             if ( !debouncing ) {
@@ -1385,7 +1385,7 @@
 
     // Special events for the frame events 'hook'
     helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[ name ] = $$$util$DebouncedWrapper$$DebouncedWrapper;
+        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
     });
 
     // Support: Firefox, Chrome, Safari
@@ -2323,112 +2323,6 @@
 
     // Current version of the library. Keep in sync with `package.json`.
     core$core$$ugma.version = "0.0.1";
-    function util$adjustcss$$adjustCSS(root, prop, parts, computed) {
-    
-        var adjusted,
-            scale = 1,
-            maxIterations = 20,
-            currentValue = function() {
-                return parseFloat( computed[ prop ] );
-            },
-            initial = currentValue(),
-            unit = parts && parts[ 3 ] || "",
-            // Starting value computation is required for potential unit mismatches
-            initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec( computed[ prop ] );
-    
-        if (initialInUnit && initialInUnit[ 3 ] !== unit) {
-    
-            unit = unit || initialInUnit[ 3 ];
-    
-            parts = parts || [];
-    
-            // Iteratively approximate from a nonzero starting point
-            initialInUnit = +initial || 1;
-    
-            do {
-                // If previous iteration zeroed out, double until we get *something*.
-                // Use string for doubling so we don't accidentally see scale as unchanged below
-                scale = scale || ".5";
-    
-                // Adjust and apply
-                initialInUnit = initialInUnit / scale;
-                root.css(prop, initialInUnit + unit);
-    
-                // Break the loop if scale is unchanged or perfect, or if we've just had enough.
-            } while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
-        }
-    
-        if (parts) {
-            // Apply relative offset (+=/-=) if specified
-            adjusted = parts[ 1 ] ? (+initialInUnit || +initial || 0) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
-    
-            return adjusted;
-        }
-    }function util$debouncedwrapper$$DebouncedWrapper( handler, node ) {
-        var debouncing;
-        return function( e )  {
-            if ( !debouncing ) {
-                debouncing = true;
-                node._._raf = core$core$$ugma.requestFrame( function()  {
-                    handler( e );
-                    debouncing = false;
-                });
-            }
-        };
-    }
-
-    var util$pseudoclasses$$pseudoClasses = {
-    
-            ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
-    
-            ":selected": function( node )  {
-                // Accessing this property makes selected-by-default
-                // options in Safari work properly
-                /* jshint ignore:start */
-                if ( node.parentNode ) {
-                    node.parentNode.selectedIndex;
-                }
-                /* jshint ignore:end */
-                return node.selected === true;
-            },
-            ":enabled": function( node )   {return !node.disabled},
-            ":disabled": function( node )  {return node.disabled},
-            // In CSS3, :checked should return both checked and selected elements
-            // http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
-    
-            ":checked": function( node )  {return !!("checked" in node ? node.checked : node.selected)},
-    
-            ":focus": function( node )  {return node === node.ownerDocument.activeElement},
-    
-            ":visible": function( node )  {return !util$pseudoclasses$$pseudoClasses[ ":hidden" ](node)},
-    
-            ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
-        };
-
-    function util$pseudoclasses$$createButtonPseudo( type ) {
-        return function( node )  {
-            var name = node.nodeName;
-            return (name === "INPUT" || name === "BUTTON") && node.type === type;
-        };
-    }
-
-    function util$pseudoclasses$$createInputPseudo( type ) {
-        return function( node )  {
-            var name = node.nodeName;
-            return name === "INPUT" && node.type === type;
-        };
-    }
-
-    // Add button/input type pseudos
-    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
-        util$pseudoclasses$$pseudoClasses[ ":" + key ] = util$pseudoclasses$$createInputPseudo( key );
-    });
-
-    helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
-        util$pseudoclasses$$pseudoClasses[ ":" + key ] = util$pseudoclasses$$createButtonPseudo( key );
-    });
-
-    var util$pseudoclasses$$default = util$pseudoclasses$$pseudoClasses;
 
     // Map over 'ugma' in case of overwrite
     var outro$$_ugma = WINDOW.ugma;
