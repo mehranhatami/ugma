@@ -10,14 +10,21 @@ import operators        from "../template/operators";
 
 var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     charMap = { 
-        "&": "&amp;", 
-        "<": "&lt;",
-        ">": "&gt;",
-        "\"": "&quot;",
-        "'": "&#039;"
+        "&": "&amp;",    // ampersand
+        "<": "&lt;",     // less-than
+        ">": "&gt;",     // greater-than
+        "\"": "&quot;", 
+        "'": "&#039;",
+        "¢": "&#162;",   // cent
+        "¥": "&#165;",   // yen
+        "§": "&#167;",   // section
+        "©": "&#169;",   // copyright
+        "®": "&#174;",   // registred trademark
+        "™": "&#8482;",  // trademark
     },
-    // filter for escaping unsafe XML characters: <, >, &, ', "
-    escapeChars = ( str ) => str.replace( /[&<>"']/g, ( ch ) => charMap[ ch ]),
+    // filter for escaping unsafe XML characters: <, >, &, ', " and
+    // prevent XSS attacks
+    escapeChars = ( str ) => str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ]),
     process = ( template ) => {
 
     let stack = [];

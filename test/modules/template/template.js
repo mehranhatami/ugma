@@ -119,6 +119,10 @@ describe("template", function() {
         checkExpr("span>`Hello world`", "<span>Hello world</span>");
         checkExpr("span>`Hello`+` world`", "<span>Hello world</span>");
         checkExpr("span>`<Hello\"> & </world> '`", "<span>&lt;Hello&quot;&gt; &amp; &lt;/world&gt; &#039;</span>");
+        checkExpr("span>`<Hello\"> © </world> '`", "<span>&lt;Hello&quot;&gt; &#169; &lt;/world&gt; &#039;</span>");
+        checkExpr("span>`<Hello\"> ® </world> '`", "<span>&lt;Hello&quot;&gt; &#174; &lt;/world&gt; &#039;</span>");
+        checkExpr("span>`<Hello\"> ™ </world> '`", "<span>&lt;Hello&quot;&gt; &#8482; &lt;/world&gt; &#039;</span>");
+        checkExpr("span>`<Hello\"> ¢ </world> '`", "<span>&lt;Hello&quot;&gt; &#162; &lt;/world&gt; &#039;</span>");
         checkExpr("span>`Click `+(a[href=/url/]>`here`)+` for more info`", "<span>Click <a href=\"/url/\">here</a> for more info</span>");
         checkExpr("a>`{0}: `+span+span", "<a>test: <span></span><span></span></a>", ["test"]);
         checkExpr("p>i.z+`{0}`+br+`{1}`", "<p><i class=\"z\"></i>{0}<br>{1}</p>");
