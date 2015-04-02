@@ -1,5 +1,5 @@
 import { ugma                          } from "../core/core";
-import { RETURN_THIS, ERROR_MSG        } from "../const";
+import { RETURN_THIS                   } from "../const";
 import { implement, is, computeStyle   } from "../helpers";
 import { minErr                        } from "../minErr";
 
@@ -25,7 +25,7 @@ implement({
         }
 
         if ( callback && typeof callback !== "function") {
-            minErr( methodName + "()", ERROR_MSG[ 4 ] );
+            minErr( methodName + "()", "This operation is not supported" );
         }
 
         var node = this[0],

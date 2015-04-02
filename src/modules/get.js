@@ -1,6 +1,5 @@
 import { minErr                        } from "../minErr";
 import { implement, isArray, each, is  } from "../helpers";
-import { ERROR_MSG                     } from "../const";
 import { dataAttr                      } from "../util/dataAttr";
 import   accessorhooks                   from "../util/accessorhooks";
 
@@ -35,7 +34,7 @@ implement({
 
             return obj;
         } else {
-            minErr("get()", ERROR_MSG[ 4 ]);
+            minErr("get()", "This operation is not supported" );
         }
     }
 }, null, () => () => {});

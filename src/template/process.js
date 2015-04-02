@@ -1,5 +1,4 @@
 import { is, each   }   from "../helpers";
-import { ERROR_MSG  }   from "../const";
 import { minErr     }   from "../minErr";
 import { parseAttr  }   from "../template/parseAttr";
 import { injection  }   from "../template/injection";
@@ -35,33 +34,33 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
                 node = [ processTag( node ) ];
             }
 
-            if ( is( node, "undefined" ) || is(value, "undefined") ) {
-                minErr("emmet()", ERROR_MSG[ 4 ] );
+            if ( is( node, "undefined" ) || is( value, "undefined" ) ) {
+                minErr("emmet()", "This operation is not supported" );
             }
 
-            if (str === "#") { // id
-                value = injection(" id=\"" + value + "\"");
-            } else if (str === ".") { // class
-                value = injection(" class=\"" + value + "\"");
-            } else if (str === "[") { // id
-                value = injection(value.replace(attributes, parseAttr));
-            } else if (str === "*") { // universal selector 
-                node = indexing(+value, node.join(""));
-            } else if (str === "`") { // Back tick
+            if (str === "#" ) { // id
+                value = injection(" id=\"" + value + "\"" );
+            } else if ( str === "." ) { // class
+                value = injection(" class=\"" + value + "\"" );
+            } else if ( str === "[" ) { // id
+                value = injection( value.replace( attributes, parseAttr ) );
+            } else if ( str === "*" ) { // universal selector 
+                node = indexing( +value, node.join( "" ) );
+            } else if ( str === "`" ) { // Back tick
                 stack.unshift(node);
                 // escape unsafe HTML symbols
-                node = [escapeChars(value)];
+                node = [ escapeChars( value ) ];
             } else { /* ">", "+", "^" */
-                value = is(value, "string") ? processTag(value) : value.join("");
+                value = is( value, "string" ) ? processTag( value ) : value.join( "" );
 
-                if (str === ">") {
-                    value = injection(value, true);
+                if ( str === ">" ) {
+                    value = injection( value, true );
                 } else {
-                    node.push(value);
+                    node.push( value );
                 }
             }
 
-            str = is(value, "function") ? node.map(value) : node;
+            str = is( value, "function" ) ? node.map( value ) : node;
         }
 
         stack.unshift( str );

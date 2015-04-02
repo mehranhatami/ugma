@@ -1,12 +1,11 @@
 import { implement, injectElement, is, sliceArgs } from "../helpers";
 import { minErr                                  } from "../minErr";
-import { ERROR_MSG                               } from "../const";
 
 implement({
     // Import external javascript files in the document, and call optional 
     // callback when it will be done. 
     injectScript() {
-        var urls = sliceArgs(arguments),
+        var urls = sliceArgs( arguments ),
             doc = this[ 0 ].ownerDocument,
             callback = () => {
 
@@ -21,7 +20,7 @@ implement({
                     // Support: IE9
                     // Bug in IE force us to set the 'src' after the element has been
                     // added to the document.
-                    injectElement(script);
+                    injectElement( script );
 
                     script.src = arg;
                     script.async = true;
@@ -30,7 +29,7 @@ implement({
                 } else if ( is(arg, "function") ) {
                     arg();
                 } else if ( arg ) {
-                    minErr("injectScript()", ERROR_MSG[ 3 ]);
+                    minErr("injectScript()", "Wrong amount of arguments." );
                 }
             };
 

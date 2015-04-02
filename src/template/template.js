@@ -1,6 +1,5 @@
 import { ugma              } from "../core/core";
 import { is, each, forOwn  } from "../helpers";
-import { ERROR_MSG         } from "../const";
 import { minErr            } from "../minErr";
 import { process           } from "../template/process";
 import   operators           from "../template/operators";
@@ -14,10 +13,10 @@ var dot = /\./g,
     templateHooks = {},
     tagCache = { "": "" };
 
-// Expose the 'templateHooks' to the global scope
+// Expose 'templateHooks' to the global scope
 ugma.templateHooks = (obj)  => {
 
-  if( !is( obj, "object" ) ) minErr("templateHooks()", "... has to be a object" );
+  if( !is( obj, "object" ) ) minErr( "templateHooks()", "... has to be a object" );
 
   forOwn(obj, ( key, value ) => {
         templateHooks[ key ] = value;
@@ -26,7 +25,7 @@ ugma.templateHooks = (obj)  => {
 
 ugma.template = function( template, args ) {
 
-    if ( !is(template, "string" ) ) minErr("template()", ERROR_MSG[ 2] );
+    if ( !is(template, "string" ) ) minErr("template()", "The first argument need to be a string");
 
     if ( args ) template = ugma.format( template, args );
 

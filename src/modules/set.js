@@ -1,6 +1,6 @@
 import { implement, invoke, isArray, each, is, forOwn  } from "../helpers";
 import { minErr                                        } from "../minErr";
-import { ERROR_MSG, RETURN_THIS                        } from "../const";
+import { RETURN_THIS                                   } from "../const";
 import   accessorhooks                                   from "../util/accessorhooks";
 
  var objectTag = "[object Object]",
@@ -11,12 +11,12 @@ import   accessorhooks                                   from "../util/accessorh
 
 implement({
     // Set  erty/attribute value by name
-    set(name, value) {
+    set( name, value ) {
 
         var node = this[ 0 ];
 
-        if (arguments.length === 1) {
-            if ( is(name, "function") ) {
+        if ( arguments.length === 1 ) {
+            if ( is( name, "function" ) ) {
                 value = name;
             } else {
                 value = name == null ? "" : name + "";
@@ -32,7 +32,7 @@ implement({
             }
         }
 
-        var hook = accessorhooks.set[name],
+        var hook = accessorhooks.set[ name ],
             subscription = ( this._._subscription || {} )[ name ],
             previousValue;
 
@@ -65,14 +65,14 @@ implement({
         } else if ( is( name, "object" ) ) {
             forOwn( name, ( key, value ) => { this.set( key, name[ key ] ) } );
         } else {
-            minErr("set()", ERROR_MSG[ 6 ]);
+            minErr( "set()", "The property or attribute is not valid." );
         }
 
-        if (subscription && previousValue !== value) {
+        if ( subscription && previousValue !== value ) {
             // Trigger all relevant attribute / nameerty changes.
-            each(subscription, ( cb ) => { invoke(this, cb, value, previousValue) });
+            each(subscription, ( cb ) => { invoke(this, cb, value, previousValue) } );
         }
 
         return this;
     }
-}, null, () => RETURN_THIS);
+}, null, () => RETURN_THIS );

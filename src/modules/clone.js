@@ -10,7 +10,7 @@ implement({
     // also includes the node's descendants.
     clone(deep) {
         
-        if (!is(deep, "boolean")) minErr("clone()", "The object can not be cloned.");
+        if (!is(deep, "boolean")) minErr("clone()", "This element can not be cloned.");
         
         return new nodeTree( this[ 0 ].cloneNode(deep) );
     }

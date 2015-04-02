@@ -1,4 +1,3 @@
-import { ERROR_MSG                          } from "../const";
 import { minErr                             } from "../minErr";
 import { implement, injectElement, is, each } from "../helpers";
 
@@ -17,7 +16,7 @@ implement({
         }
 
         if ( !is(selector, "string") || !is(cssText, "string") ) {
-            minErr( "injectCSS()", ERROR_MSG[ 1 ] );
+            minErr( "injectCSS()", "The string did not match the expected pattern" );
         }
 
         each(selector.split(","), function(selector) {

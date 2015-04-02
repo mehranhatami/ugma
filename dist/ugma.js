@@ -5,10 +5,44 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 12:59:45 GMT
+ * Build date: Thu, 02 Apr 2015 14:23:32 GMT
  */
 (function() {
     "use strict";
+    function minErr$$minErr(module, msg) {
+        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
+        // use the arrow method here. And the function will fail BIG TIME !!
+        var wrapper = function() {
+            this.message = module ? ( msg ? msg : "This operation is not supported" ) +
+                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : "The string did not match the expected pattern";
+            // use the name on the framework
+            this.name = "ugma";
+        };
+        wrapper.prototype = Object.create( Error.prototype );
+        throw new wrapper( module, msg );
+    }var WINDOW = window;
+    var DOCUMENT = document;
+    var HTML = DOCUMENT.documentElement;
+
+    var RETURN_THIS = function() { return this };
+    var RETURN_TRUE = function()  {return true};
+    var RETURN_FALSE = function()  {return false};
+    var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
+
+    var INTERNET_EXPLORER = document.documentMode;
+
+    var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
+
+    var RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
+
+    //  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
+    // information on preventing it
+    if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
+        WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
+            "tag to your HTML to prevent this from happening: " +
+            "<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
+        );
+    }
 
     // jshint unused:false
 
@@ -260,50 +294,6 @@
     // Set a new document, and define a local copy of ugma
     var core$core$$ugma = new core$core$$domTree( document );
 
-    var WINDOW = window;
-    var DOCUMENT = document;
-    var HTML = DOCUMENT.documentElement;
-
-    var ERROR_MSG = {
-        1: "The string did not match the expected pattern",
-        2: "The string contains invalid characters.",
-        3: "Wrong amount of arguments.",
-        4: "This operation is not supported",
-        6: "The property or attribute is not valid.",
-        7: "The first argument need to be a string"
-    };
-
-    var RETURN_THIS = function() { return this };
-    var RETURN_TRUE = function()  {return true};
-    var RETURN_FALSE = function()  {return false};
-    var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
-
-    var INTERNET_EXPLORER = document.documentMode;
-
-    var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
-
-    var RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
-
-    //  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
-    // information on preventing it
-    if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
-        WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
-            "tag to your HTML to prevent this from happening: " +
-            "<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
-        );
-    }function minErr$$minErr(module, msg) {
-        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
-        // use the arrow method here. And the function will fail BIG TIME !!
-        var wrapper = function() {
-            this.message = module ? ( msg ? msg : ERROR_MSG[ 4 ] ) +
-                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : ERROR_MSG[ 1 ];
-            // use the name on the framework
-            this.name = "ugma";
-        };
-        wrapper.prototype = Object.create( Error.prototype );
-        throw new wrapper( module, msg );
-    }
-
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
     /* es6-transpiler has-iterators:false, has-generators: false */
@@ -495,7 +485,7 @@
         // also includes the node's descendants.
         clone: function(deep) {
             
-            if (!helpers$$is(deep, "boolean")) minErr$$minErr("clone()", "The object can not be cloned.");
+            if (!helpers$$is(deep, "boolean")) minErr$$minErr("clone()", "This element can not be cloned.");
             
             return new core$core$$nodeTree( this[ 0 ].cloneNode(deep) );
         }
@@ -507,7 +497,7 @@
         // Find parent element filtered by optional selector 
         // Following the Element#closest specs  
         closest: function(selector) {
-            if (selector && !helpers$$is(selector, "string")) minErr$$minErr("closest()", ERROR_MSG[ 1 ]);
+            if (selector && !helpers$$is(selector, "string")) minErr$$minErr("closest()", "The string did not match the expected pattern");
     
             var matches = util$selectormatcher$$default(selector),
                 parentNode = this[ 0 ];
@@ -728,7 +718,7 @@
                 });
                 
             } else {
-                minErr$$minErr("css()", ERROR_MSG[ 4 ]);
+                minErr$$minErr("css()", "This operation is not supported");
             }
    
             return this;
@@ -821,7 +811,7 @@
             } else if (helpers$$is(method, "string")) {
                 handler = function()  { result = node[ method ].apply( node, args ) };
             } else {
-                minErr$$minErr( "dispatch()", ERROR_MSG [ 1 ] );
+                minErr$$minErr( "dispatch()", "The string did not match the expected pattern" );
             }
             // register safe invokation handler
             modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = handler;
@@ -1027,7 +1017,7 @@
     
                 return obj;
             } else {
-                minErr$$minErr("get()", ERROR_MSG[ 4 ]);
+                minErr$$minErr("get()", "This operation is not supported" );
             }
         }
     }, null, function()  {return function()  {}});
@@ -1057,7 +1047,7 @@
             }
     
             if ( !helpers$$is(selector, "string") || !helpers$$is(cssText, "string") ) {
-                minErr$$minErr( "injectCSS()", ERROR_MSG[ 1 ] );
+                minErr$$minErr( "injectCSS()", "The string did not match the expected pattern" );
             }
     
             helpers$$each(selector.split(","), function(selector) {
@@ -1072,7 +1062,7 @@
         // Import external javascript files in the document, and call optional 
         // callback when it will be done. 
         injectScript: function() {
-            var urls = helpers$$sliceArgs(arguments),
+            var urls = helpers$$sliceArgs( arguments ),
                 doc = this[ 0 ].ownerDocument,
                 callback = function()  {
     
@@ -1087,7 +1077,7 @@
                         // Support: IE9
                         // Bug in IE force us to set the 'src' after the element has been
                         // added to the document.
-                        helpers$$injectElement(script);
+                        helpers$$injectElement( script );
     
                         script.src = arg;
                         script.async = true;
@@ -1096,7 +1086,7 @@
                     } else if ( helpers$$is(arg, "function") ) {
                         arg();
                     } else if ( arg ) {
-                        minErr$$minErr("injectScript()", ERROR_MSG[ 3 ]);
+                        minErr$$minErr("injectScript()", "Wrong amount of arguments." );
                     }
                 };
     
@@ -1209,7 +1199,7 @@
     helpers$$implement({
         // Invokes a function for element if it's not empty and return array of results
         map: function(fn, context) {
-            if ( !helpers$$is(fn, "function") ) minErr$$minErr("map()", ERROR_MSG[ 4 ]);
+            if ( !helpers$$is( fn, "function" ) ) minErr$$minErr("map()", "This operation is not supported" );
             return [ fn.call( ( context ), this) ];
         }
     }, null, function()  {return function()  {return []}} );
@@ -1269,19 +1259,19 @@
     helpers$$implement({
         // Check if the element matches a selector against an element
         matches: function(selector) {
-            if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", ERROR_MSG[ 1 ] );
+            if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );
                 // compare a match with CSS pseudos selectors 
                 // e.g "link.matches(":enabled") or "link.matches(":checked")
                 var checker = util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
                 return !!checker( this[ 0 ] );
         }
-    }, null, function()  {return RETURN_FALSE});
+    }, null, function()  {return RETURN_FALSE} );
 
     helpers$$implement({
     
         // Remove one or many callbacks.
         off: function(eventType, selector, callback) {
-            if ( !helpers$$is(eventType,"string" ) ) minErr$$minErr("off()", ERROR_MSG[ 7 ] );
+            if ( !helpers$$is(eventType,"string" ) ) minErr$$minErr("off()", "The first argument need to be a string" );
     
             if (callback === void 0) {
                 callback = selector;
@@ -1519,13 +1509,13 @@
         // the callback is invoked, it will be removed.
         once: true
     
-    }, function(method, single)  {return function(eventType, selector, args, callback) {var this$0 = this;
+    }, function( method, single )  {return function( eventType, selector, args, callback ) {var this$0 = this;
     
-        if ( helpers$$is(eventType, "string") ) {
-            if ( helpers$$is(args, "function") ) {
+        if ( helpers$$is( eventType, "string" ) ) {
+            if ( helpers$$is( args, "function" ) ) {
                 callback = args;
     
-                if ( helpers$$is(selector, "string") ) {
+                if ( helpers$$is(selector, "string" ) ) {
                     args = null;
                 } else {
                     args = selector;
@@ -1533,21 +1523,21 @@
                 }
             }
     
-            if ( helpers$$is(selector, "function") ) {
+            if ( helpers$$is( selector, "function") ) {
                 callback = selector;
                 selector = null;
                 args = null;
             }
     
-            if ( !helpers$$is(callback, "function") ) {
-                minErr$$minErr(method + "()", callback + " is not a function.");
+            if ( !helpers$$is( callback, "function" ) ) {
+                minErr$$minErr( method + "()", callback + " is not a function." );
             }
     
             // http://jsperf.com/string-indexof-vs-split
             var node = this[ 0 ],
                 parts,
                 namespace,
-                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [eventType],
+                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [ eventType ],
                 i = eventTypes.length,
                 handler,
                 handlers = this._._events || ( this._._events = [] );
@@ -1557,9 +1547,9 @@
                 eventType = parts[ 0 ] || null;
                 namespace = parts[ 1 ] || null;
     
-                handler = util$eventhandler$$default(this, eventType, selector, callback, args, single, namespace);
+                handler = util$eventhandler$$default(this, eventType, selector, callback, args, single, namespace );
     
-                node.addEventListener(handler._eventType || eventType, handler, !!handler.capturing);
+                node.addEventListener(handler._eventType || eventType, handler, !!handler.capturing );
     
                 // store event entry
                 handlers.push( handler );
@@ -1569,15 +1559,15 @@
             if ( helpers$$isArray( eventType ) ) {
     
                 helpers$$each( eventType, function( name )  {
-                    this$0[ method ]( name, selector, args, callback);
+                    this$0[ method ]( name, selector, args, callback );
                 });
             } else {
-                helpers$$forOwn(eventType, function(name, value)  {
-                    this$0[ method ](name, selector, args, value);
+                helpers$$forOwn( eventType, function( name, value )  {
+                    this$0[ method ]( name, selector, args, value );
                 });
             }
         } else {
-            minErr$$minErr( method + "()", ERROR_MSG[ 7 ] );
+            minErr$$minErr( method + "()", "The first argument need to be a string" );
         }
     
         return this;
@@ -1738,8 +1728,8 @@
     
             var node = this[ 0 ];
     
-            if (arguments.length === 1) {
-                if ( helpers$$is(name, "function") ) {
+            if ( arguments.length === 1 ) {
+                if ( helpers$$is( name, "function" ) ) {
                     value = name;
                 } else {
                     value = name == null ? "" : name + "";
@@ -1755,7 +1745,7 @@
                 }
             }
     
-            var hook = util$accessorhooks$$default.set[name],
+            var hook = util$accessorhooks$$default.set[ name ],
                 subscription = ( this._._subscription || {} )[ name ],
                 previousValue;
     
@@ -1788,17 +1778,17 @@
             } else if ( helpers$$is( name, "object" ) ) {
                 helpers$$forOwn( name, function( key, value )  { this$0.set( key, name[ key ] ) } );
             } else {
-                minErr$$minErr("set()", ERROR_MSG[ 6 ]);
+                minErr$$minErr( "set()", "The property or attribute is not valid." );
             }
     
-            if (subscription && previousValue !== value) {
+            if ( subscription && previousValue !== value ) {
                 // Trigger all relevant attribute / nameerty changes.
-                helpers$$each(subscription, function( cb )  { helpers$$invoke(this$0, cb, value, previousValue) });
+                helpers$$each(subscription, function( cb )  { helpers$$invoke(this$0, cb, value, previousValue) } );
             }
     
             return this;
         }
-    }, null, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_THIS} );
 
     // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
     // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
@@ -1897,27 +1887,27 @@
         nextAll: "nextElementSibling",
         // Find all preceding sibling elements filtered by optional selector
         prevAll: "previousElementSibling",
-    }, function(methodName, propertyName)  {return function(selector) {
+    }, function( methodName, propertyName )  {return function( selector ) {
     
-        if (selector && !helpers$$is(selector, "string")) minErr$$minErr(methodName + "()", ERROR_MSG[ 1 ]);
+        if ( selector && !helpers$$is( selector, "string") ) minErr$$minErr( methodName + "()", "The provided argument did not match the expected pattern" );
     
         var all = methodName.slice( -3 ) === "All",
-            matcher = util$selectormatcher$$default(selector),
+            matcher = util$selectormatcher$$default( selector ),
             descendants = all ? [] : null,
             currentNode = this[ 0 ];
     
-        if (!matcher) currentNode = currentNode[propertyName];
+        if ( !matcher ) currentNode = currentNode[ propertyName ];
     
-        for (; currentNode; currentNode = currentNode[propertyName]) {
-            if (currentNode.nodeType === 1 && (!matcher || matcher(currentNode))) {
+        for (; currentNode; currentNode = currentNode[ propertyName ] ) {
+            if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
                 if ( !all ) break;
     
                 descendants.push(currentNode);
             }
         }
     
-        return all ? helpers$$map(descendants, core$core$$nodeTree) : core$core$$nodeTree(currentNode);
-    }}, function(methodName)  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}});
+        return all ? helpers$$map( descendants, core$core$$nodeTree ) : core$core$$nodeTree( currentNode );
+    }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
 
     helpers$$implement({
         // Trigger one or many events, firing all bound callbacks. 
@@ -1925,7 +1915,7 @@
         var node = this[ 0 ],
             e, eventType, canContinue;
     
-        if ( helpers$$is(type, "string") ) {
+        if ( helpers$$is( type, "string" ) ) {
             var hook = util$eventhooks$$default[ type ],
                 handler = {};
     
@@ -1933,16 +1923,16 @@
     
             eventType = handler._eventType || type;
         } else {
-            minErr$$minErr("trigger()", ERROR_MSG[ 1 ] );
+            minErr$$minErr( "trigger()", "The string did not match the expected pattern" );
         }
         // Handles triggering the appropriate event callbacks.
-        e = node.ownerDocument.createEvent("HTMLEvents");
+        e = node.ownerDocument.createEvent( "HTMLEvents" );
         e[ "__" + "trackira" + "__" ] = arguments;
         e.initEvent( eventType, true, true );
         canContinue = node.dispatchEvent( e );
     
         // call native function to trigger default behavior
-        if (canContinue && node[ type ]) {
+        if ( canContinue && node[ type ] ) {
             // prevent re-triggering of the current event
             util$eventhandler$$default.skip = type;
     
@@ -1952,8 +1942,8 @@
         }
     
         return canContinue;
-    }
-    }, null, function()  {return RETURN_TRUE});
+      }
+    }, null, function()  {return RETURN_TRUE} );
 
     helpers$$implement({
         // Read or write inner content of the element
@@ -1994,7 +1984,7 @@
             }
     
             if ( callback && typeof callback !== "function") {
-                minErr$$minErr( methodName + "()", ERROR_MSG[ 4 ] );
+                minErr$$minErr( methodName + "()", "This operation is not supported" );
             }
     
             var node = this[0],
@@ -2111,10 +2101,10 @@
         template$template$$templateHooks = {},
         template$template$$tagCache = { "": "" };
 
-    // Expose the 'templateHooks' to the global scope
+    // Expose 'templateHooks' to the global scope
     core$core$$ugma.templateHooks = function(obj)   {
     
-      if( !helpers$$is( obj, "object" ) ) minErr$$minErr("templateHooks()", "... has to be a object" );
+      if( !helpers$$is( obj, "object" ) ) minErr$$minErr( "templateHooks()", "... has to be a object" );
     
       helpers$$forOwn(obj, function( key, value )  {
             template$template$$templateHooks[ key ] = value;
@@ -2123,7 +2113,7 @@
 
     core$core$$ugma.template = function( template, args ) {
     
-        if ( !helpers$$is(template, "string" ) ) minErr$$minErr("template()", ERROR_MSG[ 2] );
+        if ( !helpers$$is(template, "string" ) ) minErr$$minErr("template()", "The first argument need to be a string");
     
         if ( args ) template = core$core$$ugma.format( template, args );
     
@@ -2234,33 +2224,33 @@
                     node = [ template$processTag$$processTag( node ) ];
                 }
     
-                if ( helpers$$is( node, "undefined" ) || helpers$$is(value, "undefined") ) {
-                    minErr$$minErr("emmet()", ERROR_MSG[ 4 ] );
+                if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) {
+                    minErr$$minErr("emmet()", "This operation is not supported" );
                 }
     
-                if (str === "#") { // id
-                    value = template$injection$$injection(" id=\"" + value + "\"");
-                } else if (str === ".") { // class
-                    value = template$injection$$injection(" class=\"" + value + "\"");
-                } else if (str === "[") { // id
-                    value = template$injection$$injection(value.replace(template$process$$attributes, template$parseAttr$$parseAttr));
-                } else if (str === "*") { // universal selector 
-                    node = template$indexing$$indexing(+value, node.join(""));
-                } else if (str === "`") { // Back tick
+                if (str === "#" ) { // id
+                    value = template$injection$$injection(" id=\"" + value + "\"" );
+                } else if ( str === "." ) { // class
+                    value = template$injection$$injection(" class=\"" + value + "\"" );
+                } else if ( str === "[" ) { // id
+                    value = template$injection$$injection( value.replace( template$process$$attributes, template$parseAttr$$parseAttr ) );
+                } else if ( str === "*" ) { // universal selector 
+                    node = template$indexing$$indexing( +value, node.join( "" ) );
+                } else if ( str === "`" ) { // Back tick
                     stack.unshift(node);
                     // escape unsafe HTML symbols
-                    node = [template$process$$escapeChars(value)];
+                    node = [ template$process$$escapeChars( value ) ];
                 } else { /* ">", "+", "^" */
-                    value = helpers$$is(value, "string") ? template$processTag$$processTag(value) : value.join("");
+                    value = helpers$$is( value, "string" ) ? template$processTag$$processTag( value ) : value.join( "" );
     
-                    if (str === ">") {
-                        value = template$injection$$injection(value, true);
+                    if ( str === ">" ) {
+                        value = template$injection$$injection( value, true );
                     } else {
-                        node.push(value);
+                        node.push( value );
                     }
                 }
     
-                str = helpers$$is(value, "function") ? node.map(value) : node;
+                str = helpers$$is( value, "function" ) ? node.map( value ) : node;
             }
     
             stack.unshift( str );

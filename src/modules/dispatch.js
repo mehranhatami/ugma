@@ -1,6 +1,6 @@
-import { DOCUMENT, RETURN_TRUE, ERROR_MSG   } from "../const";
-import { implement, is, slice               } from "../helpers";
-import { minErr                             } from "../minErr";
+import { DOCUMENT, RETURN_TRUE    } from "../const";
+import { implement, is, slice     } from "../helpers";
+import { minErr                   } from "../minErr";
 
 var dispatcher = DOCUMENT.createElement( "a" ),
     safePropName = "onpropertychange";
@@ -23,7 +23,7 @@ implement({
         } else if (is(method, "string")) {
             handler = () => { result = node[ method ].apply( node, args ) };
         } else {
-            minErr( "dispatch()", ERROR_MSG [ 1 ] );
+            minErr( "dispatch()", "The string did not match the expected pattern" );
         }
         // register safe invokation handler
         dispatcher[ safePropName ] = handler;

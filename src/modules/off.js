@@ -1,13 +1,13 @@
-import { RETURN_THIS, ERROR_MSG   } from "../const";
-import { ugma                     } from "../core/core";
-import { implement, is, filter    } from "../helpers";
-import { minErr                   } from "../minErr";
+import { RETURN_THIS            } from "../const";
+import { ugma                   } from "../core/core";
+import { implement, is, filter  } from "../helpers";
+import { minErr                 } from "../minErr";
 
 implement({
 
     // Remove one or many callbacks.
     off(eventType, selector, callback) {
-        if ( !is(eventType,"string" ) ) minErr("off()", ERROR_MSG[ 7 ] );
+        if ( !is(eventType,"string" ) ) minErr("off()", "The first argument need to be a string" );
 
         if (callback === void 0) {
             callback = selector;

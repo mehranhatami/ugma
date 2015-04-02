@@ -1,6 +1,5 @@
 import { nodeTree, dummyTree     } from "../core/core";
 import   SelectorMatcher           from "../util/selectormatcher";
-import { ERROR_MSG               } from "../const";
 import { implement, is           } from "../helpers";
 import { minErr                  } from "../minErr";
 
@@ -10,7 +9,7 @@ implement({
     // Find parent element filtered by optional selector 
     // Following the Element#closest specs  
     closest(selector) {
-        if (selector && !is(selector, "string")) minErr("closest()", ERROR_MSG[ 1 ]);
+        if (selector && !is(selector, "string")) minErr("closest()", "The string did not match the expected pattern");
 
         var matches = SelectorMatcher(selector),
             parentNode = this[ 0 ];

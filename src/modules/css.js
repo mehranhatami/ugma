@@ -1,4 +1,4 @@
-import { ERROR_MSG, RCSSNUM                                       } from "../const";
+import { RCSSNUM                                                  } from "../const";
 import { implement, isArray, computeStyle, is, map, forOwn, each  } from "../helpers";
 import { minErr                                                   } from "../minErr";
 import   cssHooks                                                   from "../util/csshooks";
@@ -76,7 +76,7 @@ import { adjustCSS                                                } from "../uti
              });
              
          } else {
-             minErr("css()", ERROR_MSG[ 4 ]);
+             minErr("css()", "This operation is not supported");
          }
 
          return this;

@@ -7,16 +7,6 @@ export const WINDOW = window;
 export const DOCUMENT = document;
 export const HTML = DOCUMENT.documentElement;
 
-// error messages
-export const ERROR_MSG = {
-    1: "The string did not match the expected pattern",
-    2: "The string contains invalid characters.",
-    3: "Wrong amount of arguments.",
-    4: "This operation is not supported",
-    6: "The property or attribute is not valid.",
-    7: "The first argument need to be a string"
-};
-
 // constants
 export const RETURN_THIS = function() { return this };
 export const RETURN_TRUE = () => true;
