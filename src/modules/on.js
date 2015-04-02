@@ -44,10 +44,6 @@ implement({
             handler,
             handlers = this._._events || ( this._._events = [] );
 
-        // Handle space separated event names.
-        while (i--) {
-
-            eventType = eventTypes[i];
             // handle namespace
             parts = eventType.split( "." );
             eventType = parts[ 0 ] || null;
@@ -59,7 +55,6 @@ implement({
 
             // store event entry
             handlers.push( handler );
-        }
 
     } else if ( is(eventType, "object") ) {
 

@@ -1,5 +1,5 @@
 import { DOCUMENT, RETURN_TRUE, ERROR_MSG   } from "../const";
-import { implement, is                      } from "../helpers";
+import { implement, is, slice               } from "../helpers";
 import { minErr                             } from "../minErr";
 
 var dispatcher = DOCUMENT.createElement( "a" ),
@@ -12,8 +12,9 @@ var dispatcher = DOCUMENT.createElement( "a" ),
 
 implement({
     // Make a safe method/function call
-    dispatch(method, ...args) {
-   var  node = this[ 0 ],
+    dispatch(method) {
+   var  args = slice.call(arguments, 1),
+        node = this[ 0 ],
         handler, result, e;
 
     if (node) {
@@ -22,7 +23,7 @@ implement({
         } else if (is(method, "string")) {
             handler = () => { result = node[ method ].apply( node, args ) };
         } else {
-            minErr( "dispatch()", ERROR_MSG [1 ] );
+            minErr( "dispatch()", ERROR_MSG [ 1 ] );
         }
         // register safe invokation handler
         dispatcher[ safePropName ] = handler;

@@ -17,6 +17,16 @@ describe("on", function() {
         expect(input.on("click", spy)).toEqual(input);
     });
 
+    it("should attach an event handler with a namespaced type to an element", function() {
+
+        var eventType = "focus",
+            eventNS = "Ns";
+
+        input.on([eventType, eventNS].join("."), spy).trigger("focus");
+
+        expect(spy).toHaveBeenCalled();
+    });
+
     it("should accept single callback with the element as 'this' by default", function() {
         input.on("focus", spy).trigger("focus");
 
@@ -53,7 +63,10 @@ describe("on", function() {
         var otherSpy = jasmine.createSpy("otherSpy"),
             arraySpy = jasmine.createSpy("arraySpy");
 
-        input.on({focus: spy, click: otherSpy});
+        input.on({
+            focus: spy,
+            click: otherSpy
+        });
 
         input.trigger("focus");
         expect(spy).toHaveBeenCalled();
@@ -105,7 +118,7 @@ describe("on", function() {
             expect(spy).toHaveBeenCalledWith(123, "testing", input);
         });
 
-        it("can use zero to access event type",  function() {
+        it("can use zero to access event type", function() {
             input.on("focus", [0, "target"], spy);
             input.trigger("focus");
 
@@ -140,7 +153,7 @@ describe("on", function() {
         });
     });
 
-    it("should fix some non-bubbling events", function() {
+    it("should fix non-bubbling events", function() {
         ugma.once("focus", spy);
         input.trigger("focus");
         expect(spy).toHaveBeenCalled();
@@ -226,8 +239,12 @@ describe("on", function() {
     });
 
     it("should throw error if arguments are invalid", function() {
-        expect(function() { input.on(123); }).toThrow();
-        expect(function() { input.on("a", 123); }).toThrow();
+        expect(function() {
+            input.on(123);
+        }).toThrow();
+        expect(function() {
+            input.on("a", 123);
+        }).toThrow();
     });
 
     describe("once", function() {
