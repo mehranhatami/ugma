@@ -10,30 +10,29 @@ var langFix = /_/g,
             title: ( node ) => {
                 var doc = node.ownerDocument;
 
-                return (node === doc.documentElement ? doc : node).title;
+                return ( node === doc.documentElement ? doc : node ).title;
             },
-            option: ( node ) => trim( node.value ),
-            select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
-            undefined: (node) => {
-                switch (node.tagName) {
-                    case "SELECT":
-                        return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
-                    case "OPTION":
-                        // Support: IE<11
-                        // option.value not trimmed
-                        return trim( node[ node.hasAttribute("value") ? "value" : "text" ] );
-                    default:
-                        return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+            option: ( node ) => { 
+                // Support: IE<11
+                // option.value not trimmed
+                return trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+            },
+            select: ( node ) => ~node.selectedIndex ? node.options[node.selectedIndex].value : "",
+            undefined: ( node ) => {
+                switch ( node.tagName ) {
+                    case "SELECT": return accessorHooks.get.select( node );
+                    case "OPTION": return accessorHooks.get.option( node );
+                    default:       return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                 }
             },
-            type: ( node ) => node.getAttribute("type") || node.type
+            type: ( node ) => node.getAttribute( "type" ) || node.type
         },
 
         set: {
             lang: ( node, value ) => {
                 // correct locale browser language before setting the attribute             
                 // e.g. from zh_CN to zh-cn, from en_US to en-us
-                node.setAttribute("lang", value.replace( langFix, "-").toLowerCase() );
+                node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() );
             },
 
             style: ( node, value ) => {
@@ -42,12 +41,12 @@ var langFix = /_/g,
             title: ( node, value ) => {
                 var doc = node.ownerDocument;
 
-                (node === doc.documentElement ? doc : node).title = value;
+                ( node === doc.documentElement ? doc : node ).title = value;
             },
             value: ( node, value ) => {
                 if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
-                    if (every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
+                    if ( every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
                         node.selectedIndex = -1;
                     }
                 } else {
@@ -60,7 +59,7 @@ var langFix = /_/g,
 
 // Support: IE<=11+    
 (function() {
-    var input = DOCUMENT.createElement("input");
+    var input = DOCUMENT.createElement( "input" );
 
     input.type = "checkbox";
 
@@ -73,19 +72,19 @@ var langFix = /_/g,
     }
     // Support: IE<=11+
     // An input loses its value after becoming a radio
-    input = DOCUMENT.createElement("input");
+    input = DOCUMENT.createElement( "input" );
     input.value = "t";
     input.type = "radio";
 
     // Setting the type on a radio button after the value resets the value in IE9
     if (input.value !== "t") {
 
-        accessorHooks.set.type = (node, value) => {
+        accessorHooks.set.type = ( node, value ) => {
             if (value === "radio" &&
-                node.nodeName === "INPUT") {
+                node.nodeName === "INPUT" ) {
                 var val = node.value;
-                node.setAttribute("type", value);
-                if (val) {
+                node.setAttribute( "type", value );
+                if ( val ) {
                     node.value = val;
                 }
                 return value;
