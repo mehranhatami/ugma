@@ -16,6 +16,7 @@ implement({
     // e.g. "document.createElement('div')"
     if (value.nodeType === 1) return nodeTree(value);
 
+    if (!is(value, "string")) minErr(methodName + "()", "Not supported.");
 
     var doc = this[0].ownerDocument,
         sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
