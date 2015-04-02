@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 05:46:02 GMT
+ * Build date: Thu, 02 Apr 2015 08:41:57 GMT
  */
 (function() {
     "use strict";
@@ -19,17 +19,16 @@
     var helpers$$slice = helpers$$arrayProto.slice;
     var helpers$$isArray = Array.isArray;
 
-    var // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-        helpers$$each = function(arr, callback)  {
-            if ( arr && callback ) {
-                var index = -1,
+    // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+    var helpers$$each = function(collection, callback)  {
+                var arr = collection || [],
+                    index = -1,
                     length = arr.length;
                 while ( ++index < length ) {
                     if ( callback( arr[ index ], index, arr ) === false) {
                         break;
                     }
                 }
-            }
             return arr;
         },
     
@@ -46,24 +45,16 @@
     
         // is() returns a boolean for if typeof obj is exactly type.
         helpers$$is = function(obj, type)  {
-            // Avoid a Chakra JIT bug in compatibility modes of IE 11.
-            // https://github.com/jashkenas/underscore/issues/1621 for more details.
-            return type === "function" ? typeof obj === type || false : typeof obj === type;
+            return typeof obj === type;
         },
     
         // Iterates over own enumerable properties of an object, executing  the callback for each property.
-        helpers$$forOwn = function(obj, callback)  {
+        helpers$$forOwn = function(object, callback)  {
     
-            if (obj) {
-                var keys = function( obj )  {
-                        if ( !helpers$$is(obj, "object") ) return [];
-                        var key, keys = [];
-                        for ( key in obj ) keys.push( key );
-                        return keys;
-                    },
+                var obj = object || {},
                     key,
                     index = -1,
-                    props = keys( obj ),
+                    props = Object.keys( obj ),
                     length = props.length;
     
                 while (++index < length) {
@@ -74,7 +65,6 @@
                         break;
                     }
                 }
-            }
             return obj;
         },
         // create a new array with all elements that pass the test implemented by the provided function.
@@ -820,8 +810,9 @@
 
     helpers$$implement({
         // Make a safe method/function call
-        dispatch: function(method) {var SLICE$0 = Array.prototype.slice;var args = SLICE$0.call(arguments, 1);var this$0 = this;
-       var  node = this[ 0 ],
+        dispatch: function(method) {var this$0 = this;
+       var  args = helpers$$slice.call(arguments, 1),
+            node = this[ 0 ],
             handler, result, e;
     
         if (node) {
@@ -830,7 +821,7 @@
             } else if (helpers$$is(method, "string")) {
                 handler = function()  { result = node[ method ].apply( node, args ) };
             } else {
-                minErr$$minErr( "dispatch()", ERROR_MSG [1 ] );
+                minErr$$minErr( "dispatch()", ERROR_MSG [ 1 ] );
             }
             // register safe invokation handler
             modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = handler;
@@ -1740,10 +1731,11 @@
         }
     });
 
-    function modules$set$$getTagName( node ) {
+    var modules$set$$objectTag = "[object Object]",
+        modules$set$$getTagName = function( node )  {
         var tag = node.tagName;
-        return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
-    }
+       return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
+   };
 
     helpers$$implement({
         // Set  erty/attribute value by name
@@ -1758,9 +1750,9 @@
                     value = name == null ? "" : name + "";
                 }
     
-                if (value !== "[object Object]") {
+                if ( value !== modules$set$$objectTag ) {
     
-                    if (modules$set$$getTagName( node )) {
+                    if ( modules$set$$getTagName( node ) ) {
                         name = "value";
                     } else {
                         name = "innerHTML";
@@ -1773,22 +1765,22 @@
                 previousValue;
     
             // grab the previous value if it's already a subscription on this attribute / property,
-            if (subscription) {
+            if ( subscription ) {
                 previousValue = this.get( name );
             }
     
-            if (helpers$$is(name, "string")) {
+            if ( helpers$$is(name, "string" ) ) {
                 
                 if (helpers$$is(value, "function")) {
                     value = value( this );
                 }
     
-                if (hook) {
-                    hook(node, value);
-                } else if (value == null) {
+                if ( hook ) {
+                    hook( node, value );
+                } else if ( value == null ) {
                     // removes an attribute from an HTML element.
                     node.removeAttribute( name || name.toLowerCase() );
-                } else if (name in node) {
+                } else if ( name in node ) {
                     node[ name ] = value;
                 } else {
                     // node's attribute
@@ -1797,15 +1789,9 @@
                 // set array of key values
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");
             } else if (helpers$$isArray( name )) {
-                helpers$$each(name, function(key)  { this$0.set(key, value) });
-                //	Set multiple values at once:
-                //  e.g
-                //	link.set({
-                //	   "foo": "bar",
-                //	    "tabIndex": -1
-                //		});
-            } else if (helpers$$is(name, "object")) {
-                helpers$$forOwn(name, function(key, value)  { this$0.set(key, name[ key ]) });
+                helpers$$each(name, function( key )  { this$0.set(key, value) } );
+            } else if ( helpers$$is( name, "object" ) ) {
+                helpers$$forOwn( name, function( key, value )  { this$0.set( key, name[ key ] ) } );
             } else {
                 minErr$$minErr("set()", ERROR_MSG[ 6 ]);
             }
@@ -2029,7 +2015,7 @@
         };
 
     function template$injection$$injection(term, adjusted) {
-        return function(html)  {
+        return function( html )  {
              // find index of where to inject the term
              var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
              // inject the term into the HTML string
@@ -2072,28 +2058,28 @@
         template$template$$abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
         template$template$$tagCache = { "": "" };
 
-    core$core$$ugma.template = function(template, args) {
+    core$core$$ugma.template = function( template, args ) {
     
         if (!helpers$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
     
-        if (args) template = core$core$$ugma.format(template, args);
+        if ( args ) template = core$core$$ugma.format( template, args );
     
-        if (template in template$template$$tagCache) return template$template$$tagCache[template];
+        if ( template in template$template$$tagCache ) return template$template$$tagCache[ template ];
     
         var stack = [],
             output = [];
     
-        helpers$$each(template.match(template$template$$abbreviation), function(str)  {
+        helpers$$each(template.match( template$template$$abbreviation ), function( str )  {
     
             if ( template$operators$$default[ str[ 0 ] ] ) {
-                if (str !== "(") {
+                if ( str !== "(" ) {
                     // for ^ operator need to skip > str.length times
-                    for ( var i = 0, n = (str[ 0 ] === "^" ? str.length : 1); i < n; ++i ) {
-                        while (stack[ 0 ] !== str[ 0 ] && template$operators$$default[ stack[ 0 ] ] >= template$operators$$default[ str[ 0 ] ] ) {
+                    for ( var i = 0, n = (str[ 0 ] === "^" ? str.length : 1 ); i < n; ++i ) {
+                        while ( stack[ 0 ] !== str[ 0 ] && template$operators$$default[ stack[ 0 ] ] >= template$operators$$default[ str[ 0 ] ] ) {
                             var head = stack.shift();
                             output.push( head );
                             // for ^ operator stop shifting when the first > is found
-                            if (str[ 0 ] === "^" && head === ">") break;
+                            if ( str[ 0 ] === "^" && head === ">" ) break;
                         }
                     }
                 }
@@ -2102,12 +2088,12 @@
                     stack.shift(); // remove "(" symbol from stack
                 } else {
                     // handle values inside of `...` and [...] sections
-                    if (str[ 0 ] === "[" || str[ 0 ] === "`") {
-                        output.push(str.slice(1, -1) );
+                    if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) {
+                        output.push( str.slice(1, -1) );
                     }
                     // handle multiple classes, e.g. a.one.two
-                    if (str[ 0 ] === ".") {
-                        output.push( str.slice(1).replace(template$template$$dot, " ") );
+                    if ( str[ 0 ] === "." ) {
+                        output.push( str.slice( 1 ).replace( template$template$$dot, " ") );
                     }
     
                     stack.unshift( str[ 0 ] );
@@ -2123,9 +2109,7 @@
     };
 
     // populate empty tag names with result
-    helpers$$each("area base br col hr img input link meta param command keygen source".split(" "), function(tag)  {
-        template$template$$tagCache[tag] = "<" + tag + ">";
-    });
+    helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
 
     var template$template$$default = template$template$$tagCache;
     // return tag's from tagCache with <code>tag</code> type
