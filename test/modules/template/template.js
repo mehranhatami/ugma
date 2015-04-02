@@ -6,6 +6,17 @@ describe("template", function() {
             expect(ugma.template(source, vars)).toBe(target);
         });
     }
+    
+    describe("templateHooks", function() {
+        
+     ugma.templateHooks({
+         doubleP: "p+p",
+         pName: "p.name+p+p",
+    });
+       
+        checkExpr("doubleP", "<p></p><p></p>");
+        checkExpr("pName", "<p class=\"name\"></p><p></p><p></p>");
+    });
 
     checkExpr("", "");
     checkExpr("article", "<article></article>");

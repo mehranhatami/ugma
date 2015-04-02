@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 08:41:57 GMT
+ * Build date: Thu, 02 Apr 2015 12:59:45 GMT
  */
 (function() {
     "use strict";
@@ -1552,10 +1552,6 @@
                 handler,
                 handlers = this._._events || ( this._._events = [] );
     
-            // Handle space separated event names.
-            while (i--) {
-    
-                eventType = eventTypes[i];
                 // handle namespace
                 parts = eventType.split( "." );
                 eventType = parts[ 0 ] || null;
@@ -1567,7 +1563,6 @@
     
                 // store event entry
                 handlers.push( handler );
-            }
     
         } else if ( helpers$$is(eventType, "object") ) {
     
@@ -1977,6 +1972,63 @@
         if (arguments.length) return this;
     }});
 
+    helpers$$implement({
+            // Show a single element
+            show: false,
+            // Hide a single element
+            hide: true,
+            // Toggles the CSS `display` of `element`
+            toggle: null
+    
+        }, function( methodName, condition )  {return function( state, callback ) {var this$0 = this;
+    
+            // Boolean toggle()
+            if ( methodName === "toggle" && helpers$$is( state, "boolean" ) ) {
+                condition = state;
+                state = null;
+            }
+    
+            if ( !helpers$$is( state, "string" ) ) {
+                callback = state;
+                state = null;
+            }
+    
+            if ( callback && typeof callback !== "function") {
+                minErr$$minErr( methodName + "()", ERROR_MSG[ 4 ] );
+            }
+    
+            var node = this[0],
+                style = node.style,
+                computed = helpers$$computeStyle( node ),
+                hiding = condition,
+                frameId = this._[ "__frame_trackira__" ],
+                done = function()  {
+                    this$0.set("aria-hidden", String( hiding ) );
+    
+                    style.visibility = hiding ? "hidden" : "inherit";
+    
+                    this$0._[ "__frame_trackira__" ] = null;
+    
+                    if ( callback ) callback( this$0 );
+                };
+    
+            if ( !helpers$$is( hiding, "boolean" ) ) {
+                hiding = computed.visibility !== "hidden";
+            }
+    
+            // cancel previous frame if it exists
+            if ( frameId ) core$core$$ugma.cancelFrame( frameId );
+    
+            if ( !node.ownerDocument.documentElement.contains( node ) ) {
+                done();
+            } else {
+                this._[ "__frame_trackira__" ] = core$core$$ugma.requestFrame( done );
+            }
+    
+            return this;
+    
+    }}, function()  {return function()  {return RETURN_THIS}});
+
     var template$format$$reVar = /\{([\w\-]+)\}/g;
 
     // 'format' a placeholder value with it's original content 
@@ -2056,13 +2108,29 @@
 
     var template$template$$dot = /\./g,
         template$template$$abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
+        template$template$$templateHooks = {},
         template$template$$tagCache = { "": "" };
+
+    // Expose the 'templateHooks' to the global scope
+    core$core$$ugma.templateHooks = function(obj)   {
+    
+      if( !helpers$$is( obj, "object" ) ) minErr$$minErr("templateHooks()", "... has to be a object" );
+    
+      helpers$$forOwn(obj, function( key, value )  {
+            template$template$$templateHooks[ key ] = value;
+        });
+    };
 
     core$core$$ugma.template = function( template, args ) {
     
-        if (!helpers$$is(template, "string")) minErr$$minErr("emmet()", ERROR_MSG[2]);
+        if ( !helpers$$is(template, "string" ) ) minErr$$minErr("template()", ERROR_MSG[ 2] );
     
         if ( args ) template = core$core$$ugma.format( template, args );
+    
+        // use template hooks if they exist
+        var hook = template$template$$templateHooks[ template ];
+        
+        template = hook && helpers$$is( hook, "string" ) ? hook : template;
     
         if ( template in template$template$$tagCache ) return template$template$$tagCache[ template ];
     
@@ -2107,6 +2175,27 @@
     
         return template$process$$process( output );
     };
+
+    // populate templateHooks
+    helpers$$forOwn({
+          "kg"    : "keygen",
+          "out"   : "output",
+          "det"   : "details",
+          "cmd"   : "command",
+          "datal" : "datalist",
+          "ftr"   : "footer",
+          "adr"   : "adress",
+          "dlg"   : "dialog",
+          "art"   : "article",
+          "leg"   : "legend",
+          "sect"  : "section",
+          "ol+"   : "ol>li",
+          "ul+"   : "ul>li",
+          "dl+"   : "dl>dt+dd",
+          "tr+"   : "tr>td",
+      }, function( key, value )  {
+          template$template$$templateHooks[ key ] = value;
+      });
 
     // populate empty tag names with result
     helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });

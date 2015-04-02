@@ -1,9 +1,9 @@
-import { ugma       } from "../core/core";
-import { is, each   } from "../helpers";
-import { ERROR_MSG  } from "../const";
-import { minErr     } from "../minErr";
-import { process    } from "../template/process";
-import operators      from "../template/operators";
+import { ugma              } from "../core/core";
+import { is, each, forOwn  } from "../helpers";
+import { ERROR_MSG         } from "../const";
+import { minErr            } from "../minErr";
+import { process           } from "../template/process";
+import   operators           from "../template/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -11,13 +11,29 @@ import operators      from "../template/operators";
 
 var dot = /\./g,
     abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
+    templateHooks = {},
     tagCache = { "": "" };
+
+// Expose the 'templateHooks' to the global scope
+ugma.templateHooks = (obj)  => {
+
+  if( !is( obj, "object" ) ) minErr("templateHooks()", "... has to be a object" );
+
+  forOwn(obj, ( key, value ) => {
+        templateHooks[ key ] = value;
+    });
+};
 
 ugma.template = function( template, args ) {
 
-    if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
+    if ( !is(template, "string" ) ) minErr("template()", ERROR_MSG[ 2] );
 
     if ( args ) template = ugma.format( template, args );
+
+    // use template hooks if they exist
+    var hook = templateHooks[ template ];
+    
+    template = hook && is( hook, "string" ) ? hook : template;
 
     if ( template in tagCache ) return tagCache[ template ];
 
@@ -62,6 +78,27 @@ ugma.template = function( template, args ) {
 
     return process( output );
 };
+
+  // populate templateHooks
+  forOwn({
+        "kg"    : "keygen",
+        "out"   : "output",
+        "det"   : "details",
+        "cmd"   : "command",
+        "datal" : "datalist",
+        "ftr"   : "footer",
+        "adr"   : "adress",
+        "dlg"   : "dialog",
+        "art"   : "article",
+        "leg"   : "legend",
+        "sect"  : "section",
+        "ol+"   : "ol>li",
+        "ul+"   : "ul>li",
+        "dl+"   : "dl>dt+dd",
+        "tr+"   : "tr>td",
+    }, ( key, value ) => {
+        templateHooks[ key ] = value;
+    });
 
 // populate empty tag names with result
 each( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" });
