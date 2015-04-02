@@ -1,7 +1,7 @@
 import { ERROR_MSG                         } from "../const";
 import { minErr                            } from "../minErr";
 import { ugma, nodeTree                    } from "../core/core";
-import   tagCache                            from "../template/emmet";
+import   tagCache                            from "../template/template";
 import { implement, reduce, is, trim       } from "../helpers";
 
 implement({
@@ -33,7 +33,7 @@ implement({
                 value = varMap ? ugma.format(value, varMap) : value;
 
             } else { // emmet strings
-                value = ugma.emmet( value, varMap );
+                value = ugma.template( value, varMap );
             }
 
             sandbox.innerHTML = value; // parse input HTML string

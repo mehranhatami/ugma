@@ -13,7 +13,7 @@ var dot = /\./g,
     abbreviation = /`[^`]*`|\[[^\]]*\]|\.[^()>^+*`[#]+|[^()>^+*`[#.]+|\^+|./g,
     tagCache = { "": "" };
 
-ugma.emmet = function(template, args) {
+ugma.template = function(template, args) {
 
     if (!is(template, "string")) minErr("emmet()", ERROR_MSG[2]);
 

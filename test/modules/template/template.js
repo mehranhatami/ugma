@@ -1,9 +1,9 @@
-describe("ugma.emmet", function() {
+describe("template", function() {
     "use strict";
 
     function checkExpr(source, target, vars) {
         it(source, function() {
-            expect(ugma.emmet(source, vars)).toBe(target);
+            expect(ugma.template(source, vars)).toBe(target);
         });
     }
 
@@ -114,8 +114,8 @@ describe("ugma.emmet", function() {
     });
 
     it("should throw error on invalid args", function() {
-        expect(function() { ugma.emmet({}); }).toThrow();
-        expect(function() { ugma.emmet(it); }).toThrow();
-        expect(function() { ugma.emmet(434); }).toThrow();
+        expect(function() { ugma.template({}); }).toThrow();
+        expect(function() { ugma.template(it); }).toThrow();
+        expect(function() { ugma.template(434); }).toThrow();
     });
 });

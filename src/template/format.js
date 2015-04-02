@@ -6,20 +6,20 @@ var reVar = /\{([\w\-]+)\}/g;
 // 'format' a placeholder value with it's original content 
 // @example
 // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
-ugma.format = function(tmpl, varMap) {
-    if (!is(tmpl, "string")) tmpl = String(tmpl);
+ugma.format = function(template, varMap) {
+    if (!is(template, "string")) template = String(template);
 
     if ( !varMap || !is(varMap, "object") ) varMap = {};
 
-    return tmpl.replace(reVar, (x, name, index) => {
+    return template.replace(reVar, (placeholder, name, index) => {
         if ( name in varMap ) {
-            x = varMap[ name ];
+            placeholder = varMap[ name ];
 
-            if ( is(x, "function") ) x = x( index );
+            if ( is(placeholder, "function") ) placeholder = placeholder( index );
 
-            x = String( x );
+            placeholder = String( placeholder );
         }
 
-        return x;
+        return placeholder;
     });
 };
