@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 04:50:36 GMT
+ * Build date: Thu, 02 Apr 2015 05:46:02 GMT
  */
 (function() {
     "use strict";
@@ -1997,7 +1997,7 @@
     // @example
     // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
     core$core$$ugma.format = function(template, varMap) {
-        if (!helpers$$is(template, "string")) template = String(template);
+        if (!helpers$$is(template, "string")) template = template + "";
     
         if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
     
@@ -2005,29 +2005,28 @@
             if ( name in varMap ) {
                 placeholder = varMap[ name ];
     
-                if ( helpers$$is(placeholder, "function") ) placeholder = placeholder( index );
+                if ( helpers$$is( placeholder, "function") ) placeholder = placeholder( index );
     
-                placeholder = String( placeholder );
+                placeholder = placeholder + "";
             }
     
             return placeholder;
         });
     };var template$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
         template$indexing$$reDollar = /\$/g,
-        template$indexing$$indexing = function(num, term)  {
-        var stricted = num >= 1800 ? /* max 1800 HTML elements */ 1800 : (num <= 0 ? 1 : num),
-            result = new Array( stricted ),
-            i = 0;
+        template$indexing$$indexing = function( num, term )  {
+            var index = num = num >= 1600 ? /* max 1600 HTML elements */ 1600 : ( num <= 0 ? 1 : num ),
+                result = new Array( index );
     
-        for (; i < stricted; ++i) {
-            result[ i ] = term.replace( template$indexing$$reIndex, function(expr, fmt, sign, base )  {
-                var index = (sign ? stricted - i - 1 : i) + (base ? +base : 1);
-                // handle zero-padded index values, like $$$ etc.
-                return ( fmt + index ).slice( -fmt.length ).replace( template$indexing$$reDollar, "0");
-            });
-        }
-        return result;
-    };
+            while (index--) {
+                result[ index ] = term.replace( template$indexing$$reIndex, function( expr, fmt, sign, base )  {
+                    var pos = ( sign ? num - index - 1 : index ) + ( base ? +base : 1 );
+                    // handle zero-padded index values, like $$$ etc.
+                    return ( fmt + pos ).slice( -fmt.length ).replace( template$indexing$$reDollar, "0" );
+                });
+            }
+            return result;
+        };
 
     function template$injection$$injection(term, adjusted) {
         return function(html)  {
@@ -2051,13 +2050,15 @@
         "#" : 8
     };
 
-    function template$parseAttr$$parseAttr(quote, name, value, rawValue) {
+    function template$parseAttr$$parseAttr( quote, name, value, rawValue ) {
         // try to determine which kind of quotes to use
-        quote = value && helpers$$inArray(value, "\"") >= 0 ? "'" : "\"";
+        quote = value && helpers$$inArray( value, "\"" ) >= 0 ? "'" : "\"";
     
-        if (helpers$$is(rawValue, "string")) {
+        if ( helpers$$is( rawValue, "string" ) ) {
             value = rawValue;
-        } else if ( !helpers$$is(value, "string") ) {
+        } 
+        
+        if ( !helpers$$is( value, "string" ) ) {
             value = name;
         }
         return " " + name + "=" + quote + value + quote;
@@ -2203,55 +2204,55 @@
     
     }, function(methodName, all)  {return function(value, varMap) {
     
-        if (helpers$$is(value, "string")) {
+        // Create native DOM elements
+        // e.g. "document.createElement('div')"
+        if (value.nodeType === 1) return core$core$$nodeTree(value);
     
-            var doc = this[ 0 ].ownerDocument,
-                sandbox = this._._sandbox || (this._._sandbox = doc.createElement( "div" ));
+        if (!helpers$$is(value, "string")) minErr$$minErr(methodName + "()", "Not supported.");
     
-            var nodes, el;
+        var doc = this[0].ownerDocument,
+            sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
     
-            if (value && value in template$template$$default) {
+        var nodes, el;
     
-                nodes = doc.createElement( value );
+        if ( value && value in template$template$$default ) {
     
-                if (all) nodes = [ new core$core$$nodeTree( nodes ) ];
-            } else {
-                value = helpers$$trim( value );
-                // handle vanila HTML strings
-                // e.g. <div id="foo" class="bar"></div>
-                if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3) {
+            nodes = doc.createElement( value );
     
-                    value = varMap ? core$core$$ugma.format(value, varMap) : value;
+            if ( all ) nodes = [ new core$core$$nodeTree( nodes ) ];
     
-                } else { // emmet strings
-                    value = core$core$$ugma.template( value, varMap );
-                }
+        } else {
     
-                sandbox.innerHTML = value; // parse input HTML string
+            value = helpers$$trim( value );
     
-                nodes = all ? [] : null;
+            // handle vanila HTML strings
+            // e.g. <div id="foo" class="bar"></div>
+            if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3 ) {
     
-                if (sandbox.childNodes.length === 1 && sandbox.firstChild.nodeType === 1) {
-                    nodes = sandbox.removeChild( sandbox.firstChild );
-                } else {
+                value = varMap ? core$core$$ugma.format( value, varMap ) : value;
     
-                    for (; el = sandbox.firstChild;) {
-                        sandbox.removeChild( el ); // detach element from the sandbox
+            } else { // emmet strings
+                value = core$core$$ugma.template( value, varMap );
+            }
     
-                        if (el.nodeType === 1) {
-                            nodes.push( new core$core$$nodeTree( el ) );
-                        }
+            sandbox.innerHTML = value; // parse input HTML string
+    
+            for ( nodes = all ? [] : null; el = sandbox.firstChild; ) {
+                sandbox.removeChild( el ); // detach element from the sandbox
+    
+                if (el.nodeType === 1) {
+    
+                    if ( all ) {
+                        nodes.push( new core$core$$nodeTree( el ) );
+                    } else {
+                        nodes = el;
+    
+                        break; // stop early, because need only the first element
                     }
                 }
             }
-            return all ? nodes : core$core$$nodeTree( nodes );
         }
-    
-        if (value.nodeType !== 1) {
-            minErr$$minErr(methodName + "()", "Not supported");
-        }
-    
-        return core$core$$nodeTree(value);
+        return all ? nodes : core$core$$nodeTree( nodes );
     }});
     // Current codename on the framework.
     core$core$$ugma.version = "trackira";
