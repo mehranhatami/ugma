@@ -10,25 +10,29 @@ import { minErr                  } from "../minErr";
 // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
 implement({
-    // Find parent element filtered by optional selector 
-    // Following the Element#closest specs  
-    closest(selector) {
-        if (selector && !is(selector, "string")) minErr("closest()", "The string did not match the expected pattern");
+ /**
+  * Find parent element filtered by optional selector 
+  * @param {String} [selector] css selector
+  * @Following the Element#closest specs  
+  * @function
+  */
+    closest( selector ) {
+        if ( selector && !is( selector, "string" ) ) minErr( "closest()", "The string did not match the expected pattern" );
 
-        var matches = SelectorMatcher(selector),
+        var matches = SelectorMatcher( selector ),
             parentNode = this[ 0 ];
         
         // document has no .matches
-        if (!matches) {
+        if ( !matches ) {
             parentNode = parentNode.parentElement;
         }
 
-        for (; parentNode; parentNode = parentNode.parentElement) {
-            if (parentNode.nodeType === 1 && (!matches || matches(parentNode))) {
+        for (; parentNode; parentNode = parentNode.parentElement ) {
+            if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) {
                 break;
             }
         }
 
-        return nodeTree(parentNode);
+        return nodeTree( parentNode );
     }
-}, null, () => () => new dummyTree());
+}, null, () => () => new dummyTree() );

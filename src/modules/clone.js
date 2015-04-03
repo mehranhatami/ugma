@@ -6,8 +6,10 @@ import { implement, is        } from "../helpers";
 // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
 implement({
-    // Returns a copy of node. If deep is true, the copy 
-    // also includes the node's descendants.
+  /**
+   * Returns a copy of a DOM node.
+   * @param {Boolean} [deep=true] true if all descendants should also be cloned, or false otherwise
+   */
     clone(deep) {
         
         if (!is(deep, "boolean")) minErr("clone()", "This element can not be cloned.");

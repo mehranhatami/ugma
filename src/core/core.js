@@ -60,13 +60,13 @@ nodeTree = uClass({
                     this[ 0 ] = node;
                     // use a generated property to store a reference
                     // to the wrapper for circular object binding
-                    node[ "<%= pkg.codename %>" ] = this;
+                    node._ugma = this;
 
                     this._ = {};
                 }
             } else {
                 // create a wrapper only once for each native element
-                return node ? node[ "<%= pkg.codename %>" ] || new nodeTree( node ) : new dummyTree();
+                return node ? node._ugma || new nodeTree( node ) : new dummyTree();
             }
         },
         toString() { return "<" + this[ 0 ].tagName + ">" },

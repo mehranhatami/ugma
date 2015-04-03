@@ -8,34 +8,64 @@ import { implement, is, map        } from "../helpers";
 import { minErr                    } from "../minErr";
 
 implement({
-    // Find first element
+    /**
+     * Find first element filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     first: "firstElementChild",
-    // Find last element
+    /**
+     * Find last element filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     last: "lastElementChild",
-    // Find next following sibling element filtered by optional selector
+    /**
+     * Find next sibling element filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     next: "nextElementSibling",
-    // Find previous preceding sibling element filtered by optional selector
+    /**
+     * Find previous sibling element filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     prev: "previousElementSibling",
-    // Find all following sibling elements filtered by optional selector
+    /**
+     * Find all next sibling elements filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     nextAll: "nextElementSibling",
-    // Find all preceding sibling elements filtered by optional selector
+    /**
+     * Find all previous sibling elements filtered by optional selector
+     * @param {String} [selector] css selector
+     * @param {Boolean} [andSelf] if true than search will start from the current element
+     * @function
+     */
     prevAll: "previousElementSibling",
-}, ( methodName, propertyName ) => function( selector ) {
+}, (methodName, propertyName) => function(selector, andSelf) {
 
-    if ( selector && !is( selector, "string") ) minErr( methodName + "()", "The provided argument did not match the expected pattern" );
+    if ( selector && !is( selector, "string" ) ) minErr( methodName + "()", "The provided argument did not match the expected pattern" );
 
     var all = methodName.slice( -3 ) === "All",
         matcher = SelectorMatcher( selector ),
         descendants = all ? [] : null,
         currentNode = this[ 0 ];
 
-    if ( !matcher ) currentNode = currentNode[ propertyName ];
+    if (!matcher) currentNode = currentNode[propertyName];
 
-    for (; currentNode; currentNode = currentNode[ propertyName ] ) {
+    for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
         if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
             if ( !all ) break;
 
-            descendants.push(currentNode);
+            descendants.push( currentNode );
         }
     }
 

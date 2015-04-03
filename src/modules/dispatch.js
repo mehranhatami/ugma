@@ -15,7 +15,12 @@ var dispatcher = DOCUMENT.createElement( "a" ),
 
 
 implement({
-    // Make a safe method/function call
+  /**
+   * Make a safe method/function call
+   * @param  {String|Function}  method  name of method or function for a safe call
+   * @param  {...Object}        [args]  extra arguments to pass into each invokation
+   * @return {Object} result of the invokation which is undefined if there was an exception
+   */
     dispatch(method) {
    var  args = slice.call(arguments, 1),
         node = this[ 0 ],

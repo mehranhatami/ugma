@@ -12,7 +12,12 @@ var reClass = /[\n\t\r]/g,
     hasClassList = !!DOCUMENT.createElement("div").classList;
 
 implement({
-    // Adds a class or an array of class names
+   
+   /**
+    * Adds a class(es) or an array of class names
+    * @param  {...String} classNames class name(s)
+    * @function
+    */    
     addClass: [RETURN_THIS, "add", ( node, token ) => {
         var existingClasses = (" " + node[ 0 ].className + " ")
             .replace(reClass, " ");
@@ -23,21 +28,30 @@ implement({
 
         node[ 0 ].className = trim(existingClasses);
     }],
-
-    // Remove class(es) or an array of class names from element
+   /**
+    * Remove class(es) or an array of class names from element
+    * @param  {...String} classNames class name(s)
+    * @function
+    */    
     removeClass: [RETURN_THIS, "remove", ( node, token ) => {
         node[ 0 ].className = trim((" " + node[ 0 ].className + " ")
             .replace(reClass, " ")
             .replace(" " + trim(token) + " ", " "));
     }],
-
-    // Check if element contains class name
+   /**
+    * Check if element contains class name
+    * @param  {...String} classNames class name(s)
+    * @function
+    */    
     hasClass: [RETURN_FALSE, "contains", false, ( node, token ) => {
         return ((" " + node[ 0 ].className + " ")
             .replace(reClass, " ").indexOf(" " + token + " ") > -1);
     }],
-
-    // Toggle the `class` in the class list. Optionally force state via `condition`
+   /**
+    * Toggle the `class` in the class list. Optionally force state via `condition`
+    * @param  {...String} classNames class name(s)
+    * @function
+    */    
     toggleClass: [RETURN_FALSE, "toggle", ( el, token ) => {
         var hasClass = el.hasClass(token);
 

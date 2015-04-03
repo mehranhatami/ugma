@@ -10,31 +10,31 @@ import   eventhooks              from "./eventhooks";
 
 function getEventProperty(name, e, eventType, node, target, currentTarget) {
 
-    if ( is(name, "number") ) {
+    if ( is( name, "number" ) ) {
 
-        var args = e["__" + "<%= pkg.codename %>" + "__"];
+        var args = e._trigger;
 
-        return args ? args[name] : void 0;
+        return args ? args[ name ] : void 0;
     }
 
-    if (name === "type")               return eventType;
-    if (name === "defaultPrevented")   return e.defaultPrevented;
-    if (name === "target")             return nodeTree(target);
-    if (name === "currentTarget")      return nodeTree(currentTarget);
-    if (name === "relatedTarget")      return nodeTree(e.relatedTarget);
+    if ( name === "type" )               return eventType;
+    if ( name === "defaultPrevented" )   return e.defaultPrevented;
+    if ( name === "target" )             return nodeTree( target );
+    if ( name === "currentTarget" )      return nodeTree( currentTarget );
+    if ( name === "relatedTarget" )      return nodeTree( e.relatedTarget );
 
-    var value = e[name];
+    var value = e[ name ];
 
-    if ( is(value, "function") ) return () => value.apply(e, arguments);
+    if ( is( value, "function" ) ) return () => value.apply( e, arguments );
 
     return value;
 }
 
-function EventHandler(el, eventType, selector, callback, props, once, namespace) {
+function EventHandler( el, eventType, selector, callback, props, once, namespace ) {
     var node = el[ 0 ],
         hook = eventhooks[ eventType ],
         matcher = SelectorMatcher( selector, node ),
-        handler = (e) => {
+        handler = ( e ) => {
             e = e || WINDOW.event;
             // early stop in case of default action
             if ( EventHandler.skip === eventType ) return;
@@ -46,7 +46,7 @@ function EventHandler(el, eventType, selector, callback, props, once, namespace)
             // if this is a event delegation, else use current DOM node as the `currentTarget`.
             var currentTarget = matcher &&
                 // Don't process clicks on disabled elements
-                (eventTarget.disabled !== true || e.type !== "click") ? matcher( eventTarget ) : node,
+                ( eventTarget.disabled !== true || e.type !== "click" ) ? matcher( eventTarget ) : node,
                 args = props || [];
 
             // early stop for late binding or when target doesn't match selector
@@ -56,21 +56,21 @@ function EventHandler(el, eventType, selector, callback, props, once, namespace)
             if ( once ) el.off( eventType, callback );
 
             if ( props ) {
-                args = map(args, ( name ) => getEventProperty(
-                    name, e, eventType, node, eventTarget, currentTarget));
+                args = map( args, ( name ) => getEventProperty(
+                    name, e, eventType, node, eventTarget, currentTarget ) );
             } else {
-                args = slice.call(e["__" + "<%= pkg.codename %>" + "__"] || [ 0 ], 1);
+                args = slice.call( e._trigger || [ 0 ], 1 );
             }
 
             // prevent default if handler returns false
-            if (callback.apply( el, args ) === false) {
+            if ( callback.apply( el, args ) === false ) {
                 e.preventDefault();
             }
         };
 
-    if (hook) handler = hook(handler, el) || handler;
+    if ( hook ) handler = hook( handler, el ) || handler;
 
-    handler.eventType       = eventType;
+    handler.eventType  = eventType;
     handler.namespace  = namespace;
     handler.callback   = callback;
     handler.selector   = selector;

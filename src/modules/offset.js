@@ -26,6 +26,4 @@ implement({
             height: boundingRect.bottom - boundingRect.top
         };
     }
-}, null, () => () => {
-    return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
-});
+}, null, () => () => { return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } } );

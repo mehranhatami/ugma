@@ -21,8 +21,8 @@ if ( DOCUMENT.attachEvent ? readyState === "complete" : readyState !== "loading"
     // use setTimeout to make sure that the dispatch method exists
     WINDOW.setTimeout( pageLoaded, 0 );
 } else {
-    WINDOW.addEventListener( "load", pageLoaded, false );
-    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded, false );
+    WINDOW.addEventListener( "load", pageLoaded );
+    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded );
 }
 
 implement({
