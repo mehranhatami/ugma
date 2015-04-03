@@ -1,3 +1,7 @@
+/**
+ * @module parseAttr
+ */
+
 import { is, inArray } from "../helpers";
 
 function parseAttr( quote, name, value, rawValue ) {

@@ -1,3 +1,7 @@
+/**
+ * @module process
+ */
+
 import { is, each   }   from "../helpers";
 import { minErr     }   from "../minErr";
 import { parseAttr  }   from "../template/parseAttr";

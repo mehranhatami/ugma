@@ -1,3 +1,7 @@
+/**
+ * @module contains
+ */
+
 import { implement       } from "../helpers";
 import { minErr          } from "../minErr";
 import { nodeTree        } from "../core/core";

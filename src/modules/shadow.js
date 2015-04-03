@@ -1,3 +1,7 @@
+/**
+ * @module shadow
+ */
+
 import { implement                                  } from "../helpers";
 import { WINDOW, INTERNET_EXPLORER, RETURN_FALSE    } from "../const";
 import { domTree, ugma                              } from "../core/core";

@@ -1,3 +1,7 @@
+/**
+ * @module query
+ */
+
 import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
 import { nodeTree, dummyTree               } from "../core/core";
 import { minErr                            } from "../minErr";

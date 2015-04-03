@@ -1,3 +1,7 @@
+/**
+ * @module subscription
+ */
+
 import { implement, filter } from "../helpers";
 import { RETURN_THIS       } from "../const";
 

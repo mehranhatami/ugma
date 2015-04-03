@@ -1,3 +1,7 @@
+/**
+ * @module value
+ */
+
 import { implement, isArray  } from "../helpers";
 
 implement({

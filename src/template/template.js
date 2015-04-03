@@ -1,3 +1,7 @@
+/**
+ * @module template
+ */
+
 import { ugma              } from "../core/core";
 import { is, each, forOwn  } from "../helpers";
 import { minErr            } from "../minErr";

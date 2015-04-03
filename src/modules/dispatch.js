@@ -1,3 +1,7 @@
+/**
+ * @module dispatch
+ */
+
 import { DOCUMENT, RETURN_TRUE    } from "../const";
 import { implement, is, slice     } from "../helpers";
 import { minErr                   } from "../minErr";

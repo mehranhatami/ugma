@@ -1,3 +1,7 @@
+/**
+ * @module set
+ */
+
 import { implement, invoke, isArray, each, is, forOwn  } from "../helpers";
 import { minErr                                        } from "../minErr";
 import { RETURN_THIS                                   } from "../const";

@@ -1,3 +1,7 @@
+/**
+ * @module eventhandler
+ */
+
 import { slice, map, is        } from "../helpers";
 import { WINDOW                } from "../const";
 import { nodeTree              } from "../core/core";

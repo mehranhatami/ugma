@@ -1,3 +1,7 @@
+/**
+ * @module injectcss
+ */
+
 import { minErr                             } from "../minErr";
 import { implement, injectElement, is, each } from "../helpers";
 

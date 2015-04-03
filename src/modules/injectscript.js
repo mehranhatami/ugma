@@ -1,3 +1,7 @@
+/**
+ * @module injectscript
+ */
+
 import { implement, injectElement, is, sliceArgs } from "../helpers";
 import { minErr                                  } from "../minErr";
 

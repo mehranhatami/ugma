@@ -1,3 +1,7 @@
+/**
+ * @module classes
+ */
+
 import { DOCUMENT, HTML, RETURN_FALSE, RETURN_THIS } from "../const";
 import { implement, trim, is                       } from "../helpers";
 import { minErr                                    } from "../minErr";

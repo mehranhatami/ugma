@@ -1,3 +1,6 @@
+/**
+ * @module minErr
+ */
 
 export function minErr(module, msg) {
     // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to

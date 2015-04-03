@@ -1,3 +1,7 @@
+/**
+ * @module render
+ */
+
 import { ERROR_MSG                         } from "../const";
 import { minErr                            } from "../minErr";
 import { ugma, nodeTree                    } from "../core/core";

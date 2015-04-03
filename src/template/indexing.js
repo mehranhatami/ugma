@@ -1,3 +1,7 @@
+/**
+ * @module indexing
+ */
+
 var reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
     reDollar = /\$/g,
     indexing = ( num, term ) => {

@@ -1,3 +1,7 @@
+/**
+ * @module readData
+ */
+
 var multiDash = /([A-Z])/g,
     // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
     readData = ( node, key ) => {

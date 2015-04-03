@@ -1,3 +1,7 @@
+/**
+ * @module trigger
+ */
+
 import { CUSTOM_EVENT_TYPE, RETURN_TRUE  } from "../const";
 import   EventHandler                      from "../util/eventhandler";
 import   eventhooks                        from "../util/eventhooks";

@@ -1,3 +1,7 @@
+/**
+ * @module map
+ */
+
 import { minErr        } from "../minErr";
 import { implement, is } from "../helpers";
 

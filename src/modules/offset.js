@@ -1,3 +1,7 @@
+/**
+ * @module offset
+ */
+
 import { implement } from "../helpers";
 import { WINDOW    } from "../const";
 

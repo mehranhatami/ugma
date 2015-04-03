@@ -1,3 +1,7 @@
+/**
+ * @module traversing
+ */
+
 import { nodeTree, dummyTree       } from "../core/core";
 import SelectorMatcher               from "../util/selectormatcher";
 import { implement, is, map        } from "../helpers";

@@ -1,3 +1,7 @@
+/**
+ * @module format
+ */
+
 import { ugma } from "../core/core";
 import { is   } from "../helpers";
 

@@ -1,3 +1,7 @@
+/**
+ * @module accessorHooks
+ */
+
 import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 

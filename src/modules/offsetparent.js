@@ -1,3 +1,7 @@
+/**
+ * @module offsetparent
+ */
+
 import { implement          } from "../helpers";
 import { nodeTree           } from "../core/core";
 import { RETURN_FALSE, HTML } from "../const";

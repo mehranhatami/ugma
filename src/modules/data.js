@@ -1,3 +1,7 @@
+/**
+ * @module data
+ */
+
 import { implement, forOwn, map, is, isArray  } from "../helpers";
 import { RETURN_THIS                          } from "../const";
 import { readData                             } from "../util/readData";

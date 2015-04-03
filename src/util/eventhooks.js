@@ -1,3 +1,7 @@
+/**
+ * @module eventHooks
+ */
+
 import { DOCUMENT, WINDOW, INTERNET_EXPLORER  } from "../const";
 import { ugma                                 } from "../core/core";
 import { each                                 } from "../helpers";

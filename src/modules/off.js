@@ -1,3 +1,7 @@
+/**
+ * @module off
+ */
+
 import { RETURN_THIS            } from "../const";
 import { ugma                   } from "../core/core";
 import { implement, is, filter  } from "../helpers";

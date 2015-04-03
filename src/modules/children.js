@@ -1,3 +1,7 @@
+/**
+ * @module children
+ */
+
 import { minErr                      } from "../minErr";
 import { nodeTree, dummyTree         } from "../core/core";
 import   SelectorMatcher               from "../util/selectormatcher";

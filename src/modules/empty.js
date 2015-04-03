@@ -1,3 +1,7 @@
+/**
+ * @module empty
+ */
+
 import { implement   } from "../helpers";
 import { RETURN_THIS } from "../const";
 

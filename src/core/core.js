@@ -1,3 +1,7 @@
+/**
+ * @module core
+ */
+
 /* globals window, document */
 
 import { forOwn } from "../helpers";

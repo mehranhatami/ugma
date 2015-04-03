@@ -1,3 +1,7 @@
+/**
+ * @module css
+ */
+
 import { RCSSNUM                                                  } from "../const";
 import { implement, isArray, computeStyle, is, map, forOwn, each  } from "../helpers";
 import { minErr                                                   } from "../minErr";

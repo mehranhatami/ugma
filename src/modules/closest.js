@@ -1,3 +1,7 @@
+/**
+ * @module closest
+ */
+
 import { nodeTree, dummyTree     } from "../core/core";
 import   SelectorMatcher           from "../util/selectormatcher";
 import { implement, is           } from "../helpers";

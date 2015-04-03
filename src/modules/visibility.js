@@ -1,3 +1,7 @@
+/**
+ * @module visibility
+ */
+
 import { ugma                          } from "../core/core";
 import { RETURN_THIS                   } from "../const";
 import { implement, is, computeStyle   } from "../helpers";

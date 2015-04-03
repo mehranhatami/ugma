@@ -1,3 +1,7 @@
+/**
+ * @module csshooks
+ */
+
 import { filter, map, keys, camelize, each, forOwn   } from "../helpers";
 import { VENDOR_PREFIXES, HTML                       } from "../const";
 

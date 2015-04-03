@@ -1,3 +1,7 @@
+/**
+ * @module selectormatcher
+ */
+
 import { DOCUMENT, HTML, VENDOR_PREFIXES } from "../const";
 import { minErr                          } from "../minErr";
 import { is, map                         } from "../helpers";

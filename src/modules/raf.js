@@ -1,3 +1,7 @@
+/**
+ * @module raf
+ */
+
 import { WINDOW } from "../const";
 
 var lastTime = 0,
@@ -22,7 +26,6 @@ var lastTime = 0,
         }
     },
     cancelFrame = ( frameId ) => {
-        /* istanbul ignore else */
         if ( cancelAnimationFrame ) {
             cancelAnimationFrame( frameId );
         } else {

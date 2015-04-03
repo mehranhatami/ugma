@@ -1,3 +1,7 @@
+/**
+ * @module const
+ */
+
 /* globals window, document */
 
 import { Document } from "./core/core";

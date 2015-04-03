@@ -1,3 +1,7 @@
+/**
+ * @module ready
+ */
+
 import { ugma                 } from "../core/core";
 import { implement, each, is  } from "../helpers";
 import { DOCUMENT, WINDOW     } from "../const";

@@ -1,3 +1,7 @@
+/**
+ * @module adjustCSS
+ */
+
 import { DOCUMENT, WINDOW, RCSSNUM } from "../const";
 import { Document, Element, Node   } from "../core/core";
 

@@ -1,3 +1,7 @@
+/**
+ * @module debouncedWrapper
+ */
+
 import { ugma } from "../core/core";
 import { requestFrame } from "../modules/raf";
 

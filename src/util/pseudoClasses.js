@@ -1,3 +1,7 @@
+/**
+ * @module pseudoClasses
+ */
+
 import { computeStyle, forOwn } from "../helpers";
 import { FOCUSABLE            } from "../const";
 
