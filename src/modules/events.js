@@ -7,7 +7,7 @@ import   EventHandler                                                           
 import   eventhooks                                                             from "../util/eventhooks";
 import { implement, isArray, keys, each, forOwn, is, inArray, filter, invoke  } from "../helpers";
 import { minErr                                                               } from "../minErr";
-import { cancelFrame                                                          } from "../modules/raf";
+import { cancelFrame                                                          } from "../util/raf";
 
 implement({
     
