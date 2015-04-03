@@ -33,17 +33,17 @@ implement({
             minErr( methodName + "()", "This operation is not supported" );
         }
 
-        var node = this[0],
+        var node = this[ 0 ],
             style = node.style,
             computed = computeStyle( node ),
             hiding = condition,
-            frameId = this._[ "<%= prop('frame') %>" ],
+            frameId = this._._frame,
             done = () => {
                 this.set("aria-hidden", String( hiding ) );
 
                 style.visibility = hiding ? "hidden" : "inherit";
 
-                this._[ "<%= prop('frame') %>" ] = null;
+                this._._frame = null;
 
                 if ( callback ) callback( this );
             };
@@ -58,7 +58,7 @@ implement({
         if ( !node.ownerDocument.documentElement.contains( node ) ) {
             done();
         } else {
-            this._[ "<%= prop('frame') %>" ] = requestFrame( done );
+            this._._frame = requestFrame( done );
         }
 
         return this;

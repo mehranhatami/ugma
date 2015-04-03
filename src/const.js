@@ -20,14 +20,21 @@ export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 // Internet Explorer
 export const INTERNET_EXPLORER = document.documentMode;
 
-// Vendor prefixes
-export const VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
+/**
+ * Support style names that may come passed in prefixed by adding permutations
+ * of vendor prefixes.
+ */
+  export const VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
 
-// css
-export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
+/**
+ * Relative numbers regEx
+ */
+ export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
-//  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
-// information on preventing it
+ /** 
+  * Check to see if we"re in IE9 to see if we are in combatibility mode and provide
+  *  information on preventing it
+  */
 if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
     WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
         "tag to your HTML to prevent this from happening: " +

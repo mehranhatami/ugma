@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 03 Apr 2015 13:44:07 GMT
+ * Build date: Fri, 03 Apr 2015 13:52:23 GMT
  */
 (function() {
     "use strict";
@@ -2108,17 +2108,17 @@
                 minErr$$minErr( methodName + "()", "This operation is not supported" );
             }
     
-            var node = this[0],
+            var node = this[ 0 ],
                 style = node.style,
                 computed = helpers$$computeStyle( node ),
                 hiding = condition,
-                frameId = this._[ "__frame_trackira__" ],
+                frameId = this._._frame,
                 done = function()  {
                     this$0.set("aria-hidden", String( hiding ) );
     
                     style.visibility = hiding ? "hidden" : "inherit";
     
-                    this$0._[ "__frame_trackira__" ] = null;
+                    this$0._._frame = null;
     
                     if ( callback ) callback( this$0 );
                 };
@@ -2133,7 +2133,7 @@
             if ( !node.ownerDocument.documentElement.contains( node ) ) {
                 done();
             } else {
-                this._[ "__frame_trackira__" ] = util$raf$$requestFrame( done );
+                this._._frame = util$raf$$requestFrame( done );
             }
     
             return this;
