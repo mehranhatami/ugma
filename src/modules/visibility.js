@@ -2,6 +2,7 @@ import { ugma                          } from "../core/core";
 import { RETURN_THIS                   } from "../const";
 import { implement, is, computeStyle   } from "../helpers";
 import { minErr                        } from "../minErr";
+import { requestFrame, cancelFrame } from "../modules/raf";
 
 implement({
         // Show a single element
@@ -48,12 +49,12 @@ implement({
         }
 
         // cancel previous frame if it exists
-        if ( frameId ) ugma.cancelFrame( frameId );
+        if ( frameId ) cancelFrame( frameId );
 
         if ( !node.ownerDocument.documentElement.contains( node ) ) {
             done();
         } else {
-            this._[ "<%= prop('frame') %>" ] = ugma.requestFrame( done );
+            this._[ "<%= prop('frame') %>" ] = requestFrame( done );
         }
 
         return this;

@@ -17,6 +17,66 @@ describe("on", function() {
         expect(input.on("click", spy)).toEqual(input);
     });
 
+ it("should debounce mousemove", function(done) {
+        var spy = jasmine.createSpy("callback");
+
+        form.on("mousemove", spy);
+        form.trigger("mousemove");
+        form.trigger("mousemove");
+        form.trigger("mousemove");
+
+        setTimeout(function() {
+            expect(spy.calls.count()).toBe(1);
+
+            done();
+        }, 100);
+    });
+
+ it("should debounce scroll", function(done) {
+        var spy = jasmine.createSpy("callback");
+
+        form.on("scroll", spy);
+        form.trigger("scroll");
+        form.trigger("scroll");
+        form.trigger("scroll");
+
+        setTimeout(function() {
+            expect(spy.calls.count()).toBe(1);
+
+            done();
+        }, 100);
+    });
+
+ it("should debounce mousewheel", function(done) {
+        var spy = jasmine.createSpy("callback");
+
+        form.on("mousewheel", spy);
+        form.trigger("mousewheel");
+        form.trigger("mousewheel");
+        form.trigger("mousewheel");
+
+        setTimeout(function() {
+            expect(spy.calls.count()).toBe(1);
+
+            done();
+        }, 100);
+    });
+    
+ it("should debounce touchmove", function(done) {
+        var spy = jasmine.createSpy("callback");
+
+        form.on("touchmove", spy);
+        form.trigger("touchmove");
+        form.trigger("touchmove");
+        form.trigger("touchmove");
+
+        setTimeout(function() {
+            expect(spy.calls.count()).toBe(1);
+
+            done();
+        }, 100);
+    });
+    
     it("should attach an event handler with a namespaced type to an element", function() {
 
         var eventType = "focus",

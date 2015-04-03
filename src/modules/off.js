@@ -2,6 +2,7 @@ import { RETURN_THIS            } from "../const";
 import { ugma                   } from "../core/core";
 import { implement, is, filter  } from "../helpers";
 import { minErr                 } from "../minErr";
+import { cancelFrame } from "../modules/raf";
 
 implement({
 
@@ -23,7 +24,7 @@ implement({
 
                 // Cancel previous frame if it exists
                 if ( self._._raf ) {
-                    ugma.cancelFrame( self._._raf );
+                      cancelFrame( self._._raf );
                     // Zero out rAF id used during the animation
                     self._._raf = null;
                 }

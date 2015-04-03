@@ -7,7 +7,8 @@ var reVar = /\{([\w\-]+)\}/g;
 // @example
 // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
 ugma.format = function(template, varMap) {
-    if (!is(template, "string")) template = template + "";
+    // Enforce data types on user input
+    if (!is(template, "string")) template = String(template);
 
     if ( !varMap || !is(varMap, "object") ) varMap = {};
 
@@ -17,7 +18,7 @@ ugma.format = function(template, varMap) {
 
             if ( is( placeholder, "function") ) placeholder = placeholder( index );
 
-            placeholder = placeholder + "";
+            placeholder = String(placeholder);
         }
 
         return placeholder;

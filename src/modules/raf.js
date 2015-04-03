@@ -1,57 +1,36 @@
-import { WINDOW, VENDOR_PREFIXES    } from "../const";
-import { ugma                       } from "../core/core";
-import { each                       } from "../helpers";
+import { WINDOW } from "../const";
 
-    var global = WINDOW;
-    // Test if we are within a foreign domain. Use raf from the top if possible.
-    /* jshint ignore:start */
-    try {
-        // Accessing .name will throw SecurityError within a foreign domain.
-        global.top.name;
-        global = global.top;
-    } catch (e) {}
-    
-    /* jshint ignore:end */
-    // Works around a iOS6 bug
-    var raf = global.requestAnimationFrame,
-        craf = global.cancelAnimationFrame,
-        lastTime = 0;
+var lastTime = 0,
+    requestAnimationFrame = WINDOW.requestAnimationFrame             ||
+                            WINDOW.mozRequestAnimationFrame          ||
+                            WINDOW.webkitRequestAnimationFrame,
+    cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
+                            WINDOW.webkitCancelAnimationFrame        ||
+                            WINDOW.webkitCancelRequestAnimationFrame,
 
-    if (!( raf && !craf ) ) {
-        each(VENDOR_PREFIXES, ( prefix ) => {
-            prefix = prefix.toLowerCase();
-            raf = raf || WINDOW[ prefix + "RequestAnimationFrame" ];
-            craf = craf || WINDOW[ prefix + "CancelAnimationFrame" ];
-        });
-    }
-
-    // Executes a callback in the next frame
-    ugma.requestFrame = ( callback ) => {
-        /* istanbul ignore else */
-        if (raf) {
-            return raf.call(global, callback);
+    requestFrame = ( callback ) => {
+        if ( requestAnimationFrame ) {
+            return requestAnimationFrame( callback );
         } else {
             // Dynamically set delay on a per-tick basis to match 60fps.
             var currTime = Date.now(),
-                timeDelay = Math.max( 0, 16 - (currTime - lastTime)); // 1000 / 60 = 16.666
+                timeDelay = Math.max( 0, 16 - ( currTime - lastTime ) ); // 1000 / 60 = 16.666
 
             lastTime = currTime + timeDelay;
 
-            return global.setTimeout( () => {
-                callback(currTime + timeDelay );
-            }, timeDelay);
+            return WINDOW.setTimeout( () => { callback(currTime + timeDelay) }, timeDelay);
         }
-    };
-
-    // Works around a rare bug in Safari 6 where the first request is never invoked.
-    ugma.requestFrame( function() { return function() {} } );
-
-    // Cancel a scheduled frame
-    ugma.cancelFrame = ( frameId ) => {
+    },
+    cancelFrame = ( frameId ) => {
         /* istanbul ignore else */
-        if ( craf ) {
-            craf.call( global, frameId );
+        if ( cancelAnimationFrame ) {
+            cancelAnimationFrame( frameId );
         } else {
-            global.clearTimeout( frameId );
+            WINDOW.clearTimeout( frameId );
         }
     };
+
+// Works around a rare bug in Safari 6 where the first request is never invoked.
+requestFrame( () => { return () => {} } );
+
+export { requestFrame, cancelFrame };

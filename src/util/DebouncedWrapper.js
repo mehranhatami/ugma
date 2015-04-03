@@ -1,4 +1,5 @@
 import { ugma } from "../core/core";
+import { requestFrame } from "../modules/raf";
 
 // Receive specific events at 60fps, with requestAnimationFrame (rAF).
 // http://www.html5rocks.com/en/tutorials/speed/animations/
@@ -7,7 +8,7 @@ export function DebouncedWrapper( handler, node ) {
     return ( e ) => {
         if ( !debouncing ) {
             debouncing = true;
-            node._._raf = ugma.requestFrame( () => {
+            node._._raf = requestFrame( () => {
                 handler( e );
                 debouncing = false;
             });
