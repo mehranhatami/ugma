@@ -25,7 +25,7 @@ var lastTime = 0,
         }, timeDelay );
     },
     cancelFrame = cancelAnimationFrame || 
-      function( frameId ) => {
+      function( frameId ) {
         WINDOW.clearTimeout( frameId );
     };
 
