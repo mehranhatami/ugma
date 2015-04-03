@@ -8,12 +8,12 @@ var lastTime = 0,
     requestAnimationFrame =
           WINDOW.requestAnimationFrame             ||
           WINDOW.webkitRequestAnimationFrame       ||
-          WINDOW.mozRequestAnimationFrame          ||
+          WINDOW.mozRequestAnimationFrame,
     cancelAnimationFrame = 
           WINDOW.cancelAnimationFrame              ||
           WINDOW.webkitCancelAnimationFrame        ||
-          WINDOW.webkitCancelRequestAnimationFrame,
-          WINDOW.mozCancelAnimationFrame           ||
+          WINDOW.webkitCancelRequestAnimationFrame ||
+          WINDOW.mozCancelAnimationFrame,
     requestFrame = requestAnimationFrame ||
       function( callback ) {
         // Dynamically set delay on a per-tick basis to match 60fps.
@@ -25,7 +25,7 @@ var lastTime = 0,
         }, timeDelay );
     },
     cancelFrame = cancelAnimationFrame || 
-      function( frameId ) {
+      function( frameId ) => {
         WINDOW.clearTimeout( frameId );
     };
 
