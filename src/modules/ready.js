@@ -2,37 +2,29 @@
  * @module ready
  */
 
-import { ugma                 } from "../core/core";
-import { implement, each, is  } from "../helpers";
-import { DOCUMENT, WINDOW     } from "../const";
+import { implement, is  } from "../helpers";
+import { DOCUMENT, HTML     } from "../const";
 import { minErr               } from "../minErr";
 
 var callbacks = [],
-    readyState = DOCUMENT.readyState,
-    pageLoaded = () => {
-        //  safely trigger stored callbacks
-        if ( callbacks ) callbacks = each( callbacks( ( func ) => ugma.dispatch, ugma) );
-    };
+    loaded = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
+    pageLoaded;
 
-callbacks = callbacks.forEach( ugma.dispatch, ugma );
-
-// Support: IE9
-if ( DOCUMENT.attachEvent ? readyState === "complete" : readyState !== "loading" ) {
-    // use setTimeout to make sure that the dispatch method exists
-    WINDOW.setTimeout( pageLoaded, 0 );
-} else {
-    WINDOW.addEventListener( "load", pageLoaded );
-    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded );
-}
+if ( !loaded )
+    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded = () => {
+        DOCUMENT.removeEventListener("DOMContentLoaded", pageLoaded);
+        loaded = 1;
+        while ( pageLoaded = callbacks.shift() ) pageLoaded();
+    });
 
 implement({
-    ready: function( callback ) {
-        if ( !is( callback, "function") ) minErr();
+    ready: function( fn ) {
+        if ( !is( fn, "function") ) minErr();
 
-        if ( callbacks ) {
-            callbacks.push( callback );
+        if ( loaded ) {
+            fn();
         } else {
-            ugma.dispatch( callback );
+            callbacks.push( fn );
         }
     }
 });

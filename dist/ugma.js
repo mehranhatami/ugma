@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 03 Apr 2015 05:00:08 GMT
+ * Build date: Fri, 03 Apr 2015 06:42:53 GMT
  */
 (function() {
     "use strict";
@@ -842,48 +842,6 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    var modules$dispatch$$dispatcher = DOCUMENT.createElement( "a" ),
-        modules$dispatch$$safePropName = "onpropertychange";
-    // for modern browsers use late binding for safe calls
-    // dispatcher MUST have handleEvent property before registering
-    modules$dispatch$$dispatcher[ modules$dispatch$$safePropName = "handleEvent" ] = null;
-    modules$dispatch$$dispatcher.addEventListener( modules$dispatch$$safePropName, modules$dispatch$$dispatcher, false );
-
-
-    helpers$$implement({
-      /**
-       * Make a safe method/function call
-       * @param  {String|Function}  method  name of method or function for a safe call
-       * @param  {...Object}        [args]  extra arguments to pass into each invokation
-       * @return {Object} result of the invokation which is undefined if there was an exception
-       */
-        dispatch: function(method) {var this$0 = this;
-       var  args = helpers$$slice.call(arguments, 1),
-            node = this[ 0 ],
-            handler, result, e;
-    
-        if (node) {
-            if ( helpers$$is(method, "function" ) ) {
-                handler = function()  { result = method.apply( this$0, args ) };
-            } else if (helpers$$is(method, "string")) {
-                handler = function()  { result = node[ method ].apply( node, args ) };
-            } else {
-                minErr$$minErr( "dispatch()", "The string did not match the expected pattern" );
-            }
-            // register safe invokation handler
-            modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = handler;
-            // make a safe call
-                e = DOCUMENT.createEvent( "HTMLEvents" );
-                e.initEvent( modules$dispatch$$safePropName, false, false );
-                modules$dispatch$$dispatcher.dispatchEvent( e );
-            // cleanup references
-            modules$dispatch$$dispatcher[ modules$dispatch$$safePropName ] = null;
-        }
-    
-       return result;
-    }
-    }, null, function()  {return RETURN_TRUE});
-
     helpers$$implement({
       /**
         * Remove child nodes of current element from the DOM
@@ -892,44 +850,44 @@
         empty: function() { return this.set( "" ) }
     }, null, function()  {return RETURN_THIS});
 
-    var modules$raf$$lastTime = 0,
-        modules$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
+    var util$raf$$lastTime = 0,
+        util$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
                                 WINDOW.mozRequestAnimationFrame          ||
                                 WINDOW.webkitRequestAnimationFrame,
-        modules$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
+        util$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
                                 WINDOW.webkitCancelAnimationFrame        ||
                                 WINDOW.webkitCancelRequestAnimationFrame,
     
-        modules$raf$$requestFrame = function( callback )  {
-            if ( modules$raf$$requestAnimationFrame ) {
-                return modules$raf$$requestAnimationFrame( callback );
+        util$raf$$requestFrame = function( callback )  {
+            if ( util$raf$$requestAnimationFrame ) {
+                return util$raf$$requestAnimationFrame( callback );
             } else {
                 // Dynamically set delay on a per-tick basis to match 60fps.
                 var currTime = Date.now(),
-                    timeDelay = Math.max( 0, 16 - ( currTime - modules$raf$$lastTime ) ); // 1000 / 60 = 16.666
+                    timeDelay = Math.max( 0, 16 - ( currTime - util$raf$$lastTime ) ); // 1000 / 60 = 16.666
     
-                modules$raf$$lastTime = currTime + timeDelay;
+                util$raf$$lastTime = currTime + timeDelay;
     
                 return WINDOW.setTimeout( function()  { callback(currTime + timeDelay) }, timeDelay);
             }
         },
-        modules$raf$$cancelFrame = function( frameId )  {
-            if ( modules$raf$$cancelAnimationFrame ) {
-                modules$raf$$cancelAnimationFrame( frameId );
+        util$raf$$cancelFrame = function( frameId )  {
+            if ( util$raf$$cancelAnimationFrame ) {
+                util$raf$$cancelAnimationFrame( frameId );
             } else {
                 WINDOW.clearTimeout( frameId );
             }
         };
 
     // Works around a rare bug in Safari 6 where the first request is never invoked.
-    modules$raf$$requestFrame( function()  { return function()  {} } );
+    util$raf$$requestFrame( function()  { return function()  {} } );
 
     function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
         var debouncing;
         return function( e )  {
             if ( !debouncing ) {
                 debouncing = true;
-                node._._raf = modules$raf$$requestFrame( function()  {
+                node._._raf = util$raf$$requestFrame( function()  {
                     handler( e );
                     debouncing = false;
                 });
@@ -1165,7 +1123,7 @@
     
                     // Cancel previous frame if it exists
                     if ( self._._raf ) {
-                          modules$raf$$cancelFrame( self._._raf );
+                          util$raf$$cancelFrame( self._._raf );
                         // Zero out rAF id used during the animation
                         self._._raf = null;
                     }
@@ -1238,9 +1196,36 @@
         return canContinue;
       }
     }, null, function()  {return RETURN_TRUE} );
+
     helpers$$implement({
-        extend: function(mixins, global) {
-            return mixins ? global ? helpers$$implement(mixins) : helpers$$implement(mixins, null, function()  {return RETURN_THIS}) : false;
+        /**
+         * Extend ugma with methods
+         * @param  {Object}    obj       methods container
+         * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
+         * @example
+         * ugma.extend({
+         *     foo: function() {
+         *         console.log("bar");
+         *     }
+         * });
+         *
+         * ugma.extend({
+         *     foo: function() {
+         *         console.log("bar");
+         *     }
+         * }, true);
+         *
+         *
+         * Note! If 'namespace' set to true, the methods can be used like:
+         *
+         *   ugma.foo();
+         *
+         * otherwise:
+         *
+         *   link.foo();
+         */
+        extend: function(obj, namespace) {
+            return obj ? namespace ? helpers$$implement(obj) : helpers$$implement(obj, null, function()  {return RETURN_THIS}) : false;
         }
     });
 
@@ -1817,31 +1802,24 @@
     }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$dummyTree()}});
 
     var modules$ready$$callbacks = [],
-        modules$ready$$readyState = DOCUMENT.readyState,
-        modules$ready$$pageLoaded = function()  {
-            //  safely trigger stored callbacks
-            if ( modules$ready$$callbacks ) modules$ready$$callbacks = helpers$$each( modules$ready$$callbacks( function( func )  {return core$core$$ugma.dispatch}, core$core$$ugma) );
-        };
+        modules$ready$$loaded = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
+        modules$ready$$pageLoaded;
 
-    modules$ready$$callbacks = modules$ready$$callbacks.forEach( core$core$$ugma.dispatch, core$core$$ugma );
-
-    // Support: IE9
-    if ( DOCUMENT.attachEvent ? modules$ready$$readyState === "complete" : modules$ready$$readyState !== "loading" ) {
-        // use setTimeout to make sure that the dispatch method exists
-        WINDOW.setTimeout( modules$ready$$pageLoaded, 0 );
-    } else {
-        WINDOW.addEventListener( "load", modules$ready$$pageLoaded );
-        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded );
-    }
+    if ( !modules$ready$$loaded )
+        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded = function()  {
+            DOCUMENT.removeEventListener("DOMContentLoaded", modules$ready$$pageLoaded);
+            modules$ready$$loaded = 1;
+            while ( modules$ready$$pageLoaded = modules$ready$$callbacks.shift() ) modules$ready$$pageLoaded();
+        });
 
     helpers$$implement({
-        ready: function( callback ) {
-            if ( !helpers$$is( callback, "function") ) minErr$$minErr();
+        ready: function( fn ) {
+            if ( !helpers$$is( fn, "function") ) minErr$$minErr();
     
-            if ( modules$ready$$callbacks ) {
-                modules$ready$$callbacks.push( callback );
+            if ( modules$ready$$loaded ) {
+                fn();
             } else {
-                core$core$$ugma.dispatch( callback );
+                modules$ready$$callbacks.push( fn );
             }
         }
     });
@@ -2146,12 +2124,12 @@
             }
     
             // cancel previous frame if it exists
-            if ( frameId ) modules$raf$$cancelFrame( frameId );
+            if ( frameId ) util$raf$$cancelFrame( frameId );
     
             if ( !node.ownerDocument.documentElement.contains( node ) ) {
                 done();
             } else {
-                this._[ "__frame_trackira__" ] = modules$raf$$requestFrame( done );
+                this._[ "__frame_trackira__" ] = util$raf$$requestFrame( done );
             }
     
             return this;
