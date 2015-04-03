@@ -18,6 +18,10 @@ if ( !loaded )
     });
 
 implement({
+  /**
+   * Execute callback when DOM is ready
+   * @param {Function} callback event listener
+   */
     ready: function( fn ) {
         if ( !is( fn, "function") ) minErr();
 
