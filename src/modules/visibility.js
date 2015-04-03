@@ -6,7 +6,7 @@ import { ugma                          } from "../core/core";
 import { RETURN_THIS                   } from "../const";
 import { implement, is, computeStyle   } from "../helpers";
 import { minErr                        } from "../minErr";
-import { requestFrame, cancelFrame } from "../modules/raf";
+import { requestFrame, cancelFrame } from "../util/raf";
 
 implement({
         // Show a single element

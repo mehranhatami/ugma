@@ -3,7 +3,7 @@
  */
 
 import { ugma } from "../core/core";
-import { requestFrame } from "../modules/raf";
+import { requestFrame } from "../util/raf";
 
 // Receive specific events at 60fps, with requestAnimationFrame (rAF).
 // http://www.html5rocks.com/en/tutorials/speed/animations/
