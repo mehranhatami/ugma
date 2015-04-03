@@ -12,10 +12,16 @@ var siblings = /[\x20\t\r\n\f]*[+~>]/,
     rescape  = /'|\\/g;
 
 implement({
-    // Find the first matched element by css selector
+ /**
+  * Find the first matched element by css selector
+  * @param  {String} selector css selector
+  */
     query: "",
-    // Find all matched elements by css selector
-    queryAll: "All"
+ /**
+  * Find all matched elements by css selector
+  * @param  {String} selector css selector
+  */
+   queryAll: "All"
 
 }, (methodName, all) => function(selector) {
     if (typeof selector !== "string") minErr();

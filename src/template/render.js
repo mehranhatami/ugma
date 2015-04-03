@@ -9,9 +9,18 @@ import   tagCache                            from "../template/template";
 import { implement, reduce, is, trim       } from "../helpers";
 
 implement({
-    // Create a new nodeTree from Emmet or HTML string in memory
+     /**
+     * Create a new nodeTree from Emmet or HTML string in memory
+     * @param  {String}       value     Emmet or HTML string
+     * @param  {Object|Array} [varMap]  key/value map of variables
+     */
     render: "",
-    // Create a new array of nodeTree from Emmet or HTML string in memory
+    /**
+     * Create a new array of nodeTree from Emmet or HTML string in memory
+     * @param  {String}       value     Emmet or HTML string
+     * @param  {Object|Array} [varMap]  key/value map of variables
+     * @function
+     */    
     renderAll: "All"
 
 }, (methodName, all) => function(value, varMap) {

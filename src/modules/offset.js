@@ -6,7 +6,10 @@ import { implement } from "../helpers";
 import { WINDOW    } from "../const";
 
 implement({
-    // Calculates offset of the current element
+   /**
+    * Calculates offset of the current element
+    * @return object with left, top, bottom, right, width and height properties
+    */
     offset() {
 
         var node = this[ 0 ],

@@ -13,9 +13,10 @@ implement({
     
    /**
     * Bind an event to a callback function for one or more events to the selected elements. 
-    * @param  {String|Array}    type event type(s) with optional selector
-    * @param  {Function|String} callback event callback or property name (for late binding)
-    * @param  {Array}           [props] array of event properties to pass into the callback
+    * @param  {String|Array}  type        event type(s) with optional selector
+    * @param  {String}        [selector]  event selector filter
+    * @param  {Array}         [args]      array of handler arguments to pass into the callback
+    * @param  {Function}      callback    event callback
     */
     on: false,
    /**
@@ -95,7 +96,8 @@ implement({
 
    /**
     * Remove one or many callbacks.
-    * @param  {String}          type type of event
+    * @param  {String}          type        type of event
+    * @param  {String}          [selector]  event selector
     * @param  {Function|String} [callback] event handler
     */
     off( eventType, selector, callback ) {

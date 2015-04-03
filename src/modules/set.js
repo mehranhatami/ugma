@@ -14,7 +14,11 @@ import   accessorhooks                                   from "../util/accessorh
 };
 
 implement({
-    // Set  erty/attribute value by name
+  /**
+   * Set property/attribute value by name
+   * @param {String|Object|Array}   name    property/attribute name
+   * @param {String|Function}       value   property/attribute value or functor
+   */
     set( name, value ) {
 
         var node = this[ 0 ];

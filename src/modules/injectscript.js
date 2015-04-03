@@ -6,8 +6,11 @@ import { implement, injectElement, is, sliceArgs } from "../helpers";
 import { minErr                                  } from "../minErr";
 
 implement({
-    // Import external javascript files in the document, and call optional 
-    // callback when it will be done. 
+  /**
+   * Import external scripts on the page and call optional callback when it will be done
+   * @param {...String} urls       script file urls
+   * @param {Function}  [callback] callback that is triggered when all scripts are loaded
+   */
     injectScript() {
         var urls = sliceArgs( arguments ),
             doc = this[ 0 ].ownerDocument,

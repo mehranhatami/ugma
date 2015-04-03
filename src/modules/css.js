@@ -9,7 +9,12 @@ import   cssHooks                                                   from "../uti
 import { adjustCSS                                                } from "../util/adjustCSS";
 
  implement({
-     //Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
+   /**
+     * Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
+     * @param  {String|Object}      name    style property name or key/value object
+     * @param  {String|Function}    [value] style property value or functor
+     * @return {String|$Element} a property value or reference to <code>this</code>
+     */   
      css(name, value) {
          
          var len = arguments.length,

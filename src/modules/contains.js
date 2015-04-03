@@ -8,10 +8,18 @@ import { nodeTree        } from "../core/core";
 import { RETURN_FALSE    } from "../const";
 
 implement({
-    // The contains(other) method returns true if other is an inclusive descendant of the 
-    // context object, and false otherwise (including when other is null).
-    //
-    // Reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+ /**
+  * Check if element is inside of context
+  * @param  {ugma wrapped Object} element to check
+  * @return {Boolean} returns true if success and false otherwise
+  *
+  * Note! 
+  *
+  * The contains(other) method returns true if other is an inclusive descendant of the 
+  * context object, and false otherwise (including when other is null).
+  *
+  * @reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+  */
     contains( element ) {
         var reference = this[ 0 ];
 

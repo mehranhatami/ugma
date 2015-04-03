@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 03 Apr 2015 01:43:26 GMT
+ * Build date: Fri, 03 Apr 2015 05:00:08 GMT
  */
 (function() {
     "use strict";
@@ -262,13 +262,13 @@
                         this[ 0 ] = node;
                         // use a generated property to store a reference
                         // to the wrapper for circular object binding
-                        node[ "trackira" ] = this;
+                        node._ugma = this;
     
                         this._ = {};
                     }
                 } else {
                     // create a wrapper only once for each native element
-                    return node ? node[ "trackira" ] || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
+                    return node ? node._ugma || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
                 }
             },
             toString: function() { return "<" + this[ 0 ].tagName + ">" },
@@ -360,24 +360,32 @@
     };
 
     helpers$$implement({
-        // returns the first child node in a collection of children
+        /**
+         * Returns the first child node in a collection of children filtered by index
+         * @param  {Number} index
+         * @function
+         */
         child: false,
-        // returns all child nodes in a collection of children
+        /**
+         * eturns all child nodes in a collection of children filtered by optional selector
+         * @param  {String} [selector] css selector
+         * @function
+         */
         children: true
     
-    }, function(methodName, all)  {return function(selector) {
-            if (selector && (!helpers$$is(selector, all ? "string" : "number") ) ) {
-                minErr$$minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
-            }
+    }, function( methodName, all )  {return function( selector ) {
+        if (selector && (!helpers$$is(selector, all ? "string" : "number" ) ) ) {
+            minErr$$minErr(methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
+        }
     
         var node = this[ 0 ],
             matcher = util$selectormatcher$$default( selector ),
             children = node.children;
     
-        if (all) {
+        if ( all ) {
             if ( matcher ) children = helpers$$filter( children, matcher );
     
-            return helpers$$map( children, core$core$$nodeTree );
+            return helpers$$map(children, core$core$$nodeTree);
         } else {
             if ( selector < 0 ) selector = children.length + selector;
     
@@ -391,7 +399,12 @@
         modules$classes$$hasClassList = !!DOCUMENT.createElement("div").classList;
 
     helpers$$implement({
-        // Adds a class or an array of class names
+       
+       /**
+        * Adds a class(es) or an array of class names
+        * @param  {...String} classNames class name(s)
+        * @function
+        */    
         addClass: [RETURN_THIS, "add", function( node, token )  {
             var existingClasses = (" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ");
@@ -402,21 +415,30 @@
     
             node[ 0 ].className = helpers$$trim(existingClasses);
         }],
-    
-        // Remove class(es) or an array of class names from element
+       /**
+        * Remove class(es) or an array of class names from element
+        * @param  {...String} classNames class name(s)
+        * @function
+        */    
         removeClass: [RETURN_THIS, "remove", function( node, token )  {
             node[ 0 ].className = helpers$$trim((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ")
                 .replace(" " + helpers$$trim(token) + " ", " "));
         }],
-    
-        // Check if element contains class name
+       /**
+        * Check if element contains class name
+        * @param  {...String} classNames class name(s)
+        * @function
+        */    
         hasClass: [RETURN_FALSE, "contains", false, function( node, token )  {
             return ((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ").indexOf(" " + token + " ") > -1);
         }],
-    
-        // Toggle the `class` in the class list. Optionally force state via `condition`
+       /**
+        * Toggle the `class` in the class list. Optionally force state via `condition`
+        * @param  {...String} classNames class name(s)
+        * @function
+        */    
         toggleClass: [RETURN_FALSE, "toggle", function( el, token )  {
             var hasClass = el.hasClass(token);
     
@@ -470,7 +492,10 @@
     }, function(methodName, defaultStrategy)  {return defaultStrategy});
 
     helpers$$implement({
-        // Clear a property/attribute on the node
+      /**
+       * Clear a property/attribute on the node
+       * @param  {String}   name    property/attribute name
+       */
         clear: function(name) {
             this[ 0 ].removeAttribute( name );
             return this;
@@ -481,8 +506,10 @@
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
     helpers$$implement({
-        // Returns a copy of node. If deep is true, the copy 
-        // also includes the node's descendants.
+      /**
+       * Returns a copy of a DOM node.
+       * @param {Boolean} [deep=true] true if all descendants should also be cloned, or false otherwise
+       */
         clone: function(deep) {
             
             if (!helpers$$is(deep, "boolean")) minErr$$minErr("clone()", "This element can not be cloned.");
@@ -494,34 +521,46 @@
     // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
     helpers$$implement({
-        // Find parent element filtered by optional selector 
-        // Following the Element#closest specs  
+     /**
+      * Find parent element filtered by optional selector 
+      * @param {String} [selector] css selector
+      * @Following the Element#closest specs  
+      * @function
+      */
         closest: function(selector) {
-            if (selector && !helpers$$is(selector, "string")) minErr$$minErr("closest()", "The string did not match the expected pattern");
+            if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( "closest()", "The string did not match the expected pattern" );
     
-            var matches = util$selectormatcher$$default(selector),
+            var matches = util$selectormatcher$$default( selector ),
                 parentNode = this[ 0 ];
             
             // document has no .matches
-            if (!matches) {
+            if ( !matches ) {
                 parentNode = parentNode.parentElement;
             }
     
-            for (; parentNode; parentNode = parentNode.parentElement) {
-                if (parentNode.nodeType === 1 && (!matches || matches(parentNode))) {
+            for (; parentNode; parentNode = parentNode.parentElement ) {
+                if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) {
                     break;
                 }
             }
     
-            return core$core$$nodeTree(parentNode);
+            return core$core$$nodeTree( parentNode );
         }
-    }, null, function()  {return function()  {return new core$core$$dummyTree()}});
+    }, null, function()  {return function()  {return new core$core$$dummyTree()}} );
 
     helpers$$implement({
-        // The contains(other) method returns true if other is an inclusive descendant of the 
-        // context object, and false otherwise (including when other is null).
-        //
-        // Reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+     /**
+      * Check if element is inside of context
+      * @param  {ugma wrapped Object} element to check
+      * @return {Boolean} returns true if success and false otherwise
+      *
+      * Note! 
+      *
+      * The contains(other) method returns true if other is an inclusive descendant of the 
+      * context object, and false otherwise (including when other is null).
+      *
+      * @reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+      */
         contains: function(element) {
             var reference = this[ 0 ];
     
@@ -647,7 +686,12 @@
     }
 
     helpers$$implement({
-        //Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
+      /**
+        * Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
+        * @param  {String|Object}      name    style property name or key/value object
+        * @param  {String|Function}    [value] style property value or functor
+        * @return {String|$Element} a property value or reference to <code>this</code>
+        */   
         css: function(name, value) {var this$0 = this;
             
             var len = arguments.length,
@@ -754,8 +798,13 @@
     };
 
     helpers$$implement({
-        // Getter/setter of a data entry value. Tries to read the appropriate
-        // HTML5 data-* attribute if it exists
+      /**
+       * Getter/setter of a data entry value. Tries to read the appropriate
+       * HTML5 data-* attribute if it exists
+       * @param  {String|Object|Array}  key(s)  data key or key/value object or array of keys
+       * @param  {Object}               [value] data value to store
+       * @return {Object} data entry value or this in case of setter
+       */
         data: function(key, value) {var this$0 = this;
             
             var len = arguments.length;
@@ -802,7 +851,12 @@
 
 
     helpers$$implement({
-        // Make a safe method/function call
+      /**
+       * Make a safe method/function call
+       * @param  {String|Function}  method  name of method or function for a safe call
+       * @param  {...Object}        [args]  extra arguments to pass into each invokation
+       * @return {Object} result of the invokation which is undefined if there was an exception
+       */
         dispatch: function(method) {var this$0 = this;
        var  args = helpers$$slice.call(arguments, 1),
             node = this[ 0 ],
@@ -831,9 +885,359 @@
     }, null, function()  {return RETURN_TRUE});
 
     helpers$$implement({
-        // Remove child nodes of current element from the DOM
+      /**
+        * Remove child nodes of current element from the DOM
+        * @function
+        */
         empty: function() { return this.set( "" ) }
     }, null, function()  {return RETURN_THIS});
+
+    var modules$raf$$lastTime = 0,
+        modules$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
+                                WINDOW.mozRequestAnimationFrame          ||
+                                WINDOW.webkitRequestAnimationFrame,
+        modules$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
+                                WINDOW.webkitCancelAnimationFrame        ||
+                                WINDOW.webkitCancelRequestAnimationFrame,
+    
+        modules$raf$$requestFrame = function( callback )  {
+            if ( modules$raf$$requestAnimationFrame ) {
+                return modules$raf$$requestAnimationFrame( callback );
+            } else {
+                // Dynamically set delay on a per-tick basis to match 60fps.
+                var currTime = Date.now(),
+                    timeDelay = Math.max( 0, 16 - ( currTime - modules$raf$$lastTime ) ); // 1000 / 60 = 16.666
+    
+                modules$raf$$lastTime = currTime + timeDelay;
+    
+                return WINDOW.setTimeout( function()  { callback(currTime + timeDelay) }, timeDelay);
+            }
+        },
+        modules$raf$$cancelFrame = function( frameId )  {
+            if ( modules$raf$$cancelAnimationFrame ) {
+                modules$raf$$cancelAnimationFrame( frameId );
+            } else {
+                WINDOW.clearTimeout( frameId );
+            }
+        };
+
+    // Works around a rare bug in Safari 6 where the first request is never invoked.
+    modules$raf$$requestFrame( function()  { return function()  {} } );
+
+    function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
+        var debouncing;
+        return function( e )  {
+            if ( !debouncing ) {
+                debouncing = true;
+                node._._raf = modules$raf$$requestFrame( function()  {
+                    handler( e );
+                    debouncing = false;
+                });
+            }
+        };
+    }
+
+    var util$eventhooks$$eventHooks = {};
+
+    // Special events for the frame events 'hook'
+    helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
+        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
+    });
+
+    // Support: Firefox, Chrome, Safari
+    // Create 'bubbling' focus and blur events
+
+    if ("onfocusin" in DOCUMENT.documentElement) {
+        util$eventhooks$$eventHooks.focus = function( handler )  { handler._eventType = "focusin" };
+        util$eventhooks$$eventHooks.blur = function( handler )  { handler._eventType = "focusout" };
+    } else {
+        // firefox doesn't support focusin/focusout events
+        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function( handler )  { handler.capturing = true };
+    }
+    /* istanbul ignore else */
+    if (DOCUMENT.createElement( "input" ).validity) {
+        util$eventhooks$$eventHooks.invalid = function( handler )  {
+            handler.capturing = true;
+        };
+    }
+    // Support: IE9
+    if (INTERNET_EXPLORER < 10) {
+    
+        var util$eventhooks$$capturedNode, util$eventhooks$$capturedNodeValue;
+    
+        // IE9 doesn't fire oninput when text is deleted, so use
+        // onselectionchange event to detect such cases
+        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
+        DOCUMENT.attachEvent("onselectionchange", function()  {
+            if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
+                util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
+                // trigger custom event that capture
+                core$core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
+            }
+        });
+    
+        // input event fix via propertychange
+        DOCUMENT.attachEvent("onfocusin", function()  {
+            util$eventhooks$$capturedNode = WINDOW.event.srcElement;
+            util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
+        });
+    }
+
+    var util$eventhooks$$default = util$eventhooks$$eventHooks;
+
+    function util$eventhandler$$getEventProperty(name, e, eventType, node, target, currentTarget) {
+    
+        if ( helpers$$is( name, "number" ) ) {
+    
+            var args = e._trigger;
+    
+            return args ? args[ name ] : void 0;
+        }
+    
+        if ( name === "type" )               return eventType;
+        if ( name === "defaultPrevented" )   return e.defaultPrevented;
+        if ( name === "target" )             return core$core$$nodeTree( target );
+        if ( name === "currentTarget" )      return core$core$$nodeTree( currentTarget );
+        if ( name === "relatedTarget" )      return core$core$$nodeTree( e.relatedTarget );
+    
+        var value = e[ name ];
+    
+        if ( helpers$$is( value, "function" ) ) return function()  {return value.apply( e, arguments )};
+    
+        return value;
+    }
+
+    function util$eventhandler$$EventHandler( el, eventType, selector, callback, props, once, namespace ) {
+        var node = el[ 0 ],
+            hook = util$eventhooks$$default[ eventType ],
+            matcher = util$selectormatcher$$default( selector, node ),
+            handler = function( e )  {
+                e = e || WINDOW.event;
+                // early stop in case of default action
+                if ( util$eventhandler$$EventHandler.skip === eventType ) return;
+                var eventTarget = e.target || node.ownerDocument.documentElement;
+                // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
+                // @see http://www.quirksmode.org/js/events_properties.html
+                eventTarget = eventTarget.nodeType === 3 ? eventTarget.parentNode : eventTarget;
+                // Test whether delegated events match the provided `selector` (filter),
+                // if this is a event delegation, else use current DOM node as the `currentTarget`.
+                var currentTarget = matcher &&
+                    // Don't process clicks on disabled elements
+                    ( eventTarget.disabled !== true || e.type !== "click" ) ? matcher( eventTarget ) : node,
+                    args = props || [];
+    
+                // early stop for late binding or when target doesn't match selector
+                if ( !currentTarget ) return;
+    
+                // off callback even if it throws an exception later
+                if ( once ) el.off( eventType, callback );
+    
+                if ( props ) {
+                    args = helpers$$map( args, function( name )  {return util$eventhandler$$getEventProperty(
+                        name, e, eventType, node, eventTarget, currentTarget )} );
+                } else {
+                    args = helpers$$slice.call( e._trigger || [ 0 ], 1 );
+                }
+    
+                // prevent default if handler returns false
+                if ( callback.apply( el, args ) === false ) {
+                    e.preventDefault();
+                }
+            };
+    
+        if ( hook ) handler = hook( handler, el ) || handler;
+    
+        handler.eventType  = eventType;
+        handler.namespace  = namespace;
+        handler.callback   = callback;
+        handler.selector   = selector;
+    
+        return handler;
+    }
+
+    var util$eventhandler$$default = util$eventhandler$$EventHandler;
+
+    helpers$$implement({
+        
+       /**
+        * Bind an event to a callback function for one or more events to the selected elements. 
+        * @param  {String|Array}  type        event type(s) with optional selector
+        * @param  {String}        [selector]  event selector filter
+        * @param  {Array}         [args]      array of handler arguments to pass into the callback
+        * @param  {Function}      callback    event callback
+        */
+        on: false,
+       /**
+        * Bind an event to only be triggered a single time. 
+        * @param  {String|Array}    type event type(s) with optional selector
+        * @param  {Function|String} callback event callback or property name (for late binding)
+        * @param  {Array}           [props] array of event properties to pass into the callback
+        */
+        once: true
+    
+    }, function( method, single )  {return function( eventType, selector, args, callback ) {var this$0 = this;
+    
+        if ( helpers$$is( eventType, "string" ) ) {
+            if ( helpers$$is( args, "function" ) ) {
+                callback = args;
+    
+                if ( helpers$$is(selector, "string" ) ) {
+                    args = null;
+                } else {
+                    args = selector;
+                    selector = null;
+                }
+            }
+    
+            if ( helpers$$is( selector, "function") ) {
+                callback = selector;
+                selector = null;
+                args = null;
+            }
+    
+            if ( !helpers$$is( callback, "function" ) ) {
+                minErr$$minErr( method + "()", callback + " is not a function." );
+            }
+    
+            // http://jsperf.com/string-indexof-vs-split
+            var node = this[ 0 ],
+                parts,
+                namespace,
+                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [ eventType ],
+                i = eventTypes.length,
+                handler,
+                handlers = this._._events || ( this._._events = [] );
+    
+                // handle namespace
+                parts = eventType.split( "." );
+                eventType = parts[ 0 ] || null;
+                namespace = parts[ 1 ] || null;
+    
+                handler = util$eventhandler$$default( this, eventType, selector, callback, args, single, namespace );
+    
+                node.addEventListener( handler._eventType || eventType, handler, !!handler.capturing );
+    
+                // store event entry
+                handlers.push( handler );
+    
+        } else if ( helpers$$is(eventType, "object") ) {
+    
+            if ( helpers$$isArray( eventType ) ) {
+    
+                helpers$$each( eventType, function( name )  {
+                    this$0[ method ]( name, selector, args, callback );
+                });
+            } else {
+                helpers$$forOwn( eventType, function( name, value )  {
+                    this$0[ method ]( name, selector, args, value );
+                });
+            }
+        } else {
+            minErr$$minErr( method + "()", "The first argument need to be a string" );
+        }
+    
+        return this;
+    }}, function()  {return RETURN_THIS});
+
+
+    helpers$$implement({
+    
+       /**
+        * Remove one or many callbacks.
+        * @param  {String}          type        type of event
+        * @param  {String}          [selector]  event selector
+        * @param  {Function|String} [callback] event handler
+        */
+        off: function(eventType, selector, callback) {
+            if ( !helpers$$is( eventType,"string" ) ) minErr$$minErr("off()", "The first argument need to be a string" );
+    
+            if ( callback === void 0 ) {
+                callback = selector;
+                selector = void 0;
+            }
+    
+            var self = this,
+                node = this[ 0 ],
+                parts,
+                namespace,
+                handlers,
+                removeHandler = function( handler )  {
+    
+                    // Cancel previous frame if it exists
+                    if ( self._._raf ) {
+                          modules$raf$$cancelFrame( self._._raf );
+                        // Zero out rAF id used during the animation
+                        self._._raf = null;
+                    }
+                    // Remove the listener
+                    node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
+                };
+    
+            parts = eventType.split( "." );
+            eventType = parts[ 0 ] || null;
+            namespace = parts[ 1 ] || null;
+    
+            this._._events = helpers$$filter(this._._events, function( handler )  {
+    
+                var skip = eventType !== handler.eventType;
+    
+                skip = skip || selector && selector !== handler.selector;
+                skip = skip || namespace && namespace !== handler.namespace;
+                skip = skip || callback && callback !== handler.callback;
+    
+                // Bail out if listener isn't listening.
+                if ( skip ) return true;
+    
+                removeHandler( handler );
+            });
+    
+            return this;
+        }
+    }, null, function()  {return RETURN_THIS});
+
+
+
+    helpers$$implement({
+       
+       /**
+        * Trigger one or many events, firing all bound callbacks. 
+        * @param  {String}  type  type of event
+        * @param  {...Object}     [args]  extra arguments to pass into each event handler
+        * @return {Boolean} true if default action wasn't prevented
+        */    
+        trigger: function(type) {
+        var node = this[ 0 ],
+            e, eventType, canContinue;
+    
+        if ( helpers$$is( type, "string" ) ) {
+            var hook = util$eventhooks$$default[ type ],
+                handler = {};
+    
+            if ( hook ) handler = hook( handler ) || handler;
+    
+            eventType = handler._eventType || type;
+        } else {
+            minErr$$minErr( "trigger()", "The string did not match the expected pattern" );
+        }
+        // Handles triggering the appropriate event callbacks.
+        e = node.ownerDocument.createEvent( "HTMLEvents" );
+        e._trigger = arguments;
+        e.initEvent( eventType, true, true );
+        canContinue = node.dispatchEvent( e );
+    
+        // call native function to trigger default behavior
+        if ( canContinue && node[ type ] ) {
+            // prevent re-triggering of the current event
+            util$eventhandler$$default.skip = type;
+    
+            helpers$$invoke( node, type );
+    
+            util$eventhandler$$default.skip = null;
+        }
+    
+        return canContinue;
+      }
+    }, null, function()  {return RETURN_TRUE} );
     helpers$$implement({
         extend: function(mixins, global) {
             return mixins ? global ? helpers$$implement(mixins) : helpers$$implement(mixins, null, function()  {return RETURN_THIS}) : false;
@@ -989,7 +1393,12 @@
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
     helpers$$implement({
-        // Get HTML5 Custom Data Attributes, property or attribute value by name
+       
+      /**
+       * Get HTML5 Custom Data Attributes, property or attribute value by name
+       * @param  {String|Array}  name  property or attribute name or array of names
+       * @return {String|Object} a value of property or attribute
+       */
         get: function(name) {var this$0 = this;
             var node = this[ 0 ],
                 hook = util$accessorhooks$$default.get[ name ];
@@ -1025,17 +1434,24 @@
     }, null, function()  {return function()  {}});
 
     helpers$$implement({
-        // Returns true if the requested attribute is specified on the
-        // given element, and false otherwise.
+      /**
+       * Returns true if the requested attribute/property is specified on the given element, and false otherwise.
+       * @param  {String} [name] property/attribute name or array of names
+       * @return {Boolean} true if exist
+       */
         has: function(name) {
-            if (helpers$$is(name, "string")) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
+            if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
     
-            minErr$$minErr("has()", "Not a valid property/attribute");
+            minErr$$minErr( "has()", "Not a valid property/attribute" );
         }
-    }, null, function()  {return RETURN_FALSE});
+    }, null, function()  {return RETURN_FALSE} );
 
     helpers$$implement({
-        // Append global css styles
+      /**
+       * Append global css styles
+       * @param {String}         selector  css selector
+       * @param {String}  cssText   css rules
+       */
         injectCSS: function(selector, cssText) {
             var styleSheet = this._._styles;
     
@@ -1061,8 +1477,11 @@
     });
 
     helpers$$implement({
-        // Import external javascript files in the document, and call optional 
-        // callback when it will be done. 
+      /**
+       * Import external scripts on the page and call optional callback when it will be done
+       * @param {...String} urls       script file urls
+       * @param {Function}  [callback] callback that is triggered when all scripts are loaded
+       */
         injectScript: function() {
             var urls = helpers$$sliceArgs( arguments ),
                 doc = this[ 0 ].ownerDocument,
@@ -1199,9 +1618,14 @@
     }}, function()  {return RETURN_THIS});
 
     helpers$$implement({
-        // Invokes a function for element if it's not empty and return array of results
+      /**
+         * Invokes a function for element if it's not empty and return array of results
+         * @param  {Function}  fn         function to invoke
+         * @param  {Object}    [context]  execution context
+         * @return {Array} an empty array or array with returned value
+         */
         map: function(fn, context) {
-            if ( !helpers$$is( fn, "function" ) ) minErr$$minErr("map()", "This operation is not supported" );
+            if ( !helpers$$is( fn, "function" ) ) minErr$$minErr( "map()", "This operation is not supported" );
             return [ fn.call( ( context ), this) ];
         }
     }, null, function()  {return function()  {return []}} );
@@ -1259,7 +1683,11 @@
 
     var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
     helpers$$implement({
-        // Check if the element matches a selector against an element
+       /**
+         * Check if the element matches a selector against an element
+         * @param  {String}   selector  css selector for checking
+         * @return {Boolean} returns true if success and false otherwise
+         */
         matches: function(selector) {
             if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );
                 // compare a match with CSS pseudos selectors 
@@ -1269,90 +1697,11 @@
         }
     }, null, function()  {return RETURN_FALSE} );
 
-    var modules$raf$$lastTime = 0,
-        modules$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
-                                WINDOW.mozRequestAnimationFrame          ||
-                                WINDOW.webkitRequestAnimationFrame,
-        modules$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
-                                WINDOW.webkitCancelAnimationFrame        ||
-                                WINDOW.webkitCancelRequestAnimationFrame,
-    
-        modules$raf$$requestFrame = function( callback )  {
-            if ( modules$raf$$requestAnimationFrame ) {
-                return modules$raf$$requestAnimationFrame( callback );
-            } else {
-                // Dynamically set delay on a per-tick basis to match 60fps.
-                var currTime = Date.now(),
-                    timeDelay = Math.max( 0, 16 - ( currTime - modules$raf$$lastTime ) ); // 1000 / 60 = 16.666
-    
-                modules$raf$$lastTime = currTime + timeDelay;
-    
-                return WINDOW.setTimeout( function()  { callback(currTime + timeDelay) }, timeDelay);
-            }
-        },
-        modules$raf$$cancelFrame = function( frameId )  {
-            if ( modules$raf$$cancelAnimationFrame ) {
-                modules$raf$$cancelAnimationFrame( frameId );
-            } else {
-                WINDOW.clearTimeout( frameId );
-            }
-        };
-
-    // Works around a rare bug in Safari 6 where the first request is never invoked.
-    modules$raf$$requestFrame( function()  { return function()  {} } );
-
     helpers$$implement({
-    
-        // Remove one or many callbacks.
-        off: function(eventType, selector, callback) {
-            if ( !helpers$$is(eventType,"string" ) ) minErr$$minErr("off()", "The first argument need to be a string" );
-    
-            if (callback === void 0) {
-                callback = selector;
-                selector = void 0;
-            }
-    
-            var self = this,
-                node = this[0],
-                parts,
-                namespace,
-                handlers,
-                removeHandler = function( handler )  {
-    
-                    // Cancel previous frame if it exists
-                    if ( self._._raf ) {
-                          modules$raf$$cancelFrame( self._._raf );
-                        // Zero out rAF id used during the animation
-                        self._._raf = null;
-                    }
-                    // Remove the listener
-                    node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
-                };
-    
-            parts = eventType.split( "." );
-            eventType = parts[ 0 ] || null;
-            namespace = parts[ 1 ] || null;
-    
-            this._._events = helpers$$filter(this._._events, function(handler)  {
-    
-                var skip = eventType !== handler.eventType;
-    
-                skip = skip || selector && selector !== handler.selector;
-                skip = skip || namespace && namespace !== handler.namespace;
-                skip = skip || callback && callback !== handler.callback;
-    
-                // Bail out if listener isn't listening.
-                if (skip) return true;
-    
-                removeHandler(handler);
-            });
-    
-            return this;
-        }
-    }, null, function()  {return RETURN_THIS});
-
-    helpers$$implement({
-        // Calculates offset of the current element
+       /**
+        * Calculates offset of the current element
+        * @return object with left, top, bottom, right, width and height properties
+        */
         offset: function() {
     
             var node = this[ 0 ],
@@ -1372,9 +1721,7 @@
                 height: boundingRect.bottom - boundingRect.top
             };
         }
-    }, null, function()  {return function()  {
-        return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
-    }});
+    }, null, function()  {return function()  { return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } }} );
 
     helpers$$implement({
         // This method will return documentElement in the following cases:
@@ -1402,220 +1749,23 @@
     
             return core$core$$nodeTree(offsetParent);
         }
-    }, null, function()  {return RETURN_FALSE});function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
-        var debouncing;
-        return function( e )  {
-            if ( !debouncing ) {
-                debouncing = true;
-                node._._raf = modules$raf$$requestFrame( function()  {
-                    handler( e );
-                    debouncing = false;
-                });
-            }
-        };
-    }
-
-    var util$eventhooks$$eventHooks = {};
-
-    // Special events for the frame events 'hook'
-    helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
-    });
-
-    // Support: Firefox, Chrome, Safari
-    // Create 'bubbling' focus and blur events
-
-    if ("onfocusin" in DOCUMENT.documentElement) {
-        util$eventhooks$$eventHooks.focus = function( handler )  { handler._eventType = "focusin" };
-        util$eventhooks$$eventHooks.blur = function( handler )  { handler._eventType = "focusout" };
-    } else {
-        // firefox doesn't support focusin/focusout events
-        util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function( handler )  { handler.capturing = true };
-    }
-    /* istanbul ignore else */
-    if (DOCUMENT.createElement( "input" ).validity) {
-        util$eventhooks$$eventHooks.invalid = function( handler )  {
-            handler.capturing = true;
-        };
-    }
-    // Support: IE9
-    if (INTERNET_EXPLORER < 10) {
-    
-        var util$eventhooks$$capturedNode, util$eventhooks$$capturedNodeValue;
-    
-        // IE9 doesn't fire oninput when text is deleted, so use
-        // onselectionchange event to detect such cases
-        // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-        DOCUMENT.attachEvent("onselectionchange", function()  {
-            if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
-                util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
-                // trigger custom event that capture
-                core$core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
-            }
-        });
-    
-        // input event fix via propertychange
-        DOCUMENT.attachEvent("onfocusin", function()  {
-            util$eventhooks$$capturedNode = WINDOW.event.srcElement;
-            util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
-        });
-    }
-
-    var util$eventhooks$$default = util$eventhooks$$eventHooks;
-
-    function util$eventhandler$$getEventProperty(name, e, eventType, node, target, currentTarget) {
-    
-        if ( helpers$$is(name, "number") ) {
-    
-            var args = e["__" + "trackira" + "__"];
-    
-            return args ? args[name] : void 0;
-        }
-    
-        if (name === "type")               return eventType;
-        if (name === "defaultPrevented")   return e.defaultPrevented;
-        if (name === "target")             return core$core$$nodeTree(target);
-        if (name === "currentTarget")      return core$core$$nodeTree(currentTarget);
-        if (name === "relatedTarget")      return core$core$$nodeTree(e.relatedTarget);
-    
-        var value = e[name];
-    
-        if ( helpers$$is(value, "function") ) return function()  {return value.apply(e, arguments)};
-    
-        return value;
-    }
-
-    function util$eventhandler$$EventHandler(el, eventType, selector, callback, props, once, namespace) {
-        var node = el[ 0 ],
-            hook = util$eventhooks$$default[ eventType ],
-            matcher = util$selectormatcher$$default( selector, node ),
-            handler = function(e)  {
-                e = e || WINDOW.event;
-                // early stop in case of default action
-                if ( util$eventhandler$$EventHandler.skip === eventType ) return;
-                var eventTarget = e.target || node.ownerDocument.documentElement;
-                // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
-                // @see http://www.quirksmode.org/js/events_properties.html
-                eventTarget = eventTarget.nodeType === 3 ? eventTarget.parentNode : eventTarget;
-                // Test whether delegated events match the provided `selector` (filter),
-                // if this is a event delegation, else use current DOM node as the `currentTarget`.
-                var currentTarget = matcher &&
-                    // Don't process clicks on disabled elements
-                    (eventTarget.disabled !== true || e.type !== "click") ? matcher( eventTarget ) : node,
-                    args = props || [];
-    
-                // early stop for late binding or when target doesn't match selector
-                if ( !currentTarget ) return;
-    
-                // off callback even if it throws an exception later
-                if ( once ) el.off( eventType, callback );
-    
-                if ( props ) {
-                    args = helpers$$map(args, function( name )  {return util$eventhandler$$getEventProperty(
-                        name, e, eventType, node, eventTarget, currentTarget)});
-                } else {
-                    args = helpers$$slice.call(e["__" + "trackira" + "__"] || [ 0 ], 1);
-                }
-    
-                // prevent default if handler returns false
-                if (callback.apply( el, args ) === false) {
-                    e.preventDefault();
-                }
-            };
-    
-        if (hook) handler = hook(handler, el) || handler;
-    
-        handler.eventType       = eventType;
-        handler.namespace  = namespace;
-        handler.callback   = callback;
-        handler.selector   = selector;
-    
-        return handler;
-    }
-
-    var util$eventhandler$$default = util$eventhandler$$EventHandler;
-
-    helpers$$implement({
-        // Bind an event to a callback function for one or more events to 
-        // the selected elements.
-        on: false,
-        // Bind an event to only be triggered a single time. After the first time
-        // the callback is invoked, it will be removed.
-        once: true
-    
-    }, function( method, single )  {return function( eventType, selector, args, callback ) {var this$0 = this;
-    
-        if ( helpers$$is( eventType, "string" ) ) {
-            if ( helpers$$is( args, "function" ) ) {
-                callback = args;
-    
-                if ( helpers$$is(selector, "string" ) ) {
-                    args = null;
-                } else {
-                    args = selector;
-                    selector = null;
-                }
-            }
-    
-            if ( helpers$$is( selector, "function") ) {
-                callback = selector;
-                selector = null;
-                args = null;
-            }
-    
-            if ( !helpers$$is( callback, "function" ) ) {
-                minErr$$minErr( method + "()", callback + " is not a function." );
-            }
-    
-            // http://jsperf.com/string-indexof-vs-split
-            var node = this[ 0 ],
-                parts,
-                namespace,
-                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [ eventType ],
-                i = eventTypes.length,
-                handler,
-                handlers = this._._events || ( this._._events = [] );
-    
-                // handle namespace
-                parts = eventType.split( "." );
-                eventType = parts[ 0 ] || null;
-                namespace = parts[ 1 ] || null;
-    
-                handler = util$eventhandler$$default(this, eventType, selector, callback, args, single, namespace );
-    
-                node.addEventListener(handler._eventType || eventType, handler, !!handler.capturing );
-    
-                // store event entry
-                handlers.push( handler );
-    
-        } else if ( helpers$$is(eventType, "object") ) {
-    
-            if ( helpers$$isArray( eventType ) ) {
-    
-                helpers$$each( eventType, function( name )  {
-                    this$0[ method ]( name, selector, args, callback );
-                });
-            } else {
-                helpers$$forOwn( eventType, function( name, value )  {
-                    this$0[ method ]( name, selector, args, value );
-                });
-            }
-        } else {
-            minErr$$minErr( method + "()", "The first argument need to be a string" );
-        }
-    
-        return this;
-    }}, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_FALSE});
 
     var modules$query$$siblings = /[\x20\t\r\n\f]*[+~>]/,
         modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
         modules$query$$rescape  = /'|\\/g;
 
     helpers$$implement({
-        // Find the first matched element by css selector
+     /**
+      * Find the first matched element by css selector
+      * @param  {String} selector css selector
+      */
         query: "",
-        // Find all matched elements by css selector
-        queryAll: "All"
+     /**
+      * Find all matched elements by css selector
+      * @param  {String} selector css selector
+      */
+       queryAll: "All"
     
     }, function(methodName, all)  {return function(selector) {
         if (typeof selector !== "string") minErr$$minErr();
@@ -1680,8 +1830,8 @@
         // use setTimeout to make sure that the dispatch method exists
         WINDOW.setTimeout( modules$ready$$pageLoaded, 0 );
     } else {
-        WINDOW.addEventListener( "load", modules$ready$$pageLoaded, false );
-        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded, false );
+        WINDOW.addEventListener( "load", modules$ready$$pageLoaded );
+        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded );
     }
 
     helpers$$implement({
@@ -1703,7 +1853,11 @@
    };
 
     helpers$$implement({
-        // Set  erty/attribute value by name
+      /**
+       * Set property/attribute value by name
+       * @param {String|Object|Array}   name    property/attribute name
+       * @param {String|Function}       value   property/attribute value or functor
+       */
         set: function(name, value) {var this$0 = this;
     
             var node = this[ 0 ];
@@ -1834,7 +1988,11 @@
     }, null, function()  {return function()  {return RETURN_FALSE}} );
 
     helpers$$implement({
-        // Subscribe on particular properties / attributes, and get notified if they are changing
+      /**
+       * Subscribe on particular properties / attributes, and get notified if they are changing
+       * @param  {String}   name     property/attribute name
+       * @param  {Function}  callback  function for notifying about changes of the property/attribute
+       */
         subscribe: function(name, callback) {
                 var subscription = this._._subscription || ( this._._subscription = [] );
     
@@ -1844,9 +2002,12 @@
     
                 return this;
             },
-    
-            // Cancel / stop a property / attribute subscription
-            unsubscribe: function(name, callback) {
+     /**
+      * Cancel / stop a property / attribute subscription
+      * @param  {String}   name    property/attribute name
+      * @param  {Function}  callback  function for notifying about changes of the property/attribute
+      */
+       unsubscribe: function(name, callback) {
                 var subscription = this._._subscription;
     
                 if ( subscription[ name ] ) subscription[ name ] = helpers$$filter( subscription[ name ], function( cb )  {return cb !== callback} );
@@ -1856,34 +2017,64 @@
     }, null, function()  {return RETURN_THIS} );
 
     helpers$$implement({
-        // Find first element
+        /**
+         * Find first element filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         first: "firstElementChild",
-        // Find last element
+        /**
+         * Find last element filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         last: "lastElementChild",
-        // Find next following sibling element filtered by optional selector
+        /**
+         * Find next sibling element filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         next: "nextElementSibling",
-        // Find previous preceding sibling element filtered by optional selector
+        /**
+         * Find previous sibling element filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         prev: "previousElementSibling",
-        // Find all following sibling elements filtered by optional selector
+        /**
+         * Find all next sibling elements filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         nextAll: "nextElementSibling",
-        // Find all preceding sibling elements filtered by optional selector
+        /**
+         * Find all previous sibling elements filtered by optional selector
+         * @param {String} [selector] css selector
+         * @param {Boolean} [andSelf] if true than search will start from the current element
+         * @function
+         */
         prevAll: "previousElementSibling",
-    }, function( methodName, propertyName )  {return function( selector ) {
+    }, function(methodName, propertyName)  {return function(selector, andSelf) {
     
-        if ( selector && !helpers$$is( selector, "string") ) minErr$$minErr( methodName + "()", "The provided argument did not match the expected pattern" );
+        if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( methodName + "()", "The provided argument did not match the expected pattern" );
     
         var all = methodName.slice( -3 ) === "All",
             matcher = util$selectormatcher$$default( selector ),
             descendants = all ? [] : null,
             currentNode = this[ 0 ];
     
-        if ( !matcher ) currentNode = currentNode[ propertyName ];
+        if (!matcher) currentNode = currentNode[propertyName];
     
-        for (; currentNode; currentNode = currentNode[ propertyName ] ) {
+        for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
             if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
                 if ( !all ) break;
     
-                descendants.push(currentNode);
+                descendants.push( currentNode );
             }
         }
     
@@ -1891,44 +2082,11 @@
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
 
     helpers$$implement({
-        // Trigger one or many events, firing all bound callbacks. 
-        trigger: function(type) {
-        var node = this[ 0 ],
-            e, eventType, canContinue;
-    
-        if ( helpers$$is( type, "string" ) ) {
-            var hook = util$eventhooks$$default[ type ],
-                handler = {};
-    
-            if ( hook ) handler = hook( handler ) || handler;
-    
-            eventType = handler._eventType || type;
-        } else {
-            minErr$$minErr( "trigger()", "The string did not match the expected pattern" );
-        }
-        // Handles triggering the appropriate event callbacks.
-        e = node.ownerDocument.createEvent( "HTMLEvents" );
-        e[ "__" + "trackira" + "__" ] = arguments;
-        e.initEvent( eventType, true, true );
-        canContinue = node.dispatchEvent( e );
-    
-        // call native function to trigger default behavior
-        if ( canContinue && node[ type ] ) {
-            // prevent re-triggering of the current event
-            util$eventhandler$$default.skip = type;
-    
-            helpers$$invoke( node, type );
-    
-            util$eventhandler$$default.skip = null;
-        }
-    
-        return canContinue;
-      }
-    }, null, function()  {return RETURN_TRUE} );
-
-    helpers$$implement({
-        // Read or write inner content of an element
-        value: function(val) {
+        /**
+         * Read or write inner content of the element
+         * @param  {Mixed}  [content]  optional value to set
+         * @function
+         */    value: function(val) {
             if ( arguments.length === 0 ) {
                 return this.get();
             }
@@ -2251,9 +2409,18 @@
     };
 
     helpers$$implement({
-        // Create a new nodeTree from Emmet or HTML string in memory
+         /**
+         * Create a new nodeTree from Emmet or HTML string in memory
+         * @param  {String}       value     Emmet or HTML string
+         * @param  {Object|Array} [varMap]  key/value map of variables
+         */
         render: "",
-        // Create a new array of nodeTree from Emmet or HTML string in memory
+        /**
+         * Create a new array of nodeTree from Emmet or HTML string in memory
+         * @param  {String}       value     Emmet or HTML string
+         * @param  {Object|Array} [varMap]  key/value map of variables
+         * @function
+         */    
         renderAll: "All"
     
     }, function(methodName, all)  {return function(value, varMap) {

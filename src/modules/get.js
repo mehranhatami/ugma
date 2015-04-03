@@ -8,7 +8,12 @@ import { readData                      } from "../util/readData";
 import   accessorhooks                   from "../util/accessorhooks";
 
 implement({
-    // Get HTML5 Custom Data Attributes, property or attribute value by name
+   
+  /**
+   * Get HTML5 Custom Data Attributes, property or attribute value by name
+   * @param  {String|Array}  name  property or attribute name or array of names
+   * @return {String|Object} a value of property or attribute
+   */
     get(name) {
         var node = this[ 0 ],
             hook = accessorhooks.get[ name ];

@@ -5,8 +5,11 @@
 import { implement, isArray  } from "../helpers";
 
 implement({
-    // Read or write inner content of an element
-    value( val ) {
+    /**
+     * Read or write inner content of the element
+     * @param  {Mixed}  [content]  optional value to set
+     * @function
+     */    value( val ) {
         if ( arguments.length === 0 ) {
             return this.get();
         }

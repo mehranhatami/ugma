@@ -6,7 +6,11 @@ import { minErr                             } from "../minErr";
 import { implement, injectElement, is, each } from "../helpers";
 
 implement({
-    // Append global css styles
+  /**
+   * Append global css styles
+   * @param {String}         selector  css selector
+   * @param {String}  cssText   css rules
+   */
     injectCSS(selector, cssText) {
         var styleSheet = this._._styles;
 
