@@ -6,6 +6,7 @@ import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
+    support = {},
     accessorHooks = {
 
         get: {
@@ -16,17 +17,31 @@ var langFix = /_/g,
 
                 return ( node === doc.documentElement ? doc : node ).title;
             },
-            option: ( node ) => { 
+            option: ( node ) => {
                 // Support: IE<11
                 // option.value not trimmed
                 return trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
             },
-            select: ( node ) => ~node.selectedIndex ? node.options[node.selectedIndex].value : "",
+            select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
+
+            value: ( node ) => {
+
+                // Support: Android<4.4
+                // Default value for a checkbox should be "on"
+                if ( node.type === "checkbox" && !support.checkOn ) {
+                    return node.getAttribute( "value" ) === null ? "on" : node.value;
+                }
+                return node.value;
+            },
+
             undefined: ( node ) => {
                 switch ( node.tagName ) {
-                    case "SELECT": return accessorHooks.get.select( node );
-                    case "OPTION": return accessorHooks.get.option( node );
-                    default:       return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+                    case "SELECT":
+                        return accessorHooks.get.select( node );
+                    case "OPTION":
+                        return accessorHooks.get.option( node );
+                    default:
+                        return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                 }
             },
             type: ( node ) => node.getAttribute( "type" ) || node.type
@@ -48,9 +63,20 @@ var langFix = /_/g,
                 ( node === doc.documentElement ? doc : node ).title = value;
             },
             value: ( node, value ) => {
+
+                if ( !support.radioValue && value === "radio" && node.nodeName === "input" ) {
+                    var val = node.value;
+
+                    node.setAttribute( "type", value );
+                    if ( val ) {
+                        node.value = val;
+                    }
+                    return value;
+                }
+
                 if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
-                    if ( every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
+                    if ( every.call(node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
                         node.selectedIndex = -1;
                     }
                 } else {
@@ -61,7 +87,6 @@ var langFix = /_/g,
         }
     };
 
-// Support: IE<=11+    
 (function() {
     var input = DOCUMENT.createElement( "input" );
 
@@ -69,36 +94,15 @@ var langFix = /_/g,
 
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
-    if (input.value !== "") {
-        accessorHooks.get.checked = ( node ) => {
-            return node.getAttribute("value") === null ? "on" : node.value;
-        };
-    }
+    support.checkOn = input.value !== "";
+
     // Support: IE<=11+
     // An input loses its value after becoming a radio
     input = DOCUMENT.createElement( "input" );
     input.value = "t";
     input.type = "radio";
-
-    // Setting the type on a radio button after the value resets the value in IE9
-    if (input.value !== "t") {
-
-        accessorHooks.set.type = ( node, value ) => {
-            if (value === "radio" &&
-                node.nodeName === "INPUT" ) {
-                var val = node.value;
-                node.setAttribute( "type", value );
-                if ( val ) {
-                    node.value = val;
-                }
-                return value;
-            } else {
-                node.type = value;
-            }
-        };
-    }
-    input = null;
-}());
+    support.radioValue = input.value === "t";
+})();
 
 // Attributes that are booleans
 each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
