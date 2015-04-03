@@ -14,41 +14,41 @@ import { implement, isArray, trim, each, is, sliceArgs } from "../helpers";
 implement({
     // Inserts nodes after the last child of node, while replacing strings 
     // in nodes with native element or equivalent html string.
-    append: ["beforeend", true, false, ( node, relatedNode ) => {
-        node.appendChild(relatedNode);
+    append: [ "beforeend", true, false, ( node, relatedNode ) => {
+        node.appendChild( relatedNode );
     }],
     // Inserts nodes before the first child of node, while replacing strings 
     // in nodes with native element or equivalent html strings.
-    prepend: ["afterbegin", true, false, ( node, relatedNode ) => {
-        node.insertBefore(relatedNode, node.firstChild);
+    prepend: [ "afterbegin", true, false, ( node, relatedNode ) => {
+        node.insertBefore( relatedNode, node.firstChild );
     }],
     // Insert nodes just before node while replacing strings in nodes with 
     // native element or a html string.
-    before: ["beforebegin", true, true, ( node, relatedNode ) => {
-        node.parentNode.insertBefore(relatedNode, node);
+    before: [ "beforebegin", true, true, ( node, relatedNode ) => {
+        node.parentNode.insertBefore( relatedNode, node );
     }],
     // Insert nodes just after node while replacing strings in nodes with 
     // native element or a html string .
-    after: ["afterend", true, true, ( node, relatedNode ) => {
-        node.parentNode.insertBefore(relatedNode, node.nextSibling);
+    after: [ "afterend", true, true, ( node, relatedNode ) => {
+        node.parentNode.insertBefore( relatedNode, node.nextSibling );
     }],
     // Replaces node with nodes, while replacing strings in nodes with 
     // native element or html string.
-    replaceWith: ["", false, true, (node, relatedNode) => {
+    replaceWith: [ "", false, true, ( node, relatedNode ) => {
         node.parentNode.replaceChild( relatedNode, node );
     }],
-    remove: ["", false, true, ( node ) => {
+    remove: [ "", false, true, ( node ) => {
         node.parentNode.removeChild( node );
     }]
 }, (methodName, adjacentHTML, native, requiresParent, strategy) => function() {
     
-      var contents = sliceArgs(arguments),
+      var contents = sliceArgs( arguments ),
           node = this[ 0 ];
 
-    if (requiresParent && !node.parentNode) return this;
+    if ( requiresParent && !node.parentNode ) return this;
 
-    if ((methodName === "after" || methodName === "before") && this === ugma) {
-         minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
+    if ( ( methodName === "after" || methodName === "before" ) && this === ugma ) {
+         minErr( methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)" );
     }
     
     // don't create fragment for adjacentHTML
@@ -62,7 +62,7 @@ implement({
             content = nodeTree( content );
         }
 
-        if (is(content, "function")) {
+        if ( is( content, "function" ) ) {
             content = content( this );
         }
 
@@ -71,39 +71,39 @@ implement({
             content = content.join();
         }
 
-        if (is(content, "string")) {
-            if (is(fragment, "string")) {
-                fragment += trim(content);
+        if ( is( content, "string" ) ) {
+            if (is( fragment, "string" ) ) {
+                fragment += trim( content );
             } else {
-                content = ugma.renderAll(content);
+                content = ugma.renderAll( content );
             }
-        } else if (content._) {
-            content = [content];
+        } else if ( content._ ) {
+            content = [ content ];
         }
         
         // should handle documentFragment
         if ( content.nodeType === 11 ) {
             fragment = content;
         } else {
-            if (isArray(content)) {
-                if (is(fragment, "string")) {
+            if ( isArray( content ) ) {
+                if ( is( fragment, "string" ) ) {
                     // append existing string to fragment
                     content = ugma.renderAll( fragment ).concat( content );
                     // fallback to document fragment strategy
                     fragment = node.ownerDocument.createDocumentFragment();
                 }
 
-                each(content, function(el) {
-                    fragment.appendChild(el._ ? el[ 0 ] : el);
+                each( content, function( el ) {
+                    fragment.appendChild( el._ ? el[ 0 ] : el );
                 });
             }
         }
     });
 
-    if (is(fragment, "string")) {
-        node.insertAdjacentHTML(adjacentHTML, fragment);
+    if ( is( fragment, "string" ) ) {
+        node.insertAdjacentHTML( adjacentHTML, fragment );
     } else {
-        strategy(node, fragment);
+        strategy( node, fragment );
     }
 
     return this;

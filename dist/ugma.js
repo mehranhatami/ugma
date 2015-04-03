@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 03 Apr 2015 06:42:53 GMT
+ * Build date: Fri, 03 Apr 2015 13:44:07 GMT
  */
 (function() {
     "use strict";
@@ -35,8 +35,10 @@
 
     var RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
-    //  Check to see if we"re in IE9 to see if we are in combatibility mode and provide
-    // information on preventing it
+    /** 
+     * Check to see if we"re in IE9 to see if we are in combatibility mode and provide
+     *  information on preventing it
+     */
     if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
         WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
             "tag to your HTML to prevent this from happening: " +
@@ -687,10 +689,9 @@
 
     helpers$$implement({
       /**
-        * Get the value of a style property for the  DOM Node, or set one or more style properties for a  DOM Node.
+        * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
         * @param  {String|Object}      name    style property name or key/value object
         * @param  {String|Function}    [value] style property value or functor
-        * @return {String|$Element} a property value or reference to <code>this</code>
         */   
         css: function(name, value) {var this$0 = this;
             
@@ -702,76 +703,77 @@
    
             // Get CSS values
             // with support for pseudo-elements in getComputedStyle 
-            if (pseudoElement || (len === 1 && (helpers$$is(name, "string") || helpers$$isArray(name)))) {
-                var getValue = function(name)  {
-                    var getter = util$csshooks$$default.get[name] || util$csshooks$$default._default(name, style),
+            if ( pseudoElement || ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) ) {
+                var getValue = function( name )  {
+                    var getter = util$csshooks$$default.get[ name ] || util$csshooks$$default._default( name, style ),
    
                         // if a 'pseudoElement' is present, don't change the original value. 
                         // The 'pseudoElement' need to be the second argument.
                         // E.g. link.css('color', ':before');
-                        value = pseudoElement ? value : helpers$$is(getter, "function") ? getter(style) : style[getter];
+                        value = pseudoElement ? value : helpers$$is( getter, "function" ) ? getter( style ) : style[ getter ];
    
-                    if (!value || pseudoElement) {
-                        if (!computed) computed = helpers$$computeStyle(node, pseudoElement ? value : "");
+                    if ( !value || pseudoElement ) {
+                        if ( !computed ) computed = helpers$$computeStyle(node, pseudoElement ? value : "" );
    
-                        value = helpers$$is(getter, "function") ? getter(computed) : computed[getter];
+                        value = helpers$$is( getter, "function" ) ? getter( computed ) : computed[ getter ];
                     }
    
                     return value;
                 };
    
-                if ( helpers$$is(name, "string") ) {
+                if ( helpers$$is( name, "string" ) ) {
    
                     return getValue(name);
    
                 } else {
                     var obj = {};
-                     helpers$$each(helpers$$map(name, getValue), function(value, index)  {
-                        obj[name[index]] = value;
-                    });
+                     helpers$$each( helpers$$map( name, getValue ), function( value, index )  {
+                        obj[ name [ index ] ] = value;
+                    } );
                   return obj;
                 }
             }
    
-            if ( len === 2 && helpers$$is(name, "string") ) {
-                var ret, setter = util$csshooks$$default.set[name] || util$csshooks$$default._default(name, style);
+            if ( len === 2 && helpers$$is( name, "string" ) ) {
+                var ret, setter = util$csshooks$$default.set[ name ] || util$csshooks$$default._default( name, style );
    
-                if (helpers$$is(value, "function")) value = value(this);
+                if ( helpers$$is( value, "function" ) ) value = value( this );
    
-                if ( value == null ) value = "";
+                if ( value == null || helpers$$is( value, "boolean" ) ) value = "";
    
                 // Convert '+=' or '-=' to relative numbers
-                if (value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ]) {
+                if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
    
                     if (!computed) computed = helpers$$computeStyle(node);
    
                     value = util$adjustCSS$$adjustCSS( this, setter, ret, computed );
    
-                    if (ret && ret[ 3 ]) value += ret[ 3 ];
+                    if ( ret && ret[ 3 ] ) value += ret[ 3 ];
                 }
    
-                if (helpers$$is(setter, "function")) {
-                    setter(value, style);
+                if ( helpers$$is( setter, "function" ) ) {
+                    setter ( value, style );
                 } else {
-                    style[setter] = helpers$$is(value, "number") ? value + "px" : value + ""; // cast to string; 
+                    // prevent dangerous style values
+                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : ( helpers$$is( value, "string" )  ? helpers$$trim( value ) : "" + value ); // cast to string 
                 }
-            } else if (len === 1 && name && helpers$$is(name, "object")) {
+            } else if ( len === 1 && name && helpers$$is( name, "object" ) ) {
                 
-                helpers$$forOwn(name, function(key, value)  {
-                    this$0.css(key, value);
+                helpers$$forOwn( name, function( key, value )  {
+                    this$0.css( key, value );
                 });
                 
             } else {
-                minErr$$minErr("css()", "This operation is not supported");
+                minErr$$minErr( "css()", "This operation is not supported" );
             }
    
             return this;
         }
-    }, null, function()  {return function(name) {
+    }, null, function()  {return function( name ) {
    
-        if (arguments.length === 1 && helpers$$isArray(name)) return {};
+        if ( arguments.length === 1 && helpers$$isArray( name ) ) return {};
    
-        if (arguments.length !== 1 || !helpers$$is(name, "string")) return this;
+        if ( arguments.length !== 1 || !helpers$$is( name, "string" ) ) return this;
     }});
 
     var util$readData$$multiDash = /([A-Z])/g,
@@ -851,36 +853,32 @@
     }, null, function()  {return RETURN_THIS});
 
     var util$raf$$lastTime = 0,
-        util$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
-                                WINDOW.mozRequestAnimationFrame          ||
-                                WINDOW.webkitRequestAnimationFrame,
-        util$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
-                                WINDOW.webkitCancelAnimationFrame        ||
-                                WINDOW.webkitCancelRequestAnimationFrame,
-    
-        util$raf$$requestFrame = function( callback )  {
-            if ( util$raf$$requestAnimationFrame ) {
-                return util$raf$$requestAnimationFrame( callback );
-            } else {
-                // Dynamically set delay on a per-tick basis to match 60fps.
-                var currTime = Date.now(),
-                    timeDelay = Math.max( 0, 16 - ( currTime - util$raf$$lastTime ) ); // 1000 / 60 = 16.666
-    
-                util$raf$$lastTime = currTime + timeDelay;
-    
-                return WINDOW.setTimeout( function()  { callback(currTime + timeDelay) }, timeDelay);
-            }
+        util$raf$$requestAnimationFrame =
+              WINDOW.requestAnimationFrame             ||
+              WINDOW.webkitRequestAnimationFrame       ||
+              WINDOW.mozRequestAnimationFrame,
+        util$raf$$cancelAnimationFrame = 
+              WINDOW.cancelAnimationFrame              ||
+              WINDOW.webkitCancelAnimationFrame        ||
+              WINDOW.webkitCancelRequestAnimationFrame ||
+              WINDOW.mozCancelAnimationFrame,
+        util$raf$$requestFrame = util$raf$$requestAnimationFrame ||
+          function( callback ) {
+            // Dynamically set delay on a per-tick basis to match 60fps.
+            var currTime = Date.now(),
+                timeDelay = Math.max( 0, 16 - ( currTime - util$raf$$lastTime ) ); // 1000 / 60 = 16.666
+            util$raf$$lastTime = currTime + timeDelay;
+            return WINDOW.setTimeout( function() {
+                callback( Date.now() );
+            }, timeDelay );
         },
-        util$raf$$cancelFrame = function( frameId )  {
-            if ( util$raf$$cancelAnimationFrame ) {
-                util$raf$$cancelAnimationFrame( frameId );
-            } else {
-                WINDOW.clearTimeout( frameId );
-            }
+        util$raf$$cancelFrame = util$raf$$cancelAnimationFrame || 
+          function( frameId ) {
+            WINDOW.clearTimeout( frameId );
         };
 
     // Works around a rare bug in Safari 6 where the first request is never invoked.
-    util$raf$$requestFrame( function()  { return function()  {} } );
+    util$raf$$requestFrame( function()  {return function()  {}} );
 
     function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
         var debouncing;
@@ -1152,8 +1150,6 @@
             return this;
         }
     }, null, function()  {return RETURN_THIS});
-
-
 
     helpers$$implement({
        
@@ -1507,41 +1503,41 @@
     helpers$$implement({
         // Inserts nodes after the last child of node, while replacing strings 
         // in nodes with native element or equivalent html string.
-        append: ["beforeend", true, false, function( node, relatedNode )  {
-            node.appendChild(relatedNode);
+        append: [ "beforeend", true, false, function( node, relatedNode )  {
+            node.appendChild( relatedNode );
         }],
         // Inserts nodes before the first child of node, while replacing strings 
         // in nodes with native element or equivalent html strings.
-        prepend: ["afterbegin", true, false, function( node, relatedNode )  {
-            node.insertBefore(relatedNode, node.firstChild);
+        prepend: [ "afterbegin", true, false, function( node, relatedNode )  {
+            node.insertBefore( relatedNode, node.firstChild );
         }],
         // Insert nodes just before node while replacing strings in nodes with 
         // native element or a html string.
-        before: ["beforebegin", true, true, function( node, relatedNode )  {
-            node.parentNode.insertBefore(relatedNode, node);
+        before: [ "beforebegin", true, true, function( node, relatedNode )  {
+            node.parentNode.insertBefore( relatedNode, node );
         }],
         // Insert nodes just after node while replacing strings in nodes with 
         // native element or a html string .
-        after: ["afterend", true, true, function( node, relatedNode )  {
-            node.parentNode.insertBefore(relatedNode, node.nextSibling);
+        after: [ "afterend", true, true, function( node, relatedNode )  {
+            node.parentNode.insertBefore( relatedNode, node.nextSibling );
         }],
         // Replaces node with nodes, while replacing strings in nodes with 
         // native element or html string.
-        replaceWith: ["", false, true, function(node, relatedNode)  {
+        replaceWith: [ "", false, true, function( node, relatedNode )  {
             node.parentNode.replaceChild( relatedNode, node );
         }],
-        remove: ["", false, true, function( node )  {
+        remove: [ "", false, true, function( node )  {
             node.parentNode.removeChild( node );
         }]
     }, function(methodName, adjacentHTML, native, requiresParent, strategy)  {return function() {var this$0 = this;
         
-          var contents = helpers$$sliceArgs(arguments),
+          var contents = helpers$$sliceArgs( arguments ),
               node = this[ 0 ];
     
-        if (requiresParent && !node.parentNode) return this;
+        if ( requiresParent && !node.parentNode ) return this;
     
-        if ((methodName === "after" || methodName === "before") && this === core$core$$ugma) {
-             minErr$$minErr(methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)");
+        if ( ( methodName === "after" || methodName === "before" ) && this === core$core$$ugma ) {
+             minErr$$minErr( methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)" );
         }
         
         // don't create fragment for adjacentHTML
@@ -1555,7 +1551,7 @@
                 content = core$core$$nodeTree( content );
             }
     
-            if (helpers$$is(content, "function")) {
+            if ( helpers$$is( content, "function" ) ) {
                 content = content( this$0 );
             }
     
@@ -1564,39 +1560,39 @@
                 content = content.join();
             }
     
-            if (helpers$$is(content, "string")) {
-                if (helpers$$is(fragment, "string")) {
-                    fragment += helpers$$trim(content);
+            if ( helpers$$is( content, "string" ) ) {
+                if (helpers$$is( fragment, "string" ) ) {
+                    fragment += helpers$$trim( content );
                 } else {
-                    content = core$core$$ugma.renderAll(content);
+                    content = core$core$$ugma.renderAll( content );
                 }
-            } else if (content._) {
-                content = [content];
+            } else if ( content._ ) {
+                content = [ content ];
             }
             
             // should handle documentFragment
             if ( content.nodeType === 11 ) {
                 fragment = content;
             } else {
-                if (helpers$$isArray(content)) {
-                    if (helpers$$is(fragment, "string")) {
+                if ( helpers$$isArray( content ) ) {
+                    if ( helpers$$is( fragment, "string" ) ) {
                         // append existing string to fragment
                         content = core$core$$ugma.renderAll( fragment ).concat( content );
                         // fallback to document fragment strategy
                         fragment = node.ownerDocument.createDocumentFragment();
                     }
     
-                    helpers$$each(content, function(el) {
-                        fragment.appendChild(el._ ? el[ 0 ] : el);
+                    helpers$$each( content, function( el ) {
+                        fragment.appendChild( el._ ? el[ 0 ] : el );
                     });
                 }
             }
         });
     
-        if (helpers$$is(fragment, "string")) {
-            node.insertAdjacentHTML(adjacentHTML, fragment);
+        if ( helpers$$is( fragment, "string" ) ) {
+            node.insertAdjacentHTML( adjacentHTML, fragment );
         } else {
-            strategy(node, fragment);
+            strategy( node, fragment );
         }
     
         return this;
@@ -1801,25 +1797,33 @@
             
     }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$dummyTree()}});
 
-    var modules$ready$$callbacks = [],
+    var modules$ready$$readyCallbacks = [],
+        // Supports: IE9+
+        // IE have issues were the browser trigger the interactive state before DOMContentLoaded.
         modules$ready$$loaded = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
         modules$ready$$pageLoaded;
+
+
 
     if ( !modules$ready$$loaded )
         DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded = function()  {
             DOCUMENT.removeEventListener("DOMContentLoaded", modules$ready$$pageLoaded);
             modules$ready$$loaded = 1;
-            while ( modules$ready$$pageLoaded = modules$ready$$callbacks.shift() ) modules$ready$$pageLoaded();
+            while ( modules$ready$$pageLoaded = modules$ready$$readyCallbacks.shift() ) modules$ready$$pageLoaded();
         });
 
     helpers$$implement({
+      /**
+       * Execute callback when DOM is ready
+       * @param {Function} callback event listener
+       */
         ready: function( fn ) {
-            if ( !helpers$$is( fn, "function") ) minErr$$minErr();
+            if ( !helpers$$is( fn, "function") ) minErr$$minErr("ready()", "The provided 'callback' is not a function.");
     
             if ( modules$ready$$loaded ) {
                 fn();
             } else {
-                modules$ready$$callbacks.push( fn );
+                modules$ready$$readyCallbacks.push( fn );
             }
         }
     });
