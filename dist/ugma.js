@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 02 Apr 2015 15:19:36 GMT
+ * Build date: Fri, 03 Apr 2015 01:43:26 GMT
  */
 (function() {
     "use strict";
@@ -728,7 +728,9 @@
         if (arguments.length === 1 && helpers$$isArray(name)) return {};
    
         if (arguments.length !== 1 || !helpers$$is(name, "string")) return this;
-    }});var util$readData$$multiDash = /([A-Z])/g,
+    }});
+
+    var util$readData$$multiDash = /([A-Z])/g,
         // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
         util$readData$$readData = function( node, key )  {
     
@@ -1267,6 +1269,38 @@
         }
     }, null, function()  {return RETURN_FALSE} );
 
+    var modules$raf$$lastTime = 0,
+        modules$raf$$requestAnimationFrame = WINDOW.requestAnimationFrame             ||
+                                WINDOW.mozRequestAnimationFrame          ||
+                                WINDOW.webkitRequestAnimationFrame,
+        modules$raf$$cancelAnimationFrame =  WINDOW.cancelAnimationFrame              ||
+                                WINDOW.webkitCancelAnimationFrame        ||
+                                WINDOW.webkitCancelRequestAnimationFrame,
+    
+        modules$raf$$requestFrame = function( callback )  {
+            if ( modules$raf$$requestAnimationFrame ) {
+                return modules$raf$$requestAnimationFrame( callback );
+            } else {
+                // Dynamically set delay on a per-tick basis to match 60fps.
+                var currTime = Date.now(),
+                    timeDelay = Math.max( 0, 16 - ( currTime - modules$raf$$lastTime ) ); // 1000 / 60 = 16.666
+    
+                modules$raf$$lastTime = currTime + timeDelay;
+    
+                return WINDOW.setTimeout( function()  { callback(currTime + timeDelay) }, timeDelay);
+            }
+        },
+        modules$raf$$cancelFrame = function( frameId )  {
+            if ( modules$raf$$cancelAnimationFrame ) {
+                modules$raf$$cancelAnimationFrame( frameId );
+            } else {
+                WINDOW.clearTimeout( frameId );
+            }
+        };
+
+    // Works around a rare bug in Safari 6 where the first request is never invoked.
+    modules$raf$$requestFrame( function()  { return function()  {} } );
+
     helpers$$implement({
     
         // Remove one or many callbacks.
@@ -1287,7 +1321,7 @@
     
                     // Cancel previous frame if it exists
                     if ( self._._raf ) {
-                        core$core$$ugma.cancelFrame( self._._raf );
+                          modules$raf$$cancelFrame( self._._raf );
                         // Zero out rAF id used during the animation
                         self._._raf = null;
                     }
@@ -1373,7 +1407,7 @@
         return function( e )  {
             if ( !debouncing ) {
                 debouncing = true;
-                node._._raf = core$core$$ugma.requestFrame( function()  {
+                node._._raf = modules$raf$$requestFrame( function()  {
                     handler( e );
                     debouncing = false;
                 });
@@ -1631,60 +1665,6 @@
             return all ? helpers$$map(result, core$core$$nodeTree) : core$core$$nodeTree(result);
             
     }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$dummyTree()}});
-
-    var modules$raf$$global = WINDOW;
-    // Test if we are within a foreign domain. Use raf from the top if possible.
-    /* jshint ignore:start */
-    try {
-        // Accessing .name will throw SecurityError within a foreign domain.
-        modules$raf$$global.top.name;
-        modules$raf$$global = modules$raf$$global.top;
-    } catch (e) {}
-
-    /* jshint ignore:end */
-    // Works around a iOS6 bug
-    var modules$raf$$raf = modules$raf$$global.requestAnimationFrame,
-        modules$raf$$craf = modules$raf$$global.cancelAnimationFrame,
-        modules$raf$$lastTime = 0;
-
-    if (!( modules$raf$$raf && !modules$raf$$craf ) ) {
-        helpers$$each(VENDOR_PREFIXES, function( prefix )  {
-            prefix = prefix.toLowerCase();
-            modules$raf$$raf = modules$raf$$raf || WINDOW[ prefix + "RequestAnimationFrame" ];
-            modules$raf$$craf = modules$raf$$craf || WINDOW[ prefix + "CancelAnimationFrame" ];
-        });
-    }
-
-    // Executes a callback in the next frame
-    core$core$$ugma.requestFrame = function( callback )  {
-        /* istanbul ignore else */
-        if (modules$raf$$raf) {
-            return modules$raf$$raf.call(modules$raf$$global, callback);
-        } else {
-            // Dynamically set delay on a per-tick basis to match 60fps.
-            var currTime = Date.now(),
-                timeDelay = Math.max( 0, 16 - (currTime - modules$raf$$lastTime)); // 1000 / 60 = 16.666
-
-            modules$raf$$lastTime = currTime + timeDelay;
-
-            return modules$raf$$global.setTimeout( function()  {
-                callback(currTime + timeDelay );
-            }, timeDelay);
-        }
-    };
-
-    // Works around a rare bug in Safari 6 where the first request is never invoked.
-    core$core$$ugma.requestFrame( function() { return function() {} } );
-
-    // Cancel a scheduled frame
-    core$core$$ugma.cancelFrame = function( frameId )  {
-        /* istanbul ignore else */
-        if ( modules$raf$$craf ) {
-            modules$raf$$craf.call( modules$raf$$global, frameId );
-        } else {
-            modules$raf$$global.clearTimeout( frameId );
-        }
-    };
 
     var modules$ready$$callbacks = [],
         modules$ready$$readyState = DOCUMENT.readyState,
@@ -2008,12 +1988,12 @@
             }
     
             // cancel previous frame if it exists
-            if ( frameId ) core$core$$ugma.cancelFrame( frameId );
+            if ( frameId ) modules$raf$$cancelFrame( frameId );
     
             if ( !node.ownerDocument.documentElement.contains( node ) ) {
                 done();
             } else {
-                this._[ "__frame_trackira__" ] = core$core$$ugma.requestFrame( done );
+                this._[ "__frame_trackira__" ] = modules$raf$$requestFrame( done );
             }
     
             return this;
@@ -2026,7 +2006,8 @@
     // @example
     // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
     core$core$$ugma.format = function(template, varMap) {
-        if (!helpers$$is(template, "string")) template = template + "";
+        // Enforce data types on user input
+        if (!helpers$$is(template, "string")) template = String(template);
     
         if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
     
@@ -2036,12 +2017,14 @@
     
                 if ( helpers$$is( placeholder, "function") ) placeholder = placeholder( index );
     
-                placeholder = placeholder + "";
+                placeholder = String(placeholder);
             }
     
             return placeholder;
         });
-    };var template$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
+    };
+
+    var template$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
         template$indexing$$reDollar = /\$/g,
         template$indexing$$indexing = function( num, term )  {
             var index = num = num >= 1600 ? /* max 1600 HTML elements */ 1600 : ( num <= 0 ? 1 : num ),
@@ -2201,14 +2184,21 @@
 
     var template$process$$attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
         template$process$$charMap = { 
-            "&": "&amp;", 
-            "<": "&lt;",
-            ">": "&gt;",
-            "\"": "&quot;",
-            "'": "&#039;"
+            "&": "&amp;",    // ampersand
+            "<": "&lt;",     // less-than
+            ">": "&gt;",     // greater-than
+            "\"": "&quot;", 
+            "'": "&#039;",
+            "¢": "&#162;",   // cent
+            "¥": "&#165;",   // yen
+            "§": "&#167;",   // section
+            "©": "&#169;",   // copyright
+            "®": "&#174;",   // registred trademark
+            "™": "&#8482;",  // trademark
         },
-        // filter for escaping unsafe XML characters: <, >, &, ', "
-        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"']/g, function( ch )  {return template$process$$charMap[ ch ]})},
+        // filter for escaping unsafe XML characters: <, >, &, ', " and
+        // prevent XSS attacks
+        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]})},
         template$process$$process = function( template )  {
     
         var stack = [];

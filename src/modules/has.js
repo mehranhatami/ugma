@@ -1,3 +1,7 @@
+/**
+ * @module has
+ */
+
 import { implement, is   } from "../helpers";
 import { minErr          } from "../minErr";
 import { RETURN_FALSE    } from "../const";
