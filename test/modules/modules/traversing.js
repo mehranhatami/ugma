@@ -27,6 +27,12 @@ describe("traversing", function() {
             expect(link.last("em")).toHaveTag("em");
             expect(link.closest("body")).toHaveTag("body");
         });
+        
+       it("should support and andSelf argument", function() {
+            expect(link.next().next("b", true)).toHaveTag("b");
+            expect(link.prev().prev("i", true)).toHaveTag("i");
+        });
+        
     });
 
     it("should return empty element if value is not found", function() {

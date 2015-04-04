@@ -57,6 +57,77 @@ describe("set", function() {
         expect(link.set("data-test", "t")).toHaveAttr("data-test", "t");
     });
 
+
+    it("should handle tabIndex", function() {
+
+        jasmine.sandbox.set("<div id='tabindex-tests'>" +
+            "<ol id='listWithTabIndex' tabindex='5'> " +
+            "<li id='foodWithNegativeTabIndex' tabindex='-1'>Rice</li> " +
+            "<li id='foodNoTabIndex'>Beans</li> " +
+            "<li>Blinis</li> " +
+            "<li>Tofu</li> " +
+            "</ol> " +
+            "<div id='divWithNoTabIndex'>I'm hungry. I should...</div> " +
+            "<span>...</span><a href='#' id='linkWithNoTabIndex'>Eat lots of food</a><span>...</span> | " +
+            "<span>...</span><a href='#' id='linkWithTabIndex' tabindex='2'>Eat a little food</a><span>...</span> | " +
+            "<span>...</span><a href='#' id='linkWithNegativeTabIndex' tabindex='-1'>Eat no food</a><span>...</span> " +
+            "<span>...</span><a id='linkWithNoHrefWithNoTabIndex'>Eat a burger</a><span>...</span> " +
+            "<span>...</span><a id='linkWithNoHrefWithTabIndex' tabindex='1'>Eat some funyuns</a><span>...</span> " +
+            "<span>...</span><a id='linkWithNoHrefWithNegativeTabIndex' tabindex='-1'>Eat some funyuns</a><span>...</span> " +
+            "<input id='inputWithoutTabIndex'/> " +
+            "<button id='buttonWithoutTabIndex'></button> " +
+            "<textarea id='textareaWithoutTabIndex'></textarea> " +
+            "<menu type='popup'> " +
+            "<menuitem id='menuitemWithoutTabIndex' command='submitbutton' default/> " +
+            "</menu> " +
+            "</div>");
+
+        //  equal( ugma.query("#listWithTabIndex").get("tabindex"), "5", "not natively tabbable, with tabindex set to 0" );      
+        var listWithTabIndex = ugma.query("#listWithTabIndex");
+        var linkWithNoTabIndex = ugma.query("#linkWithNoTabIndex");
+        var linkWithTabIndex = ugma.query("#linkWithTabIndex");
+        var linkWithNegativeTabIndex = ugma.query("#linkWithNegativeTabIndex");
+
+        expect(listWithTabIndex.get("tabindex")).toBe(5);
+        expect(ugma.query("#divWithNoTabIndex").get("tabindex")).toBe(-1);
+
+        expect(linkWithNoTabIndex.get("tabindex")).toBe(0);
+        expect(linkWithTabIndex.get("tabindex")).toBe(2);
+        expect(linkWithNegativeTabIndex.get("tabindex")).toBe(-1);
+
+        expect(ugma.query("#linkWithNoHrefWithNoTabIndex").get("tabindex")).toBe(0);
+        expect(ugma.query("#linkWithNoHrefWithTabIndex").get("tabindex")).toBe(1);
+
+        var element = ugma.query("#divWithNoTabIndex");
+
+        expect(element.get("tabindex")).toBe(-1);
+
+        // set a positive string
+        element.set("tabindex", "1");
+        expect(element.get("tabindex")).toBe(1);
+
+        // set a zero string
+        element.set("tabindex", "0");
+        expect(element.get("tabindex")).toBe(0);
+
+        // set a negative string
+        element.set("tabindex", "-1");
+
+        expect(element.get("tabindex")).toBe(-1);
+
+        // set a positive number
+        element.set("tabindex", 1);
+        expect(element.get("tabindex")).toBe(1);
+
+        // set a zero number
+        element.set("tabindex", 0);
+        expect(element.get("tabindex")).toBe(0);
+
+        // set a negative number
+        element.set("tabindex", -1);
+        expect(element.get("tabindex")).toBe(-1);
+    });
+
     it("should try to update an appropriate native object property first", function() {
         link.set("href", "#test");
 
@@ -148,169 +219,165 @@ describe("set", function() {
         expect(empty.set("attr", "test")).toBe(empty);
     });
 
-    describe("value shortcut", function() {
-        it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
-            var value = "set-test-changed";
+    it("should use 'innerHTML' or 'value' if name argument is undefined", function() {
+        var value = "set-test-changed";
 
-            link.set(value);
-            input.set(value);
+        link.set(value);
+        input.set(value);
 
-            expect(link).toHaveHtml(value);
-            expect(input).toHaveProp("value", value);
-        });
-
-        it("should set select value properly", function() {
-            var select = ugma.render("<select><option>AM</option><option>PM</option></select>");
-
-            expect(select.get()).toBe("AM");
-            select.set("PM");
-            expect(select.get()).toBe("PM");
-            select.set("MM");
-            expect(select.get()).toBe("");
-        });
-
-        it("should set the html of select", function() {
-            var html = "<option>option 1</option><option selected='selected'>option 2</option>";
-
-            var select = ugma.render("select").set("innerHTML", html);
-
-            expect(select.children().length).toEqual(2);
-            expect(select[0].options.length).toEqual(2);
-            expect(select[0].selectedIndex).toEqual(1);
-        });
-
-        it("should set the html of table", function() {
-            var html = "<tbody><tr><td>cell 1</td><td>cell 2</td></tr><tr><td class='cell'>cell 1</td><td>cell 2</td></tr></tbody>";
-
-            var table = ugma.render("table").set("innerHTML", html);
-
-            expect(table.children().length).toEqual(1);
-            expect(table.first().first().children().length).toEqual(2);
-            expect(table.first().last().first().get("className")).toEqual("cell");
-        });
-
-        it("should set the text of an element", function() {
-            var div = ugma.render("div").set("textContent", "some text content");
-            expect(div.get("textContent")).toEqual("some text content");
-            expect(div[0].innerHTML).toEqual("some text content");
-        });
-
-        it("should set the style attribute of an element", function() {
-            var style = "font-size:12px;line-height:23px;";
-            var div = ugma.render("div").set("style", style);
-            expect(div[0].style.lineHeight).toEqual("23px");
-            expect(div[0].style.fontSize).toEqual("12px");
-        });
-
-        it("should set multiple attributes of an element", function() {
-            link.set({
-                id: "apple",
-                "title": "some_title",
-                "innerHTML": "some_content"
-            });
-
-            expect(link[0].id).toEqual("apple");
-            expect(link[0].title).toEqual("some_title");
-            expect(link[0].innerHTML).toEqual("some_content");
-        });
-
-
-        it("should set various attributes of a script element", function() {
-            link.set({
-                type: "text/javascript",
-                defer: "defer"
-            });
-            expect(link[0].type).toEqual("text/javascript");
-            expect(link[0].defer).toBeTruthy();
-        });
-
-        it("should set various attributes of a table element", function() {
-            var table = ugma.render("table").set({
-                border: "2",
-                cellpadding: "3",
-                cellspacing: "4",
-                align: "center"
-            });
-            expect(table.get("border")).toBe("2");
-            expect(table.get("cellPadding")).toBe("3");
-            expect(table.get("cellSpacing")).toBe("4");
-            expect(table[0].align).toEqual("center");
-        });
-
-        it("should replace child element(s) from node with provided element", function() {
-            var div = ugma.render("div>a+a");
-            expect(div[0].childNodes.length).toBe(2);
-            expect(div.value(ugma.render("b"))).toBe(div);
-            expect(div[0].childNodes.length).toBe(1);
-            expect(div.child(0)).toHaveTag("b");
-        });
-
-        it("should set value of text input to provided string value", function() {
-            var input = ugma.render("input[value=foo]");
-            expect(input.value("bar")).toBe(input);
-            expect(input).toHaveProp("value", "bar");
-        });
-
-        it("should call the function and update the attribute with the return value", function() {
-            var spy = jasmine.createSpy("set").and.returnValue("ok");
-
-            link.set(spy);
-            input.set(spy);
-
-            expect(spy.calls.count()).toBe(2);
-
-            expect(link).toHaveHtml("ok");
-            expect(input).toHaveProp("value", "ok");
-        });
-
-        it("should set a falsey value and not an empty string", function() {
-            expect(input.set({
-                value: false
-            }).get("value")).toEqual("false");
-            expect(input.set({
-                value: 0
-            }).get("value")).toEqual("0");
-        });
-
-        it("should set the selected option for a select element to matching string w/o falsy matches", function() {
-            var form = ugma.render("form");
-            form.set("innerHTML", "<select>" +
-                "<option value=''>no value</option>" +
-                "<option value='0'>value 0</option>" +
-                "<option value='1'>value 1</option>" +
-                "</select>");
-            expect(form.query("select").set("value", 0).get("value")).toEqual("");
-        });
-
-        it("should set the type of a button", function() {
-            expect(ugma.render("button").set({
-                type: "button"
-            }).get("type")).toEqual("submit");
-        });
-
-        it("accept object with overriden toString", function() {
-            function Type() {
-                this.name = "bar";
-            }
-
-            Type.prototype.toString = function() {
-                return "foo";
-            };
-
-            input.set(new Type());
-            expect(input.get()).toBe("foo");
-            expect(input).not.toHaveAttr("name", "bar");
-        });
-
-        it("should add/remove boolean attributes", function() {
-            var select = ugma.render("select");
-            select.set("multiple", false);
-            expect(select.get("multiple")).not.toBeUndefined();
-
-            select.set("multiple", true);
-            expect(select.get("multiple")).toBe(true);
-        });
-
+        expect(link).toHaveHtml(value);
+        expect(input).toHaveProp("value", value);
     });
 
+    it("should set select value properly", function() {
+        var select = ugma.render("<select><option>AM</option><option>PM</option></select>");
+
+        expect(select.get()).toBe("AM");
+        select.set("PM");
+        expect(select.get()).toBe("PM");
+        select.set("MM");
+        expect(select.get()).toBe("");
+    });
+
+    it("should set the html of select", function() {
+        var html = "<option>option 1</option><option selected='selected'>option 2</option>";
+
+        var select = ugma.render("select").set("innerHTML", html);
+
+        expect(select.children().length).toEqual(2);
+        expect(select[0].options.length).toEqual(2);
+        expect(select[0].selectedIndex).toEqual(1);
+    });
+
+    it("should set the html of table", function() {
+        var html = "<tbody><tr><td>cell 1</td><td>cell 2</td></tr><tr><td class='cell'>cell 1</td><td>cell 2</td></tr></tbody>";
+
+        var table = ugma.render("table").set("innerHTML", html);
+
+        expect(table.children().length).toEqual(1);
+        expect(table.first().first().children().length).toEqual(2);
+        expect(table.first().last().first().get("className")).toEqual("cell");
+    });
+
+    it("should set the text of an element", function() {
+        var div = ugma.render("div").set("textContent", "some text content");
+        expect(div.get("textContent")).toEqual("some text content");
+        expect(div[0].innerHTML).toEqual("some text content");
+    });
+
+    it("should set the style attribute of an element", function() {
+        var style = "font-size:12px;line-height:23px;";
+        var div = ugma.render("div").set("style", style);
+        expect(div[0].style.lineHeight).toEqual("23px");
+        expect(div[0].style.fontSize).toEqual("12px");
+    });
+
+    it("should set multiple attributes of an element", function() {
+        link.set({
+            id: "apple",
+            "title": "some_title",
+            "innerHTML": "some_content"
+        });
+
+        expect(link[0].id).toEqual("apple");
+        expect(link[0].title).toEqual("some_title");
+        expect(link[0].innerHTML).toEqual("some_content");
+    });
+
+
+    it("should set various attributes of a script element", function() {
+        link.set({
+            type: "text/javascript",
+            defer: "defer"
+        });
+        expect(link[0].type).toEqual("text/javascript");
+        expect(link[0].defer).toBeTruthy();
+    });
+
+    it("should set various attributes of a table element", function() {
+        var table = ugma.render("table").set({
+            border: "2",
+            cellpadding: "3",
+            cellspacing: "4",
+            align: "center"
+        });
+        expect(table.get("border")).toBe("2");
+        expect(table.get("cellPadding")).toBe("3");
+        expect(table.get("cellSpacing")).toBe("4");
+        expect(table[0].align).toEqual("center");
+    });
+
+    it("should replace child element(s) from node with provided element", function() {
+        var div = ugma.render("div>a+a");
+        expect(div[0].childNodes.length).toBe(2);
+        expect(div.value(ugma.render("b"))).toBe(div);
+        expect(div[0].childNodes.length).toBe(1);
+        expect(div.child(0)).toHaveTag("b");
+    });
+
+    it("should set value of text input to provided string value", function() {
+        var input = ugma.render("input[value=foo]");
+        expect(input.value("bar")).toBe(input);
+        expect(input).toHaveProp("value", "bar");
+    });
+
+    it("should call the function and update the attribute with the return value", function() {
+        var spy = jasmine.createSpy("set").and.returnValue("ok");
+
+        link.set(spy);
+        input.set(spy);
+
+        expect(spy.calls.count()).toBe(2);
+
+        expect(link).toHaveHtml("ok");
+        expect(input).toHaveProp("value", "ok");
+    });
+
+    it("should set a falsey value and not an empty string", function() {
+        expect(input.set({
+            value: false
+        }).get("value")).toEqual("false");
+        expect(input.set({
+            value: 0
+        }).get("value")).toEqual("0");
+    });
+
+    it("should set the selected option for a select element to matching string w/o falsy matches", function() {
+        var form = ugma.render("form");
+        form.set("innerHTML", "<select>" +
+            "<option value=''>no value</option>" +
+            "<option value='0'>value 0</option>" +
+            "<option value='1'>value 1</option>" +
+            "</select>");
+        expect(form.query("select").set("value", 0).get("value")).toEqual("");
+    });
+
+    it("should set the type of a button", function() {
+        expect(ugma.render("button").set({
+            type: "button"
+        }).get("type")).toEqual("submit");
+    });
+
+    it("accept object with overriden toString", function() {
+        function Type() {
+            this.name = "bar";
+        }
+
+        Type.prototype.toString = function() {
+            return "foo";
+        };
+
+        input.set(new Type());
+        expect(input.get()).toBe("foo");
+        expect(input).not.toHaveAttr("name", "bar");
+    });
+
+    it("should add/remove boolean attributes", function() {
+        var select = ugma.render("select");
+        select.set("multiple", false);
+        expect(select.get("multiple")).not.toBeUndefined();
+
+        select.set("multiple", true);
+        expect(select.get("multiple")).toBe(true);
+    });
 });
