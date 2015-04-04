@@ -40,8 +40,34 @@ describe("set", function() {
         checkbox.set("checked", "lala");
         expect(checkbox.get("checked")).toBe(true);
 
-
         expect(checkbox.set("checked", null)).not.toHaveAttr("checked");
+    });
+
+    it("should set and remove boolean element property", function() {
+
+        var checkbox = ugma.render("<input type='checkbox'>");
+
+        checkbox.set("checked", "checked");
+
+        expect(checkbox.get("checked")).toBe(true);
+
+        checkbox.set("checked", false).set("checked", true).set("checked", false);
+
+        expect(checkbox[0].checked).toBe(false);
+
+        txt.set("readOnly", true).set("readonly", undefined);
+
+        expect(txt[0].readOnly).toBe(false);
+
+        var first = ugma.render("<div Case='mixed'></div>");
+
+        // case of attribute doesn't matter
+        expect(first.get("case")).toBe("mixed");
+
+        first.set("Case", undefined);
+
+        expect(first.get("case")).toBe(null);
+
     });
 
     it("should return reference to 'this'", function() {
@@ -211,6 +237,12 @@ describe("set", function() {
 
         expect(link.css("font-style")).not.toBe("italic");
         expect(link.css("float")).toBe("left");
+
+        link.set("style", "position:absolute");
+
+        expect(link.css("position")).not.toBe("left");
+        expect(link.css("position")).toBe("absolute");
+
     });
 
     it("should return this for empty nodes", function() {
