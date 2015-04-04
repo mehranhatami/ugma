@@ -9,58 +9,88 @@ import { minErr                        } from "../minErr";
 import { requestFrame, cancelFrame } from "../util/raf";
 
 implement({
-        // Show a single element
-        show: false,
-        // Hide a single element
-        hide: true,
-        // Toggles the CSS `display` of `element`
-        toggle: null
+    /**
+     * Show an element
+     * @param {Function} [callback]
+     * @chainable
+     * @example
+     *    link.show(); // displays element
+     *
+     *    foo.show(function() { });
+     */
+    show: false,
+    /**
+     * Hide an element
+     * @param {Function} [callback]
+     * @chainable
+     * @example
+     * link.hide(); // hides element
+     *
+     * foo.hide(function() { });
+     */
+    hide: true,
 
-    }, ( methodName, condition ) => function( state, callback ) {
+    /**
+     * Toggle an element
+     * @param {Boolean}  
+     * @param {Function} [callback]
+     * @chainable
+     * @example
+     * link.toggle(); // toggles element visibility
+     *
+     * link.toggle(true); // forces 'true' state
+     *
+     * link.toggle(false); // forces 'false' state
+     *
+     * foo.toggle(function() { });
+     */
+    toggle: null
 
-        // Boolean toggle()
-        if ( methodName === "toggle" && is( state, "boolean" ) ) {
-            condition = state;
-            state = null;
-        }
+}, ( methodName, condition ) => function( state, callback ) {
 
-        if ( !is( state, "string" ) ) {
-            callback = state;
-            state = null;
-        }
+    // Boolean toggle()
+    if ( methodName === "toggle" && is( state, "boolean" ) ) {
+        condition = state;
+        state = null;
+    }
 
-        if ( callback && typeof callback !== "function") {
-            minErr( methodName + "()", "This operation is not supported" );
-        }
+    if ( !is(state, "string" ) ) {
+        callback = state;
+        state = null;
+    }
 
-        var node = this[ 0 ],
-            style = node.style,
-            computed = computeStyle( node ),
-            hiding = condition,
-            frameId = this._._frame,
-            done = () => {
-                this.set("aria-hidden", String( hiding ) );
+    if ( callback && !is( callback, "function") ) {
+        minErr( methodName + "()", "This operation is not supported" );
+    }
 
-                style.visibility = hiding ? "hidden" : "inherit";
+    var node = this[ 0 ],
+        style = node.style,
+        computed = computeStyle( node ),
+        hiding = condition,
+        frameId = this._._frame,
+        done = () => {
+            this.set( "aria-hidden", String( hiding ) );
 
-                this._._frame = null;
+            style.visibility = hiding ? "hidden" : "inherit";
 
-                if ( callback ) callback( this );
-            };
+            this._._frame = null;
 
-        if ( !is( hiding, "boolean" ) ) {
-            hiding = computed.visibility !== "hidden";
-        }
+            if ( callback ) callback( this );
+        };
 
-        // cancel previous frame if it exists
-        if ( frameId ) cancelFrame( frameId );
+    if ( !is(hiding, "boolean" ) ) {
+        hiding = computed.visibility !== "hidden";
+    }
 
-        if ( !node.ownerDocument.documentElement.contains( node ) ) {
-            done();
-        } else {
-            this._._frame = requestFrame( done );
-        }
+    // cancel previous frame if it exists
+    if ( frameId ) cancelFrame( frameId );
 
-        return this;
+    if ( !node.ownerDocument.documentElement.contains( node ) ) {
+        done();
+    } else {
+        this._._frame = requestFrame( done );
+    }
 
-}, () => () => RETURN_THIS);
+    return this;
+
+}, () => () => RETURN_THIS );

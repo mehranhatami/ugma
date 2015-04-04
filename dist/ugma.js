@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 21:55:02 GMT
+ * Build date: Sat, 04 Apr 2015 22:15:38 GMT
  */
 (function() {
     "use strict";
@@ -654,13 +654,16 @@
          * @chainable
          * @example
          *     link.content('New value');
+         *
+         *     var div = ugma.render("div>a+b");
+         *     div.value(ugma.render("i"));
          */
          content: function(val) {
             if ( arguments.length === 0 ) {
                 return this.get();
             }
     
-            if (val._ || helpers$$isArray( val ) ) {
+            if ( val._ || helpers$$isArray( val ) ) {
                 return this.set( "" ).append( val );
             }
     
@@ -1534,8 +1537,11 @@
        * @param  {String} [name] property/attribute name or array of names
        * @return {Boolean} true if exist
        * @chainable
+       * @example
+       * 
+       *    link.has('fooBar');  true / false
        */
-        has: function(name) {
+       has: function(name) {
             if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
     
             minErr$$minErr( "has()", "Not a valid property/attribute" );
@@ -1853,6 +1859,8 @@
        /**
         * Calculates offset of the current element
         * @return object with left, top, bottom, right, width and height properties
+        * @example
+        *     link.offset();
         */
         offset: function() {
     
@@ -2194,6 +2202,8 @@
        * @param  {String}   name     property/attribute name
        * @param  {Function}  callback  function for notifying about changes of the property/attribute
        * @chainable
+       * @example
+       *     link.subscribe("value", function(value, oldValue) { });
        */
         subscribe: function(name, callback) {
                 var subscription = this._._subscription || ( this._._subscription = [] );
@@ -2209,6 +2219,8 @@
       * @param  {String}   name    property/attribute name
       * @param  {Function}  callback  function for notifying about changes of the property/attribute
       * @chainable
+      * @example
+      *     link.unsubscribe("value", function(value, oldValue) { });
       */
        unsubscribe: function(name, callback) {
                 var subscription = this._._subscription;
@@ -2225,6 +2237,8 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         *    link.first();
          */
         first: "firstElementChild",
         /**
@@ -2232,6 +2246,9 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         * @example
+         *    link.last();
          */
         last: "lastElementChild",
         /**
@@ -2239,6 +2256,9 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         *    link.next();             
+         *    link.next("i"); 
          */
         next: "nextElementSibling",
         /**
@@ -2246,6 +2266,9 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         *    link.prev();                       
+         *    link.prev("b");                    
          */
         prev: "previousElementSibling",
         /**
@@ -2253,6 +2276,9 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         *    link.prevAll();
+         *    link.prevAll("b");
          */
         nextAll: "nextElementSibling",
         /**
@@ -2260,9 +2286,12 @@
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
+         * @example
+         *     link.nextAll();
+         *     link.nextAll("i");
          */
         prevAll: "previousElementSibling",
-    }, function(methodName, propertyName)  {return function(selector, andSelf) {
+    }, function(methodName, propertyName)  {return function( selector, andSelf ) {
     
         if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( methodName + "()", "The provided argument did not match the expected pattern" );
     
@@ -2271,7 +2300,7 @@
             descendants = all ? [] : null,
             currentNode = this[ 0 ];
     
-        if (!matcher) currentNode = currentNode[propertyName];
+        if ( !matcher ) currentNode = currentNode[ propertyName ];
     
         for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
             if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
@@ -2285,61 +2314,91 @@
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
 
     helpers$$implement({
-            // Show a single element
-            show: false,
-            // Hide a single element
-            hide: true,
-            // Toggles the CSS `display` of `element`
-            toggle: null
+        /**
+         * Show an element
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         *    link.show(); // displays element
+         *
+         *    foo.show(function() { });
+         */
+        show: false,
+        /**
+         * Hide an element
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         * link.hide(); // hides element
+         *
+         * foo.hide(function() { });
+         */
+        hide: true,
     
-        }, function( methodName, condition )  {return function( state, callback ) {var this$0 = this;
+        /**
+         * Toggle an element
+         * @param {Boolean}  
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         * link.toggle(); // toggles element visibility
+         *
+         * link.toggle(true); // forces 'true' state
+         *
+         * link.toggle(false); // forces 'false' state
+         *
+         * foo.toggle(function() { });
+         */
+        toggle: null
     
-            // Boolean toggle()
-            if ( methodName === "toggle" && helpers$$is( state, "boolean" ) ) {
-                condition = state;
-                state = null;
-            }
+    }, function( methodName, condition )  {return function( state, callback ) {var this$0 = this;
     
-            if ( !helpers$$is( state, "string" ) ) {
-                callback = state;
-                state = null;
-            }
+        // Boolean toggle()
+        if ( methodName === "toggle" && helpers$$is( state, "boolean" ) ) {
+            condition = state;
+            state = null;
+        }
     
-            if ( callback && typeof callback !== "function") {
-                minErr$$minErr( methodName + "()", "This operation is not supported" );
-            }
+        if ( !helpers$$is(state, "string" ) ) {
+            callback = state;
+            state = null;
+        }
     
-            var node = this[ 0 ],
-                style = node.style,
-                computed = helpers$$computeStyle( node ),
-                hiding = condition,
-                frameId = this._._frame,
-                done = function()  {
-                    this$0.set("aria-hidden", String( hiding ) );
+        if ( callback && !helpers$$is( callback, "function") ) {
+            minErr$$minErr( methodName + "()", "This operation is not supported" );
+        }
     
-                    style.visibility = hiding ? "hidden" : "inherit";
+        var node = this[ 0 ],
+            style = node.style,
+            computed = helpers$$computeStyle( node ),
+            hiding = condition,
+            frameId = this._._frame,
+            done = function()  {
+                this$0.set( "aria-hidden", String( hiding ) );
     
-                    this$0._._frame = null;
+                style.visibility = hiding ? "hidden" : "inherit";
     
-                    if ( callback ) callback( this$0 );
-                };
+                this$0._._frame = null;
     
-            if ( !helpers$$is( hiding, "boolean" ) ) {
-                hiding = computed.visibility !== "hidden";
-            }
+                if ( callback ) callback( this$0 );
+            };
     
-            // cancel previous frame if it exists
-            if ( frameId ) util$raf$$cancelFrame( frameId );
+        if ( !helpers$$is(hiding, "boolean" ) ) {
+            hiding = computed.visibility !== "hidden";
+        }
     
-            if ( !node.ownerDocument.documentElement.contains( node ) ) {
-                done();
-            } else {
-                this._._frame = util$raf$$requestFrame( done );
-            }
+        // cancel previous frame if it exists
+        if ( frameId ) util$raf$$cancelFrame( frameId );
     
-            return this;
+        if ( !node.ownerDocument.documentElement.contains( node ) ) {
+            done();
+        } else {
+            this._._frame = util$raf$$requestFrame( done );
+        }
     
-    }}, function()  {return function()  {return RETURN_THIS}});
+        return this;
+    
+    }}, function()  {return function()  {return RETURN_THIS}} );
 
     var template$format$$reVar = /\{([\w\-]+)\}/g;
 

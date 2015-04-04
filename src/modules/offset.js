@@ -9,6 +9,8 @@ implement({
    /**
     * Calculates offset of the current element
     * @return object with left, top, bottom, right, width and height properties
+    * @example
+    *     link.offset();
     */
     offset() {
 

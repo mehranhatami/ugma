@@ -11,6 +11,8 @@ implement({
    * @param  {String}   name     property/attribute name
    * @param  {Function}  callback  function for notifying about changes of the property/attribute
    * @chainable
+   * @example
+   *     link.subscribe("value", function(value, oldValue) { });
    */
     subscribe(name, callback) {
             var subscription = this._._subscription || ( this._._subscription = [] );
@@ -26,6 +28,8 @@ implement({
   * @param  {String}   name    property/attribute name
   * @param  {Function}  callback  function for notifying about changes of the property/attribute
   * @chainable
+  * @example
+  *     link.unsubscribe("value", function(value, oldValue) { });
   */
    unsubscribe(name, callback) {
             var subscription = this._._subscription;

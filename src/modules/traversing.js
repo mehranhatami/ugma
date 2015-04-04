@@ -13,6 +13,8 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     *    link.first();
      */
     first: "firstElementChild",
     /**
@@ -20,6 +22,9 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     * @example
+     *    link.last();
      */
     last: "lastElementChild",
     /**
@@ -27,6 +32,9 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     *    link.next();             
+     *    link.next("i"); 
      */
     next: "nextElementSibling",
     /**
@@ -34,6 +42,9 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     *    link.prev();                       
+     *    link.prev("b");                    
      */
     prev: "previousElementSibling",
     /**
@@ -41,6 +52,9 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     *    link.prevAll();
+     *    link.prevAll("b");
      */
     nextAll: "nextElementSibling",
     /**
@@ -48,9 +62,12 @@ implement({
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
+     * @example
+     *     link.nextAll();
+     *     link.nextAll("i");
      */
     prevAll: "previousElementSibling",
-}, (methodName, propertyName) => function(selector, andSelf) {
+}, (methodName, propertyName) => function( selector, andSelf ) {
 
     if ( selector && !is( selector, "string" ) ) minErr( methodName + "()", "The provided argument did not match the expected pattern" );
 
@@ -59,7 +76,7 @@ implement({
         descendants = all ? [] : null,
         currentNode = this[ 0 ];
 
-    if (!matcher) currentNode = currentNode[propertyName];
+    if ( !matcher ) currentNode = currentNode[ propertyName ];
 
     for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
         if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {

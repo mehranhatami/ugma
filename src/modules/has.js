@@ -12,8 +12,11 @@ implement({
    * @param  {String} [name] property/attribute name or array of names
    * @return {Boolean} true if exist
    * @chainable
+   * @example
+   * 
+   *    link.has('fooBar');  true / false
    */
-    has(name) {
+   has(name) {
         if ( is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
 
         minErr( "has()", "Not a valid property/attribute" );
