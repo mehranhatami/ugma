@@ -9,21 +9,27 @@ import { implement, map, filter, is  } from "../helpers";
 
 implement({
     /**
-     * Returns the first child node in a collection of children filtered by index
-     * @param  {Number} index
-     * @chainable
-     */
-    child: false,
-    /**
-     * eturns all child nodes in a collection of children filtered by optional selector
+     * Returns all child nodes in a collection of children filtered by optional selector
      * @param  {String} [selector] css selector
-     * @function
+     * @example
+     *     link.children();
+     *     link.children('.filter');
      */
-    children: true
+    children: true,
+    /**
+     * Returns the first child node in a collection of children filtered by index
+     * @param  {Number} index child index
+     * @chainable
+     * @example
+     *   ul.child(0);  // => the first <li>
+     *   ul.child(2);  // => 3th child <li>
+     *   ul.child(-1); // => last child <li>     
+     */
+    child: false
 
 }, ( methodName, all ) => function( selector ) {
-    if (selector && (!is(selector, all ? "string" : "number" ) ) ) {
-        minErr(methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
+    if (selector && ( !is( selector, all ? "string" : "number" ) ) ) {
+        minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
     }
 
     var node = this[ 0 ],

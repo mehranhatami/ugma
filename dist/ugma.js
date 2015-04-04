@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 14:10:20 GMT
+ * Build date: Sat, 04 Apr 2015 14:17:56 GMT
  */
 (function() {
     "use strict";
@@ -402,21 +402,27 @@
 
     helpers$$implement({
         /**
-         * Returns the first child node in a collection of children filtered by index
-         * @param  {Number} index
-         * @chainable
-         */
-        child: false,
-        /**
-         * eturns all child nodes in a collection of children filtered by optional selector
+         * Returns all child nodes in a collection of children filtered by optional selector
          * @param  {String} [selector] css selector
-         * @function
+         * @example
+         *     link.children();
+         *     link.children('.filter');
          */
-        children: true
+        children: true,
+        /**
+         * Returns the first child node in a collection of children filtered by index
+         * @param  {Number} index child index
+         * @chainable
+         * @example
+         *   ul.child(0);  // => the first <li>
+         *   ul.child(2);  // => 3th child <li>
+         *   ul.child(-1); // => last child <li>     
+         */
+        child: false
     
     }, function( methodName, all )  {return function( selector ) {
-        if (selector && (!helpers$$is(selector, all ? "string" : "number" ) ) ) {
-            minErr$$minErr(methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
+        if (selector && ( !helpers$$is( selector, all ? "string" : "number" ) ) ) {
+            minErr$$minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
         }
     
         var node = this[ 0 ],
@@ -578,10 +584,12 @@
 
     helpers$$implement({
      /**
-      * Find parent element filtered by optional selector 
+      * Return the closest element matching the selector
       * @param {String} [selector] css selector
       * @Following the Element#closest specs  
       * @chainable
+      * @example
+      *    link.closest('.mehran');
       */
         closest: function(selector) {
             if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( "closest()", "The string did not match the expected pattern" );
@@ -1825,9 +1833,12 @@
     var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
     helpers$$implement({
        /**
-         * Check if the element matches a selector against an element
-         * @param  {String}   selector  css selector for checking
+         * Returns `true` if the element would be selected by the specified selector string; otherwise, returns `false`.
+         * @param  {String} selector Selector to match against element
          * @return {Boolean} returns true if success and false otherwise
+         *
+         * @example
+         *    link.matches('.match');
          */
         matches: function(selector) {
             if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );

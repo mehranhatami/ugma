@@ -11,9 +11,12 @@ import   pseudoClasses        from "../util/pseudoClasses";
  // Reference: https://dom.spec.whatwg.org/#dom-element-matches
 implement({
    /**
-     * Check if the element matches a selector against an element
-     * @param  {String}   selector  css selector for checking
+     * Returns `true` if the element would be selected by the specified selector string; otherwise, returns `false`.
+     * @param  {String} selector Selector to match against element
      * @return {Boolean} returns true if success and false otherwise
+     *
+     * @example
+     *    link.matches('.match');
      */
     matches( selector ) {
         if ( !selector || !is(selector, "string") ) minErr("matches()", "The string did not match the expected pattern" );

@@ -11,10 +11,12 @@ import { minErr                  } from "../minErr";
 
 implement({
  /**
-  * Find parent element filtered by optional selector 
+  * Return the closest element matching the selector
   * @param {String} [selector] css selector
   * @Following the Element#closest specs  
   * @chainable
+  * @example
+  *    link.closest('.mehran');
   */
     closest( selector ) {
         if ( selector && !is( selector, "string" ) ) minErr( "closest()", "The string did not match the expected pattern" );
