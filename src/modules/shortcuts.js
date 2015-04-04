@@ -22,11 +22,11 @@ implement({
      * @param  {String}   value 
      */
     attr: "attribute",
-}, ( methodName, propertyName ) => function( value ) {
+}, ( methodName, property ) => function( value ) {
 
     if ( arguments.length === 0 ) {
-        return this.get( methodName );
+        return this.get( property );
     }
-    this.set( methodName, value );
+    this.set( property, value );
 
 }, ( methodName ) => () => () => RETURN_THIS );
