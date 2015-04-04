@@ -56,4 +56,8 @@ forOwn({ submit: true, reset: true }, ( key, value ) => {
     pseudoClasses[ ":" + key ] = createButtonPseudo( key );
 });
 
+/*
+ * Export interface
+ */
+
 export default pseudoClasses;

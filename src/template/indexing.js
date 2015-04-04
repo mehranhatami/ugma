@@ -17,5 +17,9 @@ var reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
         }
         return result;
     };
-    
+  
+/*
+ * Export interface
+ */
+  
 export { indexing };

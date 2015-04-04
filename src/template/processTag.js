@@ -8,4 +8,8 @@ function processTag(tag) {
     return tagCache[tag] || (tagCache[tag] = "<" + tag + "></" + tag + ">");
 }
 
+/*
+ * Export interface
+ */
+
 export { processTag };

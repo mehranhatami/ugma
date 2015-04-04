@@ -24,7 +24,7 @@ if ("onfocusin" in DOCUMENT.documentElement) {
     // firefox doesn't support focusin/focusout events
     eventHooks.focus = eventHooks.blur = ( handler ) => { handler.capturing = true };
 }
-/* istanbul ignore else */
+
 if (DOCUMENT.createElement( "input" ).validity) {
     eventHooks.invalid = ( handler ) => {
         handler.capturing = true;
@@ -53,6 +53,8 @@ if (INTERNET_EXPLORER < 10) {
     });
 }
 
-/* istanbul ignore if */
+/*
+ * Export interface
+ */
 
 export default eventHooks;

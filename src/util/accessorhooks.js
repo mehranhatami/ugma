@@ -184,4 +184,8 @@ each((
         node.innerHTML = value;
     };
 
+/*
+ * Export interface
+ */
+
 export default accessorHooks;

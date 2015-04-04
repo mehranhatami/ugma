@@ -32,4 +32,8 @@ var lastTime = 0,
 // Works around a rare bug in Safari 6 where the first request is never invoked.
 requestFrame( () => () => {} );
 
+/*
+ * Export interface
+ */
+
 export { requestFrame, cancelFrame };

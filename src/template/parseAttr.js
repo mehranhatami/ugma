@@ -17,4 +17,8 @@ function parseAttr( quote, name, value, rawValue ) {
     }
     return " " + name + "=" + quote + value + quote;
 }
+
+/*
+ * Export interface
+ */
 export { parseAttr };

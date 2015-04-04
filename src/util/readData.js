@@ -25,4 +25,8 @@ var multiDash = /([A-Z])/g,
     return value;
 };
 
+/*
+ * Export interface
+ */
+
 export { readData };

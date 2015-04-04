@@ -5,6 +5,10 @@
 import { DOCUMENT, WINDOW, RCSSNUM } from "../const";
 import { Document, Element, Node   } from "../core/core";
 
+/*
+ * Export interface
+ */
+
 export function adjustCSS(root, prop, parts, computed) {
 
     var adjusted,

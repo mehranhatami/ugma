@@ -35,6 +35,10 @@ var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
         return false;
     };
 
+/*
+ * Export interface
+ */
+
 export default function(selector, context) {
 
     if (is(selector, "string")) {

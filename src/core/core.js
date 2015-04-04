@@ -92,4 +92,7 @@ dummyTree = uClass(nodeTree, {
 // Set a new document, and define a local copy of ugma
 var ugma = new domTree( document );
 
+/*
+ * Export interface
+ */
 export { nodeTree, dummyTree, domTree, ugma };

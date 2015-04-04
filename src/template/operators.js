@@ -2,6 +2,11 @@
  * @module operators
  */
 
+
+/*
+ * Export interface
+ */
+
 export default {
     "(" : 1,
     ")" : 2,

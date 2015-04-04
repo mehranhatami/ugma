@@ -78,4 +78,8 @@ function EventHandler( el, eventType, selector, callback, props, once, namespace
     return handler;
 }
 
+/*
+ * Export interface
+ */
+
 export default EventHandler;

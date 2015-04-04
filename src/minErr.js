@@ -2,6 +2,10 @@
  * @module minErr
  */
 
+/*
+ * Export interface
+ */
+
 export function minErr(module, msg) {
     // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
     // use the arrow method here. And the function will fail BIG TIME !!

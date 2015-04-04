@@ -67,4 +67,8 @@ cssHooks._default = function(name, style) {
     return this.get[ name ] = this.set[ name ] = propName;
 };
 
+/*
+ * Export interface
+ */
+
 export default cssHooks;

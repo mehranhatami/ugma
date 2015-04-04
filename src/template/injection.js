@@ -7,4 +7,7 @@ function injection(term, adjusted) {
      };
  }
 
+/*
+ * Export interface
+ */
  export { injection };

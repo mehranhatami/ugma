@@ -80,4 +80,8 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     return template.length === 1 ? processTag( stack[ 0 ] ) : stack[ 0 ].join( "" );
 };
 
+/*
+ * Export interface
+ */
+
 export { process };
