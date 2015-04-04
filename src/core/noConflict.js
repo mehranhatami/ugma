@@ -20,6 +20,7 @@ var _ugma = WINDOW.ugma;
  *     var ugma = ugma.noConflict();
  */
 
+ugma.noConflict = () => {
     if ( WINDOW.ugma === ugma ) WINDOW.ugma = _ugma;
     return ugma;
 };
