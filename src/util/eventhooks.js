@@ -5,13 +5,13 @@
 import { DOCUMENT, WINDOW, INTERNET_EXPLORER  } from "../const";
 import { ugma                                 } from "../core/core";
 import { each                                 } from "../helpers";
-import { DebouncedWrapper                     } from "../util/DebouncedWrapper";
+import { debounce                             } from "../util/debounce";
 
 var eventHooks = {};
 
  // Special events for the frame events 'hook'
     each(("touchmove mousewheel scroll mousemove drag").split(" "), ( name ) => {
-        eventHooks[ name ] = DebouncedWrapper;
+        eventHooks[ name ] = debounce;
     });
 
 // Support: Firefox, Chrome, Safari

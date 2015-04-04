@@ -12,7 +12,7 @@ var langFix = /_/g,
     accessorHooks = {
 
         get: {
-
+            // special case - setting a style
             style: ( node ) => node.style.cssText,
             title: ( node ) => {
                 var doc = node.ownerDocument;
