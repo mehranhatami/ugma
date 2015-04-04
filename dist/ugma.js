@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 12:41:53 GMT
+ * Build date: Sat, 04 Apr 2015 14:10:20 GMT
  */
 (function() {
     "use strict";
@@ -55,178 +55,199 @@
     var helpers$$slice = helpers$$arrayProto.slice;
 
     var helpers$$isArray = Array.isArray;
+
     /**
      * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+     *
+     * @param {Array} collection
+     * @param {Function} callback
+     * @return {Array}
+     * @private
      */
     var helpers$$each = function(collection, callback)  {
-                var arr = collection || [],
-                    index = -1,
-                    length = arr.length;
-                while ( ++index < length ) {
-                    if ( callback( arr[ index ], index, arr ) === false) {
-                        break;
-                    }
-                }
-            return arr;
-        },
-    
-        /**
-         * Create a new array with the results of calling a provided function 
-         * on every element in this array.
-         */
-        helpers$$map = function(collection, callback)  {
-            var arr = collection || [],
-                result = [];
-          // Go through the array, translating each of the items to their
-          // new value (or values).
-            helpers$$each(arr, function( value, key )  {
-                result.push( callback( value, key ) );
-            });
-            return result;
-        },
-    
-     /**
-       * Return a boolean for if typeof obj is exactly type.
-       *
-       * @param {String} [obj] String to test whether or not it is a typeof.
-       * @param {String} [type] String that should match the typeof
-       * @return {boolean} 
+               var arr = collection || [],
+                   index = -1,
+                   length = arr.length;
+               while ( ++index < length ) {
+                   if ( callback( arr[ index ], index, arr ) === false) {
+                       break;
+                   }
+               }
+           return arr;
+       },
+   
+      /**
+       * Create a new collection by executing the callback for each element in the collection.
        * @example
-       *     is(function(), "function");
-       *     // true
+       *     link.map(function(element) {
+       *         return element.getAttribute('name')
+       *     });
+       *     // ['ever', 'green']
+       */     
+        
+       helpers$$map = function(collection, callback)  {
+           var arr = collection || [],
+               result = [];
+         // Go through the array, translating each of the items to their
+         // new value (or values).
+           helpers$$each(arr, function( value, key )  {
+               result.push( callback( value, key ) );
+           });
+           return result;
+       },
+   
+    /**
+      * Return a boolean for if typeof obj is exactly type.
+      *
+      * @param {String} [obj] String to test whether or not it is a typeof.
+      * @param {String} [type] String that should match the typeof
+      * @return {boolean} 
+      * @example
+      *     is(function(), "function");
+      *     // true
+      * @example
+      *     is({}, "function");
+      *     // false
+      */    
+       helpers$$is = function(obj, type)  {
+           return typeof obj === type;
+       },
+   
+       // Iterates over own enumerable properties of an object, executing  the callback for each property.
+       helpers$$forOwn = function(object, callback)  {
+   
+               var obj = object || {},
+                   key,
+                   index = -1,
+                   props = Object.keys( obj ),
+                   length = props.length;
+   
+               while (++index < length) {
+   
+                   key = props[ index ];
+   
+                   if ( callback( key, obj[ key ], obj ) === false) {
+                       break;
+                   }
+               }
+           return obj;
+       },
+   
+      /**
+       * Create a new array with all elements that pass the test implemented by the provided function
        * @example
-       *     is({}, "function");
-       *     // false
+       *     link.filter('.active');
+       * @example
+       *     link.filter(function(element) {
+       *         return element.hasAttribute('active')
+       *     });
        */    
-        helpers$$is = function(obj, type)  {
-            return typeof obj === type;
-        },
-    
-        // Iterates over own enumerable properties of an object, executing  the callback for each property.
-        helpers$$forOwn = function(object, callback)  {
-    
-                var obj = object || {},
-                    key,
-                    index = -1,
-                    props = Object.keys( obj ),
-                    length = props.length;
-    
-                while (++index < length) {
-    
-                    key = props[ index ];
-    
-                    if ( callback( key, obj[ key ], obj ) === false) {
-                        break;
-                    }
-                }
-            return obj;
-        },
-        // create a new array with all elements that pass the test implemented by the provided function.
-        helpers$$filter = function( collection, predicate )  {
-            var arr = collection || [],
-                result = [];
-    
-            helpers$$forOwn( arr, function( index, value )  {
-                if ( predicate( value, index, arr ) ) {
-                    result.push( value );
-                }
-            });
-            return result;
-        },
-    
-        helpers$$trim = function( value )  {
-            return helpers$$is( value, "string" ) ? value.trim() : value;
-        },
-    
-        helpers$$inArray = function(arr, searchElement, fromIndex)  {
-            fromIndex = fromIndex || 0;
-            /* jshint ignore:start */
-            if ( fromIndex > arr.length ) {
-    
-                arr - 1;
-            }
-            /* jshint ignore:end */
-            var i = 0,
-                len = arr.length;
-    
-            for ( ; i < len; i++ ) {
-                if ( arr[ i ] === searchElement && fromIndex <= i ) {
-                    return i;
-                }
-    
-                if ( arr[ i ] === searchElement && fromIndex > i ) {
-                    return -1;
-                }
-            }
-            return -1;
-        },
-    
-        helpers$$invoke = function(context, fn, arg1, arg2)  {
-            if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
-    
-            try {
-                return fn.call(context, arg1, arg2);
-            } catch (err) {
-                WINDOW.setTimeout( function()  { throw err }, 1 );
-    
-                return false;
-            }
-        },
-        // internal method to extend ugma with methods - either 
-        // the nodeTree or the domTree
-        helpers$$implement = function(obj, callback, mixin)  {
-    
-            if (!callback) callback = function(method, strategy)  {return strategy};
-    
-            helpers$$forOwn(obj, function( method, func)  {
-                var args = [ method] .concat( func );
-                (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
-    
-                if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
-            });
-        },
-    
-        // Faster alternative then slice.call
-        helpers$$sliceArgs = function(arg)  {
-            var i = arg.length,
-                args = new Array(i || 0);
-    
-            while (i--) {
-                args[ i ] = arg[ i ];
-            }
-            return args;
-        },
-    
-        helpers$$reDash = /([\:\-\_]+(.))/g,
-        helpers$$mozHack = /^moz([A-Z])/,
-    
-        // Convert dashed to camelCase
-        // Support: IE9-11+
-        helpers$$camelize = function( prop )  {
-            return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
-                return offset ? letter.toUpperCase() : letter;
-            }).replace (helpers$$mozHack, "Moz$1" );
-        },
-    
-        // getComputedStyle takes a pseudoClass as an optional argument, so do we
-        // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
-        helpers$$computeStyle = function( node, pseudoElement )  {
-            /* istanbul ignore if */
-            pseudoElement = pseudoElement ? pseudoElement : "";
-            // Support: IE<=11+, Firefox<=30+
-            // IE throws on elements created in popups
-            // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-            if (node.ownerDocument.defaultView.opener) {
-                return ( node.ownerDocument.defaultView ||
-                    // This will work if the ownerDocument is a shadow DOM element
-                    DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
-            }
-            return WINDOW.getComputedStyle(node, pseudoElement);
-        },
-    
-        helpers$$injectElement = function(node)  {
-            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
-        };
+       
+       helpers$$filter = function( collection, predicate )  {
+           var arr = collection || [],
+               result = [];
+   
+           helpers$$forOwn( arr, function( index, value )  {
+               if ( predicate( value, index, arr ) ) {
+                   result.push( value );
+               }
+           });
+           return result;
+       },
+   
+       helpers$$trim = function( value )  {
+           return helpers$$is( value, "string" ) ? value.trim() : value;
+       },
+   
+       helpers$$inArray = function(arr, searchElement, fromIndex)  {
+           fromIndex = fromIndex || 0;
+           /* jshint ignore:start */
+           if ( fromIndex > arr.length ) {
+   
+               arr - 1;
+           }
+           /* jshint ignore:end */
+           var i = 0,
+               len = arr.length;
+   
+           for ( ; i < len; i++ ) {
+               if ( arr[ i ] === searchElement && fromIndex <= i ) {
+                   return i;
+               }
+   
+               if ( arr[ i ] === searchElement && fromIndex > i ) {
+                   return -1;
+               }
+           }
+           return -1;
+       },
+   
+       helpers$$invoke = function(context, fn, arg1, arg2)  {
+           if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
+   
+           try {
+               return fn.call(context, arg1, arg2);
+           } catch (err) {
+               WINDOW.setTimeout( function()  { throw err }, 1 );
+   
+               return false;
+           }
+       },
+       // internal method to extend ugma with methods - either 
+       // the nodeTree or the domTree
+       helpers$$implement = function(obj, callback, mixin)  {
+   
+           if (!callback) callback = function(method, strategy)  {return strategy};
+   
+           helpers$$forOwn(obj, function( method, func)  {
+               var args = [ method] .concat( func );
+               (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
+   
+               if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
+           });
+       },
+   
+       // Faster alternative then slice.call
+       helpers$$sliceArgs = function(arg)  {
+           var i = arg.length,
+               args = new Array(i || 0);
+   
+           while (i--) {
+               args[ i ] = arg[ i ];
+           }
+           return args;
+       },
+   
+       helpers$$reDash = /([\:\-\_]+(.))/g,
+       helpers$$mozHack = /^moz([A-Z])/,
+   
+       // Convert dashed to camelCase
+       // Support: IE9-11+
+       helpers$$camelize = function( prop )  {
+           return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
+               return offset ? letter.toUpperCase() : letter;
+           }).replace (helpers$$mozHack, "Moz$1" );
+       },
+   
+       // getComputedStyle takes a pseudoClass as an optional argument, so do we
+       // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
+       helpers$$computeStyle = function( node, pseudoElement )  {
+           /* istanbul ignore if */
+           pseudoElement = pseudoElement ? pseudoElement : "";
+           // Support: IE<=11+, Firefox<=30+
+           // IE throws on elements created in popups
+           // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
+           if (node.ownerDocument.defaultView.opener) {
+               return ( node.ownerDocument.defaultView ||
+                   // This will work if the ownerDocument is a shadow DOM element
+                   DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
+           }
+           return WINDOW.getComputedStyle(node, pseudoElement);
+       },
+   
+       helpers$$injectElement = function(node)  {
+           if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
+       };
 
     var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree;
 
@@ -383,7 +404,7 @@
         /**
          * Returns the first child node in a collection of children filtered by index
          * @param  {Number} index
-         * @function
+         * @chainable
          */
         child: false,
         /**
@@ -423,8 +444,11 @@
        /**
         * Adds a class(es) or an array of class names
         * @param  {...String} classNames class name(s)
-        * @function
-        */    
+        * @chainable
+        * @example
+        * link.addClass('bar');
+        * link.addClass('bar', 'foo');
+        */   
         addClass: [RETURN_THIS, "add", function( node, token )  {
             var existingClasses = (" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ");
@@ -438,8 +462,11 @@
        /**
         * Remove class(es) or an array of class names from element
         * @param  {...String} classNames class name(s)
-        * @function
-        */    
+        * @chainable
+        * @example
+        * link.removeClass('bar');
+        * link.removeClass('bar' , 'foo');
+        */
         removeClass: [RETURN_THIS, "remove", function( node, token )  {
             node[ 0 ].className = helpers$$trim((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ")
@@ -448,8 +475,10 @@
        /**
         * Check if element contains class name
         * @param  {...String} classNames class name(s)
-        * @function
-        */    
+        * @chainable
+        * @example
+        * link.hasClass('bar');
+        */
         hasClass: [RETURN_FALSE, "contains", false, function( node, token )  {
             return ((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ").indexOf(" " + token + " ") > -1);
@@ -457,7 +486,10 @@
        /**
         * Toggle the `class` in the class list. Optionally force state via `condition`
         * @param  {...String} classNames class name(s)
-        * @function
+        * @chainable
+        * @example
+        * link.toggleClass('bar');
+        * link.toggleClass('bar', 'foo');
         */    
         toggleClass: [RETURN_FALSE, "toggle", function( el, token )  {
             var hasClass = el.hasClass(token);
@@ -515,10 +547,14 @@
       /**
        * Clear a property/attribute on the node
        * @param  {String}   name    property/attribute name
+       * @chainable
+       * @example
+       *     link.clear('attrName');
+       *     link.clear('propName');
        */
+    
         clear: function(name) {
-            this[ 0 ].removeAttribute( name );
-            return this;
+           return this.set(name, undefined);
         }
     
     }, null, function()  {return RETURN_THIS});
@@ -545,7 +581,7 @@
       * Find parent element filtered by optional selector 
       * @param {String} [selector] css selector
       * @Following the Element#closest specs  
-      * @function
+      * @chainable
       */
         closest: function(selector) {
             if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( "closest()", "The string did not match the expected pattern" );
@@ -573,6 +609,10 @@
       * Check if element is inside of context
       * @param  {ugma wrapped Object} element to check
       * @return {Boolean} returns true if success and false otherwise
+      *
+      * @example
+      *   ugma.contains(childElement);
+      *     // true/false
       *
       * Note! 
       *
@@ -603,8 +643,10 @@
         /**
          * Read or write inner content of the element
          * @param  {Mixed}  [content]  optional value to set
-         * @function
-         */    
+         * @chainable
+         * @example
+         *     link.content('New value');
+         */
          content: function(val) {
             if ( arguments.length === 0 ) {
                 return this.get();
@@ -731,7 +773,12 @@
         * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
         * @param  {String|Object}      name    style property name or key/value object
         * @param  {String|Function}    [value] style property value or functor
-        */   
+        * @chainable
+        * @example
+        * link.css('padding-left'); // get
+        * link.css('color', '#f00'); // set
+        * link.css({'border-width', '1px'}, {'display', 'inline-block}); // set multiple
+        */
         css: function(name, value) {var this$0 = this;
             
             var len = arguments.length,
@@ -845,7 +892,11 @@
        * @param  {String|Object|Array}  key(s)  data key or key/value object or array of keys
        * @param  {Object}               [value] data value to store
        * @return {Object} data entry value or this in case of setter
-       */
+       * @chainable
+       * @example
+       *     link.data('foo'); // get
+       *     link.data('bar', {any: 'data'}); // set
+       */   
         data: function(key, value) {var this$0 = this;
             
             var len = arguments.length;
@@ -886,7 +937,9 @@
     helpers$$implement({
       /**
         * Remove child nodes of current element from the DOM
-        * @function
+        * @chainable
+        * @example
+        *    link.empty();
         */
         empty: function() { return this.set( "" ) }
     }, null, function()  {return RETURN_THIS});
@@ -1060,6 +1113,10 @@
         * @param  {String}        [selector]  event selector filter
         * @param  {Array}         [args]      array of handler arguments to pass into the callback
         * @param  {Function}      callback    event callback
+        * @chainable
+        * @example
+        *    link.on('click', callback);
+        *    link.on(['click', 'focus'], '.item', handler);
         */
         on: false,
        /**
@@ -1142,6 +1199,10 @@
         * @param  {String}          type        type of event
         * @param  {String}          [selector]  event selector
         * @param  {Function|String} [callback] event handler
+        * @chainable
+        * @example
+        *     link.off('click', callback);
+        *     link.off();
         */
         off: function(eventType, selector, callback) {
             if ( !helpers$$is( eventType,"string" ) ) minErr$$minErr("off()", "The first argument need to be a string" );
@@ -1197,7 +1258,10 @@
         * @param  {String}  type  type of event
         * @param  {...Object}     [args]  extra arguments to pass into each event handler
         * @return {Boolean} true if default action wasn't prevented
-        */    
+        * @chainable
+        * @example
+        *    link.trigger('anyEventType');
+        */
         trigger: function(type) {
         var node = this[ 0 ],
             e, eventType, canContinue;
@@ -1418,6 +1482,9 @@
        * Get HTML5 Custom Data Attributes, property or attribute value by name
        * @param  {String|Array}  name  property or attribute name or array of names
        * @return {String|Object} a value of property or attribute
+       * @chainable
+       * @example
+       *   link.get('attrName'); // get
        */
         get: function(name) {var this$0 = this;
             var node = this[ 0 ],
@@ -1458,6 +1525,7 @@
        * Returns true if the requested attribute/property is specified on the given element, and false otherwise.
        * @param  {String} [name] property/attribute name or array of names
        * @return {Boolean} true if exist
+       * @chainable
        */
         has: function(name) {
             if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
@@ -1540,31 +1608,84 @@
     // Section: 4.2.5 Interface ChildNode
 
     helpers$$implement({
-        // Inserts nodes after the last child of node, while replacing strings 
-        // in nodes with native element or equivalent html string.
+        
+       /**
+        *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *     link.append('<p>more</p>');
+        *     link.append(ugma.render("b"));
+        */
         append: [ "beforeend", true, false, function( node, relatedNode )  {
             node.appendChild( relatedNode );
         }],
-        // Inserts nodes before the first child of node, while replacing strings 
-        // in nodes with native element or equivalent html strings.
+       /**
+        * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *     link.prepend('<span>start</span>');
+        */    
         prepend: [ "afterbegin", true, false, function( node, relatedNode )  {
             node.insertBefore( relatedNode, node.firstChild );
         }],
-        // Insert nodes just before node while replacing strings in nodes with 
-        // native element or a html string.
+       /**
+        * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *     link.before('<p>prefix</p>');
+        *     link.before(ugma.render("i"), ugma.render("u"));
+        */    
         before: [ "beforebegin", true, true, function( node, relatedNode )  {
             node.parentNode.insertBefore( relatedNode, node );
         }],
-        // Insert nodes just after node while replacing strings in nodes with 
-        // native element or a html string .
+       /**
+        * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *     link.after('<span>suf</span><span>fix</span>');
+        *     link.after(ugma.render("b"));   
+        */    
         after: [ "afterend", true, true, function( node, relatedNode )  {
             node.parentNode.insertBefore( relatedNode, node.nextSibling );
         }],
-        // Replaces node with nodes, while replacing strings in nodes with 
-        // native element or html string.
+       /**
+        * Replace current element with HTMLString or a ugma wrapped object
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *
+        *     var div = ugma.render("div>span>`foo`");   
+        *         div.child(0).replace(ugma.render("b>`bar`"));
+        */    
         replaceWith: [ "", false, true, function( node, relatedNode )  {
             node.parentNode.replaceChild( relatedNode, node );
         }],
+       /**
+        * Remove current element from the DOM
+        *
+        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @return {Object} The wrapped collection
+        * @chainable
+        * @example
+        *     link.remove();
+        *
+        *     var foo = ugma.query(".bar");
+        *     bar.remove();    
+        */    
         remove: [ "", false, true, function( node )  {
             node.parentNode.removeChild( node );
         }]
@@ -1853,9 +1974,13 @@
 
     helpers$$implement({
       /**
-       * Execute callback when DOM is ready
+       * Execute callback when `DOMContentLoaded` fires for `document`, or immediately if called afterwards.
        * @param {Function} callback event listener
-       */
+       * @return {Object} The wrapped collection
+       * @example
+       *     ugma.ready(callback);
+       */  
+      
         ready: function( fn ) {
             if ( !helpers$$is( fn, "function") ) minErr$$minErr("ready()", "The provided 'callback' is not a function.");
     
@@ -1878,6 +2003,10 @@
        * Set property/attribute value by name
        * @param {String|Object|Array}   name    property/attribute name
        * @param {String|Function}       value   property/attribute value or functor
+       * @chainable
+       * @example
+       *    link.set('attrName', 'attrValue'); // set
+       *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
        */
         set: function(name, value) {var this$0 = this;
     
@@ -2013,19 +2142,32 @@
     
         /**
          * Get / set text content of a node
-         * @param  {String}   value   
+         * @param {String|Object|Array}   value   textContent
+         * @chainable
+         * @example
+         *     link.text('New content');
          */
         text: "textContent",
         /**
          * Get / set HTML content of a node
-         * @param  {String}   value   
+         * @param {String|Object|Array}   value   innerHTML content
+         * @chainable
+         * @example
+         *     link.html();
+         *     link.html('<span>more</span>');
          */
         html: "innerHTML",
         /**
          * Get / set the value attribute on a node
-         * @param  {String}   value 
-         */
+         * @param {String|Object|Array}   value   attribute name
+         * @chainable
+         * @example
+         *     link.attr('attrName'); // get
+         *     link.attr('attrName', 'attrValue'); // set
+         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+         */   
         attr: "attribute",
+       
     }, function( methodName, property )  {return function( value ) {
     
         if ( arguments.length === 0 ) {
@@ -2040,6 +2182,7 @@
        * Subscribe on particular properties / attributes, and get notified if they are changing
        * @param  {String}   name     property/attribute name
        * @param  {Function}  callback  function for notifying about changes of the property/attribute
+       * @chainable
        */
         subscribe: function(name, callback) {
                 var subscription = this._._subscription || ( this._._subscription = [] );
@@ -2054,6 +2197,7 @@
       * Cancel / stop a property / attribute subscription
       * @param  {String}   name    property/attribute name
       * @param  {Function}  callback  function for notifying about changes of the property/attribute
+      * @chainable
       */
        unsubscribe: function(name, callback) {
                 var subscription = this._._subscription;
@@ -2069,42 +2213,42 @@
          * Find first element filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         first: "firstElementChild",
         /**
          * Find last element filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         last: "lastElementChild",
         /**
          * Find next sibling element filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         next: "nextElementSibling",
         /**
          * Find previous sibling element filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         prev: "previousElementSibling",
         /**
          * Find all next sibling elements filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         nextAll: "nextElementSibling",
         /**
          * Find all previous sibling elements filtered by optional selector
          * @param {String} [selector] css selector
          * @param {Boolean} [andSelf] if true than search will start from the current element
-         * @function
+         * @chainable
          */
         prevAll: "previousElementSibling",
     }, function(methodName, propertyName)  {return function(selector, andSelf) {
@@ -2539,15 +2683,23 @@
         }
     });
 
-    // Map over 'ugma' in case of overwrite
+    /*
+     * Map over the previous value of the `ugma` namespace variable, so that it can be restored later on.
+     */
+
     var core$noConflict$$_ugma = WINDOW.ugma;
 
-    // Runs ugma in *noConflict* mode, returning the original `ugma` namespace.
-    core$core$$ugma.noConflict = function() {
-        if ( WINDOW.ugma === core$core$$ugma ) {
-            WINDOW.ugma = core$noConflict$$_ugma;
-        }
-    
+    /**
+     * In case another library sets the `ugma` variable before ugma does,
+     * this method can be used to return the original `ugma` namespace to that other library.
+     *
+     * @return {Object} Reference to ugma.
+     * @example
+     *     var ugma = ugma.noConflict();
+     */
+
+    core$core$$ugma.noConflict = function()  {
+        if ( WINDOW.ugma === core$core$$ugma ) WINDOW.ugma = core$noConflict$$_ugma;
         return core$core$$ugma;
     };
 

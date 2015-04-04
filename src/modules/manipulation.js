@@ -12,31 +12,84 @@ import { implement, isArray, trim, each, is, sliceArgs } from "../helpers";
 // Section: 4.2.5 Interface ChildNode
 
 implement({
-    // Inserts nodes after the last child of node, while replacing strings 
-    // in nodes with native element or equivalent html string.
+    
+   /**
+    *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *     link.append('<p>more</p>');
+    *     link.append(ugma.render("b"));
+    */
     append: [ "beforeend", true, false, ( node, relatedNode ) => {
         node.appendChild( relatedNode );
     }],
-    // Inserts nodes before the first child of node, while replacing strings 
-    // in nodes with native element or equivalent html strings.
+   /**
+    * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *     link.prepend('<span>start</span>');
+    */    
     prepend: [ "afterbegin", true, false, ( node, relatedNode ) => {
         node.insertBefore( relatedNode, node.firstChild );
     }],
-    // Insert nodes just before node while replacing strings in nodes with 
-    // native element or a html string.
+   /**
+    * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *     link.before('<p>prefix</p>');
+    *     link.before(ugma.render("i"), ugma.render("u"));
+    */    
     before: [ "beforebegin", true, true, ( node, relatedNode ) => {
         node.parentNode.insertBefore( relatedNode, node );
     }],
-    // Insert nodes just after node while replacing strings in nodes with 
-    // native element or a html string .
+   /**
+    * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *     link.after('<span>suf</span><span>fix</span>');
+    *     link.after(ugma.render("b"));   
+    */    
     after: [ "afterend", true, true, ( node, relatedNode ) => {
         node.parentNode.insertBefore( relatedNode, node.nextSibling );
     }],
-    // Replaces node with nodes, while replacing strings in nodes with 
-    // native element or html string.
+   /**
+    * Replace current element with HTMLString or a ugma wrapped object
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *
+    *     var div = ugma.render("div>span>`foo`");   
+    *         div.child(0).replace(ugma.render("b>`bar`"));
+    */    
     replaceWith: [ "", false, true, ( node, relatedNode ) => {
         node.parentNode.replaceChild( relatedNode, node );
     }],
+   /**
+    * Remove current element from the DOM
+    *
+    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @return {Object} The wrapped collection
+    * @chainable
+    * @example
+    *     link.remove();
+    *
+    *     var foo = ugma.query(".bar");
+    *     bar.remove();    
+    */    
     remove: [ "", false, true, ( node ) => {
         node.parentNode.removeChild( node );
     }]
