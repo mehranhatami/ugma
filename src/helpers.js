@@ -12,9 +12,24 @@ var arrayProto = Array.prototype;
 
 export const every = arrayProto.every;
 export const slice = arrayProto.slice;
-export const isArray = Array.isArray;
 
-// Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+/*
+ * Determine whether the argument is an array.
+ *
+ * @param {Object} [obj] Object to test whether or not it is an array.
+ * @return {boolean} 
+ * @example
+ *     isArray([]);
+ *     // true
+ * @example
+ *     isArray({});
+ *     // false
+ */
+
+export const isArray = Array.isArray;
+  /**
+   * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+   */
 var each = (collection, callback) => {
             var arr = collection || [],
                 index = -1,
@@ -27,8 +42,10 @@ var each = (collection, callback) => {
         return arr;
     },
 
-    // Create a new array with the results of calling a provided function 
-    // on every element in this array.
+    /**
+     * Create a new array with the results of calling a provided function 
+     * on every element in this array.
+     */
     map = (collection, callback) => {
         var arr = collection || [],
             result = [];
@@ -40,7 +57,19 @@ var each = (collection, callback) => {
         return result;
     },
 
-    // is() returns a boolean for if typeof obj is exactly type.
+ /**
+   * Return a boolean for if typeof obj is exactly type.
+   *
+   * @param {String} [obj] String to test whether or not it is a typeof.
+   * @param {String} [type] String that should match the typeof
+   * @return {boolean} 
+   * @example
+   *     is(function(), "function");
+   *     // true
+   * @example
+   *     is({}, "function");
+   *     // false
+   */    
     is = (obj, type) => {
         return typeof obj === type;
     },
@@ -170,5 +199,8 @@ var each = (collection, callback) => {
     injectElement = (node) => {
         if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
     };
-        
+
+/*
+ * Export interface
+ */        
 export { each, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };
