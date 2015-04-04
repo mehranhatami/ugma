@@ -17,6 +17,7 @@ var langFix = /_/g,
 
                 return ( node === doc.documentElement ? doc : node ).title;
             },
+            tabIndex: ( node ) => node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1,
             option: ( node ) => {
                 // Support: IE<11
                 // option.value not trimmed
@@ -62,23 +63,6 @@ var langFix = /_/g,
 
                 ( node === doc.documentElement ? doc : node ).title = value;
             },
-            type: ( node, value ) => {
-
-                // Support: IE<=11+
-                if ( !support.radioValue && value === "radio" ) {
-                    var val = node.value;
-
-                    node.setAttribute( "type", value );
-                    if ( val ) {
-                        node.value = val;
-                    }
-                    
-                    return value;
-                    
-                } else {
-                    node.type = value;
-                }
-            },
             value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
@@ -95,13 +79,19 @@ var langFix = /_/g,
     };
 
 (function() {
-    var input = DOCUMENT.createElement( "input" );
+	var input = DOCUMENT.createElement( "input" ),
+		select = DOCUMENT.createElement( "select" ),
+		opt = select.appendChild( DOCUMENT.createElement( "option" ) );
 
     input.type = "checkbox";
 
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
     support.checkOn = input.value !== "";
+
+	// Support: IE<=11+
+	// Must access selectedIndex to make default options select
+	support.optSelected = opt.selected;
 
     // Support: IE<=11+
     // An input loses its value after becoming a radio
@@ -111,15 +101,44 @@ var langFix = /_/g,
     support.radioValue = input.value === "t";
 })();
 
+// Support: IE<=11+
+if ( !support.radioValue ) {
+    accessorHooks.set.type = ( node, value ) => {
+
+        if ( value === "radio" ) {
+            var value = node.value;
+
+            node.setAttribute( "type", value );
+            
+            if ( value ) node.value = value;
+
+        } else {
+            node.type = value;
+        }
+    };
+}
+
+if ( !support.optSelected ) {
+    accessorHooks.get.selected = ( node ) => {
+        var parent = node.parentNode;
+        /* jshint ignore:start */
+        if ( parent && parent.parentNode ) {
+            parent.parentNode.selectedIndex;
+        }
+        /* jshint ignore:end */
+        return null;
+    };
+}
+
 // Attributes that are booleans
 each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
       "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
     accessorHooks.set[ key.toLowerCase() ] = ( node, value ) => {
-      // If the user is setting the value to false, completely remove the attribute
+       // completely remove the boolean attributes when set to false, otherwise set it to true
         node[ key ] = !!value ? true : false;
-        // // otherwise set the attribute value
+        // set / remove boolean attributes
         node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
     };
 });
