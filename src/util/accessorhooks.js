@@ -106,11 +106,11 @@ if ( !support.radioValue ) {
     accessorHooks.set.type = ( node, value ) => {
 
         if ( value === "radio" ) {
-            var value = node.value;
+            var val = node.value;
 
-            node.setAttribute( "type", value );
+            node.setAttribute( "type", val );
             
-            if ( value ) node.value = value;
+            if ( value ) node.value = val;
 
         } else {
             node.type = value;

@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 03 Apr 2015 13:52:23 GMT
+ * Build date: Sat, 04 Apr 2015 01:03:22 GMT
  */
 (function() {
     "use strict";
@@ -1226,6 +1226,7 @@
     });
 
     var util$accessorhooks$$langFix = /_/g,
+        util$accessorhooks$$support = {},
         util$accessorhooks$$accessorHooks = {
     
             get: {
@@ -1236,17 +1237,32 @@
     
                     return ( node === doc.documentElement ? doc : node ).title;
                 },
-                option: function( node )  { 
+                tabIndex: function( node )  {return node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1},
+                option: function( node )  {
                     // Support: IE<11
                     // option.value not trimmed
                     return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
                 },
-                select: function( node )  {return ~node.selectedIndex ? node.options[node.selectedIndex].value : ""},
+                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
+    
+                value: function( node )  {
+    
+                    // Support: Android<4.4
+                    // Default value for a checkbox should be "on"
+                    if ( node.type === "checkbox" && !util$accessorhooks$$support.checkOn ) {
+                        return node.getAttribute( "value" ) === null ? "on" : node.value;
+                    }
+                    return node.value;
+                },
+    
                 undefined: function( node )  {
                     switch ( node.tagName ) {
-                        case "SELECT": return util$accessorhooks$$accessorHooks.get.select( node );
-                        case "OPTION": return util$accessorhooks$$accessorHooks.get.option( node );
-                        default:       return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+                        case "SELECT":
+                            return util$accessorhooks$$accessorHooks.get.select( node );
+                        case "OPTION":
+                            return util$accessorhooks$$accessorHooks.get.option( node );
+                        default:
+                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
                     }
                 },
                 type: function( node )  {return node.getAttribute( "type" ) || node.type}
@@ -1268,9 +1284,10 @@
                     ( node === doc.documentElement ? doc : node ).title = value;
                 },
                 value: function( node, value )  {
+    
                     if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
-                        if ( helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
+                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
                             node.selectedIndex = -1;
                         }
                     } else {
@@ -1281,44 +1298,57 @@
             }
         };
 
-    // Support: IE<=11+    
     (function() {
-        var input = DOCUMENT.createElement( "input" );
+        var input = DOCUMENT.createElement( "input" ),
+            select = DOCUMENT.createElement( "select" ),
+            opt = select.appendChild( DOCUMENT.createElement( "option" ) );
     
         input.type = "checkbox";
     
         // Support: Android<4.4
         // Default value for a checkbox should be "on"
-        if (input.value !== "") {
-            util$accessorhooks$$accessorHooks.get.checked = function( node )  {
-                return node.getAttribute("value") === null ? "on" : node.value;
-            };
-        }
+        util$accessorhooks$$support.checkOn = input.value !== "";
+    
+        // Support: IE<=11+
+        // Must access selectedIndex to make default options select
+        util$accessorhooks$$support.optSelected = opt.selected;
+    
         // Support: IE<=11+
         // An input loses its value after becoming a radio
         input = DOCUMENT.createElement( "input" );
         input.value = "t";
         input.type = "radio";
+        util$accessorhooks$$support.radioValue = input.value === "t";
+    })();
+
+    // Support: IE<=11+
+    if ( !util$accessorhooks$$support.radioValue ) {
+        util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
     
-        // Setting the type on a radio button after the value resets the value in IE9
-        if (input.value !== "t") {
+            if ( value === "radio" ) {
+                var val = node.value;
     
-            util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
-                if (value === "radio" &&
-                    node.nodeName === "INPUT" ) {
-                    var val = node.value;
-                    node.setAttribute( "type", value );
-                    if ( val ) {
-                        node.value = val;
-                    }
-                    return value;
-                } else {
-                    node.type = value;
-                }
-            };
-        }
-        input = null;
-    }());
+                node.setAttribute( "type", val );
+                
+                if ( value ) node.value = val;
+    
+            } else {
+                node.type = value;
+            }
+        };
+    }
+
+    if ( !util$accessorhooks$$support.optSelected ) {
+        util$accessorhooks$$accessorHooks.get.selected = function( node )  {
+            var parent = node.parentNode;
+            /* jshint ignore:start */
+            if ( parent && parent.parentNode ) {
+                parent.parentNode.selectedIndex;
+            }
+            /* jshint ignore:end */
+            return null;
+        };
+    }
 
     // Attributes that are booleans
     helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
@@ -1326,9 +1356,9 @@
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
         util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
-          // If the user is setting the value to false, completely remove the attribute
+           // completely remove the boolean attributes when set to false, otherwise set it to true
             node[ key ] = !!value ? true : false;
-            // // otherwise set the attribute value
+            // set / remove boolean attributes
             node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
         };
     });
