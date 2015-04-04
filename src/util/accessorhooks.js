@@ -62,17 +62,24 @@ var langFix = /_/g,
 
                 ( node === doc.documentElement ? doc : node ).title = value;
             },
-            value: ( node, value ) => {
+            type: ( node, value ) => {
 
-                if ( !support.radioValue && value === "radio" && node.nodeName === "input" ) {
+                // Support: IE<=11+
+                if ( !support.radioValue && value === "radio" ) {
                     var val = node.value;
 
                     node.setAttribute( "type", value );
                     if ( val ) {
                         node.value = val;
                     }
+                    
                     return value;
+                    
+                } else {
+                    node.type = value;
                 }
+            },
+            value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
