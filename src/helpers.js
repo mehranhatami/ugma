@@ -2,6 +2,10 @@
  * @module helpers
  */
 
+/**
+ * @private methods
+ */
+
 import { DOCUMENT, WINDOW              } from "./const";
 import { domTree, nodeTree, dummyTree  } from "./core/core";
 
@@ -10,10 +14,19 @@ import { domTree, nodeTree, dummyTree  } from "./core/core";
 // Create local references to Array.prototype methods we'll want to use later.
 var arrayProto = Array.prototype;
 
+/**
+ * Checks if the given callback returns a true(-ish) value for each element in the collection.
+ * @example
+ *     link.every(function(element) {
+ *         return element.hasAttribute('active')
+ *     });
+ *     // true/false
+ */
+
 export const every = arrayProto.every;
 export const slice = arrayProto.slice;
 
-/*
+/**
  * Determine whether the argument is an array.
  *
  * @param {Object} [obj] Object to test whether or not it is an array.
@@ -25,12 +38,17 @@ export const slice = arrayProto.slice;
  *     isArray({});
  *     // false
  */
-
 export const isArray = Array.isArray;
-  /**
-   * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-   */
-var each = (collection, callback) => {
+
+/**
+ * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+ *
+ * @param {Array} collection
+ * @param {Function} callback
+ * @return {Array}
+ * @private
+ */
+ var each = (collection, callback) => {
             var arr = collection || [],
                 index = -1,
                 length = arr.length;
@@ -42,10 +60,15 @@ var each = (collection, callback) => {
         return arr;
     },
 
-    /**
-     * Create a new array with the results of calling a provided function 
-     * on every element in this array.
-     */
+   /**
+    * Create a new collection by executing the callback for each element in the collection.
+    * @example
+    *     link.map(function(element) {
+    *         return element.getAttribute('name')
+    *     });
+    *     // ['ever', 'green']
+    */     
+     
     map = (collection, callback) => {
         var arr = collection || [],
             result = [];
@@ -93,7 +116,17 @@ var each = (collection, callback) => {
             }
         return obj;
     },
-    // create a new array with all elements that pass the test implemented by the provided function.
+
+   /**
+    * Create a new array with all elements that pass the test implemented by the provided function
+    * @example
+    *     link.filter('.active');
+    * @example
+    *     link.filter(function(element) {
+    *         return element.hasAttribute('active')
+    *     });
+    */    
+    
     filter = ( collection, predicate ) => {
         var arr = collection || [],
             result = [];

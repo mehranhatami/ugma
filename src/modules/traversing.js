@@ -12,42 +12,42 @@ implement({
      * Find first element filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     first: "firstElementChild",
     /**
      * Find last element filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     last: "lastElementChild",
     /**
      * Find next sibling element filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     next: "nextElementSibling",
     /**
      * Find previous sibling element filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     prev: "previousElementSibling",
     /**
      * Find all next sibling elements filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     nextAll: "nextElementSibling",
     /**
      * Find all previous sibling elements filtered by optional selector
      * @param {String} [selector] css selector
      * @param {Boolean} [andSelf] if true than search will start from the current element
-     * @function
+     * @chainable
      */
     prevAll: "previousElementSibling",
 }, (methodName, propertyName) => function(selector, andSelf) {

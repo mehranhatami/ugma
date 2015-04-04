@@ -18,6 +18,10 @@ implement({
    * Set property/attribute value by name
    * @param {String|Object|Array}   name    property/attribute name
    * @param {String|Function}       value   property/attribute value or functor
+   * @chainable
+   * @example
+   *    link.set('attrName', 'attrValue'); // set
+   *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
    */
     set( name, value ) {
 

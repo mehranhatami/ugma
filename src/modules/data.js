@@ -13,7 +13,11 @@ implement({
    * @param  {String|Object|Array}  key(s)  data key or key/value object or array of keys
    * @param  {Object}               [value] data value to store
    * @return {Object} data entry value or this in case of setter
-   */
+   * @chainable
+   * @example
+   *     link.data('foo'); // get
+   *     link.data('bar', {any: 'data'}); // set
+   */   
     data( key, value ) {
         
         var len = arguments.length;

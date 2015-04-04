@@ -11,6 +11,7 @@ implement({
    * Returns true if the requested attribute/property is specified on the given element, and false otherwise.
    * @param  {String} [name] property/attribute name or array of names
    * @return {Boolean} true if exist
+   * @chainable
    */
     has(name) {
         if ( is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );

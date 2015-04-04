@@ -17,6 +17,10 @@ implement({
     * @param  {String}        [selector]  event selector filter
     * @param  {Array}         [args]      array of handler arguments to pass into the callback
     * @param  {Function}      callback    event callback
+    * @chainable
+    * @example
+    *    link.on('click', callback);
+    *    link.on(['click', 'focus'], '.item', handler);
     */
     on: false,
    /**
@@ -99,6 +103,10 @@ implement({
     * @param  {String}          type        type of event
     * @param  {String}          [selector]  event selector
     * @param  {Function|String} [callback] event handler
+    * @chainable
+    * @example
+    *     link.off('click', callback);
+    *     link.off();
     */
     off( eventType, selector, callback ) {
         if ( !is( eventType,"string" ) ) minErr("off()", "The first argument need to be a string" );
@@ -154,7 +162,10 @@ implement({
     * @param  {String}  type  type of event
     * @param  {...Object}     [args]  extra arguments to pass into each event handler
     * @return {Boolean} true if default action wasn't prevented
-    */    
+    * @chainable
+    * @example
+    *    link.trigger('anyEventType');
+    */
     trigger( type ) {
     var node = this[ 0 ],
         e, eventType, canContinue;

@@ -23,9 +23,13 @@ if ( !loaded )
 
 implement({
   /**
-   * Execute callback when DOM is ready
+   * Execute callback when `DOMContentLoaded` fires for `document`, or immediately if called afterwards.
    * @param {Function} callback event listener
-   */
+   * @return {Object} The wrapped collection
+   * @example
+   *     ugma.ready(callback);
+   */  
+  
     ready: function( fn ) {
         if ( !is( fn, "function") ) minErr("ready()", "The provided 'callback' is not a function.");
 

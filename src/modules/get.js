@@ -13,6 +13,9 @@ implement({
    * Get HTML5 Custom Data Attributes, property or attribute value by name
    * @param  {String|Array}  name  property or attribute name or array of names
    * @return {String|Object} a value of property or attribute
+   * @chainable
+   * @example
+   *   link.get('attrName'); // get
    */
     get(name) {
         var node = this[ 0 ],

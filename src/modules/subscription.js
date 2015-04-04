@@ -10,6 +10,7 @@ implement({
    * Subscribe on particular properties / attributes, and get notified if they are changing
    * @param  {String}   name     property/attribute name
    * @param  {Function}  callback  function for notifying about changes of the property/attribute
+   * @chainable
    */
     subscribe(name, callback) {
             var subscription = this._._subscription || ( this._._subscription = [] );
@@ -24,6 +25,7 @@ implement({
   * Cancel / stop a property / attribute subscription
   * @param  {String}   name    property/attribute name
   * @param  {Function}  callback  function for notifying about changes of the property/attribute
+  * @chainable
   */
    unsubscribe(name, callback) {
             var subscription = this._._subscription;

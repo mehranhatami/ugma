@@ -13,6 +13,10 @@ implement({
   * @param  {ugma wrapped Object} element to check
   * @return {Boolean} returns true if success and false otherwise
   *
+  * @example
+  *   ugma.contains(childElement);
+  *     // true/false
+  *
   * Note! 
   *
   * The contains(other) method returns true if other is an inclusive descendant of the 

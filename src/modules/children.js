@@ -11,7 +11,7 @@ implement({
     /**
      * Returns the first child node in a collection of children filtered by index
      * @param  {Number} index
-     * @function
+     * @chainable
      */
     child: false,
     /**

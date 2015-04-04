@@ -14,7 +14,7 @@ implement({
   * Find parent element filtered by optional selector 
   * @param {String} [selector] css selector
   * @Following the Element#closest specs  
-  * @function
+  * @chainable
   */
     closest( selector ) {
         if ( selector && !is( selector, "string" ) ) minErr( "closest()", "The string did not match the expected pattern" );

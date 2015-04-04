@@ -16,8 +16,11 @@ implement({
    /**
     * Adds a class(es) or an array of class names
     * @param  {...String} classNames class name(s)
-    * @function
-    */    
+    * @chainable
+    * @example
+    * link.addClass('bar');
+    * link.addClass('bar', 'foo');
+    */   
     addClass: [RETURN_THIS, "add", ( node, token ) => {
         var existingClasses = (" " + node[ 0 ].className + " ")
             .replace(reClass, " ");
@@ -31,8 +34,11 @@ implement({
    /**
     * Remove class(es) or an array of class names from element
     * @param  {...String} classNames class name(s)
-    * @function
-    */    
+    * @chainable
+    * @example
+    * link.removeClass('bar');
+    * link.removeClass('bar' , 'foo');
+    */
     removeClass: [RETURN_THIS, "remove", ( node, token ) => {
         node[ 0 ].className = trim((" " + node[ 0 ].className + " ")
             .replace(reClass, " ")
@@ -41,8 +47,10 @@ implement({
    /**
     * Check if element contains class name
     * @param  {...String} classNames class name(s)
-    * @function
-    */    
+    * @chainable
+    * @example
+    * link.hasClass('bar');
+    */
     hasClass: [RETURN_FALSE, "contains", false, ( node, token ) => {
         return ((" " + node[ 0 ].className + " ")
             .replace(reClass, " ").indexOf(" " + token + " ") > -1);
@@ -50,7 +58,10 @@ implement({
    /**
     * Toggle the `class` in the class list. Optionally force state via `condition`
     * @param  {...String} classNames class name(s)
-    * @function
+    * @chainable
+    * @example
+    * link.toggleClass('bar');
+    * link.toggleClass('bar', 'foo');
     */    
     toggleClass: [RETURN_FALSE, "toggle", ( el, token ) => {
         var hasClass = el.hasClass(token);

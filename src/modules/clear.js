@@ -9,6 +9,7 @@ implement({
   /**
    * Clear a property/attribute on the node
    * @param  {String}   name    property/attribute name
+   * @chainable
    */
     clear(name) {
         this[ 0 ].removeAttribute( name );

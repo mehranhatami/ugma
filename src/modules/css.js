@@ -13,7 +13,12 @@ import { adjustCSS                                                      } from "
      * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
      * @param  {String|Object}      name    style property name or key/value object
      * @param  {String|Function}    [value] style property value or functor
-     */   
+     * @chainable
+     * @example
+     * link.css('padding-left'); // get
+     * link.css('color', '#f00'); // set
+     * link.css({'border-width', '1px'}, {'display', 'inline-block}); // set multiple
+     */
      css(name, value) {
          
          var len = arguments.length,

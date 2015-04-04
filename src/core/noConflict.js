@@ -6,7 +6,7 @@ import { WINDOW } from "../const";
 import { ugma   } from "../core/core";
 
 /*
- * Map over 'ugma' the previous value of the global `ugma` variable, so that it can be restored later on.
+ * Map over the previous value of the `ugma` namespace variable, so that it can be restored later on.
  */
 
 var _ugma = WINDOW.ugma;
