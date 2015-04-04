@@ -7,7 +7,6 @@
  */
 
 import { DOCUMENT, WINDOW              } from "./const";
-import { minErr                        } from "./minErr";
 import { domTree, nodeTree, dummyTree  } from "./core/core";
 
 // jshint unused:false
@@ -41,23 +40,15 @@ export const slice = arrayProto.slice;
  */
 export const isArray = Array.isArray;
 
-  var onlyOnce = (fn) => {
-        var called = false;
-        return function() {
-            if ( called ) minErr("onlyOnce()", "Callback was already called.");
-            called = true;
-            fn.apply( this, arguments );
-        };
-  },
- /**
-  * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-  *
-  * @param {Array} collection
-  * @param {Function} callback
-  * @return {Array}
-  * @private
-  */
-   each = ( collection, callback ) => {
+/**
+ * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+ *
+ * @param {Array} collection
+ * @param {Function} callback
+ * @return {Array}
+ * @private
+ */
+ var each = (collection, callback) => {
             var arr = collection || [],
                 index = -1,
                 length = arr.length;
@@ -67,28 +58,6 @@ export const isArray = Array.isArray;
                 }
             }
         return arr;
-    },
-    asyncEach = ( arr, iterator, callback ) => {
-        callback = callback || function () {};
-        if ( !arr.length ) {
-            return callback();
-        }
-        var completed = 0;
-        each( arr, function ( x ) {
-            iterator( x, onlyOnce( done ) );
-        });
-        function done( err ) {
-          if ( err ) {
-              callback( err );
-              callback = function () {};
-          }
-          else {
-              completed += 1;
-              if ( completed >= arr.length ) {
-                  callback();
-              }
-          }
-        }
     },
 
    /**
@@ -267,4 +236,4 @@ export const isArray = Array.isArray;
 /*
  * Export interface
  */        
-export { each, asyncEach, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };
+export { each, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };

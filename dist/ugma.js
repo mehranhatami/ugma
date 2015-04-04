@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 15:51:41 GMT
+ * Build date: Sat, 04 Apr 2015 21:55:02 GMT
  */
 (function() {
     "use strict";
@@ -56,228 +56,198 @@
 
     var helpers$$isArray = Array.isArray;
 
-    var helpers$$onlyOnce = function(fn)  {
-          var called = false;
-          return function() {
-              if ( called ) minErr$$minErr("onlyOnce()", "Callback was already called.");
-              called = true;
-              fn.apply( this, arguments );
-          };
-    },
-   /**
-    * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
-    *
-    * @param {Array} collection
-    * @param {Function} callback
-    * @return {Array}
-    * @private
-    */
-     helpers$$each = function( collection, callback )  {
-              var arr = collection || [],
-                  index = -1,
-                  length = arr.length;
-              while ( ++index < length ) {
-                  if ( callback( arr[ index ], index, arr ) === false) {
-                      break;
-                  }
-              }
-          return arr;
-      },
-      helpers$$asyncEach = function( arr, iterator, callback )  {
-          callback = callback || function () {};
-          if ( !arr.length ) {
-              return callback();
-          }
-          var completed = 0;
-          helpers$$each( arr, function ( x ) {
-              iterator( x, helpers$$onlyOnce( done ) );
-          });
-          function done( err ) {
-            if ( err ) {
-                callback( err );
-                callback = function () {};
-            }
-            else {
-                completed += 1;
-                if ( completed >= arr.length ) {
-                    callback();
-                }
-            }
-          }
-      },
-  
-     /**
-      * Create a new collection by executing the callback for each element in the collection.
-      * @example
-      *     link.map(function(element) {
-      *         return element.getAttribute('name')
-      *     });
-      *     // ['ever', 'green']
-      */     
-       
-      helpers$$map = function(collection, callback)  {
-          var arr = collection || [],
-              result = [];
-        // Go through the array, translating each of the items to their
-        // new value (or values).
-          helpers$$each(arr, function( value, key )  {
-              result.push( callback( value, key ) );
-          });
-          return result;
-      },
-  
-   /**
-     * Return a boolean for if typeof obj is exactly type.
+    /**
+     * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
      *
-     * @param {String} [obj] String to test whether or not it is a typeof.
-     * @param {String} [type] String that should match the typeof
-     * @return {boolean} 
-     * @example
-     *     is(function(), "function");
-     *     // true
-     * @example
-     *     is({}, "function");
-     *     // false
-     */    
-      helpers$$is = function(obj, type)  {
-          return typeof obj === type;
-      },
-  
-      // Iterates over own enumerable properties of an object, executing  the callback for each property.
-      helpers$$forOwn = function(object, callback)  {
-  
-              var obj = object || {},
-                  key,
-                  index = -1,
-                  props = Object.keys( obj ),
-                  length = props.length;
-  
-              while (++index < length) {
-  
-                  key = props[ index ];
-  
-                  if ( callback( key, obj[ key ], obj ) === false) {
-                      break;
-                  }
-              }
-          return obj;
-      },
-  
-     /**
-      * Create a new array with all elements that pass the test implemented by the provided function
+     * @param {Array} collection
+     * @param {Function} callback
+     * @return {Array}
+     * @private
+     */
+    var helpers$$each = function(collection, callback)  {
+               var arr = collection || [],
+                   index = -1,
+                   length = arr.length;
+               while ( ++index < length ) {
+                   if ( callback( arr[ index ], index, arr ) === false) {
+                       break;
+                   }
+               }
+           return arr;
+       },
+   
+      /**
+       * Create a new collection by executing the callback for each element in the collection.
+       * @example
+       *     link.map(function(element) {
+       *         return element.getAttribute('name')
+       *     });
+       *     // ['ever', 'green']
+       */     
+        
+       helpers$$map = function(collection, callback)  {
+           var arr = collection || [],
+               result = [];
+         // Go through the array, translating each of the items to their
+         // new value (or values).
+           helpers$$each(arr, function( value, key )  {
+               result.push( callback( value, key ) );
+           });
+           return result;
+       },
+   
+    /**
+      * Return a boolean for if typeof obj is exactly type.
+      *
+      * @param {String} [obj] String to test whether or not it is a typeof.
+      * @param {String} [type] String that should match the typeof
+      * @return {boolean} 
       * @example
-      *     link.filter('.active');
+      *     is(function(), "function");
+      *     // true
       * @example
-      *     link.filter(function(element) {
-      *         return element.hasAttribute('active')
-      *     });
+      *     is({}, "function");
+      *     // false
       */    
-      
-      helpers$$filter = function( collection, predicate )  {
-          var arr = collection || [],
-              result = [];
-  
-          helpers$$forOwn( arr, function( index, value )  {
-              if ( predicate( value, index, arr ) ) {
-                  result.push( value );
-              }
-          });
-          return result;
-      },
-  
-      helpers$$trim = function( value )  {
-          return helpers$$is( value, "string" ) ? value.trim() : value;
-      },
-  
-      helpers$$inArray = function(arr, searchElement, fromIndex)  {
-          fromIndex = fromIndex || 0;
-          /* jshint ignore:start */
-          if ( fromIndex > arr.length ) {
-  
-              arr - 1;
-          }
-          /* jshint ignore:end */
-          var i = 0,
-              len = arr.length;
-  
-          for ( ; i < len; i++ ) {
-              if ( arr[ i ] === searchElement && fromIndex <= i ) {
-                  return i;
-              }
-  
-              if ( arr[ i ] === searchElement && fromIndex > i ) {
-                  return -1;
-              }
-          }
-          return -1;
-      },
-  
-      helpers$$invoke = function(context, fn, arg1, arg2)  {
-          if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
-  
-          try {
-              return fn.call(context, arg1, arg2);
-          } catch (err) {
-              WINDOW.setTimeout( function()  { throw err }, 1 );
-  
-              return false;
-          }
-      },
-      // internal method to extend ugma with methods - either 
-      // the nodeTree or the domTree
-      helpers$$implement = function(obj, callback, mixin)  {
-  
-          if (!callback) callback = function(method, strategy)  {return strategy};
-  
-          helpers$$forOwn(obj, function( method, func)  {
-              var args = [ method] .concat( func );
-              (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
-  
-              if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
-          });
-      },
-  
-      // Faster alternative then slice.call
-      helpers$$sliceArgs = function(arg)  {
-          var i = arg.length,
-              args = new Array(i || 0);
-  
-          while (i--) {
-              args[ i ] = arg[ i ];
-          }
-          return args;
-      },
-  
-      helpers$$reDash = /([\:\-\_]+(.))/g,
-      helpers$$mozHack = /^moz([A-Z])/,
-  
-      // Convert dashed to camelCase
-      // Support: IE9-11+
-      helpers$$camelize = function( prop )  {
-          return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
-              return offset ? letter.toUpperCase() : letter;
-          }).replace (helpers$$mozHack, "Moz$1" );
-      },
-  
-      // getComputedStyle takes a pseudoClass as an optional argument, so do we
-      // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
-      helpers$$computeStyle = function( node, pseudoElement )  {
-          /* istanbul ignore if */
-          pseudoElement = pseudoElement ? pseudoElement : "";
-          // Support: IE<=11+, Firefox<=30+
-          // IE throws on elements created in popups
-          // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-          if (node.ownerDocument.defaultView.opener) {
-              return ( node.ownerDocument.defaultView ||
-                  // This will work if the ownerDocument is a shadow DOM element
-                  DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
-          }
-          return WINDOW.getComputedStyle(node, pseudoElement);
-      },
-  
-      helpers$$injectElement = function(node)  {
-          if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
-      };
+       helpers$$is = function(obj, type)  {
+           return typeof obj === type;
+       },
+   
+       // Iterates over own enumerable properties of an object, executing  the callback for each property.
+       helpers$$forOwn = function(object, callback)  {
+   
+               var obj = object || {},
+                   key,
+                   index = -1,
+                   props = Object.keys( obj ),
+                   length = props.length;
+   
+               while (++index < length) {
+   
+                   key = props[ index ];
+   
+                   if ( callback( key, obj[ key ], obj ) === false) {
+                       break;
+                   }
+               }
+           return obj;
+       },
+   
+      /**
+       * Create a new array with all elements that pass the test implemented by the provided function
+       * @example
+       *     link.filter('.active');
+       * @example
+       *     link.filter(function(element) {
+       *         return element.hasAttribute('active')
+       *     });
+       */    
+       
+       helpers$$filter = function( collection, predicate )  {
+           var arr = collection || [],
+               result = [];
+   
+           helpers$$forOwn( arr, function( index, value )  {
+               if ( predicate( value, index, arr ) ) {
+                   result.push( value );
+               }
+           });
+           return result;
+       },
+   
+       helpers$$trim = function( value )  {
+           return helpers$$is( value, "string" ) ? value.trim() : value;
+       },
+   
+       helpers$$inArray = function(arr, searchElement, fromIndex)  {
+           fromIndex = fromIndex || 0;
+           /* jshint ignore:start */
+           if ( fromIndex > arr.length ) {
+   
+               arr - 1;
+           }
+           /* jshint ignore:end */
+           var i = 0,
+               len = arr.length;
+   
+           for ( ; i < len; i++ ) {
+               if ( arr[ i ] === searchElement && fromIndex <= i ) {
+                   return i;
+               }
+   
+               if ( arr[ i ] === searchElement && fromIndex > i ) {
+                   return -1;
+               }
+           }
+           return -1;
+       },
+   
+       helpers$$invoke = function(context, fn, arg1, arg2)  {
+           if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
+   
+           try {
+               return fn.call(context, arg1, arg2);
+           } catch (err) {
+               WINDOW.setTimeout( function()  { throw err }, 1 );
+   
+               return false;
+           }
+       },
+       // internal method to extend ugma with methods - either 
+       // the nodeTree or the domTree
+       helpers$$implement = function(obj, callback, mixin)  {
+   
+           if (!callback) callback = function(method, strategy)  {return strategy};
+   
+           helpers$$forOwn(obj, function( method, func)  {
+               var args = [ method] .concat( func );
+               (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
+   
+               if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
+           });
+       },
+   
+       // Faster alternative then slice.call
+       helpers$$sliceArgs = function(arg)  {
+           var i = arg.length,
+               args = new Array(i || 0);
+   
+           while (i--) {
+               args[ i ] = arg[ i ];
+           }
+           return args;
+       },
+   
+       helpers$$reDash = /([\:\-\_]+(.))/g,
+       helpers$$mozHack = /^moz([A-Z])/,
+   
+       // Convert dashed to camelCase
+       // Support: IE9-11+
+       helpers$$camelize = function( prop )  {
+           return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
+               return offset ? letter.toUpperCase() : letter;
+           }).replace (helpers$$mozHack, "Moz$1" );
+       },
+   
+       // getComputedStyle takes a pseudoClass as an optional argument, so do we
+       // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
+       helpers$$computeStyle = function( node, pseudoElement )  {
+           /* istanbul ignore if */
+           pseudoElement = pseudoElement ? pseudoElement : "";
+           // Support: IE<=11+, Firefox<=30+
+           // IE throws on elements created in popups
+           // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
+           if (node.ownerDocument.defaultView.opener) {
+               return ( node.ownerDocument.defaultView ||
+                   // This will work if the ownerDocument is a shadow DOM element
+                   DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
+           }
+           return WINDOW.getComputedStyle(node, pseudoElement);
+       },
+   
+       helpers$$injectElement = function(node)  {
+           if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
+       };
 
     var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree;
 
@@ -719,7 +689,7 @@
         };
 
     // Don't automatically add 'px' to these possibly-unitless properties
-    helpers$$asyncEach(util$csshooks$$UnitlessNumber, function( propName )  {
+    helpers$$each(util$csshooks$$UnitlessNumber, function( propName )  {
         var stylePropName = helpers$$camelize(propName);
     
         util$csshooks$$cssHooks.get[ propName ] = stylePropName;
@@ -747,7 +717,7 @@
                 // normalize setting complex property across browsers
                 style.cssText += ";" + key + ":" + value;
             } else {
-                helpers$$asyncEach( props, function(name)  {return style[ name ] = typeof value === "number" ? value + "px" : value + ""} );
+                helpers$$each( props, function(name)  {return style[ name ] = typeof value === "number" ? value + "px" : value + ""} );
             }
         };
     });
@@ -1462,7 +1432,7 @@
     }
 
     // Attributes that are booleans
-    helpers$$asyncEach(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+    helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
           "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
@@ -1475,7 +1445,7 @@
     });
 
     // properties written as camelCase
-    helpers$$asyncEach((
+    helpers$$each((
        // 6.4.3 The tabindex attribute
         ("tabIndex "         +
         "readOnly "         +
@@ -2543,7 +2513,7 @@
       });
 
     // populate empty tag names with result
-    helpers$$asyncEach( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
+    helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
 
     var template$template$$default = template$template$$tagCache;
     // return tag's from tagCache with <code>tag</code> type

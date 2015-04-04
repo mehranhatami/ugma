@@ -2,11 +2,11 @@
  * @module template
  */
 
-import { ugma                         } from "../core/core";
-import { is, asyncEach, each, forOwn  } from "../helpers";
-import { minErr                       } from "../minErr";
-import { process                      } from "../template/process";
-import   operators                     from "../template/operators";
+import { ugma              } from "../core/core";
+import { is, each, forOwn  } from "../helpers";
+import { minErr            } from "../minErr";
+import { process           } from "../template/process";
+import   operators           from "../template/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -104,6 +104,6 @@ ugma.template = function( template, args ) {
     });
 
 // populate empty tag names with result
-asyncEach( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" });
+each( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" });
 
 export default tagCache;

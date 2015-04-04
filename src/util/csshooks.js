@@ -2,7 +2,7 @@
  * @module csshooks
  */
 
-import { filter, map, keys, camelize, asyncEach, forOwn   } from "../helpers";
+import { filter, map, keys, camelize, each, forOwn   } from "../helpers";
 import { VENDOR_PREFIXES, HTML                            } from "../const";
 
 var UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
@@ -24,7 +24,7 @@ var UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-
     };
 
 // Don't automatically add 'px' to these possibly-unitless properties
-asyncEach(UnitlessNumber, ( propName ) => {
+each(UnitlessNumber, ( propName ) => {
     var stylePropName = camelize(propName);
 
     cssHooks.get[ propName ] = stylePropName;
@@ -52,7 +52,7 @@ forOwn(shortHand, (key, props) => {
             // normalize setting complex property across browsers
             style.cssText += ";" + key + ":" + value;
         } else {
-            asyncEach( props, (name) => style[ name ] = typeof value === "number" ? value + "px" : value + "" );
+            each( props, (name) => style[ name ] = typeof value === "number" ? value + "px" : value + "" );
         }
     };
 });

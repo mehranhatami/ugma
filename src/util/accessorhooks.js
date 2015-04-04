@@ -2,7 +2,7 @@
  * @module accessorHooks
  */
 
-import { trim, asyncEach, forOwn, every          } from "../helpers";
+import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
@@ -133,7 +133,7 @@ if ( !optSelected ) {
 }
 
 // Attributes that are booleans
-asyncEach(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
       "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
@@ -146,7 +146,7 @@ asyncEach(("compact nowrap ismap declare noshade disabled readOnly multiple hidd
 });
 
 // properties written as camelCase
-asyncEach((
+each((
    // 6.4.3 The tabindex attribute
     "tabIndex "         +
     "readOnly "         +
