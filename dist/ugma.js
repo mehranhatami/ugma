@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 12:21:59 GMT
+ * Build date: Sat, 04 Apr 2015 12:41:53 GMT
  */
 (function() {
     "use strict";
@@ -949,7 +949,7 @@
         // firefox doesn't support focusin/focusout events
         util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function( handler )  { handler.capturing = true };
     }
-    /* istanbul ignore else */
+
     if (DOCUMENT.createElement( "input" ).validity) {
         util$eventhooks$$eventHooks.invalid = function( handler )  {
             handler.capturing = true;
@@ -1231,39 +1231,6 @@
         return canContinue;
       }
     }, null, function()  {return RETURN_TRUE} );
-
-    helpers$$implement({
-        /**
-         * Extend ugma with methods
-         * @param  {Object}    mixin       methods container
-         * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
-         * @example
-         * ugma.extend({
-         *     foo: function() {
-         *         console.log("bar");
-         *     }
-         * });
-         *
-         * ugma.extend({
-         *     foo: function() {
-         *         console.log("bar");
-         *     }
-         * }, true);
-         *
-         *
-         * Note! If 'namespace' set to true, the methods can be used like:
-         *
-         *   ugma.foo();
-         *
-         * otherwise:
-         *
-         *   link.foo();
-         */
-        extend: function(mixin, namespace) {
-            if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
-            return mixin ? namespace ? helpers$$implement( mixin ) : helpers$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
-        }
-    });
 
     var util$accessorhooks$$langFix = /_/g,
         util$accessorhooks$$radioValue, 
@@ -2539,20 +2506,53 @@
     // Current codename on the framework.
     core$core$$ugma.version = "trackira";
 
-    // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.1";
+    helpers$$implement({
+        /**
+         * Extend ugma with methods
+         * @param  {Object}    mixin       methods container
+         * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
+         * @example
+         * ugma.extend({
+         *     foo: function() {
+         *         console.log("bar");
+         *     }
+         * });
+         *
+         * ugma.extend({
+         *     foo: function() {
+         *         console.log("bar");
+         *     }
+         * }, true);
+         *
+         *
+         * Note! If 'namespace' set to true, the methods can be used like:
+         *
+         *   ugma.foo();
+         *
+         * otherwise:
+         *
+         *   link.foo();
+         */
+        extend: function(mixin, namespace) {
+            if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
+            return mixin ? namespace ? helpers$$implement( mixin ) : helpers$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
+        }
+    });
 
     // Map over 'ugma' in case of overwrite
-    var outro$$_ugma = WINDOW.ugma;
+    var core$noConflict$$_ugma = WINDOW.ugma;
 
     // Runs ugma in *noConflict* mode, returning the original `ugma` namespace.
     core$core$$ugma.noConflict = function() {
         if ( WINDOW.ugma === core$core$$ugma ) {
-            WINDOW.ugma = outro$$_ugma;
+            WINDOW.ugma = core$noConflict$$_ugma;
         }
     
         return core$core$$ugma;
     };
+
+    // Current version of the library. Keep in sync with `package.json`.
+    core$core$$ugma.version = "0.0.1";
 
     WINDOW.ugma = core$core$$ugma;
 })();
