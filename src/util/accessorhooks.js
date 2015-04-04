@@ -6,7 +6,9 @@ import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
 
 var langFix = /_/g,
-    support = {},
+    radioValue, 
+    optSelected, 
+    checkOn,
     accessorHooks = {
 
         get: {
@@ -29,7 +31,7 @@ var langFix = /_/g,
 
                 // Support: Android<4.4
                 // Default value for a checkbox should be "on"
-                if ( node.type === "checkbox" && !support.checkOn ) {
+                if ( node.type === "checkbox" && !checkOn ) {
                     return node.getAttribute( "value" ) === null ? "on" : node.value;
                 }
                 return node.value;
@@ -87,22 +89,22 @@ var langFix = /_/g,
 
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
-    support.checkOn = input.value !== "";
+     checkOn = input.value !== "";
 
 	// Support: IE<=11+
 	// Must access selectedIndex to make default options select
-	support.optSelected = opt.selected;
+	 optSelected = opt.selected;
 
     // Support: IE<=11+
     // An input loses its value after becoming a radio
     input = DOCUMENT.createElement( "input" );
     input.value = "t";
     input.type = "radio";
-    support.radioValue = input.value === "t";
+    radioValue = input.value === "t";
 })();
 
 // Support: IE<=11+
-if ( !support.radioValue ) {
+if ( !radioValue ) {
     accessorHooks.set.type = ( node, value ) => {
 
         if ( value === "radio" ) {
@@ -118,7 +120,7 @@ if ( !support.radioValue ) {
     };
 }
 
-if ( !support.optSelected ) {
+if ( !optSelected ) {
     accessorHooks.get.selected = ( node ) => {
         var parent = node.parentNode;
         /* jshint ignore:start */

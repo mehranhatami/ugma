@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 01:03:22 GMT
+ * Build date: Sat, 04 Apr 2015 01:11:40 GMT
  */
 (function() {
     "use strict";
@@ -1226,7 +1226,9 @@
     });
 
     var util$accessorhooks$$langFix = /_/g,
-        util$accessorhooks$$support = {},
+        util$accessorhooks$$radioValue, 
+        util$accessorhooks$$optSelected, 
+        util$accessorhooks$$checkOn,
         util$accessorhooks$$accessorHooks = {
     
             get: {
@@ -1249,7 +1251,7 @@
     
                     // Support: Android<4.4
                     // Default value for a checkbox should be "on"
-                    if ( node.type === "checkbox" && !util$accessorhooks$$support.checkOn ) {
+                    if ( node.type === "checkbox" && !util$accessorhooks$$checkOn ) {
                         return node.getAttribute( "value" ) === null ? "on" : node.value;
                     }
                     return node.value;
@@ -1307,22 +1309,22 @@
     
         // Support: Android<4.4
         // Default value for a checkbox should be "on"
-        util$accessorhooks$$support.checkOn = input.value !== "";
+         util$accessorhooks$$checkOn = input.value !== "";
     
         // Support: IE<=11+
         // Must access selectedIndex to make default options select
-        util$accessorhooks$$support.optSelected = opt.selected;
+         util$accessorhooks$$optSelected = opt.selected;
     
         // Support: IE<=11+
         // An input loses its value after becoming a radio
         input = DOCUMENT.createElement( "input" );
         input.value = "t";
         input.type = "radio";
-        util$accessorhooks$$support.radioValue = input.value === "t";
+        util$accessorhooks$$radioValue = input.value === "t";
     })();
 
     // Support: IE<=11+
-    if ( !util$accessorhooks$$support.radioValue ) {
+    if ( !util$accessorhooks$$radioValue ) {
         util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
     
             if ( value === "radio" ) {
@@ -1338,7 +1340,7 @@
         };
     }
 
-    if ( !util$accessorhooks$$support.optSelected ) {
+    if ( !util$accessorhooks$$optSelected ) {
         util$accessorhooks$$accessorHooks.get.selected = function( node )  {
             var parent = node.parentNode;
             /* jshint ignore:start */
