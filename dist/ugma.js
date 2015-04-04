@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 01:11:40 GMT
+ * Build date: Sat, 04 Apr 2015 02:25:27 GMT
  */
 (function() {
     "use strict";
@@ -2000,6 +2000,32 @@
             return data[ 0 ] = ctx;
         }
     }, null, function()  {return function()  {return RETURN_FALSE}} );
+
+    helpers$$implement({
+    
+        /**
+         * Get / set text content of a node
+         * @param  {String}   value   
+         */
+        text: "textContent",
+        /**
+         * Get / set HTML content of a node
+         * @param  {String}   value   
+         */
+        html: "innerHTML",
+        /**
+         * Get / set the value attribute on a node
+         * @param  {String}   value 
+         */
+        attr: "attribute",
+    }, function( methodName, propertyName )  {return function( value ) {
+    
+        if ( arguments.length === 0 ) {
+            return this.get( methodName );
+        }
+        this.set( methodName, value );
+    
+    }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
 
     helpers$$implement({
       /**
