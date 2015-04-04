@@ -27,7 +27,8 @@ implement({
             if ( is( name, "function" ) ) {
                 value = name;
             } else {
-                value = name == null ? "" : name + "";
+                // convert the value to a string
+                value = name == null ? "" : "" + name;
             }
 
             if ( value !== objectTag ) {
@@ -50,7 +51,7 @@ implement({
         }
 
         if ( is(name, "string" ) ) {
-            
+            // handle executable functions
             if (is(value, "function")) {
                 value = value( this );
             }

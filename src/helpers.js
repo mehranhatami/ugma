@@ -32,6 +32,8 @@ var each = (collection, callback) => {
     map = (collection, callback) => {
         var arr = collection || [],
             result = [];
+      // Go through the array, translating each of the items to their
+      // new value (or values).
         each(arr, ( value, key ) => {
             result.push( callback( value, key ) );
         });

@@ -152,6 +152,11 @@ describe("set", function() {
         // set a negative number
         element.set("tabindex", -1);
         expect(element.get("tabindex")).toBe(-1);
+
+        // cloned element
+       var clone = element.clone(true);
+           clone.set( "tabindex", 1 );
+           expect(clone[ 0 ].getAttribute("tabindex")).toBe("1");
     });
 
     it("should try to update an appropriate native object property first", function() {
@@ -159,6 +164,82 @@ describe("set", function() {
 
         expect(link).toHaveAttr("href", "#test");
         expect(link).not.toHaveAttr("href", "#");
+    });
+
+    it("should set and remove value attributes", function() {
+
+jasmine.sandbox.set("<select name='select1' id='select1'>"+
+				"<option id='option1a' class='emptyopt' value=''>Nothing</option>"+
+				"<option id='option1b' value='1'>1</option>"+
+				"<option id='option1c' value='2'>2</option>"+
+				"<option id='option1d' value='3'>3</option>"+
+			"</select>"+
+			"<select name='select2' id='select2'>"+
+				"<option id='option2a' class='emptyopt' value=''>Nothing</option>"+
+				"<option id='option2b' value='1'>1</option>"+
+				"<option id='option2c' value='2'>2</option>"+
+				"<option id='option2d' selected='selected' value='3'>3</option>"+
+			"</select>"+
+            "<select name='select3' id='select3' multiple='multiple'>"+
+				"<option id='option3a' class='emptyopt' value=''>Nothing</option>"+
+				"<option id='option3b' selected='selected' value='1'>1</option>"+
+				"<option id='option3c' selected='selected' value='2'>2</option>"+
+				"<option id='option3d' value='3'>3</option>"+
+				"<option id='option3e'>no value</option>"+
+			"</select>"+
+			"<select name='select4' id='select4' multiple='multiple'>"+
+				"<optgroup disabled='disabled'>"+
+					"<option id='option4a' class='emptyopt' value=''>Nothing</option>"+
+					"<option id='option4b' disabled='disabled' selected='selected' value='1'>1</option>"+
+					"<option id='option4c' selected='selected' value='2'>2</option>"+
+				"</optgroup>"+
+				"<option selected='selected' disabled='disabled' id='option4d' value='3'>3</option>"+
+				"<option id='option4e'>no value</option>"+
+			"</select>"+
+			"<select name='select5' id='select5'>"+
+				"<option id='option5a' value='3'>1</option>"+
+				"<option id='option5b' value='2'>2</option>"+
+				"<option id='option5c' value='1' data-attr=''>3</option>"+
+			"</select>");
+
+        expect(txt.get("value")).toBe("Test");
+
+        expect(ugma.query("#select2").value()).toBe("3");        
+
+        expect(ugma.query("#select3").value()).toBe("1");        
+        
+        expect(ugma.query("#select2").get("selectedIndex")).toBe(3);        
+
+        expect(ugma.query("#option3c").value()).toBe("2");        
+
+        expect(ugma.query("#option3a").value()).toBe("");        
+        
+        expect(ugma.query("#option3e").value()).toBe("no value");        
+        
+        expect(ugma.query("#option3a").value()).toBe("");        
+        
+        ugma.query("#select3").value("");
+
+        expect(ugma.query("#select3").value()).toBe("");        
+        
+        expect(ugma.query("#select3").value()).toBe("");        
+        
+        expect(ugma.query("#select5").value()).toBe("3");        
+
+        // use value() method for this
+        ugma.query("#select5").value(1);
+
+        // check value on ambiguous select.
+    	expect(ugma.query("#select5").value()).toBe("1");        
+
+        // use value() method for this
+        ugma.query("#select5").value(3);
+
+        // check value on ambiguous select.
+    	expect(ugma.query("#select5").value()).toBe("3");        
+        
+        ugma.query("#select5").value( "" );
+    	expect(ugma.query("#select5").value()).toBe("");        
     });
 
     it("should remove attribute if value is null or undefined", function() {
