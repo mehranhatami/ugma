@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 02:25:27 GMT
+ * Build date: Sat, 04 Apr 2015 12:09:36 GMT
  */
 (function() {
     "use strict";
@@ -53,9 +53,11 @@
 
     var helpers$$every = helpers$$arrayProto.every;
     var helpers$$slice = helpers$$arrayProto.slice;
-    var helpers$$isArray = Array.isArray;
 
-    // Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+    var helpers$$isArray = Array.isArray;
+    /**
+     * Invokes the `callback` function once for each item in `arr` collection, which can only be an array.
+     */
     var helpers$$each = function(collection, callback)  {
                 var arr = collection || [],
                     index = -1,
@@ -68,18 +70,34 @@
             return arr;
         },
     
-        // Create a new array with the results of calling a provided function 
-        // on every element in this array.
+        /**
+         * Create a new array with the results of calling a provided function 
+         * on every element in this array.
+         */
         helpers$$map = function(collection, callback)  {
             var arr = collection || [],
                 result = [];
+          // Go through the array, translating each of the items to their
+          // new value (or values).
             helpers$$each(arr, function( value, key )  {
                 result.push( callback( value, key ) );
             });
             return result;
         },
     
-        // is() returns a boolean for if typeof obj is exactly type.
+     /**
+       * Return a boolean for if typeof obj is exactly type.
+       *
+       * @param {String} [obj] String to test whether or not it is a typeof.
+       * @param {String} [type] String that should match the typeof
+       * @return {boolean} 
+       * @example
+       *     is(function(), "function");
+       *     // true
+       * @example
+       *     is({}, "function");
+       *     // false
+       */    
         helpers$$is = function(obj, type)  {
             return typeof obj === type;
         },
@@ -1196,7 +1214,7 @@
     helpers$$implement({
         /**
          * Extend ugma with methods
-         * @param  {Object}    obj       methods container
+         * @param  {Object}    mixin       methods container
          * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
          * @example
          * ugma.extend({
@@ -1220,8 +1238,9 @@
          *
          *   link.foo();
          */
-        extend: function(obj, namespace) {
-            return obj ? namespace ? helpers$$implement(obj) : helpers$$implement(obj, null, function()  {return RETURN_THIS}) : false;
+        extend: function(mixin, namespace) {
+            if( !helpers$$is(mixin, "object") || helpers$$isArray( mixin ) ) minErr$$minErr();
+            return mixin ? namespace ? helpers$$implement(mixin) : helpers$$implement(mixin, null, function()  {return RETURN_THIS}) : false;
         }
     });
 
@@ -1880,7 +1899,8 @@
                 if ( helpers$$is( name, "function" ) ) {
                     value = name;
                 } else {
-                    value = name == null ? "" : name + "";
+                    // convert the value to a string
+                    value = name == null ? "" : "" + name;
                 }
     
                 if ( value !== modules$set$$objectTag ) {
@@ -1903,7 +1923,7 @@
             }
     
             if ( helpers$$is(name, "string" ) ) {
-                
+                // handle executable functions
                 if (helpers$$is(value, "function")) {
                     value = value( this );
                 }
@@ -2018,12 +2038,12 @@
          * @param  {String}   value 
          */
         attr: "attribute",
-    }, function( methodName, propertyName )  {return function( value ) {
+    }, function( methodName, property )  {return function( value ) {
     
         if ( arguments.length === 0 ) {
-            return this.get( methodName );
+            return this.get( property );
         }
-        this.set( methodName, value );
+        this.set( property, value );
     
     }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
 

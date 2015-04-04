@@ -2,7 +2,7 @@
  * @module extend
  */
 
-import { implement, is } from "../helpers"; 
+import { implement, is, isArray } from "../helpers"; 
 import { minErr        } from "../minErr";
 import { RETURN_THIS   } from "../const";
 
@@ -34,7 +34,7 @@ implement({
      *   link.foo();
      */
     extend(mixin, namespace) {
-        if( !is(mixin, "object") ) minErr();
-        return mixin ? namespace ? implement(mixin) : implement(mixin, null, () => RETURN_THIS) : false;
+        if( !is( mixin, "object" )  || isArray( mixin ) ) minErr();
+        return mixin ? namespace ? implement( mixin ) : implement( mixin, null, () => RETURN_THIS ) : false;
     }
 });

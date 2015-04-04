@@ -5,6 +5,12 @@ describe("extend", function() {
             ugma.extend();
         }).toThrow();
     });
+    
+    it("should not allow array as the first argument", function() {
+        expect(function() {
+            ugma.extend([]);
+        }).toThrow();
+    });
 
     it("should throw if the first argument is a string value", function() {
         expect(function() {
