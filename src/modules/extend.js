@@ -2,13 +2,14 @@
  * @module extend
  */
 
-import { implement    } from "../helpers"; 
-import { RETURN_THIS  } from "../const";
+import { implement, is } from "../helpers"; 
+import { minErr        } from "../minErr";
+import { RETURN_THIS   } from "../const";
 
 implement({
     /**
      * Extend ugma with methods
-     * @param  {Object}    obj       methods container
+     * @param  {Object}    mixin       methods container
      * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
      * @example
      * ugma.extend({
@@ -32,7 +33,8 @@ implement({
      *
      *   link.foo();
      */
-    extend(obj, namespace) {
-        return obj ? namespace ? implement(obj) : implement(obj, null, () => RETURN_THIS) : false;
+    extend(mixin, namespace) {
+        if( !is(mixin, "object") ) minErr();
+        return mixin ? namespace ? implement(mixin) : implement(mixin, null, () => RETURN_THIS) : false;
     }
 });
