@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 12:09:36 GMT
+ * Build date: Sat, 04 Apr 2015 12:21:59 GMT
  */
 (function() {
     "use strict";
@@ -598,6 +598,27 @@
             minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
         }
     }, null, function()  {return RETURN_FALSE});
+
+    helpers$$implement({
+        /**
+         * Read or write inner content of the element
+         * @param  {Mixed}  [content]  optional value to set
+         * @function
+         */    
+         content: function(val) {
+            if ( arguments.length === 0 ) {
+                return this.get();
+            }
+    
+            if (val._ || helpers$$isArray( val ) ) {
+                return this.set( "" ).append( val );
+            }
+    
+           return this.set( val );
+        }
+    }, null, function()  {return function() {
+        if ( arguments.length ) return this;
+    }});
 
     var util$csshooks$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
         "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
@@ -1239,8 +1260,8 @@
          *   link.foo();
          */
         extend: function(mixin, namespace) {
-            if( !helpers$$is(mixin, "object") || helpers$$isArray( mixin ) ) minErr$$minErr();
-            return mixin ? namespace ? helpers$$implement(mixin) : helpers$$implement(mixin, null, function()  {return RETURN_THIS}) : false;
+            if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
+            return mixin ? namespace ? helpers$$implement( mixin ) : helpers$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
         }
     });
 
@@ -2140,26 +2161,6 @@
     
         return all ? helpers$$map( descendants, core$core$$nodeTree ) : core$core$$nodeTree( currentNode );
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
-
-    helpers$$implement({
-        /**
-         * Read or write inner content of the element
-         * @param  {Mixed}  [content]  optional value to set
-         * @function
-         */    value: function(val) {
-            if ( arguments.length === 0 ) {
-                return this.get();
-            }
-    
-            if (val._ || helpers$$isArray( val ) ) {
-                return this.set( "" ).append( val );
-            }
-    
-           return this.set( val );
-        }
-    }, null, function()  {return function() {
-        if ( arguments.length ) return this;
-    }});
 
     helpers$$implement({
             // Show a single element

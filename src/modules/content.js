@@ -9,7 +9,8 @@ implement({
      * Read or write inner content of the element
      * @param  {Mixed}  [content]  optional value to set
      * @function
-     */    value( val ) {
+     */    
+     content( val ) {
         if ( arguments.length === 0 ) {
             return this.get();
         }

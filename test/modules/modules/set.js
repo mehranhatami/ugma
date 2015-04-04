@@ -204,42 +204,42 @@ jasmine.sandbox.set("<select name='select1' id='select1'>"+
 
         expect(txt.get("value")).toBe("Test");
 
-        expect(ugma.query("#select2").value()).toBe("3");        
+        expect(ugma.query("#select2").content()).toBe("3");        
 
-        expect(ugma.query("#select3").value()).toBe("1");        
+        expect(ugma.query("#select3").content()).toBe("1");        
         
         expect(ugma.query("#select2").get("selectedIndex")).toBe(3);        
 
-        expect(ugma.query("#option3c").value()).toBe("2");        
+        expect(ugma.query("#option3c").content()).toBe("2");        
 
-        expect(ugma.query("#option3a").value()).toBe("");        
+        expect(ugma.query("#option3a").content()).toBe("");        
         
-        expect(ugma.query("#option3e").value()).toBe("no value");        
+        expect(ugma.query("#option3e").content()).toBe("no value");        
         
-        expect(ugma.query("#option3a").value()).toBe("");        
+        expect(ugma.query("#option3a").content()).toBe("");        
         
-        ugma.query("#select3").value("");
+        ugma.query("#select3").content("");
 
-        expect(ugma.query("#select3").value()).toBe("");        
+        expect(ugma.query("#select3").content()).toBe("");        
         
-        expect(ugma.query("#select3").value()).toBe("");        
+        expect(ugma.query("#select3").content()).toBe("");        
         
-        expect(ugma.query("#select5").value()).toBe("3");        
+        expect(ugma.query("#select5").content()).toBe("3");        
 
-        // use value() method for this
-        ugma.query("#select5").value(1);
+        // use content() method for this
+        ugma.query("#select5").content(1);
 
-        // check value on ambiguous select.
-    	expect(ugma.query("#select5").value()).toBe("1");        
+        // check content on ambiguous select.
+    	expect(ugma.query("#select5").content()).toBe("1");        
 
-        // use value() method for this
-        ugma.query("#select5").value(3);
+        // use content() method for this
+        ugma.query("#select5").content(3);
 
-        // check value on ambiguous select.
-    	expect(ugma.query("#select5").value()).toBe("3");        
+        // check content on ambiguous select.
+    	expect(ugma.query("#select5").content()).toBe("3");        
         
-        ugma.query("#select5").value( "" );
-    	expect(ugma.query("#select5").value()).toBe("");        
+        ugma.query("#select5").content( "" );
+    	expect(ugma.query("#select5").content()).toBe("");        
     });
 
     it("should remove attribute if value is null or undefined", function() {
@@ -423,14 +423,14 @@ jasmine.sandbox.set("<select name='select1' id='select1'>"+
     it("should replace child element(s) from node with provided element", function() {
         var div = ugma.render("div>a+a");
         expect(div[0].childNodes.length).toBe(2);
-        expect(div.value(ugma.render("b"))).toBe(div);
+        expect(div.content(ugma.render("b"))).toBe(div);
         expect(div[0].childNodes.length).toBe(1);
         expect(div.child(0)).toHaveTag("b");
     });
 
     it("should set value of text input to provided string value", function() {
         var input = ugma.render("input[value=foo]");
-        expect(input.value("bar")).toBe(input);
+        expect(input.content("bar")).toBe(input);
         expect(input).toHaveProp("value", "bar");
     });
 

@@ -1,4 +1,4 @@
-describe("value", function() {
+describe("content", function() {
     "use strict";
 
     var div, input;
@@ -10,29 +10,29 @@ describe("value", function() {
 
     it("should replace child element(s) from node with provided element", function() {
         expect(div[0].childNodes.length).toBe(2);
-        expect(div.value(ugma.render("b"))).toBe(div);
+        expect(div.content(ugma.render("b"))).toBe(div);
         expect(div[0].childNodes.length).toBe(1);
         expect(div.child(0)).toHaveTag("b");
     });
 
     it("should return innerHTML string from node when called with no args", function() {
-        expect(div.value().toLowerCase()).toBe("<a></a><a></a>");
+        expect(div.content().toLowerCase()).toBe("<a></a><a></a>");
     });
 
     it("should set value of text input to provided string value", function () {
-        expect(input.value("bar")).toBe(input);
+        expect(input.content("bar")).toBe(input);
         expect(input).toHaveProp("value", "bar");
     });
 
      it("should set value of text input to string value of provided element", function () {
-         expect(input.value(ugma.render("div"))).toBe(input);
+         expect(input.content(ugma.render("div"))).toBe(input);
      });
      
      it("supports array of elements", function() {
         var content = ugma.renderAll("b*5");
 
         expect(div[0].childNodes.length).toBe(2);
-        div.value(content);
+        div.content(content);
         expect(div[0].childNodes.length).toBe(5);
     });
 
@@ -40,7 +40,7 @@ describe("value", function() {
        it("works for empty node", function() {
         var foo = ugma.query("x-foo");
 
-        expect(foo.value()).toBeUndefined();
-        expect(foo.value("123")).toBe(foo);
+        expect(foo.content()).toBeUndefined();
+        expect(foo.content("123")).toBe(foo);
      });
 });
