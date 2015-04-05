@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 05:21:54 GMT
+ * Build date: Sun, 05 Apr 2015 06:55:08 GMT
  */
 (function() {
     "use strict";
@@ -440,19 +440,6 @@
         }
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
-    var util$support$$support = {};
-
-    util$support$$support.classList = !!DOCUMENT.createElement("div").classList;
-
-    /**
-      Expose 'support' to the ugma namespace
-    */
-
-    core$core$$ugma.support = util$support$$support;
-
-
-    var util$support$$default = util$support$$support;
-
     /* es6-transpiler has-iterators:false, has-generators: false */
     var modules$classes$$reClass = /[\n\t\r]/g,
         modules$classes$$whitespace = /\s/g;
@@ -467,9 +454,8 @@
         * link.addClass('bar');
         * link.addClass('bar', 'foo');
         */   
-        addClass: [RETURN_THIS, "add", function( node, token )  {
-            var existingClasses = (" " + node[ 0 ].className + " ")
-                .replace(modules$classes$$reClass, " ");
+        addClass: ["add", true, function( node, token )  {
+            var existingClasses = (" " + node[ 0 ].className + " ").replace(modules$classes$$reClass, " ");
     
             if (existingClasses.indexOf(" " + token + " ") === -1) {
                 existingClasses += token + " ";
@@ -485,7 +471,7 @@
         * link.removeClass('bar');
         * link.removeClass('bar' , 'foo');
         */
-        removeClass: [RETURN_THIS, "remove", function( node, token )  {
+        removeClass: ["remove", true, function( node, token )  {
             node[ 0 ].className = (" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ")
                 .replace(" " + token + " ", " ");
@@ -497,7 +483,7 @@
         * @example
         * link.hasClass('bar');
         */
-        hasClass: [RETURN_FALSE, "contains", function( node, token )  {
+        hasClass: ["contains", false, function( node, token )  {
             return ((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ").indexOf(" " + token + " ") > -1);
         }],
@@ -509,32 +495,31 @@
         * link.toggleClass('bar');
         * link.toggleClass('bar', 'foo');
         */    
-        toggleClass: [RETURN_FALSE, "toggle", function( el, token )  {
+        toggleClass: ["toggle", false, function( el, token )  {
             var hasClass = el.hasClass( token );
-    
-            if ( hasClass ) {
-                el.removeClass( token );
-            } else {
-                el[ 0 ].className += " " + token;
-            }
+           
+             if(hasClass) {
+                 el.removeClass( token ); 
+             } else {
+                el.addClass( token ); 
+             }
     
             return !hasClass;
         }]
-    }, function( methodName, defaultStrategy, nativeMethodName, strategy )  {
+    }, function( methodName, nativeMethodName, iteration, strategy )  {
     
-        /* istanbul ignore else  */
-        if ( !util$support$$default.classList ) {
+        if ( HTML.classList ) {
             // use native classList property if possible
             strategy = function( el, token ) {
                 return el[ 0 ].classList[ nativeMethodName ]( token );
             };
         }
     
-        if ( defaultStrategy === RETURN_FALSE ) {
+        if ( !iteration ) {
     
-            return function(token, force) {
+            return function( token, force ) {
                
-                if ( typeof force === "boolean" && nativeMethodName === "toggle" ) {
+                if ( helpers$$is( force, "boolean") && nativeMethodName === "toggle" ) {
                     this[ force ? "addClass" : "removeClass" ]( token );
     
                     return force;
@@ -547,19 +532,21 @@
         } else {
     
             return function() {
-                    var i = 0,
-                        len = arguments.length;
-                    for (; i < len; i++) {    
+    
+                    
+                    for (var i = 0, len = arguments.length; i < len; i++) {    
                     
                     if ( !helpers$$is(arguments[ i ], "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
     
                     strategy( this, arguments[ i ] );
                 }
-    
                 return this;
             };
         }
-    }, function( methodName, defaultStrategy)  {return defaultStrategy} );
+     }, function(methodName, defaultStrategy)  {
+          if (defaultStrategy === "contains" ||defaultStrategy === "toggle") return RETURN_FALSE;
+          return RETURN_THIS;
+      });
 
     helpers$$implement({
       /**
@@ -1349,6 +1336,36 @@
         return canContinue;
       }
     }, null, function()  {return RETURN_TRUE} );
+
+    var util$support$$support = {};
+
+    var util$support$$DIV = DOCUMENT.createElement("div");
+
+    // Check for native classList support in the browser
+    util$support$$support.classList = HTML.classList;
+
+    // Don't break non-classList-compatible browsers.
+
+    try {
+
+    util$support$$DIV.classList.add("a", "b");
+
+    util$support$$support.supportsMultipleArgs = /(^| )a( |$)/.test(util$support$$DIV.className) && /(^| )b( |$)/.test(util$support$$DIV.className); 
+
+   } catch(e){
+
+    util$support$$support.supportsMultipleArgs = false; 
+  }
+
+
+    /**
+      Expose 'support' to the ugma namespace
+    */
+
+    core$core$$ugma.support = util$support$$support;
+
+
+    var util$support$$default = util$support$$support;
 
     var util$accessorhooks$$langFix = /_/g,
         util$accessorhooks$$accessorHooks = {

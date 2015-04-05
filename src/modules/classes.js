@@ -2,14 +2,13 @@
  * @module classes
  */
 
-import { DOCUMENT, HTML, RETURN_FALSE, RETURN_THIS } from "../const";
-import { implement, trim, is                       } from "../helpers";
-import { minErr                                    } from "../minErr";
-import   support                                     from "../util/support";
+import { HTML, RETURN_FALSE, RETURN_THIS } from "../const";
+import { implement, trim, is             } from "../helpers";
+import { minErr                          } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
-var reClass = /[\n\t\r]/g,
-    whitespace = /\s/g;
+
+var reClass = /[\n\t\r]/g;
 
 implement({
    
@@ -21,9 +20,8 @@ implement({
     * link.addClass('bar');
     * link.addClass('bar', 'foo');
     */   
-    addClass: [RETURN_THIS, "add", ( node, token ) => {
-        var existingClasses = (" " + node[ 0 ].className + " ")
-            .replace(reClass, " ");
+    addClass: ["add", true, ( node, token ) => {
+        var existingClasses = (" " + node[ 0 ].className + " ").replace(reClass, " ");
 
         if (existingClasses.indexOf(" " + token + " ") === -1) {
             existingClasses += token + " ";
@@ -39,7 +37,7 @@ implement({
     * link.removeClass('bar');
     * link.removeClass('bar' , 'foo');
     */
-    removeClass: [RETURN_THIS, "remove", ( node, token ) => {
+    removeClass: ["remove", true, ( node, token ) => {
         node[ 0 ].className = (" " + node[ 0 ].className + " ")
             .replace(reClass, " ")
             .replace(" " + token + " ", " ");
@@ -51,7 +49,7 @@ implement({
     * @example
     * link.hasClass('bar');
     */
-    hasClass: [RETURN_FALSE, "contains", ( node, token ) => {
+    hasClass: ["contains", false, ( node, token ) => {
         return ((" " + node[ 0 ].className + " ")
             .replace(reClass, " ").indexOf(" " + token + " ") > -1);
     }],
@@ -63,32 +61,31 @@ implement({
     * link.toggleClass('bar');
     * link.toggleClass('bar', 'foo');
     */    
-    toggleClass: [RETURN_FALSE, "toggle", ( el, token ) => {
+    toggleClass: ["toggle", false, ( el, token ) => {
         var hasClass = el.hasClass( token );
-
-        if ( hasClass ) {
-            el.removeClass( token );
-        } else {
-            el[ 0 ].className += " " + token;
-        }
+       
+         if(hasClass) {
+             el.removeClass( token ); 
+         } else {
+            el.addClass( token ); 
+         }
 
         return !hasClass;
     }]
-}, ( methodName, defaultStrategy, nativeMethodName, strategy ) => {
+}, ( methodName, nativeMethodName, iteration, strategy ) => {
 
-    /* istanbul ignore else  */
-    if ( !support.classList ) {
+    if ( HTML.classList ) {
         // use native classList property if possible
         strategy = function( el, token ) {
             return el[ 0 ].classList[ nativeMethodName ]( token );
         };
     }
 
-    if ( defaultStrategy === RETURN_FALSE ) {
+    if ( !iteration ) {
 
         return function( token, force ) {
            
-            if ( typeof force === "boolean" && nativeMethodName === "toggle" ) {
+            if ( is( force, "boolean") && nativeMethodName === "toggle" ) {
                 this[ force ? "addClass" : "removeClass" ]( token );
 
                 return force;
@@ -101,16 +98,17 @@ implement({
     } else {
 
         return function() {
-                var i = 0,
-                    len = arguments.length;
-                for (; i < len; i++) {    
+                
+                for (var i = 0, len = arguments.length; i < len; i++) {    
                 
                 if ( !is(arguments[ i ], "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
 
                 strategy( this, arguments[ i ] );
             }
-
             return this;
         };
     }
-}, ( methodName, defaultStrategy) => defaultStrategy );
+ }, (methodName, defaultStrategy) => {
+      if (defaultStrategy === "contains" ||defaultStrategy === "toggle") return RETURN_FALSE;
+      return RETURN_THIS;
+  });
