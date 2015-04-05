@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 04:04:58 GMT
+ * Build date: Sun, 05 Apr 2015 04:21:27 GMT
  */
 (function() {
     "use strict";
@@ -1550,7 +1550,7 @@
     };
 
     /**
-     * Hook 'styleAccessor' on ugma namespace
+     * Hook 'accessorHooks' on the ugma namespace
      */
 
     core$core$$ugma.accessorHooks = function( mixin, where ) {
@@ -1565,7 +1565,6 @@
             });
         }
     };
-
 
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
