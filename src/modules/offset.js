@@ -33,15 +33,15 @@ implement({
     },
 
   /**
-   * Calculate width based on element's offset
+   * Calculate element's width in pixels
    * @return {Number} element width in pixels
    */    
-   width() { return this.offset().width },
+   width() { return this.get("offsetWidth") },
  
   /**
-   * Calculate height based on element's offset
+   * Calculate element's height in pixels
    * @return {Number} element height in pixels
    */
-   height() { return this.offset().height }
+   height() { return this.get("offsetHeight"); }
    
 }, null, (methodName) => () => { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 } );

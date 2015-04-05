@@ -26,6 +26,12 @@ describe("offset", function() {
         expect(offset.height).toBe(offset.bottom - offset.top);
     });
 
+
+    it("should have width and height calculated based on offset", function() {
+        expect(link.width()).toBe(link.offset().width);
+        expect(link.height()).toBe(link.offset().height);
+    });
+
     it("should return return width and height in 'px' on hidden elements", function() {
 
         link.css("width", 30);

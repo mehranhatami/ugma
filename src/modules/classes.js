@@ -26,7 +26,7 @@ implement({
             .replace(reClass, " ");
 
         if (existingClasses.indexOf(" " + token + " ") === -1) {
-            existingClasses += trim(token) + " ";
+            existingClasses += token + " ";
         }
 
         node[ 0 ].className = trim(existingClasses);
@@ -40,9 +40,9 @@ implement({
     * link.removeClass('bar' , 'foo');
     */
     removeClass: [RETURN_THIS, "remove", ( node, token ) => {
-        node[ 0 ].className = trim((" " + node[ 0 ].className + " ")
+        node[ 0 ].className = (" " + node[ 0 ].className + " ")
             .replace(reClass, " ")
-            .replace(" " + trim(token) + " ", " "));
+            .replace(" " + token + " ", " ");
     }],
    /**
     * Check if element contains class name
@@ -51,7 +51,7 @@ implement({
     * @example
     * link.hasClass('bar');
     */
-    hasClass: [RETURN_FALSE, "contains", false, ( node, token ) => {
+    hasClass: [RETURN_FALSE, "contains", ( node, token ) => {
         return ((" " + node[ 0 ].className + " ")
             .replace(reClass, " ").indexOf(" " + token + " ") > -1);
     }],
@@ -64,39 +64,39 @@ implement({
     * link.toggleClass('bar', 'foo');
     */    
     toggleClass: [RETURN_FALSE, "toggle", ( el, token ) => {
-        var hasClass = el.hasClass(token);
+        var hasClass = el.hasClass( token );
 
-        if (hasClass) {
-            el.removeClass(token);
+        if ( hasClass ) {
+            el.removeClass( token );
         } else {
             el[ 0 ].className += " " + token;
         }
 
         return !hasClass;
     }]
-}, (methodName, defaultStrategy, nativeMethodName, strategy) => {
+}, ( methodName, defaultStrategy, nativeMethodName, strategy ) => {
 
     /* istanbul ignore else  */
-    if (support.classList) {
+    if ( !support.classList ) {
         // use native classList property if possible
-        strategy = function(el, token) {
-            return el[0].classList[nativeMethodName](token);
+        strategy = function( el, token ) {
+            return el[ 0 ].classList[ nativeMethodName ]( token );
         };
     }
 
-    if (defaultStrategy === RETURN_FALSE) {
+    if ( defaultStrategy === RETURN_FALSE ) {
 
-        return function(token, force) {
+        return function( token, force ) {
            
-            if (typeof force === "boolean" && nativeMethodName === "toggle") {
-                this[force ? "addClass" : "removeClass"](token);
+            if ( typeof force === "boolean" && nativeMethodName === "toggle" ) {
+                this[ force ? "addClass" : "removeClass" ]( token );
 
                 return force;
             }
 
-            if (!is(token, "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
+            if ( !is( token, "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
 
-            return strategy(this, trim(token));
+            return strategy( this, token );
         };
     } else {
 
@@ -105,12 +105,12 @@ implement({
                     len = arguments.length;
                 for (; i < len; i++) {    
                 
-                if (!is(arguments[ i ], "string")) minErr(nativeMethodName + "()", "The class provided is not a string.");
+                if ( !is(arguments[ i ], "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
 
-                strategy(this, arguments[ i ]);
+                strategy( this, arguments[ i ] );
             }
 
             return this;
         };
     }
-}, (methodName, defaultStrategy) => defaultStrategy);
+}, ( methodName, defaultStrategy) => defaultStrategy );
