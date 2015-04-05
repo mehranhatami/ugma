@@ -2,9 +2,11 @@
  * @module accessorHooks
  */
 
-import { trim, each, forOwn, every          } from "../helpers";
-import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
-import   support                              from "../util/support";
+import { ugma                                    } from "../core/core";
+import { trim, each, forOwn, every, is, isArray  } from "../helpers";
+import { DOCUMENT, WINDOW, FOCUSABLE             } from "../const";
+import { minErr                                  } from "../minErr";
+import   support                                   from "../util/support";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -183,6 +185,23 @@ each((
         node.innerHTML = value;
     };
 
+/**
+ * Hook 'accessorHooks' on the ugma namespace
+ */
+
+  ugma.accessorHooks = function( mixin, where ) {
+     // Stop here if 'where' is not a typeof string
+      if( !is( where, "string" ) ) minErr("ugma.accessorHooks()", "Not a valid string value");
+    
+      if ( is( mixin, "object" ) && !isArray( mixin ) ) {
+
+          forOwn( mixin, ( key, value ) => {
+              if( is( value, "string" ) || is( value, "function" ) )
+              accessorHooks[ where ][ key ] = mixin;
+          });
+      }
+  };
+  
 /*
  * Export interface
  */

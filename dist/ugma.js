@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 02:32:06 GMT
+ * Build date: Sun, 05 Apr 2015 04:04:58 GMT
  */
 (function() {
     "use strict";
@@ -1548,6 +1548,24 @@
         }
         node.innerHTML = value;
     };
+
+    /**
+     * Hook 'styleAccessor' on ugma namespace
+     */
+
+    core$core$$ugma.accessorHooks = function( mixin, where ) {
+       // Stop here if 'where' is not a typeof string
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr("ugma.accessorHooks()", "Not a valid string value");
+      
+        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+  
+            helpers$$forOwn( mixin, function( key, value )  {
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
+                util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
+            });
+        }
+    };
+
 
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
