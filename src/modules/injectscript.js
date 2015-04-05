@@ -19,7 +19,7 @@ implement({
                 var arg = urls.shift(),
                     script;
 
-                if (is(arg, "string")) {
+                if ( is( arg, "string" ) ) {
 
                     script = doc.createElement( "script" );
                     script.onload = callback;

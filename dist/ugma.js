@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 07:36:39 GMT
+ * Build date: Sun, 05 Apr 2015 08:42:47 GMT
  */
 (function() {
     "use strict";
@@ -336,15 +336,15 @@
     /* es6-transpiler has-iterators:false, has-generators: false */
 
     var util$selectormatcher$$quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-        util$selectormatcher$$matchesMethod = helpers$$map(VENDOR_PREFIXES.concat(null), function(p)  {
-            return (p ? p.toLowerCase() + "M" : "m") + "atchesSelector";
-        }).reduceRight(function(propName, p)  {
+        util$selectormatcher$$matchesMethod = helpers$$map(VENDOR_PREFIXES.concat( null ), function( p )  {
+            return ( p ? p.toLowerCase() + "M" : "m" ) + "atchesSelector";
+        }).reduceRight( function( propName, p )  {
             return propName ||
                 // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
-                (HTML.matches && "matches" ||
+                ( HTML.matches && "matches" ||
                 // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
-                 p in HTML && p);
-        }, null),
+                 p in HTML && p );
+        }, null ),
         util$selectormatcher$$query = function( node, selector )  {
     
             // match elem with all selected elems of parent
@@ -733,19 +733,18 @@
 
     core$core$$ugma.styleAccessor = function( mixin, where ) {
        // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr("ugma.styleAccessor()", "Not a valid string value");
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleAccessor()", "Not a valid string value" );
       
         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
   
             helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
-                util$styleAccessor$$styleAccessor[ where ][ key ] = mixin;
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleAccessor$$styleAccessor[ where ][ key ] = mixin;
             });
         }
     };
 
     var util$styleAccessor$$default = util$styleAccessor$$styleAccessor;
-    function util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
+    function util$adjustCSS$$adjustCSS( root, prop, parts, computed ) {
     
         var adjusted,
             scale = 1,
@@ -756,7 +755,7 @@
             initial = currentValue(),
             unit = parts && parts[ 3 ] || "",
             // Starting value computation is required for potential unit mismatches
-            initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec( computed[ prop ] );
+            initialInUnit = ( unit !== "px" && +initial ) && RCSSNUM.exec( computed[ prop ] );
     
         if (initialInUnit && initialInUnit[ 3 ] !== unit) {
     
@@ -780,9 +779,9 @@
             } while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
         }
     
-        if (parts) {
+        if ( parts ) {
             // Apply relative offset (+=/-=) if specified
-            adjusted = parts[ 1 ] ? (+initialInUnit || +initial || 0) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
+            adjusted = parts[ 1 ] ? ( +initialInUnit || +initial || 0 ) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
     
             return adjusted;
         }
@@ -1028,8 +1027,8 @@
         // IE9 doesn't fire oninput when text is deleted, so use
         // onselectionchange event to detect such cases
         // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-        DOCUMENT.attachEvent("onselectionchange", function()  {
-            if (util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue) {
+        DOCUMENT.attachEvent( "onselectionchange", function()  {
+            if ( util$eventhooks$$capturedNode && util$eventhooks$$capturedNode.value !== util$eventhooks$$capturedNodeValue ) {
                 util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
                 // trigger custom event that capture
                 core$core$$ugma.native( util$eventhooks$$capturedNode ).trigger( "input" );
@@ -1037,7 +1036,7 @@
         });
     
         // input event fix via propertychange
-        DOCUMENT.attachEvent("onfocusin", function()  {
+        DOCUMENT.attachEvent( "onfocusin", function()  {
             util$eventhooks$$capturedNode = WINDOW.event.srcElement;
             util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
         });
@@ -1108,8 +1107,7 @@
                 if ( once ) el.off( eventType, callback );
     
                 if ( props ) {
-                    args = helpers$$map( args, function( name )  {return util$eventhandler$$getEventProperty(
-                        name, e, eventType, node, eventTarget, currentTarget )} );
+                    args = helpers$$map( args, function( name )  {return util$eventhandler$$getEventProperty( name, e, eventType, node, eventTarget, currentTarget )} );
                 } else {
                     args = helpers$$slice.call( e._trigger || [ 0 ], 1 );
                 }
@@ -1174,9 +1172,7 @@
                 args = null;
             }
     
-            if ( !helpers$$is( callback, "function" ) ) {
-                minErr$$minErr( method + "()", callback + " is not a function." );
-            }
+            if ( !helpers$$is( callback, "function" ) )  minErr$$minErr( method + "()", callback + " is not a function." );
     
             // http://jsperf.com/string-indexof-vs-split
             var node = this[ 0 ],
@@ -1395,9 +1391,8 @@
     
                     if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
-                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) {
-                            node.selectedIndex = -1;
-                        }
+                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
+    
                     } else {
                         node.value = value;
                     }
@@ -1451,9 +1446,7 @@
         util$accessorhooks$$accessorHooks.get.selected = function( node )  {
             var parent = node.parentNode;
             /* jshint ignore:start */
-            if ( parent && parent.parentNode ) {
-                parent.parentNode.selectedIndex;
-            }
+            if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
             /* jshint ignore:end */
             return null;
         };
@@ -1494,21 +1487,9 @@
         "accessKey "        +
         "encType "          +
         "readOnly  "        +
-        "vAlign  " + "longDesc")).split(" "), function( key ) {
+        "vAlign  " + "longDesc") ).split( " " ), function( key ) {
         util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
     });
-
-    var util$accessorhooks$$MSApp = WINDOW.MSApp;
-    // Use a 'hook' for innerHTML because of Win8 apps
-    util$accessorhooks$$accessorHooks.set.innerHTML = function(node, value)  {
-        // Win8 apps: Allow all html to be inserted
-        if (typeof util$accessorhooks$$MSApp !== "undefined" && util$accessorhooks$$MSApp.execUnsafeLocalFunction) {
-            util$accessorhooks$$MSApp.execUnsafeLocalFunction(function() {
-                node.innerHTML = value;
-            });
-        }
-        node.innerHTML = value;
-    };
 
     /**
      * Hook 'accessorHooks' on the ugma namespace
@@ -1516,13 +1497,12 @@
 
     core$core$$ugma.accessorHooks = function( mixin, where ) {
        // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr("ugma.accessorHooks()", "Not a valid string value");
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
       
         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
   
             helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
-                util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
             });
         }
     };
@@ -1578,9 +1558,9 @@
        *    link.has('fooBar');  true / false
        */
        has: function(name) {
-            if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name ); // Boolean
-    
-            minErr$$minErr( "has()", "Not a valid property/attribute" );
+            if ( !helpers$$is( name, "string" ) ) minErr$$minErr( "has()", "Not a valid property/attribute" );
+            
+            return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name ); // Boolean
         }
     }, null, function()  {return RETURN_FALSE} );
 
@@ -1593,23 +1573,21 @@
         injectCSS: function(selector, cssText) {
             var styleSheet = this._._styles;
     
-            if (!styleSheet) {
+            if ( !styleSheet ) {
                 var doc = this[ 0 ].ownerDocument,
-                    styleNode = helpers$$injectElement( doc.createElement("style") );
+                    styleNode = helpers$$injectElement( doc.createElement( "style" ) );
     
                 styleSheet = styleNode.sheet || styleNode.styleSheet;
                 // store object internally
                 this._._styles = styleSheet;
             }
     
-            if ( !helpers$$is(selector, "string") || !helpers$$is(cssText, "string") ) {
-                minErr$$minErr( "injectCSS()", "The string did not match the expected pattern" );
-            }
+            if ( !helpers$$is( selector, "string" ) || !helpers$$is( cssText, "string" ) ) minErr$$minErr( "injectCSS()", "The string did not match the expected pattern" );
     
-            helpers$$each(selector.split(","), function(selector) {
+            helpers$$each( selector.split( "," ), function( selector ) {
                 try {
-                   styleSheet.insertRule(selector + "{" + cssText + "}", styleSheet.cssRules.length);
-                } catch(err) {}
+                   styleSheet.insertRule(selector + "{" + cssText + "}", styleSheet.cssRules.length );
+                } catch( err ) {}
             });
         }
     });
@@ -1628,7 +1606,7 @@
                     var arg = urls.shift(),
                         script;
     
-                    if (helpers$$is(arg, "string")) {
+                    if ( helpers$$is( arg, "string" ) ) {
     
                         script = doc.createElement( "script" );
                         script.onload = callback;
@@ -1757,18 +1735,12 @@
     
             // Handle native DOM elements 
             // e.g. link.append(document.createElement('li'));
-            if (native && content.nodeType === 1) {
-                content = core$core$$nodeTree( content );
-            }
+            if (native && content.nodeType === 1) content = core$core$$nodeTree( content );
     
-            if ( helpers$$is( content, "function" ) ) {
-                content = content( this$0 );
-            }
+            if ( helpers$$is( content, "function" ) ) content = content( this$0 );
     
             // merge a 'pure' array into a string
-            if ( helpers$$isArray( content ) && !helpers$$is( content[ 0 ], "object" ) ) {
-                content = content.join();
-            }
+            if ( helpers$$isArray( content ) && !helpers$$is( content[ 0 ], "object" ) ) content = content.join();
     
             if ( helpers$$is( content, "string" ) ) {
                 if (helpers$$is( fragment, "string" ) ) {
@@ -1806,7 +1778,8 @@
         }
     
         return this;
-    }}, function()  {return RETURN_THIS});
+        
+    }}, function()  {return RETURN_THIS} );
 
     helpers$$implement({
       /**
@@ -1829,9 +1802,8 @@
                 // Accessing this property makes selected-by-default
                 // options in Safari work properly
                 /* jshint ignore:start */
-                if ( node.parentNode ) {
-                    node.parentNode.selectedIndex;
-                }
+                if ( node.parentNode ) node.parentNode.selectedIndex;
+    
                 /* jshint ignore:end */
                 return node.selected === true;
             },
@@ -1943,20 +1915,18 @@
         // and might be considered as more preferable results.
         //
         // This logic, however, is not guaranteed and can change at any point in the future
-        offsetParent: function(other) {
+        offsetParent: function() {
             var node = this[ 0 ],
                 offsetParent = node.offsetParent || HTML,
                 isInline = this.css( "display" ) === "inline";
     
-            if (!isInline && offsetParent) {
-                return core$core$$nodeTree( offsetParent );
-            }
+            if ( !isInline && offsetParent ) return core$core$$nodeTree( offsetParent );
     
             while ( offsetParent && core$core$$nodeTree(offsetParent).css( "position" ) === "static" ) {
                 offsetParent = offsetParent.offsetParent;
             }
     
-            return core$core$$nodeTree(offsetParent);
+            return core$core$$nodeTree( offsetParent );
         }
     }, null, function()  {return RETURN_FALSE});
 
@@ -2099,9 +2069,7 @@
                 previousValue;
     
             // grab the previous value if it's already a subscription on this attribute / property,
-            if ( subscription ) {
-                previousValue = this.get( name );
-            }
+            if ( subscription ) previousValue = this.get( name );
     
             if ( helpers$$is(name, "string" ) ) {
                 // handle executable functions
@@ -2131,10 +2099,8 @@
                 minErr$$minErr( "set()", "The property or attribute is not valid." );
             }
     
-            if ( subscription && previousValue !== value ) {
-                // Trigger all relevant attribute / nameerty changes.
-                helpers$$each(subscription, function( cb )  { helpers$$invoke(this$0, cb, value, previousValue) } );
-            }
+            // Trigger all relevant attribute / nameerty changes.
+            if ( subscription && previousValue !== value )  helpers$$each( subscription, function( cb )  { helpers$$invoke(this$0, cb, value, previousValue) } );
     
             return this;
         }
@@ -2160,7 +2126,7 @@
     // Note! There are more cons then pros in this, and it's important to know that the shadow() method
     // is not SEO friendly
     //        
-    var modules$shadow$$MUTATION_WRAPPER = "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
+    var modules$shadow$$MUTATION_WRAPPER =  "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
 
     if ( INTERNET_EXPLORER ) {
         modules$shadow$$MUTATION_WRAPPER = modules$shadow$$MUTATION_WRAPPER.replace( "position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace( "data=`about:blank` ", "" );
@@ -2181,11 +2147,11 @@
             }
     
             var ctx = core$core$$ugma.render(modules$shadow$$MUTATION_WRAPPER),
-                object = ctx.get("firstChild");
+                object = ctx.get( "firstChild" );
             // set onload handler before adding element to the DOM
             object.onload = function()  {
                 // apply user-defined styles for the context
-                if ( ctx.addClass(name).css("position") === "static" ) ctx.css("position", "relative");
+                if ( ctx.addClass( name ).css( "position" ) === "static" ) ctx.css( "position", "relative" );
     
                 // store new context root internally and invoke callback
                 callback( data[ 1 ] = new core$core$$domTree( object.contentDocument ) );
@@ -2253,7 +2219,7 @@
         subscribe: function(name, callback) {
                 var subscription = this._._subscription || ( this._._subscription = [] );
     
-                if ( !subscription[ name ]) subscription[ name ] = [];
+                if ( !subscription[ name ] ) subscription[ name ] = [];
     
                 subscription[ name ].push( callback );
     
@@ -2409,28 +2375,24 @@
             state = null;
         }
     
-        if ( callback && !helpers$$is( callback, "function") ) {
-            minErr$$minErr( methodName + "()", "This operation is not supported" );
-        }
+        if ( callback && !helpers$$is( callback, "function") ) minErr$$minErr( methodName + "()", "This operation is not supported" );
     
         var node = this[ 0 ],
             style = node.style,
             computed = helpers$$computeStyle( node ),
-            hiding = condition,
+            isHidden = condition,
             frameId = this._._frame,
             done = function()  {
-                this$0.set( "aria-hidden", String( hiding ) );
+                this$0.set( "aria-hidden", String( isHidden ) );
     
-                style.visibility = hiding ? "hidden" : "inherit";
+                style.visibility = isHidden ? "hidden" : "inherit";
     
                 this$0._._frame = null;
     
                 if ( callback ) callback( this$0 );
             };
     
-        if ( !helpers$$is(hiding, "boolean" ) ) {
-            hiding = computed.visibility !== "hidden";
-        }
+        if ( !helpers$$is(isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
     
         // cancel previous frame if it exists
         if ( frameId ) util$raf$$cancelFrame( frameId );
@@ -2511,13 +2473,10 @@
         // try to determine which kind of quotes to use
         quote = value && helpers$$inArray( value, "\"" ) >= 0 ? "'" : "\"";
     
-        if ( helpers$$is( rawValue, "string" ) ) {
-            value = rawValue;
-        } 
+        if ( helpers$$is( rawValue, "string" ) ) value = rawValue;
         
-        if ( !helpers$$is( value, "string" ) ) {
-            value = name;
-        }
+        if ( !helpers$$is( value, "string" ) ) value = name;
+    
         return " " + name + "=" + quote + value + quote;
     }
 
@@ -2575,13 +2534,10 @@
                     stack.shift(); // remove "(" symbol from stack
                 } else {
                     // handle values inside of `...` and [...] sections
-                    if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) {
-                        output.push( str.slice(1, -1) );
-                    }
+                    if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) output.push( str.slice( 1, -1 ) );
+    
                     // handle multiple classes, e.g. a.one.two
-                    if ( str[ 0 ] === "." ) {
-                        output.push( str.slice( 1 ).replace( template$template$$dot, " ") );
-                    }
+                    if ( str[ 0 ] === "." ) output.push( str.slice( 1 ).replace( template$template$$dot, " ") );
     
                     stack.unshift( str[ 0 ] );
                 }
@@ -2620,9 +2576,9 @@
     helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
 
     var template$template$$default = template$template$$tagCache;
-    // return tag's from tagCache with <code>tag</code> type
-    function template$processTag$$processTag(tag) {
-        return template$template$$default[tag] || (template$template$$default[tag] = "<" + tag + "></" + tag + ">");
+    // return tag's from tagCache with tag type
+    function template$processTag$$processTag( tag ) {
+        return template$template$$default[ tag ] || ( template$template$$default[ tag ] = "<" + tag + "></" + tag + ">" );
     }
 
     /* es6-transpiler has-iterators:false, has-generators: false */

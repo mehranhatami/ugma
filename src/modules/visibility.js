@@ -6,7 +6,7 @@ import { ugma                          } from "../core/core";
 import { RETURN_THIS                   } from "../const";
 import { implement, is, computeStyle   } from "../helpers";
 import { minErr                        } from "../minErr";
-import { requestFrame, cancelFrame } from "../util/raf";
+import { requestFrame, cancelFrame     } from "../util/raf";
 
 implement({
     /**
@@ -59,28 +59,24 @@ implement({
         state = null;
     }
 
-    if ( callback && !is( callback, "function") ) {
-        minErr( methodName + "()", "This operation is not supported" );
-    }
+    if ( callback && !is( callback, "function") ) minErr( methodName + "()", "This operation is not supported" );
 
     var node = this[ 0 ],
         style = node.style,
         computed = computeStyle( node ),
-        hiding = condition,
+        isHidden = condition,
         frameId = this._._frame,
         done = () => {
-            this.set( "aria-hidden", String( hiding ) );
+            this.set( "aria-hidden", String( isHidden ) );
 
-            style.visibility = hiding ? "hidden" : "inherit";
+            style.visibility = isHidden ? "hidden" : "inherit";
 
             this._._frame = null;
 
             if ( callback ) callback( this );
         };
 
-    if ( !is(hiding, "boolean" ) ) {
-        hiding = computed.visibility !== "hidden";
-    }
+    if ( !is(isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
 
     // cancel previous frame if it exists
     if ( frameId ) cancelFrame( frameId );

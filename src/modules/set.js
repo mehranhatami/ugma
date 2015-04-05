@@ -50,9 +50,7 @@ implement({
             previousValue;
 
         // grab the previous value if it's already a subscription on this attribute / property,
-        if ( subscription ) {
-            previousValue = this.get( name );
-        }
+        if ( subscription ) previousValue = this.get( name );
 
         if ( is(name, "string" ) ) {
             // handle executable functions
@@ -82,10 +80,8 @@ implement({
             minErr( "set()", "The property or attribute is not valid." );
         }
 
-        if ( subscription && previousValue !== value ) {
-            // Trigger all relevant attribute / nameerty changes.
-            each(subscription, ( cb ) => { invoke(this, cb, value, previousValue) } );
-        }
+        // Trigger all relevant attribute / nameerty changes.
+        if ( subscription && previousValue !== value )  each( subscription, ( cb ) => { invoke(this, cb, value, previousValue) } );
 
         return this;
     }

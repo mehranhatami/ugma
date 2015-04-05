@@ -14,10 +14,10 @@ implement({
    * @example
    *     link.subscribe("value", function(value, oldValue) { });
    */
-    subscribe(name, callback) {
+    subscribe( name, callback ) {
             var subscription = this._._subscription || ( this._._subscription = [] );
 
-            if ( !subscription[ name ]) subscription[ name ] = [];
+            if ( !subscription[ name ] ) subscription[ name ] = [];
 
             subscription[ name ].push( callback );
 

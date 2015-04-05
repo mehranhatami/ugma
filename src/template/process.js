@@ -40,10 +40,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
             let value = stack.shift(),
                 node = stack.shift();
 
-            if ( is( node, "string" ) ) {
-                
-                node = [ processTag( node ) ];
-            }
+            if ( is( node, "string" ) ) node = [ processTag( node ) ];
 
             if ( is( node, "undefined" ) || is( value, "undefined" ) ) {
                 minErr("emmet()", "This operation is not supported" );

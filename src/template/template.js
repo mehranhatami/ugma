@@ -62,13 +62,10 @@ ugma.template = function( template, args ) {
                 stack.shift(); // remove "(" symbol from stack
             } else {
                 // handle values inside of `...` and [...] sections
-                if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) {
-                    output.push( str.slice(1, -1) );
-                }
+                if ( str[ 0 ] === "[" || str[ 0 ] === "`" ) output.push( str.slice( 1, -1 ) );
+
                 // handle multiple classes, e.g. a.one.two
-                if ( str[ 0 ] === "." ) {
-                    output.push( str.slice( 1 ).replace( dot, " ") );
-                }
+                if ( str[ 0 ] === "." ) output.push( str.slice( 1 ).replace( dot, " ") );
 
                 stack.unshift( str[ 0 ] );
             }

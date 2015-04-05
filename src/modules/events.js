@@ -51,9 +51,7 @@ implement({
             args = null;
         }
 
-        if ( !is( callback, "function" ) ) {
-            minErr( method + "()", callback + " is not a function." );
-        }
+        if ( !is( callback, "function" ) )  minErr( method + "()", callback + " is not a function." );
 
         // http://jsperf.com/string-indexof-vs-split
         var node = this[ 0 ],

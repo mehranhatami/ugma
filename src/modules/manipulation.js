@@ -111,18 +111,12 @@ implement({
 
         // Handle native DOM elements 
         // e.g. link.append(document.createElement('li'));
-        if (native && content.nodeType === 1) {
-            content = nodeTree( content );
-        }
+        if (native && content.nodeType === 1) content = nodeTree( content );
 
-        if ( is( content, "function" ) ) {
-            content = content( this );
-        }
+        if ( is( content, "function" ) ) content = content( this );
 
         // merge a 'pure' array into a string
-        if ( isArray( content ) && !is( content[ 0 ], "object" ) ) {
-            content = content.join();
-        }
+        if ( isArray( content ) && !is( content[ 0 ], "object" ) ) content = content.join();
 
         if ( is( content, "string" ) ) {
             if (is( fragment, "string" ) ) {
@@ -160,4 +154,5 @@ implement({
     }
 
     return this;
-}, () => RETURN_THIS);
+    
+}, () => RETURN_THIS );

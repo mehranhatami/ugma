@@ -75,13 +75,12 @@ styleAccessor._default = function(name, style) {
 
   ugma.styleAccessor = function( mixin, where ) {
      // Stop here if 'where' is not a typeof string
-      if( !is( where, "string" ) ) minErr("ugma.styleAccessor()", "Not a valid string value");
+      if( !is( where, "string" ) ) minErr( "ugma.styleAccessor()", "Not a valid string value" );
     
       if ( is( mixin, "object" ) && !isArray( mixin ) ) {
 
           forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) )
-              styleAccessor[ where ][ key ] = mixin;
+              if( is( value, "string" ) || is( value, "function" ) ) styleAccessor[ where ][ key ] = mixin;
           });
       }
   };

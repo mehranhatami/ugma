@@ -13,9 +13,8 @@ var pseudoClasses = {
             // Accessing this property makes selected-by-default
             // options in Safari work properly
             /* jshint ignore:start */
-            if ( node.parentNode ) {
-                node.parentNode.selectedIndex;
-            }
+            if ( node.parentNode ) node.parentNode.selectedIndex;
+
             /* jshint ignore:end */
             return node.selected === true;
         },

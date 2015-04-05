@@ -11,15 +11,15 @@ import { is, map                         } from "../helpers";
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-    matchesMethod = map(VENDOR_PREFIXES.concat(null), (p) => {
-        return (p ? p.toLowerCase() + "M" : "m") + "atchesSelector";
-    }).reduceRight((propName, p) => {
+    matchesMethod = map(VENDOR_PREFIXES.concat( null ), ( p ) => {
+        return ( p ? p.toLowerCase() + "M" : "m" ) + "atchesSelector";
+    }).reduceRight( ( propName, p ) => {
         return propName ||
             // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
-            (HTML.matches && "matches" ||
+            ( HTML.matches && "matches" ||
             // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
-             p in HTML && p);
-    }, null),
+             p in HTML && p );
+    }, null ),
     query = ( node, selector ) => {
 
         // match elem with all selected elems of parent

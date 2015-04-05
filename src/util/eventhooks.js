@@ -38,8 +38,8 @@ if (INTERNET_EXPLORER < 10) {
     // IE9 doesn't fire oninput when text is deleted, so use
     // onselectionchange event to detect such cases
     // http://benalpert.com/2013/06/18/a-near-perfect-oninput-shim-for-ie-8-and-9.html
-    DOCUMENT.attachEvent("onselectionchange", () => {
-        if (capturedNode && capturedNode.value !== capturedNodeValue) {
+    DOCUMENT.attachEvent( "onselectionchange", () => {
+        if ( capturedNode && capturedNode.value !== capturedNodeValue ) {
             capturedNodeValue = capturedNode.value;
             // trigger custom event that capture
             ugma.native( capturedNode ).trigger( "input" );
@@ -47,7 +47,7 @@ if (INTERNET_EXPLORER < 10) {
     });
 
     // input event fix via propertychange
-    DOCUMENT.attachEvent("onfocusin", () => {
+    DOCUMENT.attachEvent( "onfocusin", () => {
         capturedNode = WINDOW.event.srcElement;
         capturedNodeValue = capturedNode.value;
     });

@@ -69,9 +69,8 @@ var langFix = /_/g,
 
                 if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
-                    if ( every.call(node.options, ( o ) => !( o.selected = o.value === value ) ) ) {
-                        node.selectedIndex = -1;
-                    }
+                    if ( every.call(node.options, ( o ) => !( o.selected = o.value === value ) ) ) node.selectedIndex = -1;
+
                 } else {
                     node.value = value;
                 }
@@ -125,9 +124,7 @@ if ( !support.optSelected ) {
     accessorHooks.get.selected = ( node ) => {
         var parent = node.parentNode;
         /* jshint ignore:start */
-        if ( parent && parent.parentNode ) {
-            parent.parentNode.selectedIndex;
-        }
+        if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
         /* jshint ignore:end */
         return null;
     };
@@ -169,21 +166,9 @@ each((
     "encType "          +
     "readOnly  "        +
     "vAlign  "          +
-    "longDesc").split(" "), function( key ) {
+    "longDesc" ).split( " " ), function( key ) {
     accessorHooks.get[ key.toLowerCase() ] = ( node ) => node[ key ];
 });
-
-    var MSApp = WINDOW.MSApp;
-    // Use a 'hook' for innerHTML because of Win8 apps
-    accessorHooks.set.innerHTML = (node, value) => {
-        // Win8 apps: Allow all html to be inserted
-        if (typeof MSApp !== "undefined" && MSApp.execUnsafeLocalFunction) {
-            MSApp.execUnsafeLocalFunction(function() {
-                node.innerHTML = value;
-            });
-        }
-        node.innerHTML = value;
-    };
 
 /**
  * Hook 'accessorHooks' on the ugma namespace
@@ -191,13 +176,12 @@ each((
 
   ugma.accessorHooks = function( mixin, where ) {
      // Stop here if 'where' is not a typeof string
-      if( !is( where, "string" ) ) minErr("ugma.accessorHooks()", "Not a valid string value");
+      if( !is( where, "string" ) ) minErr( "ugma.accessorHooks()", "Not a valid string value" );
     
       if ( is( mixin, "object" ) && !isArray( mixin ) ) {
 
           forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) )
-              accessorHooks[ where ][ key ] = mixin;
+              if( is( value, "string" ) || is( value, "function" ) ) accessorHooks[ where ][ key ] = mixin;
           });
       }
   };

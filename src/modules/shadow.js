@@ -26,7 +26,7 @@ import { domTree, ugma                              } from "../core/core";
 // Note! There are more cons then pros in this, and it's important to know that the shadow() method
 // is not SEO friendly
 //        
-var MUTATION_WRAPPER = "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
+var MUTATION_WRAPPER =  "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
 
 if ( INTERNET_EXPLORER ) {
     MUTATION_WRAPPER = MUTATION_WRAPPER.replace( "position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace( "data=`about:blank` ", "" );
@@ -47,11 +47,11 @@ implement({
         }
 
         var ctx = ugma.render(MUTATION_WRAPPER),
-            object = ctx.get("firstChild");
+            object = ctx.get( "firstChild" );
         // set onload handler before adding element to the DOM
         object.onload = () => {
             // apply user-defined styles for the context
-            if ( ctx.addClass(name).css("position") === "static" ) ctx.css("position", "relative");
+            if ( ctx.addClass( name ).css( "position" ) === "static" ) ctx.css( "position", "relative" );
 
             // store new context root internally and invoke callback
             callback( data[ 1 ] = new domTree( object.contentDocument ) );

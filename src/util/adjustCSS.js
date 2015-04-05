@@ -9,7 +9,7 @@ import { Document, Element, Node   } from "../core/core";
  * Export interface
  */
 
-export function adjustCSS(root, prop, parts, computed) {
+export function adjustCSS( root, prop, parts, computed ) {
 
     var adjusted,
         scale = 1,
@@ -20,7 +20,7 @@ export function adjustCSS(root, prop, parts, computed) {
         initial = currentValue(),
         unit = parts && parts[ 3 ] || "",
         // Starting value computation is required for potential unit mismatches
-        initialInUnit = (unit !== "px" && +initial) && RCSSNUM.exec( computed[ prop ] );
+        initialInUnit = ( unit !== "px" && +initial ) && RCSSNUM.exec( computed[ prop ] );
 
     if (initialInUnit && initialInUnit[ 3 ] !== unit) {
 
@@ -44,9 +44,9 @@ export function adjustCSS(root, prop, parts, computed) {
         } while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
     }
 
-    if (parts) {
+    if ( parts ) {
         // Apply relative offset (+=/-=) if specified
-        adjusted = parts[ 1 ] ? (+initialInUnit || +initial || 0) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
+        adjusted = parts[ 1 ] ? ( +initialInUnit || +initial || 0 ) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
 
         return adjusted;
     }

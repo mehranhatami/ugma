@@ -56,8 +56,7 @@ function EventHandler( el, eventType, selector, callback, props, once, namespace
             if ( once ) el.off( eventType, callback );
 
             if ( props ) {
-                args = map( args, ( name ) => getEventProperty(
-                    name, e, eventType, node, eventTarget, currentTarget ) );
+                args = map( args, ( name ) => getEventProperty( name, e, eventType, node, eventTarget, currentTarget ) );
             } else {
                 args = slice.call( e._trigger || [ 0 ], 1 );
             }

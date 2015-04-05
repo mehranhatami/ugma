@@ -17,19 +17,17 @@ implement({
     // and might be considered as more preferable results.
     //
     // This logic, however, is not guaranteed and can change at any point in the future
-    offsetParent(other) {
+    offsetParent() {
         var node = this[ 0 ],
             offsetParent = node.offsetParent || HTML,
             isInline = this.css( "display" ) === "inline";
 
-        if (!isInline && offsetParent) {
-            return nodeTree( offsetParent );
-        }
+        if ( !isInline && offsetParent ) return nodeTree( offsetParent );
 
         while ( offsetParent && nodeTree(offsetParent).css( "position" ) === "static" ) {
             offsetParent = offsetParent.offsetParent;
         }
 
-        return nodeTree(offsetParent);
+        return nodeTree( offsetParent );
     }
 }, null, () => RETURN_FALSE);
