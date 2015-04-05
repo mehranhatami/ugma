@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 04:21:27 GMT
+ * Build date: Sun, 05 Apr 2015 05:21:54 GMT
  */
 (function() {
     "use strict";
@@ -472,7 +472,7 @@
                 .replace(modules$classes$$reClass, " ");
     
             if (existingClasses.indexOf(" " + token + " ") === -1) {
-                existingClasses += helpers$$trim(token) + " ";
+                existingClasses += token + " ";
             }
     
             node[ 0 ].className = helpers$$trim(existingClasses);
@@ -486,9 +486,9 @@
         * link.removeClass('bar' , 'foo');
         */
         removeClass: [RETURN_THIS, "remove", function( node, token )  {
-            node[ 0 ].className = helpers$$trim((" " + node[ 0 ].className + " ")
+            node[ 0 ].className = (" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ")
-                .replace(" " + helpers$$trim(token) + " ", " "));
+                .replace(" " + token + " ", " ");
         }],
        /**
         * Check if element contains class name
@@ -497,7 +497,7 @@
         * @example
         * link.hasClass('bar');
         */
-        hasClass: [RETURN_FALSE, "contains", false, function( node, token )  {
+        hasClass: [RETURN_FALSE, "contains", function( node, token )  {
             return ((" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ").indexOf(" " + token + " ") > -1);
         }],
@@ -510,39 +510,39 @@
         * link.toggleClass('bar', 'foo');
         */    
         toggleClass: [RETURN_FALSE, "toggle", function( el, token )  {
-            var hasClass = el.hasClass(token);
+            var hasClass = el.hasClass( token );
     
-            if (hasClass) {
-                el.removeClass(token);
+            if ( hasClass ) {
+                el.removeClass( token );
             } else {
                 el[ 0 ].className += " " + token;
             }
     
             return !hasClass;
         }]
-    }, function(methodName, defaultStrategy, nativeMethodName, strategy)  {
+    }, function( methodName, defaultStrategy, nativeMethodName, strategy )  {
     
         /* istanbul ignore else  */
-        if (util$support$$default.classList) {
+        if ( !util$support$$default.classList ) {
             // use native classList property if possible
-            strategy = function(el, token) {
-                return el[0].classList[nativeMethodName](token);
+            strategy = function( el, token ) {
+                return el[ 0 ].classList[ nativeMethodName ]( token );
             };
         }
     
-        if (defaultStrategy === RETURN_FALSE) {
+        if ( defaultStrategy === RETURN_FALSE ) {
     
             return function(token, force) {
                
-                if (typeof force === "boolean" && nativeMethodName === "toggle") {
-                    this[force ? "addClass" : "removeClass"](token);
+                if ( typeof force === "boolean" && nativeMethodName === "toggle" ) {
+                    this[ force ? "addClass" : "removeClass" ]( token );
     
                     return force;
                 }
     
-                if (!helpers$$is(token, "string")) minErr$$minErr(nativeMethodName + "()", "The class provided is not a string.");
+                if ( !helpers$$is( token, "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
     
-                return strategy(this, helpers$$trim(token));
+                return strategy( this, token );
             };
         } else {
     
@@ -551,15 +551,15 @@
                         len = arguments.length;
                     for (; i < len; i++) {    
                     
-                    if (!helpers$$is(arguments[ i ], "string")) minErr$$minErr(nativeMethodName + "()", "The class provided is not a string.");
+                    if ( !helpers$$is(arguments[ i ], "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
     
-                    strategy(this, arguments[ i ]);
+                    strategy( this, arguments[ i ] );
                 }
     
                 return this;
             };
         }
-    }, function(methodName, defaultStrategy)  {return defaultStrategy});
+    }, function( methodName, defaultStrategy)  {return defaultStrategy} );
 
     helpers$$implement({
       /**
@@ -970,29 +970,6 @@
             return this;
         }
     }, null, function()  {return RETURN_THIS} );
-
-    helpers$$implement({
-    
-      /**
-       * Calculate element's width in pixels
-       * @return {Number} element width in pixels
-       * @chainable
-       */    
-       width: "",
-       /**
-        * Calculate element's height in pixels
-        * @return {Number} element height in pixels
-        */    
-        height: "",
-       
-    }, function( methodName )  {return function( value ) {
-    
-        if ( arguments.length === 0 ) {
-            return this.offset()[ methodName ];
-        }
-        this.css(methodName, value );
-    
-    }}, function()  {return function()  {return function()  {}}} );
 
     helpers$$implement({
       /**
@@ -1961,8 +1938,21 @@
                 width: boundingRect.right - boundingRect.left,
                 height: boundingRect.bottom - boundingRect.top
             };
-        }
-    }, null, function()  {return function()  { return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } }} );
+        },
+    
+      /**
+       * Calculate element's width in pixels
+       * @return {Number} element width in pixels
+       */    
+       width: function() { return this.get("offsetWidth") },
+     
+      /**
+       * Calculate element's height in pixels
+       * @return {Number} element height in pixels
+       */
+       height: function() { return this.get("offsetHeight"); }
+       
+    }, null, function(methodName)  {return function()  { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 }} );
 
     helpers$$implement({
         // This method will return documentElement in the following cases:
