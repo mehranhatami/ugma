@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 06:55:08 GMT
+ * Build date: Sun, 05 Apr 2015 07:08:53 GMT
  */
 (function() {
     "use strict";
@@ -441,8 +441,8 @@
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
     /* es6-transpiler has-iterators:false, has-generators: false */
-    var modules$classes$$reClass = /[\n\t\r]/g,
-        modules$classes$$whitespace = /\s/g;
+
+    var modules$classes$$reClass = /[\n\t\r]/g;
 
     helpers$$implement({
        
@@ -532,7 +532,6 @@
         } else {
     
             return function() {
-    
                     
                     for (var i = 0, len = arguments.length; i < len; i++) {    
                     
@@ -1339,25 +1338,6 @@
 
     var util$support$$support = {};
 
-    var util$support$$DIV = DOCUMENT.createElement("div");
-
-    // Check for native classList support in the browser
-    util$support$$support.classList = HTML.classList;
-
-    // Don't break non-classList-compatible browsers.
-
-    try {
-
-    util$support$$DIV.classList.add("a", "b");
-
-    util$support$$support.supportsMultipleArgs = /(^| )a( |$)/.test(util$support$$DIV.className) && /(^| )b( |$)/.test(util$support$$DIV.className); 
-
-   } catch(e){
-
-    util$support$$support.supportsMultipleArgs = false; 
-  }
-
-
     /**
       Expose 'support' to the ugma namespace
     */
@@ -1999,8 +1979,7 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
-    var modules$query$$siblings = /[\x20\t\r\n\f]*[+~>]/,
-        modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
+    var modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
         modules$query$$rescape  = /'|\\/g;
 
     helpers$$implement({
@@ -2049,8 +2028,6 @@
                 }
     
                 nid = "[id='" + nid + "'] ";
-                
-                context = modules$query$$siblings.test(selector) ? node.parentNode : node;
                 
                 selector = nid + selector.split(",").join("," + nid);
             }

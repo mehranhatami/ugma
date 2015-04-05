@@ -69,12 +69,6 @@ describe("query", function() {
 
         jasmine.sandbox.set("<div class=test><a data-attr='2'>test</a></div>");
         expect(ugma.query(".test").query("[data-attr='2']")).toHaveAttr("data-attr");
-        
-        jasmine.sandbox.set("<div id=test><a data-attr2='2'></a></div><a data-attr1='1'></a><a data-attr3='3'></a>");
-        expect(ugma.query("#test").query("> [data-attr2='2']")).toHaveAttr("data-attr2");
-        expect(ugma.query("#test").query("+ [data-attr1='1']")).toHaveAttr("data-attr1");
-        expect(ugma.query("#test").query("~ [data-attr3='3']")).toHaveAttr("data-attr3");
- 
     });
 
     it("should return at least empty element(s)", function() {

@@ -7,8 +7,7 @@ import { nodeTree, dummyTree               } from "../core/core";
 import { minErr                            } from "../minErr";
 import { is, map, implement, invoke        } from "../helpers";
 
-var siblings = /[\x20\t\r\n\f]*[+~>]/,
-    fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
+var fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
     rescape  = /'|\\/g;
 
 implement({
@@ -57,8 +56,6 @@ implement({
             }
 
             nid = "[id='" + nid + "'] ";
-            
-            context = siblings.test(selector) ? node.parentNode : node;
             
             selector = nid + selector.split(",").join("," + nid);
         }
