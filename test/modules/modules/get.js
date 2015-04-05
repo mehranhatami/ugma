@@ -21,6 +21,21 @@ describe("get", function() {
       expect(tabIndex.get("outerHTML")).not.toBeUndefined();
     });
     
+    
+    it("could absent any parameter", function() {
+        expect(link.get()).toBe("get-test");
+        expect(input.get()).toBe("test");
+        expect(textarea.get()).toBe("");
+        textarea.set("value", "123");
+        expect(textarea.get()).toBe("123");
+
+        jasmine.sandbox.set("<select id='get_select'><option value='a1'>a2</option><option selected>a3</option></select>");
+        var select = ugma.query("#get_select");
+        expect(select.get()).toBe("a3");
+        expect(select.child(0).get()).toBe("a1");
+        expect(select.child(1).get()).toBe("a3");
+    });    
+    
     it("should return a CSS string representing the Element's styles", function() {
         var style = "font-size:12px;color:rgb(255,255,255)";
         var myElement = ugma.render("div").set("style", style);

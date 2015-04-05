@@ -22,4 +22,15 @@ describe("dimensions", function() {
         expect(link.css("width")).toBe("20px");
         expect(link.css("height")).toBe("120px");
     });
+
+    it("should return return width and height in 'px' on hidden elements", function() {
+
+        link.width(30);
+        link.hide();
+        expect(link.css("width")).toBe("30px");
+
+        link.height(30);
+        link.hide();
+        expect(link.css("height")).toBe("30px");
+    });
 });
