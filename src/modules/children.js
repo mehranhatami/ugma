@@ -41,9 +41,10 @@ implement({
         if ( matcher ) children = filter( children, matcher );
 
         return map(children, nodeTree);
-    } else {
-        if ( selector < 0 ) selector = children.length + selector;
+    } 
+        // Avoid negative children, normalize to 0
+    if ( selector < 0 ) selector = children.length + selector;
 
-        return nodeTree( children[ selector ] );
-    }
+       return nodeTree( children[ selector ] );
+    
 }, ( methodName, all ) => () => all ? [] : new dummyTree() );

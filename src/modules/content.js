@@ -16,16 +16,19 @@ implement({
      *     div.value(ugma.render("i"));
      */
      content( val ) {
-        if ( arguments.length === 0 ) {
-            return this.get();
-        }
+  
+       if ( arguments.length === 0 ) return this.get();
 
-        if ( val._ || isArray( val ) ) {
-            return this.set( "" ).append( val );
-        }
+       if ( val._ || isArray( val ) ) return this.set( "" ).append( val );
 
        return this.set( val );
     }
 }, null, () => function() {
+    
     if ( arguments.length ) return this;
+    
 });
+
+
+
+    

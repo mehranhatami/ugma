@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 14:14:55 GMT
+ * Build date: Sun, 05 Apr 2015 23:24:50 GMT
  */
 (function() {
     "use strict";
@@ -311,14 +311,7 @@
                     return node ? node._ugma || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
                 }
             },
-            toString: function() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" },
-    
-            // Create a ugma wrapper object for a native DOM element or a
-            // jQuery element. E.g. (ugma.native($('#foo')[0]))
-            native: function(node) {
-                var nodeType = node && node.nodeType;
-                return ( nodeType === 9 ? core$core$$domTree : core$core$$nodeTree)(nodeType === 1 || nodeType === 9 ? node : null);
-            }
+            toString: function() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
     });
 
     core$core$$domTree = core$core$$uClass(core$core$$nodeTree, {
@@ -433,11 +426,12 @@
             if ( matcher ) children = helpers$$filter( children, matcher );
     
             return helpers$$map(children, core$core$$nodeTree);
-        } else {
-            if ( selector < 0 ) selector = children.length + selector;
+        } 
+            // Avoid negative children, normalize to 0
+        if ( selector < 0 ) selector = children.length + selector;
     
-            return core$core$$nodeTree( children[ selector ] );
-        }
+           return core$core$$nodeTree( children[ selector ] );
+        
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
     /* es6-transpiler has-iterators:false, has-generators: false */
@@ -473,8 +467,7 @@
         */
         removeClass: [ "remove", true, function( node, token )  {
             node[ 0 ].className = (" " + node[ 0 ].className + " ")
-                .replace(modules$classes$$reClass, " ")
-                .replace(" " + token + " ", " ");
+                .replace(modules$classes$$reClass, " ").replace(" " + token + " ", " ");
         }],
        /**
         * Check if element contains class name
@@ -510,7 +503,7 @@
     
         if ( HTML.classList ) {
             // use native classList property if possible
-            strategy = function( el, token ) {
+            strategy = function( el, token )  {
                 return el[ 0 ].classList[ nativeMethodName ]( token );
             };
         }
@@ -543,25 +536,11 @@
             };
         }
      }, function( methodName, defaultStrategy )  {
-          if( defaultStrategy === "contains" ||defaultStrategy === "toggle" ) return RETURN_FALSE;
+    
+          if( defaultStrategy === "contains" || defaultStrategy === "toggle" ) return RETURN_FALSE;
+          
           return RETURN_THIS;
       });
-
-    helpers$$implement({
-      /**
-       * Clear a property/attribute on the node
-       * @param  {String}   name    property/attribute name
-       * @chainable
-       * @example
-       *     link.clear('attrName');
-       *     link.clear('propName');
-       */
-    
-        clear: function(name) {
-           return this.set( name, undefined );
-        }
-    
-    }, null, function()  {return RETURN_THIS} );
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
@@ -596,15 +575,10 @@
                 parentNode = this[ 0 ];
             
             // document has no .matches
-            if ( !matches ) {
-                parentNode = parentNode.parentElement;
-            }
+            if ( !matches ) parentNode = parentNode.parentElement;
     
-            for (; parentNode; parentNode = parentNode.parentElement ) {
-                if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) {
-                    break;
-                }
-            }
+            for (; parentNode; parentNode = parentNode.parentElement )
+               if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) break;
     
             return core$core$$nodeTree( parentNode );
         }
@@ -627,16 +601,18 @@
       *
       * @reference: https://dom.spec.whatwg.org/#dom-node-contains 
       */
-        contains: function(element) {
+        contains: function(other) {
+    
             var reference = this[ 0 ];
     
-            if ( element instanceof core$core$$nodeTree ) {
-                var otherNode = element[ 0 ];
+            if ( other._ ) {
+    
+                 other = other[ 0 ];
     
                 // If other and reference are the same object, return zero.
-                if ( reference === otherNode ) return 0;
+                if ( reference === other ) return 0;
     
-                return reference.contains(otherNode);
+                return reference.contains(other);
             }
     
             minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
@@ -655,19 +631,21 @@
          *     div.value(ugma.render("i"));
          */
          content: function(val) {
-            if ( arguments.length === 0 ) {
-                return this.get();
-            }
+      
+           if ( arguments.length === 0 ) return this.get();
     
-            if ( val._ || helpers$$isArray( val ) ) {
-                return this.set( "" ).append( val );
-            }
+           if ( val._ || helpers$$isArray( val ) ) return this.set( "" ).append( val );
     
            return this.set( val );
         }
     }, null, function()  {return function() {
+        
         if ( arguments.length ) return this;
+        
     }});
+
+
+
 
     var util$styleAccessor$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
         "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
@@ -1639,7 +1617,7 @@
        /**
         *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1652,7 +1630,7 @@
        /**
         * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1664,7 +1642,7 @@
        /**
         * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1677,7 +1655,7 @@
        /**
         * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1690,7 +1668,7 @@
        /**
         * Replace current element with HTMLString or a ugma wrapped object
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1704,7 +1682,7 @@
        /**
         * Remove current element from the DOM
         *
-        * @param {Node|array|Ugma wrapped object} element What to append the element to
+        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -2236,11 +2214,11 @@
             if ( matcher ) siblings = helpers$$filter( siblings, matcher );
     
             return helpers$$map(siblings, core$core$$nodeTree);
-        } else {
+        } 
             if ( selector < 0 ) selector = siblings.length + selector;
     
             return core$core$$nodeTree( siblings[ selector ] );
-        }
+    
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
     helpers$$implement({
@@ -2763,6 +2741,13 @@
             return mixin ? namespace ? helpers$$implement( mixin ) : helpers$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
         }
     });
+
+    // Create a ugma wrapper object for a native DOM element or a
+    // jQuery element. E.g. (ugma.native($('#foo')[0]))
+    core$core$$ugma.native = function(node)  {
+        var nodeType = node && node.nodeType;
+        return ( nodeType === 9 ? core$core$$domTree : core$core$$nodeTree )( nodeType === 1 || nodeType === 9 ? node : null );
+    };
 
     /*
      * Map over the previous value of the `ugma` namespace variable, so that it can be restored later on.

@@ -4,7 +4,6 @@
 
 import { implement       } from "../helpers";
 import { minErr          } from "../minErr";
-import { nodeTree        } from "../core/core";
 import { RETURN_FALSE    } from "../const";
 
 implement({
@@ -24,16 +23,18 @@ implement({
   *
   * @reference: https://dom.spec.whatwg.org/#dom-node-contains 
   */
-    contains( element ) {
+    contains( other ) {
+
         var reference = this[ 0 ];
 
-        if ( element instanceof nodeTree ) {
-            var otherNode = element[ 0 ];
+        if ( other._ ) {
+
+             other = other[ 0 ];
 
             // If other and reference are the same object, return zero.
-            if ( reference === otherNode ) return 0;
+            if ( reference === other ) return 0;
 
-            return reference.contains(otherNode);
+            return reference.contains(other);
         }
 
         minErr( "contains()", "Comparing position against non-Node values is not allowed." );

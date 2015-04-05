@@ -16,7 +16,7 @@ implement({
    /**
     *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -29,7 +29,7 @@ implement({
    /**
     * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -41,7 +41,7 @@ implement({
    /**
     * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -54,7 +54,7 @@ implement({
    /**
     * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -67,7 +67,7 @@ implement({
    /**
     * Replace current element with HTMLString or a ugma wrapped object
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -81,7 +81,7 @@ implement({
    /**
     * Remove current element from the DOM
     *
-    * @param {Node|array|Ugma wrapped object} element What to append the element to
+    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example

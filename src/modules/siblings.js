@@ -35,9 +35,9 @@ implement({
         if ( matcher ) siblings = filter( siblings, matcher );
 
         return map(siblings, nodeTree);
-    } else {
+    } 
         if ( selector < 0 ) selector = siblings.length + selector;
 
         return nodeTree( siblings[ selector ] );
-    }
+
 }, ( methodName, all ) => () => all ? [] : new dummyTree() );

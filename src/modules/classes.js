@@ -39,8 +39,7 @@ implement({
     */
     removeClass: [ "remove", true, ( node, token ) => {
         node[ 0 ].className = (" " + node[ 0 ].className + " ")
-            .replace(reClass, " ")
-            .replace(" " + token + " ", " ");
+            .replace(reClass, " ").replace(" " + token + " ", " ");
     }],
    /**
     * Check if element contains class name
@@ -76,7 +75,7 @@ implement({
 
     if ( HTML.classList ) {
         // use native classList property if possible
-        strategy = function( el, token ) {
+        strategy = ( el, token ) => {
             return el[ 0 ].classList[ nativeMethodName ]( token );
         };
     }
@@ -109,6 +108,8 @@ implement({
         };
     }
  }, ( methodName, defaultStrategy ) => {
-      if( defaultStrategy === "contains" ||defaultStrategy === "toggle" ) return RETURN_FALSE;
+
+      if( defaultStrategy === "contains" || defaultStrategy === "toggle" ) return RETURN_FALSE;
+      
       return RETURN_THIS;
   });

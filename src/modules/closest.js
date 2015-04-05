@@ -25,15 +25,10 @@ implement({
             parentNode = this[ 0 ];
         
         // document has no .matches
-        if ( !matches ) {
-            parentNode = parentNode.parentElement;
-        }
+        if ( !matches ) parentNode = parentNode.parentElement;
 
-        for (; parentNode; parentNode = parentNode.parentElement ) {
-            if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) {
-                break;
-            }
-        }
+        for (; parentNode; parentNode = parentNode.parentElement )
+           if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) break;
 
         return nodeTree( parentNode );
     }
