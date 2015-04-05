@@ -73,7 +73,7 @@ styleAccessor._default = function(name, style) {
  * Hook 'styleAccessor' on ugma namespace
  */
 
-  ugma.styleAccessor = function( mixin, where ) {
+  ugma.styleAccessor = ( mixin, where ) => {
      // Stop here if 'where' is not a typeof string
       if( !is( where, "string" ) ) minErr( "ugma.styleAccessor()", "Not a valid string value" );
     

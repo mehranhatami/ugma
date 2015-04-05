@@ -57,7 +57,7 @@ if (INTERNET_EXPLORER < 10) {
  * Hook 'eventHooks' on ugma namespace
  */
 
-  ugma.eventHooks = function( mixin ) {
+  ugma.eventHooks = ( mixin ) => {
     
       if ( is( mixin, "object" ) && !isArray( mixin ) ) {
 

@@ -8,7 +8,7 @@ import { nodeTree              } from "../core/core";
 import   SelectorMatcher         from "./selectormatcher";
 import   eventhooks              from "./eventhooks";
 
-function getEventProperty(name, e, eventType, node, target, currentTarget) {
+var getEventProperty = (name, e, eventType, node, target, currentTarget) => {
 
     if ( is( name, "number" ) )  return e._fire ? e._fire[ name ] : void 0;
     
@@ -24,9 +24,8 @@ function getEventProperty(name, e, eventType, node, target, currentTarget) {
     if ( is( value, "function" ) ) return () => value.apply( e, arguments );
 
     return value;
-}
-
-function EventHandler( el, eventType, selector, callback, props, once ) {
+},
+ EventHandler = ( el, eventType, selector, callback, props, once ) => {
 
     var node = el[ 0 ],
         hook = eventhooks[ eventType ],
@@ -76,7 +75,7 @@ function EventHandler( el, eventType, selector, callback, props, once ) {
     handler.selector   = selector;
 
     return handler;
-}
+};
 
 /*
  * Export interface
