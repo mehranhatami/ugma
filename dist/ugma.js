@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 08:42:47 GMT
+ * Build date: Sun, 05 Apr 2015 10:38:13 GMT
  */
 (function() {
     "use strict";
@@ -221,10 +221,13 @@
        helpers$$reDash = /([\:\-\_]+(.))/g,
        helpers$$mozHack = /^moz([A-Z])/,
    
-       // Convert dashed to camelCase
-       // Support: IE9-11+
-       helpers$$camelize = function( prop )  {
-           return prop && prop.replace( helpers$$reDash, function(_, separator, letter, offset)  {
+    /**
+     * Convert a string to camel case notation.
+     * @param  {String} str String to be converted.
+     * @return {String}     String in camel case notation.
+     */
+       helpers$$camelize = function( str )  {
+           return str && str.replace( helpers$$reDash, function(_, separator, letter, offset)  {
                return offset ? letter.toUpperCase() : letter;
            }).replace( helpers$$mozHack, "Moz$1" );
        },
@@ -400,6 +403,7 @@
         /**
          * Returns all child nodes in a collection of children filtered by optional selector
          * @param  {String} [selector] css selector
+         * @chainable
          * @example
          *     link.children();
          *     link.children('.filter');
@@ -2053,7 +2057,7 @@
                     // convert the value to a string
                     value = name == null ? "" : "" + name;
                 }
-    
+               // when `value` is not a 'plain' object
                 if ( value !== modules$set$$objectTag ) {
     
                     if ( modules$set$$getTagName( node ) ) {
@@ -2208,6 +2212,41 @@
     }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
 
     helpers$$implement({
+        /**
+         * Returns all sibling nodes in a collection of children filtered by optional selector
+         * @param  {String} [selector] css selector
+         * @chainable
+         */
+        siblings: true,
+        /**
+         * Returns the first sibling node in a collection of children filtered by index
+         * @param  {Number} index child index
+         * @chainable
+         */
+        sibling: false
+    
+    }, function( methodName, all )  {return function( selector ) {
+    
+        if ( selector && ( !helpers$$is( selector, all ? "string" : "number" ) ) ) {
+            minErr$$minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
+        }
+    
+        var node = this[ 0 ],
+            matcher = util$selectormatcher$$default( selector ),
+            siblings = node.parentElement.children;
+    
+        if ( all ) {
+            if ( matcher ) siblings = helpers$$filter( siblings, matcher );
+    
+            return helpers$$map(siblings, core$core$$nodeTree);
+        } else {
+            if ( selector < 0 ) selector = siblings.length + selector;
+    
+            return core$core$$nodeTree( siblings[ selector ] );
+        }
+    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
+
+    helpers$$implement({
       /**
        * Subscribe on particular properties / attributes, and get notified if they are changing
        * @param  {String}   name     property/attribute name
@@ -2246,7 +2285,6 @@
         /**
          * Find first element filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          *    link.first();
@@ -2255,7 +2293,6 @@
         /**
          * Find last element filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          * @example
@@ -2265,7 +2302,6 @@
         /**
          * Find next sibling element filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          *    link.next();             
@@ -2275,7 +2311,6 @@
         /**
          * Find previous sibling element filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          *    link.prev();                       
@@ -2285,7 +2320,6 @@
         /**
          * Find all next sibling elements filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          *    link.prevAll();
@@ -2295,25 +2329,25 @@
         /**
          * Find all previous sibling elements filtered by optional selector
          * @param {String} [selector] css selector
-         * @param {Boolean} [andSelf] if true than search will start from the current element
          * @chainable
          * @example
          *     link.nextAll();
          *     link.nextAll("i");
          */
-        prevAll: "previousElementSibling",
-    }, function(methodName, propertyName)  {return function( selector, andSelf ) {
+        prevAll: "previousElementSibling"
+        
+    }, function(methodName, propertyName)  {return function( selector ) {
     
         if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( methodName + "()", "The provided argument did not match the expected pattern" );
     
-        var all = methodName.slice( -3 ) === "All",
+        var currentNode = this[ 0 ],
             matcher = util$selectormatcher$$default( selector ),
-            descendants = all ? [] : null,
-            currentNode = this[ 0 ];
+            all = methodName.slice( -3 ) === "All",
+            descendants = all ? [] : null;
     
         if ( !matcher ) currentNode = currentNode[ propertyName ];
     
-        for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
+        for (; currentNode; currentNode = currentNode[ propertyName ] ) {
             if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
                 if ( !all ) break;
     
@@ -2611,10 +2645,7 @@
                 var value = stack.shift(),
                     node = stack.shift();
     
-                if ( helpers$$is( node, "string" ) ) {
-                    
-                    node = [ template$processTag$$processTag( node ) ];
-                }
+                if ( helpers$$is( node, "string" ) ) node = [ template$processTag$$processTag( node ) ];
     
                 if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) {
                     minErr$$minErr("emmet()", "This operation is not supported" );

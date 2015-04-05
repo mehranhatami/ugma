@@ -11,7 +11,6 @@ implement({
     /**
      * Find first element filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      *    link.first();
@@ -20,7 +19,6 @@ implement({
     /**
      * Find last element filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      * @example
@@ -30,7 +28,6 @@ implement({
     /**
      * Find next sibling element filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      *    link.next();             
@@ -40,7 +37,6 @@ implement({
     /**
      * Find previous sibling element filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      *    link.prev();                       
@@ -50,7 +46,6 @@ implement({
     /**
      * Find all next sibling elements filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      *    link.prevAll();
@@ -60,25 +55,25 @@ implement({
     /**
      * Find all previous sibling elements filtered by optional selector
      * @param {String} [selector] css selector
-     * @param {Boolean} [andSelf] if true than search will start from the current element
      * @chainable
      * @example
      *     link.nextAll();
      *     link.nextAll("i");
      */
-    prevAll: "previousElementSibling",
-}, (methodName, propertyName) => function( selector, andSelf ) {
+    prevAll: "previousElementSibling"
+    
+}, (methodName, propertyName) => function( selector ) {
 
     if ( selector && !is( selector, "string" ) ) minErr( methodName + "()", "The provided argument did not match the expected pattern" );
 
-    var all = methodName.slice( -3 ) === "All",
+    var currentNode = this[ 0 ],
         matcher = SelectorMatcher( selector ),
-        descendants = all ? [] : null,
-        currentNode = this[ 0 ];
+        all = methodName.slice( -3 ) === "All",
+        descendants = all ? [] : null;
 
     if ( !matcher ) currentNode = currentNode[ propertyName ];
 
-    for (; currentNode; currentNode = currentNode && !andSelf ? currentNode[ propertyName ] : currentNode) {
+    for (; currentNode; currentNode = currentNode[ propertyName ] ) {
         if ( currentNode.nodeType === 1 && ( !matcher || matcher( currentNode ) ) ) {
             if ( !all ) break;
 

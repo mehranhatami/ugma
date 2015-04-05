@@ -34,7 +34,7 @@ implement({
                 // convert the value to a string
                 value = name == null ? "" : "" + name;
             }
-
+           // when `value` is not a 'plain' object
             if ( value !== objectTag ) {
 
                 if ( getTagName( node ) ) {

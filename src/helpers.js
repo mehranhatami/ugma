@@ -205,10 +205,13 @@ export const isArray = Array.isArray;
     reDash = /([\:\-\_]+(.))/g,
     mozHack = /^moz([A-Z])/,
 
-    // Convert dashed to camelCase
-    // Support: IE9-11+
-    camelize = ( prop ) => {
-        return prop && prop.replace( reDash, (_, separator, letter, offset) => {
+ /**
+  * Convert a string to camel case notation.
+  * @param  {String} str String to be converted.
+  * @return {String}     String in camel case notation.
+  */
+    camelize = ( str ) => {
+        return str && str.replace( reDash, (_, separator, letter, offset) => {
             return offset ? letter.toUpperCase() : letter;
         }).replace( mozHack, "Moz$1" );
     },

@@ -11,6 +11,7 @@ implement({
     /**
      * Returns all child nodes in a collection of children filtered by optional selector
      * @param  {String} [selector] css selector
+     * @chainable
      * @example
      *     link.children();
      *     link.children('.filter');
