@@ -178,6 +178,14 @@ describe("css", function() {
             expect(link.css("border-right-width")).toBe(value);
         });
 
+        it("should handle vendor-prefixed properties", function() {
+            var offset = link.offset();
+
+            link.css("box-sizing", "border-box");
+
+            expect(link.offset()).not.toEqual(offset);
+        });
+
         it("should support number values", function() {
             link.css("line-height", 7);
 

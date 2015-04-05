@@ -5,13 +5,15 @@ describe("data", function() {
 
     beforeEach(function() {
 
-        jasmine.sandbox.set("<input id='set_input' data-a1='test'/><input id='set_input1'/>");
+        jasmine.sandbox.set("<input id='set_input' data-test='x' data-a1='test'/><input id='set_input1'/>");
 
         input = ugma.query("#set_input");
     });
+
+    it("should read an appropriate data-* attribute if if no data was found internally", function() {
+        expect(input.data("test")).toEqual("x");
+    });
     
-
-
     it("should only remove the specified value when setting a property name to 'null'", function() {
 
         input.data("prop1", "value");
@@ -110,4 +112,5 @@ describe("data", function() {
     it("should add and remove data on SVGs", function() {
         expect(ugma.render("<svg><rect></rect></svg>").data("svg-level", 1).data("svg-level")).toEqual(1);
     });
+    
 });

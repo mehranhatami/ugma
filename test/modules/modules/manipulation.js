@@ -5,6 +5,7 @@ describe("manipulation", function() {
         var div;
 
         beforeEach(function() {
+
             div = ugma.render("div>a+a");
         });
 
@@ -15,7 +16,7 @@ describe("manipulation", function() {
             expect(root.get()).toEqual("");
         });
 
-        it("should remove element(s) from ugma", function() {
+        it("should remove element(s) from DOM", function() {
             expect(div.remove()).toBe(div);
             expect(document.getElementById("test")).toBeNull();
             expect(ugma.queryAll(".removable").length).toBe(0);
