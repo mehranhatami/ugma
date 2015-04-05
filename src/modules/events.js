@@ -189,11 +189,11 @@ implement({
     // call native function to trigger default behavior
     if ( canContinue && node[ type ] ) {
         // prevent re-triggering of the current event
-        EventHandler.skip = type;
+        EventHandler.veto = type;
 
         invoke( node, type );
 
-        EventHandler.skip = null;
+        EventHandler.veto = null;
     }
 
     return canContinue;

@@ -6,8 +6,8 @@ describe("toString", function() {
             input = ugma.render("input"),
             spans = ugma.renderAll("i+b");
 
-        expect(link.toString()).toBe("<A>");
-        expect(input.toString()).toBe("<INPUT>");
-        expect(spans.toString()).toBe("<I>,<B>");
+        expect(link.toString()).toBe("<a>");
+        expect(input.toString()).toBe("<input>");
+        expect(spans.toString()).toBe("<i>,<b>");
     });
 });

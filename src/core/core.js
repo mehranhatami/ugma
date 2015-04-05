@@ -69,7 +69,7 @@ nodeTree = uClass({
                 return node ? node._ugma || new nodeTree( node ) : new dummyTree();
             }
         },
-        toString() { return "<" + this[ 0 ].tagName + ">" },
+        toString() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" },
 
         // Create a ugma wrapper object for a native DOM element or a
         // jQuery element. E.g. (ugma.native($('#foo')[0]))

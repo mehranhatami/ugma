@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 00:25:46 GMT
+ * Build date: Sun, 05 Apr 2015 02:32:06 GMT
  */
 (function() {
     "use strict";
@@ -312,7 +312,7 @@
                     return node ? node._ugma || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
                 }
             },
-            toString: function() { return "<" + this[ 0 ].tagName + ">" },
+            toString: function() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" },
     
             // Create a ugma wrapper object for a native DOM element or a
             // jQuery element. E.g. (ugma.native($('#foo')[0]))
@@ -440,10 +440,22 @@
         }
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
+    var util$support$$support = {};
+
+    util$support$$support.classList = !!DOCUMENT.createElement("div").classList;
+
+    /**
+      Expose 'support' to the ugma namespace
+    */
+
+    core$core$$ugma.support = util$support$$support;
+
+
+    var util$support$$default = util$support$$support;
+
     /* es6-transpiler has-iterators:false, has-generators: false */
     var modules$classes$$reClass = /[\n\t\r]/g,
-        modules$classes$$whitespace = /\s/g,
-        modules$classes$$hasClassList = !!DOCUMENT.createElement("div").classList;
+        modules$classes$$whitespace = /\s/g;
 
     helpers$$implement({
        
@@ -511,7 +523,7 @@
     }, function(methodName, defaultStrategy, nativeMethodName, strategy)  {
     
         /* istanbul ignore else  */
-        if (modules$classes$$hasClassList) {
+        if (util$support$$default.classList) {
             // use native classList property if possible
             strategy = function(el, token) {
                 return el[0].classList[nativeMethodName](token);
@@ -734,7 +746,7 @@
     };
 
     /**
-     * Expose 'styleAccessor' to the public
+     * Hook 'styleAccessor' on ugma namespace
      */
 
     core$core$$ugma.styleAccessor = function( mixin, where ) {
@@ -890,17 +902,16 @@
 
     var util$readData$$multiDash = /([A-Z])/g,
         // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
-        util$readData$$readData = function( node, key )  {
+        util$readData$$readData = function( node, value )  {
     
         // convert from camel case to dash-separated value
+        value = value.replace( util$readData$$multiDash, "-$&" ).toLowerCase();
     
-        key = key.replace( util$readData$$multiDash, "-$&" ).toLowerCase();
-    
-        var value = node.getAttribute( key );
+        value = node.getAttribute( value );
     
         if ( value != null ) {
     
-            // try to recognize and parse object notation syntax
+            // object notation syntax should have JSON.stringify form
             if ( value[ 0 ] === "{" && value[ value.length - 1 ] === "}" ) {
                 try {
                     value = JSON.parse( value );
@@ -959,6 +970,29 @@
             return this;
         }
     }, null, function()  {return RETURN_THIS} );
+
+    helpers$$implement({
+    
+      /**
+       * Calculate element's width in pixels
+       * @return {Number} element width in pixels
+       * @chainable
+       */    
+       width: "",
+       /**
+        * Calculate element's height in pixels
+        * @return {Number} element height in pixels
+        */    
+        height: "",
+       
+    }, function( methodName )  {return function( value ) {
+    
+        if ( arguments.length === 0 ) {
+            return this.offset()[ methodName ];
+        }
+        this.css(methodName, value );
+    
+    }}, function()  {return function()  {return function()  {}}} );
 
     helpers$$implement({
       /**
@@ -1060,7 +1094,7 @@
     }
 
     /**
-     * Expost to public
+     * Hook 'eventHooks' on ugma namespace
      */
 
     core$core$$ugma.eventHooks = function( mixin ) {
@@ -1105,7 +1139,7 @@
             handler = function( e )  {
                 e = e || WINDOW.event;
                 // early stop in case of default action
-                if ( util$eventhandler$$EventHandler.skip === eventType ) return;
+                if ( util$eventhandler$$EventHandler.veto === eventType ) return;
                 var eventTarget = e.target || node.ownerDocument.documentElement;
                 // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
                 // @see http://www.quirksmode.org/js/events_properties.html
@@ -1328,11 +1362,11 @@
         // call native function to trigger default behavior
         if ( canContinue && node[ type ] ) {
             // prevent re-triggering of the current event
-            util$eventhandler$$default.skip = type;
+            util$eventhandler$$default.veto = type;
     
             helpers$$invoke( node, type );
     
-            util$eventhandler$$default.skip = null;
+            util$eventhandler$$default.veto = null;
         }
     
         return canContinue;
@@ -1340,9 +1374,6 @@
     }, null, function()  {return RETURN_TRUE} );
 
     var util$accessorhooks$$langFix = /_/g,
-        util$accessorhooks$$radioValue, 
-        util$accessorhooks$$optSelected, 
-        util$accessorhooks$$checkOn,
         util$accessorhooks$$accessorHooks = {
     
             get: {
@@ -1365,7 +1396,7 @@
     
                     // Support: Android<4.4
                     // Default value for a checkbox should be "on"
-                    if ( node.type === "checkbox" && !util$accessorhooks$$checkOn ) {
+                    if ( node.type === "checkbox" && !util$support$$default.checkOn ) {
                         return node.getAttribute( "value" ) === null ? "on" : node.value;
                     }
                     return node.value;
@@ -1407,7 +1438,6 @@
                             node.selectedIndex = -1;
                         }
                     } else {
-                        // for IE use innerText for textareabecause it doesn't trigger onpropertychange
                         node.value = value;
                     }
                 }
@@ -1423,22 +1453,24 @@
     
         // Support: Android<4.4
         // Default value for a checkbox should be "on"
-         util$accessorhooks$$checkOn = input.value !== "";
+         util$support$$default.checkOn = input.value !== "";
     
         // Support: IE<=11+
         // Must access selectedIndex to make default options select
-         util$accessorhooks$$optSelected = opt.selected;
+         util$support$$default.optSelected = opt.selected;
     
         // Support: IE<=11+
         // An input loses its value after becoming a radio
         input = DOCUMENT.createElement( "input" );
         input.value = "t";
         input.type = "radio";
-        util$accessorhooks$$radioValue = input.value === "t";
+        util$support$$default.radioValue = input.value === "t";
     })();
 
+
+
     // Support: IE<=11+
-    if ( !util$accessorhooks$$radioValue ) {
+    if ( !util$support$$default.radioValue ) {
         util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
     
             if ( value === "radio" ) {
@@ -1454,7 +1486,7 @@
         };
     }
 
-    if ( !util$accessorhooks$$optSelected ) {
+    if ( !util$support$$default.optSelected ) {
         util$accessorhooks$$accessorHooks.get.selected = function( node )  {
             var parent = node.parentNode;
             /* jshint ignore:start */

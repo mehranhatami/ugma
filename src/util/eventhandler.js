@@ -37,7 +37,7 @@ function EventHandler( el, eventType, selector, callback, props, once, namespace
         handler = ( e ) => {
             e = e || WINDOW.event;
             // early stop in case of default action
-            if ( EventHandler.skip === eventType ) return;
+            if ( EventHandler.veto === eventType ) return;
             var eventTarget = e.target || node.ownerDocument.documentElement;
             // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
             // @see http://www.quirksmode.org/js/events_properties.html
