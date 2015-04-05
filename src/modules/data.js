@@ -22,6 +22,7 @@ implement({
         
         var len = arguments.length;
         
+        // getter
         if ( len === 1 ) {
             if ( is( key, "string" ) ) {
 
@@ -30,23 +31,25 @@ implement({
                 // data from the HTML5 data-* attribute
                 if ( !( key in data ) ) data[ key ] = readData( this[ 0 ], "data-" + key );
 
-                return data[ key ];
+                return data && data[ key ]; // data('key')
                 
             // Set the value (with attr map support)
             } else if ( key && is( key, "object" ) ) {
              
                 if ( isArray( key ) ) return this.data( map(key, ( key ) => key ) );
-
+                  // mass-setter: data({key1: val1, key2: val2})
                   return forOwn( key, ( key, value ) => {
                         this.data( key, value );
                    });
             }
-        } else if ( len === 2 ) {
+        } 
+         // setter   
+        if ( len === 2 ) {
             // delete the private property if the value is 'null' or 'undefined'
             if ( value === null || value === undefined ) {
                 delete this._[ key ];
             } else {
-                this._[ key ] = value;
+                this._[ key ] = value; // data('key', value)
             }
         }
         return this;

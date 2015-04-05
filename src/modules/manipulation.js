@@ -101,7 +101,7 @@ implement({
     if ( requiresParent && !node.parentNode ) return this;
 
     if ( ( methodName === "after" || methodName === "before" ) && this === ugma ) {
-         minErr( methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)" );
+         minErr( methodName + "()", "You can not " + methodName + " an element non-existing HTML (documentElement)" );
     }
     
     // don't create fragment for adjacentHTML
@@ -111,7 +111,7 @@ implement({
 
         // Handle native DOM elements 
         // e.g. link.append(document.createElement('li'));
-        if (native && content.nodeType === 1) content = nodeTree( content );
+        if ( native && content.nodeType === 1 ) content = nodeTree( content );
 
         if ( is( content, "function" ) ) content = content( this );
 

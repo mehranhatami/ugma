@@ -22,11 +22,12 @@ implement({
    * @example
    *    link.set('attrName', 'attrValue'); // set
    *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+   *    link.set("data-fooBar", "foo"); // set custom attribute data-custom
    */
     set( name, value ) {
 
         var node = this[ 0 ];
-
+        // getter
         if ( arguments.length === 1 ) {
             if ( is( name, "function" ) ) {
                 value = name;
@@ -53,10 +54,9 @@ implement({
         if ( subscription ) previousValue = this.get( name );
 
         if ( is(name, "string" ) ) {
+
             // handle executable functions
-            if (is(value, "function")) {
-                value = value( this );
-            }
+            if (is(value, "function")) value = value( this );
 
             if ( hook ) {
                 hook( node, value );

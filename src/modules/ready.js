@@ -3,7 +3,7 @@
  */
 
 import { implement, is  } from "../helpers";
-import { DOCUMENT, HTML } from "../const";
+import { DOCUMENT, WINDOW, HTML } from "../const";
 import { minErr         } from "../minErr";
 
 var readyCallbacks = [],
@@ -12,13 +12,15 @@ var readyCallbacks = [],
     isReady = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
     pageLoaded;
 
-if ( !isReady )
-    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded = () => {
+if ( !isReady ) {
+    DOCUMENT.addEventListener( "DOMContentLoaded", pageLoaded = () => { // works for modern browsers and IE9
         DOCUMENT.removeEventListener("DOMContentLoaded", pageLoaded );
         isReady = 1;
         while ( pageLoaded = readyCallbacks.shift() ) pageLoaded();
     });
-
+    
+    WINDOW.addEventListener( "load", pageLoaded); // fallback to window.onload for others
+}    
 implement({
   /**
    * Add a function to execute when the DOM is ready

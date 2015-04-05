@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 11:22:32 GMT
+ * Build date: Sun, 05 Apr 2015 13:57:26 GMT
  */
 (function() {
     "use strict";
@@ -735,7 +735,7 @@
      * Hook 'styleAccessor' on ugma namespace
      */
 
-    core$core$$ugma.styleAccessor = function( mixin, where ) {
+    core$core$$ugma.styleAccessor = function( mixin, where )  {
        // Stop here if 'where' is not a typeof string
         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleAccessor()", "Not a valid string value" );
       
@@ -916,6 +916,7 @@
             
             var len = arguments.length;
             
+            // getter
             if ( len === 1 ) {
                 if ( helpers$$is( key, "string" ) ) {
     
@@ -924,23 +925,25 @@
                     // data from the HTML5 data-* attribute
                     if ( !( key in data ) ) data[ key ] = util$readData$$readData( this[ 0 ], "data-" + key );
     
-                    return data[ key ];
+                    return data && data[ key ]; // data('key')
                     
                 // Set the value (with attr map support)
                 } else if ( key && helpers$$is( key, "object" ) ) {
                  
                     if ( helpers$$isArray( key ) ) return this.data( helpers$$map(key, function( key )  {return key} ) );
-    
+                      // mass-setter: data({key1: val1, key2: val2})
                       return helpers$$forOwn( key, function( key, value )  {
                             this$0.data( key, value );
                        });
                 }
-            } else if ( len === 2 ) {
+            } 
+             // setter   
+            if ( len === 2 ) {
                 // delete the private property if the value is 'null' or 'undefined'
                 if ( value === null || value === undefined ) {
                     delete this._[ key ];
                 } else {
-                    this._[ key ] = value;
+                    this._[ key ] = value; // data('key', value)
                 }
             }
             return this;
@@ -1050,7 +1053,7 @@
      * Hook 'eventHooks' on ugma namespace
      */
 
-    core$core$$ugma.eventHooks = function( mixin ) {
+    core$core$$ugma.eventHooks = function( mixin )  {
       
         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
   
@@ -1063,7 +1066,7 @@
 
     var util$eventhooks$$default = util$eventhooks$$eventHooks;
 
-    function util$eventhandler$$getEventProperty(name, e, eventType, node, target, currentTarget) {
+    var util$eventhandler$$getEventProperty = function(name, e, eventType, node, target, currentTarget)  {
     
         if ( helpers$$is( name, "number" ) )  return e._fire ? e._fire[ name ] : void 0;
         
@@ -1079,9 +1082,8 @@
         if ( helpers$$is( value, "function" ) ) return function()  {return value.apply( e, arguments )};
     
         return value;
-    }
-
-    function util$eventhandler$$EventHandler( el, eventType, selector, callback, props, once ) {
+    },
+     util$eventhandler$$EventHandler = function( el, eventType, selector, callback, props, once )  {
     
         var node = el[ 0 ],
             hook = util$eventhooks$$default[ eventType ],
@@ -1131,7 +1133,7 @@
         handler.selector   = selector;
     
         return handler;
-    }
+    };
 
     var util$eventhandler$$default = util$eventhandler$$EventHandler;
 
@@ -1488,7 +1490,7 @@
      * Hook 'accessorHooks' on the ugma namespace
      */
 
-    core$core$$ugma.accessorHooks = function( mixin, where ) {
+    core$core$$ugma.accessorHooks = function( mixin, where )  {
        // Stop here if 'where' is not a typeof string
         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
       
@@ -1510,8 +1512,10 @@
        * @return {String|Object} a value of property or attribute
        * @chainable
        * @example
-       *   link.get('attrName'); // get
+       *   link.get('attrName');    // get
+       *   link.get('data-fooBar'); // get
        */
+       
         get: function(name) {var this$0 = this;
             var node = this[ 0 ],
                 hook = util$accessorhooks$$default.get[ name ];
@@ -1520,16 +1524,18 @@
             if ( hook ) return hook(node, name);
     
             if ( helpers$$is(name, "string") ) {
-                
-                // try to fetch HTML5 `data-*` attribute
-                if (/^data-/.test( name ) ) return util$readData$$readData(node, name);
                 // if no DOM object property method is present... 
                 if (name in node) return node[ name ];
-                //... fallback to the getAttribute method
-                    return node.getAttribute( name );
-            } else if (helpers$$isArray(name)) {
+                
+               return /^data-/.test( name ) ? 
+                   // try to fetch HTML5 `data-*` attribute      
+                      util$readData$$readData( node, name ) : 
+                    //... fallback to the getAttribute method, or return null
+                      node.getAttribute( name ) || null;
+    
+            } else if ( helpers$$isArray( name ) ) {
                 var obj = {};
-                helpers$$each( name, function(key)  {
+                helpers$$each( name, function( key )  {
                     obj[ key ] = this$0.get( key );
                 });
     
@@ -1991,13 +1997,15 @@
         modules$ready$$isReady = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
         modules$ready$$pageLoaded;
 
-    if ( !modules$ready$$isReady )
-        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded = function()  {
+    if ( !modules$ready$$isReady ) {
+        DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded = function()  { // works for modern browsers and IE9
             DOCUMENT.removeEventListener("DOMContentLoaded", modules$ready$$pageLoaded );
             modules$ready$$isReady = 1;
             while ( modules$ready$$pageLoaded = modules$ready$$readyCallbacks.shift() ) modules$ready$$pageLoaded();
         });
-
+        
+        WINDOW.addEventListener( "load", modules$ready$$pageLoaded); // fallback to window.onload for others
+    }
     helpers$$implement({
       /**
        * Add a function to execute when the DOM is ready
@@ -2038,7 +2046,7 @@
         set: function(name, value) {var this$0 = this;
     
             var node = this[ 0 ];
-    
+            // getter
             if ( arguments.length === 1 ) {
                 if ( helpers$$is( name, "function" ) ) {
                     value = name;

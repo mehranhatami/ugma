@@ -15,8 +15,10 @@ implement({
    * @return {String|Object} a value of property or attribute
    * @chainable
    * @example
-   *   link.get('attrName'); // get
+   *   link.get('attrName');    // get
+   *   link.get('data-fooBar'); // get
    */
+   
     get(name) {
         var node = this[ 0 ],
             hook = accessorhooks.get[ name ];
@@ -25,16 +27,18 @@ implement({
         if ( hook ) return hook(node, name);
 
         if ( is(name, "string") ) {
-            
-            // try to fetch HTML5 `data-*` attribute
-            if (/^data-/.test( name ) ) return readData(node, name);
             // if no DOM object property method is present... 
             if (name in node) return node[ name ];
-            //... fallback to the getAttribute method
-                return node.getAttribute( name );
-        } else if (isArray(name)) {
+            
+           return /^data-/.test( name ) ? 
+               // try to fetch HTML5 `data-*` attribute      
+                  readData( node, name ) : 
+                //... fallback to the getAttribute method, or return null
+                  node.getAttribute( name ) || null;
+
+        } else if ( isArray( name ) ) {
             var obj = {};
-            each( name, (key) => {
+            each( name, ( key ) => {
                 obj[ key ] = this.get( key );
             });
 

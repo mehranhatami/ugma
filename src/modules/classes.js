@@ -8,7 +8,7 @@ import { minErr                          } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
-var reClass = /[\n\t\r]/g;
+ler reClass = /[\n\t\r]/g;
 
 implement({
    
@@ -20,10 +20,10 @@ implement({
     * link.addClass('bar');
     * link.addClass('bar', 'foo');
     */   
-    addClass: ["add", true, ( node, token ) => {
-        var existingClasses = (" " + node[ 0 ].className + " ").replace(reClass, " ");
+    addClass: [ "add", true, ( node, token ) => {
+        var existingClasses = ( " " + node[ 0 ].className + " " ).replace( reClass, " " );
 
-        if (existingClasses.indexOf(" " + token + " ") === -1) {
+        if ( existingClasses.indexOf( " " + token + " " ) === -1 ) {
             existingClasses += token + " ";
         }
 
@@ -37,7 +37,7 @@ implement({
     * link.removeClass('bar');
     * link.removeClass('bar' , 'foo');
     */
-    removeClass: ["remove", true, ( node, token ) => {
+    removeClass: [ "remove", true, ( node, token ) => {
         node[ 0 ].className = (" " + node[ 0 ].className + " ")
             .replace(reClass, " ")
             .replace(" " + token + " ", " ");
@@ -49,9 +49,9 @@ implement({
     * @example
     * link.hasClass('bar');
     */
-    hasClass: ["contains", false, ( node, token ) => {
-        return ((" " + node[ 0 ].className + " ")
-            .replace(reClass, " ").indexOf(" " + token + " ") > -1);
+    hasClass: [ "contains", false, ( node, token ) => {
+        return ( (" " + node[ 0 ].className + " " )
+            .replace( reClass, " " ).indexOf( " " + token + " " ) > -1 );
     }],
    /**
     * Toggle the `class` in the class list. Optionally force state via `condition`
@@ -108,7 +108,7 @@ implement({
             return this;
         };
     }
- }, (methodName, defaultStrategy) => {
-      if (defaultStrategy === "contains" ||defaultStrategy === "toggle") return RETURN_FALSE;
+ }, ( methodName, defaultStrategy ) => {
+      if( defaultStrategy === "contains" ||defaultStrategy === "toggle" ) return RETURN_FALSE;
       return RETURN_THIS;
   });
