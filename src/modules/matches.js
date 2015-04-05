@@ -19,7 +19,7 @@ implement({
      *    link.matches('.match');
      */
     matches( selector ) {
-        if ( !selector || !is(selector, "string") ) minErr("matches()", "The string did not match the expected pattern" );
+        if ( !selector || !is( selector, "string" ) ) minErr( "matches()", "The string did not match the expected pattern" );
             // compare a match with CSS pseudos selectors 
             // e.g "link.matches(":enabled") or "link.matches(":checked")
             var checker = pseudoClasses[ selector ] ||  SelectorMatcher( selector );

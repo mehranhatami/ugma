@@ -15,11 +15,11 @@ implement({
     offset() {
 
         var node = this[ 0 ],
-            docEl = node.ownerDocument.documentElement,
-            clientTop = docEl.clientTop,
-            clientLeft = docEl.clientLeft,
-            scrollTop = WINDOW.pageYOffset || docEl.scrollTop,
-            scrollLeft = WINDOW.pageXOffset || docEl.scrollLeft,
+            docElem = node.ownerDocument.documentElement,
+            clientTop = docElem.clientTop,
+            clientLeft = docElem.clientLeft,
+            scrollTop = WINDOW.pageYOffset || docElem.scrollTop,
+            scrollLeft = WINDOW.pageXOffset || docElem.scrollLeft,
             boundingRect = node.getBoundingClientRect();
 
         return {
@@ -33,15 +33,15 @@ implement({
     },
 
   /**
-   * Calculate element's width in pixels
+   * Calculate width based on element's offset
    * @return {Number} element width in pixels
    */    
-   width() { return this.get("offsetWidth") },
+   width() { return this.offset().width },
  
   /**
-   * Calculate element's height in pixels
+   * Calculate height based on element's offset
    * @return {Number} element height in pixels
    */
-   height() { return this.get("offsetHeight"); }
+   height() { return this.offset().height }
    
 }, null, (methodName) => () => { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 } );

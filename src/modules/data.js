@@ -35,13 +35,11 @@ implement({
             // Set the value (with attr map support)
             } else if ( key && is( key, "object" ) ) {
              
-                if ( isArray( key ) ) {
-                    return this.data( map(key, ( key ) => key ) );
-                } else {
-                    return forOwn( key, ( key, value ) => {
+                if ( isArray( key ) ) return this.data( map(key, ( key ) => key ) );
+
+                  return forOwn( key, ( key, value ) => {
                         this.data( key, value );
-                    });
-                }
+                   });
             }
         } else if ( len === 2 ) {
             // delete the private property if the value is 'null' or 'undefined'

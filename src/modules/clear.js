@@ -15,8 +15,8 @@ implement({
    *     link.clear('propName');
    */
 
-    clear(name) {
-       return this.set(name, undefined);
+    clear( name ) {
+       return this.set( name, undefined );
     }
 
-}, null, () => RETURN_THIS);
+}, null, () => RETURN_THIS );

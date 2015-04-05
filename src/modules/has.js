@@ -17,8 +17,8 @@ implement({
    *    link.has('fooBar');  true / false
    */
    has(name) {
-        if ( is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name ); // Boolean
-
-        minErr( "has()", "Not a valid property/attribute" );
+        if ( !is( name, "string" ) ) minErr( "has()", "Not a valid property/attribute" );
+        
+        return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name ); // Boolean
     }
 }, null, () => RETURN_FALSE );

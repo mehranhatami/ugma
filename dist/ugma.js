@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 07:08:53 GMT
+ * Build date: Sun, 05 Apr 2015 07:36:39 GMT
  */
 (function() {
     "use strict";
@@ -64,12 +64,12 @@
      * @return {Array}
      * @private
      */
-    var helpers$$each = function(collection, callback)  {
+    var helpers$$each = function( collection, callback )  {
                var arr = collection || [],
                    index = -1,
                    length = arr.length;
                while ( ++index < length ) {
-                   if ( callback( arr[ index ], index, arr ) === false) {
+                   if ( callback( arr[ index ], index, arr ) === false ) {
                        break;
                    }
                }
@@ -85,7 +85,7 @@
        *     // ['ever', 'green']
        */     
         
-       helpers$$map = function(collection, callback)  {
+       helpers$$map = function( collection, callback )  {
            var arr = collection || [],
                result = [];
          // Go through the array, translating each of the items to their
@@ -109,12 +109,12 @@
       *     is({}, "function");
       *     // false
       */    
-       helpers$$is = function(obj, type)  {
+       helpers$$is = function( obj, type )  {
            return typeof obj === type;
        },
    
        // Iterates over own enumerable properties of an object, executing  the callback for each property.
-       helpers$$forOwn = function(object, callback)  {
+       helpers$$forOwn = function( object, callback )  {
    
                var obj = object || {},
                    key,
@@ -159,7 +159,7 @@
            return helpers$$is( value, "string" ) ? value.trim() : value;
        },
    
-       helpers$$inArray = function(arr, searchElement, fromIndex)  {
+       helpers$$inArray = function( arr, searchElement, fromIndex )  {
            fromIndex = fromIndex || 0;
            /* jshint ignore:start */
            if ( fromIndex > arr.length ) {
@@ -186,8 +186,8 @@
            if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
    
            try {
-               return fn.call(context, arg1, arg2);
-           } catch (err) {
+               return fn.call( context, arg1, arg2 );
+           } catch ( err ) {
                WINDOW.setTimeout( function()  { throw err }, 1 );
    
                return false;
@@ -195,24 +195,24 @@
        },
        // internal method to extend ugma with methods - either 
        // the nodeTree or the domTree
-       helpers$$implement = function(obj, callback, mixin)  {
+       helpers$$implement = function( obj, callback, mixin )  {
    
-           if (!callback) callback = function(method, strategy)  {return strategy};
+           if ( !callback ) callback = function( method, strategy )  {return strategy};
    
-           helpers$$forOwn(obj, function( method, func)  {
-               var args = [ method] .concat( func );
-               (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply(null, args);
+           helpers$$forOwn( obj, function( method, func )  {
+               var args = [ method ] .concat( func );
+               ( mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply( null, args );
    
-               if (mixin) core$core$$dummyTree.prototype[ method ] = mixin.apply(null, args);
+               if ( mixin ) core$core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
            });
        },
    
        // Faster alternative then slice.call
-       helpers$$sliceArgs = function(arg)  {
+       helpers$$sliceArgs = function( arg )  {
            var i = arg.length,
-               args = new Array(i || 0);
+               args = new Array( i || 0 );
    
-           while (i--) {
+           while ( i-- ) {
                args[ i ] = arg[ i ];
            }
            return args;
@@ -224,28 +224,24 @@
        // Convert dashed to camelCase
        // Support: IE9-11+
        helpers$$camelize = function( prop )  {
-           return prop && prop.replace(helpers$$reDash, function(_, separator, letter, offset)  {
+           return prop && prop.replace( helpers$$reDash, function(_, separator, letter, offset)  {
                return offset ? letter.toUpperCase() : letter;
-           }).replace (helpers$$mozHack, "Moz$1" );
+           }).replace( helpers$$mozHack, "Moz$1" );
        },
    
-       // getComputedStyle takes a pseudoClass as an optional argument, so do we
-       // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
        helpers$$computeStyle = function( node, pseudoElement )  {
-           /* istanbul ignore if */
-           pseudoElement = pseudoElement ? pseudoElement : "";
            // Support: IE<=11+, Firefox<=30+
            // IE throws on elements created in popups
            // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-           if (node.ownerDocument.defaultView.opener) {
+           if ( node.ownerDocument.defaultView.opener ) {
                return ( node.ownerDocument.defaultView ||
                    // This will work if the ownerDocument is a shadow DOM element
-                   DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
+                   DOCUMENT.defaultView ).getComputedStyle( node );
            }
-           return WINDOW.getComputedStyle(node, pseudoElement);
+           return WINDOW.getComputedStyle( node );
        },
    
-       helpers$$injectElement = function(node)  {
+       helpers$$injectElement = function( node )  {
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
@@ -558,10 +554,10 @@
        */
     
         clear: function(name) {
-           return this.set(name, undefined);
+           return this.set( name, undefined );
         }
     
-    }, null, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_THIS} );
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
@@ -572,11 +568,11 @@
        */
         clone: function(deep) {
             
-            if (!helpers$$is(deep, "boolean")) minErr$$minErr("clone()", "This element can not be cloned.");
+            if ( !helpers$$is( deep, "boolean" ) ) minErr$$minErr( "clone()", "This element can not be cloned." );
             
-            return new core$core$$nodeTree( this[ 0 ].cloneNode(deep) );
+            return new core$core$$nodeTree( this[ 0 ].cloneNode( deep) );
         }
-    }, null, function()  {return function()  {return new core$core$$dummyTree()}});
+    }, null, function()  {return function()  {return new core$core$$dummyTree()}} );
 
     // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
@@ -807,23 +803,20 @@
             
             var len = arguments.length,
                 node = this[ 0 ],
-                pseudoElement = value && value[ 0 ] === ":",
                 style = node.style,
                 computed;
    
-            // Get CSS values
-            // with support for pseudo-elements in getComputedStyle 
-            if ( pseudoElement || ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) ) {
+            // Get CSS values with support for pseudo-elements
+            if ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) {
+                
                 var getValue = function( name )  {
                     var getter = util$styleAccessor$$default.get[ name ] || util$styleAccessor$$default._default( name, style ),
    
-                        // if a 'pseudoElement' is present, don't change the original value. 
-                        // The 'pseudoElement' need to be the second argument.
-                        // E.g. link.css('color', ':before');
-                        value = pseudoElement ? value : helpers$$is( getter, "function" ) ? getter( style ) : style[ getter ];
+                        value = helpers$$is( getter, "function" ) ? getter( style ) : style[ getter ];
    
-                    if ( !value || pseudoElement ) {
-                        if ( !computed ) computed = helpers$$computeStyle(node, pseudoElement ? value : "" );
+                    if ( !value ) {
+   
+                        if ( !computed ) computed = helpers$$computeStyle(node, "" );
    
                         value = helpers$$is( getter, "function" ) ? getter( computed ) : computed[ getter ];
                     }
@@ -831,20 +824,17 @@
                     return value;
                 };
    
-                if ( helpers$$is( name, "string" ) ) {
+                if ( helpers$$is( name, "string" ) ) return getValue( name );
    
-                    return getValue(name);
-   
-                } else {
                     var obj = {};
                      helpers$$each( helpers$$map( name, getValue ), function( value, index )  {
                         obj[ name [ index ] ] = value;
                     } );
                   return obj;
-                }
             }
    
             if ( len === 2 && helpers$$is( name, "string" ) ) {
+             
                 var ret, setter = util$styleAccessor$$default.set[ name ] || util$styleAccessor$$default._default( name, style );
    
                 if ( helpers$$is( value, "function" ) ) value = value( this );
@@ -854,9 +844,7 @@
                 // Convert '+=' or '-=' to relative numbers
                 if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
    
-                    if (!computed) computed = helpers$$computeStyle(node);
-   
-                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed );
+                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed || helpers$$computeStyle(node));
    
                     if ( ret && ret[ 3 ] ) value += ret[ 3 ];
                 }
@@ -864,8 +852,7 @@
                 if ( helpers$$is( setter, "function" ) ) {
                     setter ( value, style );
                 } else {
-                    // prevent dangerous style values
-                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : ( helpers$$is( value, "string" )  ? helpers$$trim( value ) : "" + value ); // cast to string 
+                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : "" + value; // cast to string 
                 }
             } else if ( len === 1 && name && helpers$$is( name, "object" ) ) {
                 
@@ -880,10 +867,12 @@
             return this;
         }
     }, null, function()  {return function( name ) {
+        
+        var len = arguments.length;
+        
+        if ( len === 1 && helpers$$isArray( name ) ) return {};
    
-        if ( arguments.length === 1 && helpers$$isArray( name ) ) return {};
-   
-        if ( arguments.length !== 1 || !helpers$$is( name, "string" ) ) return this;
+        if ( len !== 1 || !helpers$$is( name, "string" ) ) return this;
     }});
 
     var util$readData$$multiDash = /([A-Z])/g,
@@ -937,13 +926,11 @@
                 // Set the value (with attr map support)
                 } else if ( key && helpers$$is( key, "object" ) ) {
                  
-                    if ( helpers$$isArray( key ) ) {
-                        return this.data( helpers$$map(key, function( key )  {return key} ) );
-                    } else {
-                        return helpers$$forOwn( key, function( key, value )  {
+                    if ( helpers$$isArray( key ) ) return this.data( helpers$$map(key, function( key )  {return key} ) );
+    
+                      return helpers$$forOwn( key, function( key, value )  {
                             this$0.data( key, value );
-                        });
-                    }
+                       });
                 }
             } else if ( len === 2 ) {
                 // delete the private property if the value is 'null' or 'undefined'
@@ -1562,17 +1549,11 @@
             if ( helpers$$is(name, "string") ) {
                 
                 // try to fetch HTML5 `data-*` attribute
-                if (/^data-/.test( name ) ) {
-                    return util$readData$$readData(node, name);
+                if (/^data-/.test( name ) ) return util$readData$$readData(node, name);
                 // if no DOM object property method is present... 
-                } else if (name in node) {
-                    return node[ name ];
+                if (name in node) return node[ name ];
                 //... fallback to the getAttribute method
-                } else {
                     return node.getAttribute( name );
-                }
-              // Non-existent / attributes properties return null
-              return null;
             } else if (helpers$$isArray(name)) {
                 var obj = {};
                 helpers$$each( name, function(key)  {
@@ -1902,7 +1883,7 @@
          *    link.matches('.match');
          */
         matches: function(selector) {
-            if ( !selector || !helpers$$is(selector, "string") ) minErr$$minErr("matches()", "The string did not match the expected pattern" );
+            if ( !selector || !helpers$$is( selector, "string" ) ) minErr$$minErr( "matches()", "The string did not match the expected pattern" );
                 // compare a match with CSS pseudos selectors 
                 // e.g "link.matches(":enabled") or "link.matches(":checked")
                 var checker = util$pseudoClasses$$default[ selector ] ||  util$selectormatcher$$default( selector );
@@ -1920,11 +1901,11 @@
         offset: function() {
     
             var node = this[ 0 ],
-                docEl = node.ownerDocument.documentElement,
-                clientTop = docEl.clientTop,
-                clientLeft = docEl.clientLeft,
-                scrollTop = WINDOW.pageYOffset || docEl.scrollTop,
-                scrollLeft = WINDOW.pageXOffset || docEl.scrollLeft,
+                docElem = node.ownerDocument.documentElement,
+                clientTop = docElem.clientTop,
+                clientLeft = docElem.clientLeft,
+                scrollTop = WINDOW.pageYOffset || docElem.scrollTop,
+                scrollLeft = WINDOW.pageXOffset || docElem.scrollLeft,
                 boundingRect = node.getBoundingClientRect();
     
             return {
@@ -1938,16 +1919,16 @@
         },
     
       /**
-       * Calculate element's width in pixels
+       * Calculate width based on element's offset
        * @return {Number} element width in pixels
        */    
-       width: function() { return this.get("offsetWidth") },
+       width: function() { return this.offset().width },
      
       /**
-       * Calculate element's height in pixels
+       * Calculate height based on element's offset
        * @return {Number} element height in pixels
        */
-       height: function() { return this.get("offsetHeight"); }
+       height: function() { return this.offset().height }
        
     }, null, function(methodName)  {return function()  { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 }} );
 

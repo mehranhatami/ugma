@@ -48,12 +48,12 @@ export const isArray = Array.isArray;
  * @return {Array}
  * @private
  */
- var each = (collection, callback) => {
+ var each = ( collection, callback ) => {
             var arr = collection || [],
                 index = -1,
                 length = arr.length;
             while ( ++index < length ) {
-                if ( callback( arr[ index ], index, arr ) === false) {
+                if ( callback( arr[ index ], index, arr ) === false ) {
                     break;
                 }
             }
@@ -69,7 +69,7 @@ export const isArray = Array.isArray;
     *     // ['ever', 'green']
     */     
      
-    map = (collection, callback) => {
+    map = ( collection, callback ) => {
         var arr = collection || [],
             result = [];
       // Go through the array, translating each of the items to their
@@ -93,12 +93,12 @@ export const isArray = Array.isArray;
    *     is({}, "function");
    *     // false
    */    
-    is = (obj, type) => {
+    is = ( obj, type ) => {
         return typeof obj === type;
     },
 
     // Iterates over own enumerable properties of an object, executing  the callback for each property.
-    forOwn = (object, callback) => {
+    forOwn = ( object, callback ) => {
 
             var obj = object || {},
                 key,
@@ -143,7 +143,7 @@ export const isArray = Array.isArray;
         return is( value, "string" ) ? value.trim() : value;
     },
 
-    inArray = (arr, searchElement, fromIndex) => {
+    inArray = ( arr, searchElement, fromIndex ) => {
         fromIndex = fromIndex || 0;
         /* jshint ignore:start */
         if ( fromIndex > arr.length ) {
@@ -170,8 +170,8 @@ export const isArray = Array.isArray;
         if ( is(fn, "string" ) ) fn = context[ fn ];
 
         try {
-            return fn.call(context, arg1, arg2);
-        } catch (err) {
+            return fn.call( context, arg1, arg2 );
+        } catch ( err ) {
             WINDOW.setTimeout( () => { throw err }, 1 );
 
             return false;
@@ -179,24 +179,24 @@ export const isArray = Array.isArray;
     },
     // internal method to extend ugma with methods - either 
     // the nodeTree or the domTree
-    implement = (obj, callback, mixin) => {
+    implement = ( obj, callback, mixin ) => {
 
-        if (!callback) callback = (method, strategy) => strategy;
+        if ( !callback ) callback = ( method, strategy ) => strategy;
 
-        forOwn(obj, ( method, func) => {
-            var args = [ method] .concat( func );
-            (mixin ? nodeTree : domTree).prototype[ method ] = callback.apply(null, args);
+        forOwn( obj, ( method, func ) => {
+            var args = [ method ] .concat( func );
+            ( mixin ? nodeTree : domTree).prototype[ method ] = callback.apply( null, args );
 
-            if (mixin) dummyTree.prototype[ method ] = mixin.apply(null, args);
+            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
         });
     },
 
     // Faster alternative then slice.call
-    sliceArgs = (arg) => {
+    sliceArgs = ( arg ) => {
         var i = arg.length,
-            args = new Array(i || 0);
+            args = new Array( i || 0 );
 
-        while (i--) {
+        while ( i-- ) {
             args[ i ] = arg[ i ];
         }
         return args;
@@ -208,28 +208,24 @@ export const isArray = Array.isArray;
     // Convert dashed to camelCase
     // Support: IE9-11+
     camelize = ( prop ) => {
-        return prop && prop.replace(reDash, (_, separator, letter, offset) => {
+        return prop && prop.replace( reDash, (_, separator, letter, offset) => {
             return offset ? letter.toUpperCase() : letter;
-        }).replace (mozHack, "Moz$1" );
+        }).replace( mozHack, "Moz$1" );
     },
 
-    // getComputedStyle takes a pseudoClass as an optional argument, so do we
-    // https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle
     computeStyle = ( node, pseudoElement ) => {
-        /* istanbul ignore if */
-        pseudoElement = pseudoElement ? pseudoElement : "";
         // Support: IE<=11+, Firefox<=30+
         // IE throws on elements created in popups
         // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-        if (node.ownerDocument.defaultView.opener) {
+        if ( node.ownerDocument.defaultView.opener ) {
             return ( node.ownerDocument.defaultView ||
                 // This will work if the ownerDocument is a shadow DOM element
-                DOCUMENT.defaultView).getComputedStyle( node, pseudoElement );
+                DOCUMENT.defaultView ).getComputedStyle( node );
         }
-        return WINDOW.getComputedStyle(node, pseudoElement);
+        return WINDOW.getComputedStyle( node );
     },
 
-    injectElement = (node) => {
+    injectElement = ( node ) => {
         if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
     };
 

@@ -23,23 +23,20 @@ import { adjustCSS                                                      } from "
          
          var len = arguments.length,
              node = this[ 0 ],
-             pseudoElement = value && value[ 0 ] === ":",
              style = node.style,
              computed;
 
-         // Get CSS values
-         // with support for pseudo-elements in getComputedStyle 
-         if ( pseudoElement || ( len === 1 && ( is( name, "string" ) || isArray( name ) ) ) ) {
-             let getValue = ( name ) => {
+         // Get CSS values with support for pseudo-elements
+         if ( len === 1 && ( is( name, "string" ) || isArray( name ) ) ) {
+             
+             var getValue = ( name ) => {
                  var getter = styleAccessor.get[ name ] || styleAccessor._default( name, style ),
 
-                     // if a 'pseudoElement' is present, don't change the original value. 
-                     // The 'pseudoElement' need to be the second argument.
-                     // E.g. link.css('color', ':before');
-                     value = pseudoElement ? value : is( getter, "function" ) ? getter( style ) : style[ getter ];
+                     value = is( getter, "function" ) ? getter( style ) : style[ getter ];
 
-                 if ( !value || pseudoElement ) {
-                     if ( !computed ) computed = computeStyle(node, pseudoElement ? value : "" );
+                 if ( !value ) {
+
+                     if ( !computed ) computed = computeStyle(node, "" );
 
                      value = is( getter, "function" ) ? getter( computed ) : computed[ getter ];
                  }
@@ -47,20 +44,17 @@ import { adjustCSS                                                      } from "
                  return value;
              };
 
-             if ( is( name, "string" ) ) {
+             if ( is( name, "string" ) ) return getValue( name );
 
-                 return getValue(name);
-
-             } else {
                  var obj = {};
                   each( map( name, getValue ), ( value, index ) => {
                      obj[ name [ index ] ] = value;
                  } );
                return obj;
-             }
          }
 
          if ( len === 2 && is( name, "string" ) ) {
+          
              var ret, setter = styleAccessor.set[ name ] || styleAccessor._default( name, style );
 
              if ( is( value, "function" ) ) value = value( this );
@@ -70,9 +64,7 @@ import { adjustCSS                                                      } from "
              // Convert '+=' or '-=' to relative numbers
              if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
 
-                 if (!computed) computed = computeStyle(node);
-
-                 value = adjustCSS( this, setter, ret, computed );
+                 value = adjustCSS( this, setter, ret, computed || computeStyle(node));
 
                  if ( ret && ret[ 3 ] ) value += ret[ 3 ];
              }
@@ -80,8 +72,7 @@ import { adjustCSS                                                      } from "
              if ( is( setter, "function" ) ) {
                  setter ( value, style );
              } else {
-                 // prevent dangerous style values
-                 style[ setter ] = is( value, "number" ) ? value + "px" : ( is( value, "string" )  ? trim( value ) : "" + value ); // cast to string 
+                 style[ setter ] = is( value, "number" ) ? value + "px" : "" + value; // cast to string 
              }
          } else if ( len === 1 && name && is( name, "object" ) ) {
              
@@ -96,8 +87,10 @@ import { adjustCSS                                                      } from "
          return this;
      }
  }, null, () => function( name ) {
+     
+     var len = arguments.length;
+     
+     if ( len === 1 && isArray( name ) ) return {};
 
-     if ( arguments.length === 1 && isArray( name ) ) return {};
-
-     if ( arguments.length !== 1 || !is( name, "string" ) ) return this;
+     if ( len !== 1 || !is( name, "string" ) ) return this;
  });

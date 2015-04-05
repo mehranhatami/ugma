@@ -27,17 +27,11 @@ implement({
         if ( is(name, "string") ) {
             
             // try to fetch HTML5 `data-*` attribute
-            if (/^data-/.test( name ) ) {
-                return readData(node, name);
+            if (/^data-/.test( name ) ) return readData(node, name);
             // if no DOM object property method is present... 
-            } else if (name in node) {
-                return node[ name ];
+            if (name in node) return node[ name ];
             //... fallback to the getAttribute method
-            } else {
                 return node.getAttribute( name );
-            }
-          // Non-existent / attributes properties return null
-          return null;
         } else if (isArray(name)) {
             var obj = {};
             each( name, (key) => {
