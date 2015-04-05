@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 14:11:13 GMT
+ * Build date: Sun, 05 Apr 2015 14:14:55 GMT
  */
 (function() {
     "use strict";
@@ -232,7 +232,7 @@
            }).replace( helpers$$mozHack, "Moz$1" );
        },
    
-       helpers$$computeStyle = function( node, pseudoElement )  {
+       helpers$$computeStyle = function( node )  {
            // Support: IE<=11+, Firefox<=30+
            // IE throws on elements created in popups
            // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'

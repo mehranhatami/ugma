@@ -216,7 +216,7 @@ export const isArray = Array.isArray;
         }).replace( mozHack, "Moz$1" );
     },
 
-    computeStyle = ( node, pseudoElement ) => {
+    computeStyle = ( node ) => {
         // Support: IE<=11+, Firefox<=30+
         // IE throws on elements created in popups
         // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
