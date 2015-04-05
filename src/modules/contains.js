@@ -22,7 +22,7 @@ implement({
   * The contains(other) method returns true if other is an inclusive descendant of the 
   * context object, and false otherwise (including when other is null).
   *
-  * @reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+  * @reference: https://dom.spec.whatwg.org/#dom-node-contains 
   */
     contains( element ) {
         var reference = this[ 0 ];
@@ -31,11 +31,9 @@ implement({
             var otherNode = element[ 0 ];
 
             // If other and reference are the same object, return zero.
-            if ( reference === otherNode ) {
-                return 0;
-            }
-            return !!( element instanceof nodeTree &&
-                ( reference === otherNode || reference.compareDocumentPosition( otherNode ) & 16 ) );
+            if ( reference === otherNode ) return 0;
+
+            return reference.contains(otherNode);
         }
 
         minErr( "contains()", "Comparing position against non-Node values is not allowed." );

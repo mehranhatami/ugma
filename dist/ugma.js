@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 04 Apr 2015 22:15:38 GMT
+ * Build date: Sun, 05 Apr 2015 00:25:46 GMT
  */
 (function() {
     "use strict";
@@ -627,7 +627,7 @@
       * The contains(other) method returns true if other is an inclusive descendant of the 
       * context object, and false otherwise (including when other is null).
       *
-      * @reference: https://dom.spec.whatwg.org/#dom-node-comparedocumentposition 
+      * @reference: https://dom.spec.whatwg.org/#dom-node-contains 
       */
         contains: function(element) {
             var reference = this[ 0 ];
@@ -636,11 +636,9 @@
                 var otherNode = element[ 0 ];
     
                 // If other and reference are the same object, return zero.
-                if ( reference === otherNode ) {
-                    return 0;
-                }
-                return !!( element instanceof core$core$$nodeTree &&
-                    ( reference === otherNode || reference.compareDocumentPosition( otherNode ) & 16 ) );
+                if ( reference === otherNode ) return 0;
+    
+                return reference.contains(otherNode);
             }
     
             minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
@@ -673,38 +671,38 @@
         if ( arguments.length ) return this;
     }});
 
-    var util$csshooks$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
+    var util$styleAccessor$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
         "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
         "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
         "overflow rotate3d border-right-color border-top-color text-decoration-color text-emphasis-color " +
         // SVG-related properties
         "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
         
-        util$csshooks$$cssHooks = { get: {}, set: {} },
-        util$csshooks$$directions = ["Top", "Right", "Bottom", "Left"],
-        util$csshooks$$shortHand = {
+        util$styleAccessor$$styleAccessor = { get: {}, set: {} },
+        util$styleAccessor$$directions = ["Top", "Right", "Bottom", "Left"],
+        util$styleAccessor$$shortHand = {
             font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
             borderRadius:   ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomRightRadius", "borderBottomLeftRadius"],
-            padding:        helpers$$map( util$csshooks$$directions, function( dir )  {return "padding" + dir} ),
-            margin:         helpers$$map( util$csshooks$$directions, function( dir )  {return "margin" + dir} ),
-            "border-width": helpers$$map( util$csshooks$$directions, function( dir )  {return "border" + dir + "Width"} ),
-            "border-style": helpers$$map( util$csshooks$$directions, function( dir )  {return "border" + dir + "Style"} )
+            padding:        helpers$$map( util$styleAccessor$$directions, function( dir )  {return "padding" + dir} ),
+            margin:         helpers$$map( util$styleAccessor$$directions, function( dir )  {return "margin" + dir} ),
+            "border-width": helpers$$map( util$styleAccessor$$directions, function( dir )  {return "border" + dir + "Width"} ),
+            "border-style": helpers$$map( util$styleAccessor$$directions, function( dir )  {return "border" + dir + "Style"} )
         };
 
     // Don't automatically add 'px' to these possibly-unitless properties
-    helpers$$each(util$csshooks$$UnitlessNumber, function( propName )  {
+    helpers$$each(util$styleAccessor$$UnitlessNumber, function( propName )  {
         var stylePropName = helpers$$camelize(propName);
     
-        util$csshooks$$cssHooks.get[ propName ] = stylePropName;
-        util$csshooks$$cssHooks.set[ propName ] = function( value, style )  {
+        util$styleAccessor$$styleAccessor.get[ propName ] = stylePropName;
+        util$styleAccessor$$styleAccessor.set[ propName ] = function( value, style )  {
             style[stylePropName] = value + "";
         };
     });
 
     // normalize property shortcuts
-    helpers$$forOwn(util$csshooks$$shortHand, function(key, props)  {
+    helpers$$forOwn(util$styleAccessor$$shortHand, function(key, props)  {
     
-        util$csshooks$$cssHooks.get[ key ] = function(style)  {
+        util$styleAccessor$$styleAccessor.get[ key ] = function(style)  {
             var result = [],
                 hasEmptyStyleValue = function(prop, index)  {
                     result.push(prop === "/" ? prop : style[ prop ]);
@@ -715,7 +713,7 @@
             return props.some(hasEmptyStyleValue) ? "" : result.join(" ");
         };
     
-        util$csshooks$$cssHooks.set[ key ] = function(value, style)  {
+        util$styleAccessor$$styleAccessor.set[ key ] = function(value, style)  {
             if (value && "cssText" in style) {
                 // normalize setting complex property across browsers
                 style.cssText += ";" + key + ":" + value;
@@ -725,7 +723,7 @@
         };
     });
 
-    util$csshooks$$cssHooks._default = function(name, style) {
+    util$styleAccessor$$styleAccessor._default = function(name, style) {
         var propName = helpers$$camelize( name );
     
         if (!(propName in style)) {
@@ -735,7 +733,24 @@
         return this.get[ name ] = this.set[ name ] = propName;
     };
 
-    var util$csshooks$$default = util$csshooks$$cssHooks;
+    /**
+     * Expose 'styleAccessor' to the public
+     */
+
+    core$core$$ugma.styleAccessor = function( mixin, where ) {
+       // Stop here if 'where' is not a typeof string
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr("ugma.styleAccessor()", "Not a valid string value");
+      
+        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+  
+            helpers$$forOwn( mixin, function( key, value )  {
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
+                util$styleAccessor$$styleAccessor[ where ][ key ] = mixin;
+            });
+        }
+    };
+
+    var util$styleAccessor$$default = util$styleAccessor$$styleAccessor;
     function util$adjustCSS$$adjustCSS(root, prop, parts, computed) {
     
         var adjusted,
@@ -802,7 +817,7 @@
             // with support for pseudo-elements in getComputedStyle 
             if ( pseudoElement || ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) ) {
                 var getValue = function( name )  {
-                    var getter = util$csshooks$$default.get[ name ] || util$csshooks$$default._default( name, style ),
+                    var getter = util$styleAccessor$$default.get[ name ] || util$styleAccessor$$default._default( name, style ),
    
                         // if a 'pseudoElement' is present, don't change the original value. 
                         // The 'pseudoElement' need to be the second argument.
@@ -832,7 +847,7 @@
             }
    
             if ( len === 2 && helpers$$is( name, "string" ) ) {
-                var ret, setter = util$csshooks$$default.set[ name ] || util$csshooks$$default._default( name, style );
+                var ret, setter = util$styleAccessor$$default.set[ name ] || util$styleAccessor$$default._default( name, style );
    
                 if ( helpers$$is( value, "function" ) ) value = value( this );
    
@@ -983,7 +998,9 @@
     // Works around a rare bug in Safari 6 where the first request is never invoked.
     util$raf$$requestFrame( function()  {return function()  {}} );
 
-    function util$DebouncedWrapper$$DebouncedWrapper( handler, node ) {
+    // Receive specific events at 60fps, with requestAnimationFrame (rAF).
+    // http://www.html5rocks.com/en/tutorials/speed/animations/
+    function util$debounce$$debounce( handler, node ) {
         var debouncing;
         return function( e )  {
             if ( !debouncing ) {
@@ -1000,15 +1017,15 @@
 
     // Special events for the frame events 'hook'
     helpers$$each(("touchmove mousewheel scroll mousemove drag").split(" "), function( name )  {
-        util$eventhooks$$eventHooks[ name ] = util$DebouncedWrapper$$DebouncedWrapper;
+        util$eventhooks$$eventHooks[ name ] = util$debounce$$debounce;
     });
 
     // Support: Firefox, Chrome, Safari
     // Create 'bubbling' focus and blur events
 
     if ("onfocusin" in DOCUMENT.documentElement) {
-        util$eventhooks$$eventHooks.focus = function( handler )  { handler._eventType = "focusin" };
-        util$eventhooks$$eventHooks.blur = function( handler )  { handler._eventType = "focusout" };
+        util$eventhooks$$eventHooks.focus = function( handler )  { handler._eventType = "focusin"  };
+        util$eventhooks$$eventHooks.blur = function( handler )   { handler._eventType = "focusout" };
     } else {
         // firefox doesn't support focusin/focusout events
         util$eventhooks$$eventHooks.focus = util$eventhooks$$eventHooks.blur = function( handler )  { handler.capturing = true };
@@ -1041,6 +1058,21 @@
             util$eventhooks$$capturedNodeValue = util$eventhooks$$capturedNode.value;
         });
     }
+
+    /**
+     * Expost to public
+     */
+
+    core$core$$ugma.eventHooks = function( mixin ) {
+      
+        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+  
+            helpers$$forOwn( mixin, function( key, value )  {
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
+                util$eventhooks$$eventHooks[ key ] = mixin;
+            });
+        }
+    };
 
     var util$eventhooks$$default = util$eventhooks$$eventHooks;
 
@@ -1314,7 +1346,7 @@
         util$accessorhooks$$accessorHooks = {
     
             get: {
-    
+                // special case - setting a style
                 style: function( node )  {return node.style.cssText},
                 title: function( node )  {
                     var doc = node.ownerDocument;
@@ -1542,7 +1574,7 @@
        *    link.has('fooBar');  true / false
        */
        has: function(name) {
-            if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name );
+            if ( helpers$$is( name, "string" ) ) return !!this[ 0 ][ name ] || this[ 0 ].hasAttribute( name ); // Boolean
     
             minErr$$minErr( "has()", "Not a valid property/attribute" );
         }
@@ -1979,21 +2011,19 @@
     var modules$ready$$readyCallbacks = [],
         // Supports: IE9+
         // IE have issues were the browser trigger the interactive state before DOMContentLoaded.
-        modules$ready$$loaded = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
+        modules$ready$$isReady = ( HTML.doScroll ? /^loaded|^c/ : /^loaded|^i|^c/ ).test( DOCUMENT.readyState ),
         modules$ready$$pageLoaded;
 
-
-
-    if ( !modules$ready$$loaded )
+    if ( !modules$ready$$isReady )
         DOCUMENT.addEventListener( "DOMContentLoaded", modules$ready$$pageLoaded = function()  {
-            DOCUMENT.removeEventListener("DOMContentLoaded", modules$ready$$pageLoaded);
-            modules$ready$$loaded = 1;
+            DOCUMENT.removeEventListener("DOMContentLoaded", modules$ready$$pageLoaded );
+            modules$ready$$isReady = 1;
             while ( modules$ready$$pageLoaded = modules$ready$$readyCallbacks.shift() ) modules$ready$$pageLoaded();
         });
 
     helpers$$implement({
       /**
-       * Execute callback when `DOMContentLoaded` fires for `document`, or immediately if called afterwards.
+       * Add a function to execute when the DOM is ready
        * @param {Function} callback event listener
        * @return {Object} The wrapped collection
        * @example
@@ -2002,10 +2032,11 @@
       
         ready: function( fn ) {
             if ( !helpers$$is( fn, "function") ) minErr$$minErr("ready()", "The provided 'callback' is not a function.");
-    
-            if ( modules$ready$$loaded ) {
+           // call imediately when DOM is already ready
+            if ( modules$ready$$isReady ) {
                 fn();
             } else {
+                 // add to the list
                 modules$ready$$readyCallbacks.push( fn );
             }
         }

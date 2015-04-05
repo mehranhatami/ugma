@@ -5,7 +5,7 @@
 import { RCSSNUM                                                        } from "../const";
 import { implement, isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
 import { minErr                                                         } from "../minErr";
-import   cssHooks                                                         from "../util/csshooks";
+import   styleAccessor                                                    from "../util/styleAccessor";
 import { adjustCSS                                                      } from "../util/adjustCSS";
 
  implement({
@@ -31,7 +31,7 @@ import { adjustCSS                                                      } from "
          // with support for pseudo-elements in getComputedStyle 
          if ( pseudoElement || ( len === 1 && ( is( name, "string" ) || isArray( name ) ) ) ) {
              let getValue = ( name ) => {
-                 var getter = cssHooks.get[ name ] || cssHooks._default( name, style ),
+                 var getter = styleAccessor.get[ name ] || styleAccessor._default( name, style ),
 
                      // if a 'pseudoElement' is present, don't change the original value. 
                      // The 'pseudoElement' need to be the second argument.
@@ -61,7 +61,7 @@ import { adjustCSS                                                      } from "
          }
 
          if ( len === 2 && is( name, "string" ) ) {
-             var ret, setter = cssHooks.set[ name ] || cssHooks._default( name, style );
+             var ret, setter = styleAccessor.set[ name ] || styleAccessor._default( name, style );
 
              if ( is( value, "function" ) ) value = value( this );
 

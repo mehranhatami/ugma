@@ -1,27 +1,29 @@
    describe("contains", function() {
-    "use strict";
+       "use strict";
 
-    var testEl;
+       var node;
 
-    beforeEach(function() {
-        jasmine.sandbox.set("<div id='test'><a></a><a></a></div>");
+       beforeEach(function() {
+           jasmine.sandbox.set("<div id='test'><a></a><a></a></div>");
 
-        testEl = ugma.query("#test");
-    });
+           node = ugma.query("#test");
+       });
 
-    it("should accept a DOM element", function() {
-        expect(testEl.contains(testEl.query("a"))).toBeTruthy();
-    });
+       it("should accept a DOM element", function() {
+           expect(node.contains(node.query("a"))).toBeTruthy();
+       });
 
-    it("should return zero for node itself", function() {
-        expect(testEl.contains(testEl)).toBe(0);
-    });
+       it("should return zero for node itself", function() {
+           expect(node.contains(node)).toBe(0);
+       });
 
-    it("should throw error if the first argument is not a DOM node", function() {
-        expect(function() { testEl.contains(2); }).toThrow();
-    });
+       it("should throw error if the first argument is not a DOM node", function() {
+           expect(function() {
+               node.contains(2);
+           }).toThrow();
+       });
 
-    it("should return false for empty node", function() {
-        expect(ugma.query("some-node").contains(ugma)).toBe(false);
-    });
-});
+       it("should return false for empty node", function() {
+           expect(ugma.query("some-node").contains(ugma)).toBe(false);
+       });
+   });

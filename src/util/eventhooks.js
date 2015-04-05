@@ -4,7 +4,7 @@
 
 import { DOCUMENT, WINDOW, INTERNET_EXPLORER  } from "../const";
 import { ugma                                 } from "../core/core";
-import { each                                 } from "../helpers";
+import { each, is, isArray, forOwn            } from "../helpers";
 import { debounce                             } from "../util/debounce";
 
 var eventHooks = {};
@@ -18,8 +18,8 @@ var eventHooks = {};
 // Create 'bubbling' focus and blur events
 
 if ("onfocusin" in DOCUMENT.documentElement) {
-    eventHooks.focus = ( handler ) => { handler._eventType = "focusin" };
-    eventHooks.blur = ( handler ) => { handler._eventType = "focusout" };
+    eventHooks.focus = ( handler ) => { handler._eventType = "focusin"  };
+    eventHooks.blur = ( handler )  => { handler._eventType = "focusout" };
 } else {
     // firefox doesn't support focusin/focusout events
     eventHooks.focus = eventHooks.blur = ( handler ) => { handler.capturing = true };
@@ -52,6 +52,21 @@ if (INTERNET_EXPLORER < 10) {
         capturedNodeValue = capturedNode.value;
     });
 }
+
+/**
+ * Hook 'eventHooks' on ugma namespace
+ */
+
+  ugma.eventHooks = function( mixin ) {
+    
+      if ( is( mixin, "object" ) && !isArray( mixin ) ) {
+
+          forOwn( mixin, ( key, value ) => {
+              if( is( value, "string" ) || is( value, "function" ) )
+              eventHooks[ key ] = mixin;
+          });
+      }
+  };
 
 /*
  * Export interface
