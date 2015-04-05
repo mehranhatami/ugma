@@ -8,7 +8,7 @@ import { minErr                          } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
-ler reClass = /[\n\t\r]/g;
+let reClass = /[\n\t\r]/g;
 
 implement({
    

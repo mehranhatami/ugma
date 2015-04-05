@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 13:57:26 GMT
+ * Build date: Sun, 05 Apr 2015 14:11:13 GMT
  */
 (function() {
     "use strict";
@@ -454,10 +454,10 @@
         * link.addClass('bar');
         * link.addClass('bar', 'foo');
         */   
-        addClass: ["add", true, function( node, token )  {
-            var existingClasses = (" " + node[ 0 ].className + " ").replace(modules$classes$$reClass, " ");
+        addClass: [ "add", true, function( node, token )  {
+            var existingClasses = ( " " + node[ 0 ].className + " " ).replace( modules$classes$$reClass, " " );
     
-            if (existingClasses.indexOf(" " + token + " ") === -1) {
+            if ( existingClasses.indexOf( " " + token + " " ) === -1 ) {
                 existingClasses += token + " ";
             }
     
@@ -471,7 +471,7 @@
         * link.removeClass('bar');
         * link.removeClass('bar' , 'foo');
         */
-        removeClass: ["remove", true, function( node, token )  {
+        removeClass: [ "remove", true, function( node, token )  {
             node[ 0 ].className = (" " + node[ 0 ].className + " ")
                 .replace(modules$classes$$reClass, " ")
                 .replace(" " + token + " ", " ");
@@ -483,9 +483,9 @@
         * @example
         * link.hasClass('bar');
         */
-        hasClass: ["contains", false, function( node, token )  {
-            return ((" " + node[ 0 ].className + " ")
-                .replace(modules$classes$$reClass, " ").indexOf(" " + token + " ") > -1);
+        hasClass: [ "contains", false, function( node, token )  {
+            return ( (" " + node[ 0 ].className + " " )
+                .replace( modules$classes$$reClass, " " ).indexOf( " " + token + " " ) > -1 );
         }],
        /**
         * Toggle the `class` in the class list. Optionally force state via `condition`
@@ -542,8 +542,8 @@
                 return this;
             };
         }
-     }, function(methodName, defaultStrategy)  {
-          if (defaultStrategy === "contains" ||defaultStrategy === "toggle") return RETURN_FALSE;
+     }, function( methodName, defaultStrategy )  {
+          if( defaultStrategy === "contains" ||defaultStrategy === "toggle" ) return RETURN_FALSE;
           return RETURN_THIS;
       });
 
@@ -1724,7 +1724,7 @@
         if ( requiresParent && !node.parentNode ) return this;
     
         if ( ( methodName === "after" || methodName === "before" ) && this === core$core$$ugma ) {
-             minErr$$minErr( methodName + "()", "You can not  " + methodName + " an element non-existing HTML (documentElement)" );
+             minErr$$minErr( methodName + "()", "You can not " + methodName + " an element non-existing HTML (documentElement)" );
         }
         
         // don't create fragment for adjacentHTML
@@ -1734,7 +1734,7 @@
     
             // Handle native DOM elements 
             // e.g. link.append(document.createElement('li'));
-            if (native && content.nodeType === 1) content = core$core$$nodeTree( content );
+            if ( native && content.nodeType === 1 ) content = core$core$$nodeTree( content );
     
             if ( helpers$$is( content, "function" ) ) content = content( this$0 );
     
@@ -2042,6 +2042,7 @@
        * @example
        *    link.set('attrName', 'attrValue'); // set
        *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+       *    link.set("data-fooBar", "foo"); // set custom attribute data-custom
        */
         set: function(name, value) {var this$0 = this;
     
@@ -2073,10 +2074,9 @@
             if ( subscription ) previousValue = this.get( name );
     
             if ( helpers$$is(name, "string" ) ) {
+    
                 // handle executable functions
-                if (helpers$$is(value, "function")) {
-                    value = value( this );
-                }
+                if (helpers$$is(value, "function")) value = value( this );
     
                 if ( hook ) {
                     hook( node, value );
@@ -2521,18 +2521,21 @@
         template$template$$tagCache = { "": "" };
 
     // Expose 'templateHooks' to the global scope
-    core$core$$ugma.templateHooks = function(obj)   {
+    core$core$$ugma.templateHooks = function( obj )  {
     
-      if( !helpers$$is( obj, "object" ) ) minErr$$minErr( "templateHooks()", "... has to be a object" );
+        if ( helpers$$is( obj, "object" ) && !helpers$$isArray( obj ) ) {
     
-      helpers$$forOwn(obj, function( key, value )  {
-            template$template$$templateHooks[ key ] = value;
-        });
+            helpers$$forOwn( obj, function( key, value )  {
+                if ( helpers$$is( value, "string" ) ) {
+                    template$template$$templateHooks[ key ] = value;
+                }
+            });
+        }
     };
 
     core$core$$ugma.template = function( template, args ) {
     
-        if ( !helpers$$is(template, "string" ) ) minErr$$minErr("template()", "The first argument need to be a string");
+        if ( !helpers$$is(template, "string" ) ) minErr$$minErr( "template()", "The first argument need to be a string" );
     
         if ( args ) template = core$core$$ugma.format( template, args );
     
@@ -2581,27 +2584,6 @@
     
         return template$process$$process( output );
     };
-
-    // populate templateHooks
-    helpers$$forOwn({
-          "kg"    : "keygen",
-          "out"   : "output",
-          "det"   : "details",
-          "cmd"   : "command",
-          "datal" : "datalist",
-          "ftr"   : "footer",
-          "adr"   : "adress",
-          "dlg"   : "dialog",
-          "art"   : "article",
-          "leg"   : "legend",
-          "sect"  : "section",
-          "ol+"   : "ol>li",
-          "ul+"   : "ul>li",
-          "dl+"   : "dl>dt+dd",
-          "tr+"   : "tr>td",
-      }, function( key, value )  {
-          template$template$$templateHooks[ key ] = value;
-      });
 
     // populate empty tag names with result
     helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
