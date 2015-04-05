@@ -26,11 +26,15 @@ describe("offset", function() {
         expect(offset.height).toBe(offset.bottom - offset.top);
     });
 
-    it("should have width and height calculated based on offset", function() {
-        var offset = link.offset();
+    it("should return return width and height in 'px' on hidden elements", function() {
 
-        expect(link.width()).toBe(Math.floor(offset.right - offset.left));
-        expect(link.height()).toBe(Math.floor(offset.bottom - offset.top));
+        link.css("width", 30);
+        link.hide();
+        expect(link.css("width")).toBe("30px");
+
+        link.css("height", 30);
+        link.hide();
+        expect(link.css("height")).toBe("30px");
     });
 
     it("should not change offsets when window is scrolling", function() {
