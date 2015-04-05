@@ -4,11 +4,9 @@
 
 import { trim, each, forOwn, every          } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE, BOOLS } from "../const";
+import   support                              from "../util/support";
 
 var langFix = /_/g,
-    radioValue, 
-    optSelected, 
-    checkOn,
     accessorHooks = {
 
         get: {
@@ -31,7 +29,7 @@ var langFix = /_/g,
 
                 // Support: Android<4.4
                 // Default value for a checkbox should be "on"
-                if ( node.type === "checkbox" && !checkOn ) {
+                if ( node.type === "checkbox" && !support.checkOn ) {
                     return node.getAttribute( "value" ) === null ? "on" : node.value;
                 }
                 return node.value;
@@ -73,13 +71,12 @@ var langFix = /_/g,
                         node.selectedIndex = -1;
                     }
                 } else {
-                    // for IE use innerText for textareabecause it doesn't trigger onpropertychange
                     node.value = value;
                 }
             }
         }
     };
-
+    
 (function() {
 	var input = DOCUMENT.createElement( "input" ),
 		select = DOCUMENT.createElement( "select" ),
@@ -89,22 +86,24 @@ var langFix = /_/g,
 
     // Support: Android<4.4
     // Default value for a checkbox should be "on"
-     checkOn = input.value !== "";
+     support.checkOn = input.value !== "";
 
 	// Support: IE<=11+
 	// Must access selectedIndex to make default options select
-	 optSelected = opt.selected;
+	 support.optSelected = opt.selected;
 
     // Support: IE<=11+
     // An input loses its value after becoming a radio
     input = DOCUMENT.createElement( "input" );
     input.value = "t";
     input.type = "radio";
-    radioValue = input.value === "t";
+    support.radioValue = input.value === "t";
 })();
 
+    
+
 // Support: IE<=11+
-if ( !radioValue ) {
+if ( !support.radioValue ) {
     accessorHooks.set.type = ( node, value ) => {
 
         if ( value === "radio" ) {
@@ -120,7 +119,7 @@ if ( !radioValue ) {
     };
 }
 
-if ( !optSelected ) {
+if ( !support.optSelected ) {
     accessorHooks.get.selected = ( node ) => {
         var parent = node.parentNode;
         /* jshint ignore:start */

@@ -5,11 +5,11 @@
 import { DOCUMENT, HTML, RETURN_FALSE, RETURN_THIS } from "../const";
 import { implement, trim, is                       } from "../helpers";
 import { minErr                                    } from "../minErr";
+import   support                                     from "../util/support";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 var reClass = /[\n\t\r]/g,
-    whitespace = /\s/g,
-    hasClassList = !!DOCUMENT.createElement("div").classList;
+    whitespace = /\s/g;
 
 implement({
    
@@ -77,7 +77,7 @@ implement({
 }, (methodName, defaultStrategy, nativeMethodName, strategy) => {
 
     /* istanbul ignore else  */
-    if (hasClassList) {
+    if (support.classList) {
         // use native classList property if possible
         strategy = function(el, token) {
             return el[0].classList[nativeMethodName](token);
