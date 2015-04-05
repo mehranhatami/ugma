@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 10:38:13 GMT
+ * Build date: Sun, 05 Apr 2015 11:16:17 GMT
  */
 (function() {
     "use strict";
@@ -1065,18 +1065,17 @@
 
     function util$eventhandler$$getEventProperty(name, e, eventType, node, target, currentTarget) {
     
-        if ( helpers$$is( name, "number" ) ) {
-    
-            var args = e._trigger;
-    
-            return args ? args[ name ] : void 0;
+        if ( helpers$$is( name, "number" ) )  return e._fire ? e._fire[ name ] : void 0;
+        
+        switch(name) {
+         case "type":              return eventType;
+         case "defaultPrevented":  return e.defaultPrevented;
+         case "target":            return core$core$$nodeTree( target );
+         case "currentTarget":     return core$core$$nodeTree( currentTarget );
+         case "relatedTarget":     return core$core$$nodeTree( e.relatedTarget );  
         }
     
-        if ( name === "type" )               return eventType;
-        if ( name === "defaultPrevented" )   return e.defaultPrevented;
-        if ( name === "target" )             return core$core$$nodeTree( target );
-        if ( name === "currentTarget" )      return core$core$$nodeTree( currentTarget );
-        if ( name === "relatedTarget" )      return core$core$$nodeTree( e.relatedTarget );
+    
     
         var value = e[ name ];
     
@@ -1085,18 +1084,23 @@
         return value;
     }
 
-    function util$eventhandler$$EventHandler( el, eventType, selector, callback, props, once, namespace ) {
+    function util$eventhandler$$EventHandler( el, eventType, selector, callback, props, once ) {
+    
         var node = el[ 0 ],
             hook = util$eventhooks$$default[ eventType ],
             matcher = util$selectormatcher$$default( selector, node ),
             handler = function( e )  {
                 e = e || WINDOW.event;
+                
                 // early stop in case of default action
                 if ( util$eventhandler$$EventHandler.veto === eventType ) return;
+                
                 var eventTarget = e.target || node.ownerDocument.documentElement;
+                
                 // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
                 // @see http://www.quirksmode.org/js/events_properties.html
                 eventTarget = eventTarget.nodeType === 3 ? eventTarget.parentNode : eventTarget;
+                
                 // Test whether delegated events match the provided `selector` (filter),
                 // if this is a event delegation, else use current DOM node as the `currentTarget`.
                 var currentTarget = matcher &&
@@ -1113,7 +1117,7 @@
                 if ( props ) {
                     args = helpers$$map( args, function( name )  {return util$eventhandler$$getEventProperty( name, e, eventType, node, eventTarget, currentTarget )} );
                 } else {
-                    args = helpers$$slice.call( e._trigger || [ 0 ], 1 );
+                    args = helpers$$slice.call( e._fire || [ 0 ], 1 );
                 }
     
                 // prevent default if handler returns false
@@ -1125,7 +1129,6 @@
         if ( hook ) handler = hook( handler, el ) || handler;
     
         handler.eventType  = eventType;
-        handler.namespace  = namespace;
         handler.callback   = callback;
         handler.selector   = selector;
     
@@ -1170,7 +1173,7 @@
                 }
             }
     
-            if ( helpers$$is( selector, "function") ) {
+            if ( helpers$$is( selector, "function" ) ) {
                 callback = selector;
                 selector = null;
                 args = null;
@@ -1181,18 +1184,12 @@
             // http://jsperf.com/string-indexof-vs-split
             var node = this[ 0 ],
                 parts,
-                namespace,
-                eventTypes = helpers$$inArray(eventType, " ") >= -1 ? eventType.split(" ") : [ eventType ],
+                eventTypes = helpers$$inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
                 i = eventTypes.length,
                 handler,
-                handlers = this._._events || ( this._._events = [] );
+                handlers = this._._handlers || ( this._._handlers = [] );
     
-                // handle namespace
-                parts = eventType.split( "." );
-                eventType = parts[ 0 ] || null;
-                namespace = parts[ 1 ] || null;
-    
-                handler = util$eventhandler$$default( this, eventType, selector, callback, args, single, namespace );
+                handler = util$eventhandler$$default( this, eventType, selector, callback, args, single );
     
                 node.addEventListener( handler._eventType || eventType, handler, !!handler.capturing );
     
@@ -1242,7 +1239,6 @@
             var self = this,
                 node = this[ 0 ],
                 parts,
-                namespace,
                 handlers,
                 removeHandler = function( handler )  {
     
@@ -1256,16 +1252,11 @@
                     node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
                 };
     
-            parts = eventType.split( "." );
-            eventType = parts[ 0 ] || null;
-            namespace = parts[ 1 ] || null;
-    
-            this._._events = helpers$$filter(this._._events, function( handler )  {
+            this._._handlers = helpers$$filter(this._._handlers, function( handler )  {
     
                 var skip = eventType !== handler.eventType;
     
                 skip = skip || selector && selector !== handler.selector;
-                skip = skip || namespace && namespace !== handler.namespace;
                 skip = skip || callback && callback !== handler.callback;
     
                 // Bail out if listener isn't listening.
@@ -1276,7 +1267,7 @@
     
             return this;
         }
-    }, null, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_THIS} );
 
     helpers$$implement({
        
@@ -1287,9 +1278,9 @@
         * @return {Boolean} true if default action wasn't prevented
         * @chainable
         * @example
-        *    link.trigger('anyEventType');
+        *    link.fire('anyEventType');
         */
-        trigger: function(type) {
+        fire: function(type) {
         var node = this[ 0 ],
             e, eventType, canContinue;
     
@@ -1301,11 +1292,11 @@
     
             eventType = handler._eventType || type;
         } else {
-            minErr$$minErr( "trigger()", "The string did not match the expected pattern" );
+            minErr$$minErr( "fire()", "The string did not match the expected pattern" );
         }
         // Handles triggering the appropriate event callbacks.
         e = node.ownerDocument.createEvent( "HTMLEvents" );
-        e._trigger = arguments;
+        e._fire = arguments;
         e.initEvent( eventType, true, true );
         canContinue = node.dispatchEvent( e );
     

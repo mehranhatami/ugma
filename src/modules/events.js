@@ -45,7 +45,7 @@ implement({
             }
         }
 
-        if ( is( selector, "function") ) {
+        if ( is( selector, "function" ) ) {
             callback = selector;
             selector = null;
             args = null;
@@ -56,18 +56,12 @@ implement({
         // http://jsperf.com/string-indexof-vs-split
         var node = this[ 0 ],
             parts,
-            namespace,
-            eventTypes = inArray(eventType, " ") >= -1 ? eventType.split(" ") : [ eventType ],
+            eventTypes = inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
             i = eventTypes.length,
             handler,
-            handlers = this._._events || ( this._._events = [] );
+            handlers = this._._handlers || ( this._._handlers = [] );
 
-            // handle namespace
-            parts = eventType.split( "." );
-            eventType = parts[ 0 ] || null;
-            namespace = parts[ 1 ] || null;
-
-            handler = EventHandler( this, eventType, selector, callback, args, single, namespace );
+            handler = EventHandler( this, eventType, selector, callback, args, single );
 
             node.addEventListener( handler._eventType || eventType, handler, !!handler.capturing );
 
@@ -117,7 +111,6 @@ implement({
         var self = this,
             node = this[ 0 ],
             parts,
-            namespace,
             handlers,
             removeHandler = ( handler ) => {
 
@@ -131,16 +124,11 @@ implement({
                 node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
             };
 
-        parts = eventType.split( "." );
-        eventType = parts[ 0 ] || null;
-        namespace = parts[ 1 ] || null;
-
-        this._._events = filter(this._._events, ( handler ) => {
+        this._._handlers = filter(this._._handlers, ( handler ) => {
 
             var skip = eventType !== handler.eventType;
 
             skip = skip || selector && selector !== handler.selector;
-            skip = skip || namespace && namespace !== handler.namespace;
             skip = skip || callback && callback !== handler.callback;
 
             // Bail out if listener isn't listening.
@@ -151,7 +139,7 @@ implement({
 
         return this;
     }
-}, null, () => RETURN_THIS);
+}, null, () => RETURN_THIS );
 
 implement({
    
@@ -162,9 +150,9 @@ implement({
     * @return {Boolean} true if default action wasn't prevented
     * @chainable
     * @example
-    *    link.trigger('anyEventType');
+    *    link.fire('anyEventType');
     */
-    trigger( type ) {
+    fire( type ) {
     var node = this[ 0 ],
         e, eventType, canContinue;
 
@@ -176,11 +164,11 @@ implement({
 
         eventType = handler._eventType || type;
     } else {
-        minErr( "trigger()", "The string did not match the expected pattern" );
+        minErr( "fire()", "The string did not match the expected pattern" );
     }
     // Handles triggering the appropriate event callbacks.
     e = node.ownerDocument.createEvent( "HTMLEvents" );
-    e._trigger = arguments;
+    e._fire = arguments;
     e.initEvent( eventType, true, true );
     canContinue = node.dispatchEvent( e );
 
