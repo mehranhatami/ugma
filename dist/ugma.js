@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 11:16:17 GMT
+ * Build date: Sun, 05 Apr 2015 11:22:32 GMT
  */
 (function() {
     "use strict";
@@ -1067,15 +1067,12 @@
     
         if ( helpers$$is( name, "number" ) )  return e._fire ? e._fire[ name ] : void 0;
         
-        switch(name) {
+        switch( name ) {
          case "type":              return eventType;
-         case "defaultPrevented":  return e.defaultPrevented;
          case "target":            return core$core$$nodeTree( target );
          case "currentTarget":     return core$core$$nodeTree( currentTarget );
          case "relatedTarget":     return core$core$$nodeTree( e.relatedTarget );  
         }
-    
-    
     
         var value = e[ name ];
     
@@ -1090,6 +1087,7 @@
             hook = util$eventhooks$$default[ eventType ],
             matcher = util$selectormatcher$$default( selector, node ),
             handler = function( e )  {
+               
                 e = e || WINDOW.event;
                 
                 // early stop in case of default action

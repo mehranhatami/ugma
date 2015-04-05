@@ -14,7 +14,6 @@ function getEventProperty(name, e, eventType, node, target, currentTarget) {
     
     switch( name ) {
      case "type":              return eventType;
-     case "defaultPrevented":  return e.defaultPrevented;
      case "target":            return nodeTree( target );
      case "currentTarget":     return nodeTree( currentTarget );
      case "relatedTarget":     return nodeTree( e.relatedTarget );  
