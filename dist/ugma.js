@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 09:25:42 GMT
+ * Build date: Mon, 06 Apr 2015 12:32:52 GMT
  */
 (function() {
     "use strict";
@@ -239,13 +239,12 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
-    var core$uClass$$uClass = function()  {
+    var core$core$$uClass = function()  {
     
         var len = arguments.length,
             mixin = arguments[ len - 1 ],
             SuperClass = len > 1 ? arguments[ 0 ] : null,
             Class, SuperClassEmpty,
-            // helper for merging classes with each other
             extend = function( obj, extension, overwrite )  {
     
                 // failsave if something goes wrong
@@ -262,8 +261,8 @@
                     helpers$$forOwn( extension, function( prop, func )  {
                         obj[ prop ] = func;
                     });
-                }
-            };
+            }
+       };
     
         if ( helpers$$is(mixin.constructor, "object") ) {
             Class = function()  {};
@@ -284,14 +283,13 @@
         extend( Class.prototype, mixin );
     
         return Class;
-    };
-
-    var core$uClass$$default = core$uClass$$uClass;
-
-    /**
-     * dummyTree class
-    */
-    var core$core$$dummyTree = core$uClass$$default({
+    },
+    
+      /**
+       * dummyTree class
+      */
+    
+    core$core$$dummyTree = core$core$$uClass({
             constructor: function() {},
             toString: function() { return "" }
         }),
@@ -299,7 +297,7 @@
         /**
          * nodeTree class
          */
-        core$core$$nodeTree = core$uClass$$default( core$core$$dummyTree, {
+        core$core$$nodeTree = core$core$$uClass( core$core$$dummyTree, {
             // Main constructor
             constructor: function(node) {
     
@@ -321,7 +319,7 @@
         /**
          * domTree class
          */
-        core$core$$domTree = core$uClass$$default( core$core$$nodeTree, {
+        core$core$$domTree = core$core$$uClass( core$core$$nodeTree, {
             constructor: function(node) { return core$core$$domTree.Super.call( this, node.documentElement ) },
                 toString: function() { return "#document" }
         }),
@@ -349,7 +347,16 @@
        core$core$$instanceOf = function( node )  {return typeof node._ != null};
 
     // Set a new document, and define a local copy of ugma
+
     var core$core$$ugma = new core$core$$domTree( DOCUMENT );
+
+    /**
+     * Hook 'eventHooks' on ugma namespace
+     */
+    core$core$$ugma.extend = function(mixin, namespace)  {
+          if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
+          return mixin ? namespace ? core$core$$implement( mixin ) : core$core$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
+      };
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -2821,39 +2828,6 @@
     }});
     // Current codename on the framework.
     core$core$$ugma.version = "trackira";
-
-    core$core$$implement({
-        /**
-         * Extend ugma with methods
-         * @param  {Object}    mixin       methods container
-         * @param  {Boolean} namespace  indicates if the method should be attached to ugma namespace or not
-         * @example
-         * ugma.extend({
-         *     foo: function() {
-         *         console.log("bar");
-         *     }
-         * });
-         *
-         * ugma.extend({
-         *     foo: function() {
-         *         console.log("bar");
-         *     }
-         * }, true);
-         *
-         *
-         * Note! If 'namespace' set to true, the methods can be used like:
-         *
-         *   ugma.foo();
-         *
-         * otherwise:
-         *
-         *   link.foo();
-         */
-        extend: function(mixin, namespace) {
-            if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
-            return mixin ? namespace ? core$core$$implement( mixin ) : core$core$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
-        }
-    });
 
     // Create a ugma wrapper object for a native DOM element or a
     // jQuery element. E.g. (ugma.native($('#foo')[0]))

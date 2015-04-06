@@ -3,13 +3,61 @@
  */
 
 import { DOCUMENT  } from "../const";
-import { forOwn    } from "../helpers";
-import   uClass      from "../core/uClass";
+import { forOwn, is, isArray  } from "../helpers";
+import { minErr       } from "../minErr";
+import { RETURN_THIS  } from "../const";
+
+var uClass = () => {
+
+    var len = arguments.length,
+        mixin = arguments[ len - 1 ],
+        SuperClass = len > 1 ? arguments[ 0 ] : null,
+        Class, SuperClassEmpty,
+        extend = ( obj, extension, overwrite ) => {
+
+            // failsave if something goes wrong
+            if ( !obj || !extension) return obj || extension || {};
+
+            if ( overwrite === false ) {
+
+                forOwn( extension, ( prop, func ) => {
+                    if ( !( prop in obj ) ) obj[ prop ] = func;
+                });
+
+            } else {
+
+                forOwn( extension, ( prop, func ) => {
+                    obj[ prop ] = func;
+                });
+        }
+   };
+
+    if ( is(mixin.constructor, "object") ) {
+        Class = () => {};
+    } else {
+        Class = mixin.constructor;
+        delete mixin.constructor;
+    }
+
+    if (SuperClass) {
+        SuperClassEmpty = () => {};
+        SuperClassEmpty.prototype = SuperClass.prototype;
+        Class.prototype = new SuperClassEmpty();
+        Class.prototype.constructor = Class;
+        Class.Super = SuperClass;
+
+        extend( Class, SuperClass, false );
+    }
+    extend( Class.prototype, mixin );
+
+    return Class;
+},
 
   /**
    * dummyTree class
   */
-var dummyTree = uClass({
+
+dummyTree = uClass({
         constructor() {},
         toString() { return "" }
     }),
@@ -66,8 +114,17 @@ var dummyTree = uClass({
    
    instanceOf = ( node ) => typeof node._ != null;
 
-// Set a new document, and define a local copy of ugma
-var ugma = new domTree( DOCUMENT );
+  // Set a new document, and define a local copy of ugma
+    
+    var ugma = new domTree( DOCUMENT );
+
+ /**
+  * Hook 'eventHooks' on ugma namespace
+  */
+  ugma.extend = (mixin, namespace) => {
+        if( !is( mixin, "object" )  || isArray( mixin ) ) minErr();
+        return mixin ? namespace ? implement( mixin ) : implement( mixin, null, () => RETURN_THIS ) : false;
+    };
 
 /*
  * Export interface
