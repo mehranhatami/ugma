@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 13:49:49 GMT
+ * Build date: Mon, 06 Apr 2015 14:05:35 GMT
  */
 (function() {
     "use strict";
@@ -371,8 +371,29 @@
     var core$core$$ugma = new core$core$$domTree( DOCUMENT );
 
     /**
-     * Hook 'eventHooks' on ugma namespace
-     */
+      * Extend ugma with methods
+      * @param  {Object}    mixin       methods container
+      * @param  {Boolean|Function} callback 
+      * @example
+      *
+      * ugma.extend({
+      *     foo: function() {
+      *         console.log("bar");
+      *     }
+      * });  //  link.foo();
+      *
+      * ugma.extend({
+      *     foo: function() {
+      *         console.log("bar");
+      *     }
+      * }, true); // ugma.foo();
+      *
+      *
+      * Note! The second argument - 'function' - extend the ugma.extend() with similar
+      * options as for the *internally* implement method, and let us
+      * return e.g. empty object ( {} ), array, booleans, array with values ( arr[1,2,3] )
+      */
+
     core$core$$ugma.extend = function(mixin, callback)  {
         
           if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr( "ugma.extend", "The first argument is not a object.");
