@@ -3,9 +3,9 @@
  */
 
 import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
-import { nodeTree, dummyTree               } from "../core/core";
+import { nodeTree, dummyTree, implement    } from "../core/core";
 import { minErr                            } from "../minErr";
-import { is, map, implement, invoke        } from "../helpers";
+import { is, map, invoke                   } from "../helpers";
 
 var fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
     rescape  = /'|\\/g;

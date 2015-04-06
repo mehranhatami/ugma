@@ -2,9 +2,9 @@
  * @module offsetparent
  */
 
-import { implement          } from "../helpers";
-import { nodeTree           } from "../core/core";
-import { RETURN_FALSE, HTML } from "../const";
+
+import { implement, nodeTree  } from "../core/core";
+import { RETURN_FALSE, HTML   } from "../const";
 
 implement({
     // This method will return documentElement in the following cases:

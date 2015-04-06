@@ -2,11 +2,12 @@
  * @module css
  */
 
-import { RCSSNUM                                                        } from "../const";
-import { implement, isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
-import { minErr                                                         } from "../minErr";
-import   styleAccessor                                                    from "../util/styleAccessor";
-import { adjustCSS                                                      } from "../util/adjustCSS";
+import { RCSSNUM                                             } from "../const";
+import { implement                                           } from "../core/core";
+import { isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
+import { minErr                                              } from "../minErr";
+import   styleAccessor                                         from "../util/styleAccessor";
+import { adjustCSS                                           } from "../util/adjustCSS";
 
  implement({
    /**

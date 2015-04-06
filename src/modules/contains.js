@@ -2,7 +2,7 @@
  * @module contains
  */
 
-import { implement       } from "../helpers";
+import { implement       } from "../core/core";
 import { minErr          } from "../minErr";
 import { RETURN_FALSE    } from "../const";
 

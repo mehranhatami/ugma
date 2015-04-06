@@ -2,8 +2,8 @@
  * @module offset
  */
 
-import { implement } from "../helpers";
-import { WINDOW    } from "../const";
+import { implement  } from "../core/core";
+import { WINDOW     } from "../const";
 
 implement({
    /**

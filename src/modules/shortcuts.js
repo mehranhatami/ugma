@@ -2,7 +2,7 @@
  * @module shortcuts
  */
 
-import { implement   } from "../helpers";
+import { implement   } from "../core/core";
 import { RETURN_THIS } from "../const";
 
 implement({

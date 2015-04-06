@@ -2,62 +2,41 @@
  * @module core
  */
 
-/* globals window, document */
+import { DOCUMENT  } from "../const";
+import { forOwn    } from "../helpers";
+import   uClass      from "../core/uClass";
 
-import { forOwn } from "../helpers";
+var nodeTree, dummyTree, domTree,
+    
+    /**
+     * Internal method to extend ugma with methods - either 
+     * the nodeTree or the domTree
+     */ 
+    implement = ( obj, callback, mixin ) => {
 
-var nodeTree, dummyTree, domTree;
+        if ( !callback ) callback = ( method, strategy ) => strategy;
 
-function uClass() {
-    let len = arguments.length,
-        body = arguments[ len - 1 ],
-        SuperClass = len > 1 ? arguments[ 0 ] : null,
-        Class, SuperClassEmpty,
+        forOwn(obj, ( method, func ) => {
+            var args = [ method ].concat( func );
+            ( mixin ? nodeTree : domTree ).prototype[ method ] = callback.apply( null, args );
 
-        // helper for merging two object with each other
-        extend = (obj, extension, preserve) => {
+            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
+        });
+    },
+    /**
+     * Internal 'instanceOf' method
+     */
+    instanceOf = (node) => typeof node._ != null;
 
-            // failsave if something goes wrong
-            if ( !obj || !extension ) return obj || extension || {};
-
-            forOwn( extension, ( prop, func ) => {
-                // if preserve is set to true, obj will not be overwritten by extension if
-                // obj has already a method key
-                obj[ prop ] = (preserve === false && !( prop in obj ) ) ? func : func;
-
-                if ( preserve && extension.toString !== Object.prototype.toString ) {
-                    obj.toString = extension.toString;
-                }
-            });
-        };
-
-    if ( body.constructor === "[object Object]" ) {
-        Class = () => {};
-    } else {
-        Class = body.constructor;
-        delete body.constructor;
-    }
-
-    if (SuperClass) {
-        SuperClassEmpty = () => {};
-        SuperClassEmpty.prototype = SuperClass.prototype;
-        Class.prototype = new SuperClassEmpty();
-        Class.prototype.constructor = Class;
-        Class.Super = SuperClass;
-        extend( Class, SuperClass, false );
-    }
-
-    extend( Class.prototype, body );
-
-    return Class;
-}
-
+/**
+ * nodeTree class
+ */
 nodeTree = uClass({
     constructor(node) {
 
-            if ( this ) {
-                if ( node ) {
-                    this[ 0 ] = node;
+            if (this) {
+                if (node) {
+                    this[0] = node;
                     // use a generated property to store a reference
                     // to the wrapper for circular object binding
                     node._ugma = this;
@@ -66,16 +45,23 @@ nodeTree = uClass({
                 }
             } else {
                 // create a wrapper only once for each native element
-                return node ? node._ugma || new nodeTree( node ) : new dummyTree();
+                return node ? node._ugma || new nodeTree(node) : new dummyTree();
             }
         },
-        toString() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
+        toString() { return "<" + this[0].tagName.toLowerCase() + ">" }
 });
 
+/**
+ * domTree class
+ */
 domTree = uClass(nodeTree, {
-    constructor( node ) { return nodeTree.call( this, node.documentElement ) },
+    constructor(node) { return nodeTree.call(this, node.documentElement) },
     toString() { return "#document" }
 });
+
+/**
+ * dummyTree class
+ */
 
 dummyTree = uClass(nodeTree, {
     constructor() {},
@@ -83,9 +69,9 @@ dummyTree = uClass(nodeTree, {
 });
 
 // Set a new document, and define a local copy of ugma
-var ugma = new domTree( document );
+var ugma = new domTree(DOCUMENT);
 
 /*
  * Export interface
  */
-export { nodeTree, dummyTree, domTree, ugma };
+export { implement, nodeTree, dummyTree, domTree, ugma };

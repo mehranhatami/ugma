@@ -2,11 +2,11 @@
  * @module visibility
  */
 
-import { ugma                          } from "../core/core";
-import { RETURN_THIS                   } from "../const";
-import { implement, is, computeStyle   } from "../helpers";
-import { minErr                        } from "../minErr";
-import { requestFrame, cancelFrame     } from "../util/raf";
+import { ugma, implement             } from "../core/core";
+import { RETURN_THIS                 } from "../const";
+import { is, computeStyle            } from "../helpers";
+import { minErr                      } from "../minErr";
+import { requestFrame, cancelFrame   } from "../util/raf";
 
 implement({
     /**

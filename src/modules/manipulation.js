@@ -2,10 +2,10 @@
  * @module manipulation
  */
 
-import { RETURN_THIS                                   } from "../const";
-import { ugma, nodeTree                                } from "../core/core";
-import { minErr                                        } from "../minErr";
-import { implement, isArray, trim, each, is, sliceArgs } from "../helpers";
+import { RETURN_THIS                          } from "../const";
+import { ugma, nodeTree, implement            } from "../core/core";
+import { minErr                               } from "../minErr";
+import { isArray, trim, each, is, sliceArgs   } from "../helpers";
 
 // https://dom.spec.whatwg.org
 // 

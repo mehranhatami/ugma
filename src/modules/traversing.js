@@ -2,14 +2,20 @@
  * @module traversing
  */
 
-import { nodeTree, dummyTree       } from "../core/core";
-import SelectorMatcher               from "../util/selectormatcher";
-import { implement, is, map        } from "../helpers";
-import { minErr                    } from "../minErr";
+/** 
+ * Loosely based on this:
+ * http://www.w3.org/TR/ElementTraversal/
+ */
+
+import { nodeTree, dummyTree, implement  } from "../core/core";
+import SelectorMatcher                     from "../util/selectormatcher";
+import { is, map                         } from "../helpers";
+import { minErr                          } from "../minErr";
 
 implement({
+
     /**
-     * Find first element filtered by optional selector
+     * Find first element to the supplied element filtered by optional selector
      * @param {String} [selector] css selector
      * @chainable
      * @example
@@ -17,7 +23,7 @@ implement({
      */
     first: "firstElementChild",
     /**
-     * Find last element filtered by optional selector
+     * Find last element to the supplied element filtered by optional selector
      * @param {String} [selector] css selector
      * @chainable
      * @example

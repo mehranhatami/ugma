@@ -2,9 +2,10 @@
  * @module ready
  */
 
-import { implement, is  } from "../helpers";
+import { implement              } from "../core/core";
+import { is                     } from "../helpers";
 import { DOCUMENT, WINDOW, HTML } from "../const";
-import { minErr         } from "../minErr";
+import { minErr                 } from "../minErr";
 
 var readyCallbacks = [],
     // Supports: IE9+

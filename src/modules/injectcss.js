@@ -1,9 +1,13 @@
 /**
  * @module injectcss
  */
-
-import { minErr                             } from "../minErr";
-import { implement, injectElement, is, each } from "../helpers";
+ 
+ /**
+  * http://www.w3.org/TR/DOM-Level-2-Style/css.html
+  */
+import { implement               } from "../core/core";
+import { minErr                  } from "../minErr";
+import { injectElement, is, each } from "../helpers";
 
 implement({
   /**

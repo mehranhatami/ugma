@@ -2,8 +2,9 @@
  * @module subscription
  */
 
-import { implement, filter } from "../helpers";
-import { RETURN_THIS       } from "../const";
+import { implement     } from "../core/core";
+import { filter        } from "../helpers";
+import { RETURN_THIS   } from "../const";
 
 implement({
   /**

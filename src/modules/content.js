@@ -1,8 +1,8 @@
 /**
  * @module value
  */
-
-import { implement, isArray  } from "../helpers";
+import { implement   } from "../core/core";
+import { isArray     } from "../helpers";
 
 implement({
     /**

@@ -177,19 +177,6 @@ export const isArray = Array.isArray;
             return false;
         }
     },
-    // internal method to extend ugma with methods - either 
-    // the nodeTree or the domTree
-    implement = ( obj, callback, mixin ) => {
-
-        if ( !callback ) callback = ( method, strategy ) => strategy;
-
-        forOwn( obj, ( method, func ) => {
-            var args = [ method ] .concat( func );
-            ( mixin ? nodeTree : domTree).prototype[ method ] = callback.apply( null, args );
-
-            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
-        });
-    },
 
     // Faster alternative then slice.call
     sliceArgs = ( arg ) => {
@@ -216,6 +203,10 @@ export const isArray = Array.isArray;
         }).replace( mozHack, "Moz$1" );
     },
 
+ /**
+  * http://www.w3.org/TR/DOM-Level-2-Style
+  */
+
     computeStyle = ( node ) => {
         // Support: IE<=11+, Firefox<=30+
         // IE throws on elements created in popups
@@ -235,4 +226,4 @@ export const isArray = Array.isArray;
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, trim, inArray, invoke, implement, sliceArgs, camelize, computeStyle, injectElement };
+export { each, map, forOwn, filter, is, trim, inArray, invoke, sliceArgs, camelize, computeStyle, injectElement };

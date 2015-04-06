@@ -3,7 +3,8 @@
  */
 
 import { HTML, RETURN_FALSE, RETURN_THIS } from "../const";
-import { implement, trim, is             } from "../helpers";
+import { implement                       } from "../core/core";
+import { trim, is                        } from "../helpers";
 import { minErr                          } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */

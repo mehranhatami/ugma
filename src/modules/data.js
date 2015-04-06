@@ -2,9 +2,10 @@
  * @module data
  */
 
-import { implement, forOwn, map, is, isArray  } from "../helpers";
-import { RETURN_THIS                          } from "../const";
-import { readData                             } from "../util/readData";
+import { forOwn, map, is, isArray  } from "../helpers";
+import { implement                 } from "../core/core";
+import { RETURN_THIS               } from "../const";
+import { readData                  } from "../util/readData";
 
 implement({
   /**

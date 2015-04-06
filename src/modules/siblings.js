@@ -2,10 +2,10 @@
  * @module siblings
  */
 
-import { minErr                      } from "../minErr";
-import { nodeTree, dummyTree         } from "../core/core";
-import   SelectorMatcher               from "../util/selectormatcher";
-import { implement, map, filter, is  } from "../helpers";
+import { minErr                          } from "../minErr";
+import { implement, nodeTree, dummyTree  } from "../core/core";
+import   SelectorMatcher                   from "../util/selectormatcher";
+import { map, filter, is                 } from "../helpers";
 
 implement({
     /**

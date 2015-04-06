@@ -2,10 +2,11 @@
  * @module get
  */
 
-import { minErr                        } from "../minErr";
-import { implement, isArray, each, is  } from "../helpers";
-import { readData                      } from "../util/readData";
-import   accessorhooks                   from "../util/accessorhooks";
+import { minErr               } from "../minErr";
+import { implement            } from "../core/core";
+import { isArray, each, is    } from "../helpers";
+import { readData             } from "../util/readData";
+import   accessorhooks          from "../util/accessorhooks";
 
 implement({
    

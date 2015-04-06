@@ -2,12 +2,13 @@
  * @module events
  */
 
-import { RETURN_THIS, RETURN_TRUE                                             } from "../const";
-import   EventHandler                                                           from "../util/eventhandler";
-import   eventhooks                                                             from "../util/eventhooks";
-import { implement, isArray, keys, each, forOwn, is, inArray, filter, invoke  } from "../helpers";
-import { minErr                                                               } from "../minErr";
-import { cancelFrame                                                          } from "../util/raf";
+import { RETURN_THIS, RETURN_TRUE                                   } from "../const";
+import   EventHandler                                                 from "../util/eventhandler";
+import   eventhooks                                                   from "../util/eventhooks";
+import { implement                                                  } from "../core/core";
+import { isArray, keys, each, forOwn, is, inArray, filter, invoke   } from "../helpers";
+import { minErr                                                     } from "../minErr";
+import { cancelFrame                                                } from "../util/raf";
 
 implement({
     
@@ -65,7 +66,7 @@ implement({
 
             node.addEventListener( handler._eventType || eventType, handler, !!handler.capturing );
 
-            // store event entry
+              // store the event handler
             handlers.push( handler );
 
     } else if ( is(eventType, "object") ) {

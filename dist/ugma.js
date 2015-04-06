@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 02:19:59 GMT
+ * Build date: Mon, 06 Apr 2015 07:44:09 GMT
  */
 (function() {
     "use strict";
@@ -193,19 +193,6 @@
                return false;
            }
        },
-       // internal method to extend ugma with methods - either 
-       // the nodeTree or the domTree
-       helpers$$implement = function( obj, callback, mixin )  {
-   
-           if ( !callback ) callback = function( method, strategy )  {return strategy};
-   
-           helpers$$forOwn( obj, function( method, func )  {
-               var args = [ method ] .concat( func );
-               ( mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply( null, args );
-   
-               if ( mixin ) core$core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
-           });
-       },
    
        // Faster alternative then slice.call
        helpers$$sliceArgs = function( arg )  {
@@ -232,6 +219,10 @@
            }).replace( helpers$$mozHack, "Moz$1" );
        },
    
+    /**
+     * http://www.w3.org/TR/DOM-Level-2-Style
+     */
+   
        helpers$$computeStyle = function( node )  {
            // Support: IE<=11+, Firefox<=30+
            // IE throws on elements created in popups
@@ -248,39 +239,29 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
-    var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree;
-
-    function core$core$$uClass() {
+    var core$uClass$$uClass = function()  {
         var len = arguments.length,
             body = arguments[ len - 1 ],
             SuperClass = len > 1 ? arguments[ 0 ] : null,
             Class, SuperClassEmpty,
-    
-            // helper for merging two object with each other
-            extend = function(obj, extension, preserve)  {
+            extend = function( obj, extension )  {
     
                 // failsave if something goes wrong
-                if ( !obj || !extension ) return obj || extension || {};
+                if( !obj || !extension ) return obj || extension || {};
     
                 helpers$$forOwn( extension, function( prop, func )  {
-                    // if preserve is set to true, obj will not be overwritten by extension if
-                    // obj has already a method key
-                    obj[ prop ] = (preserve === false && !( prop in obj ) ) ? func : func;
-    
-                    if ( preserve && extension.toString !== Object.prototype.toString ) {
-                        obj.toString = extension.toString;
-                    }
+                    obj[ prop ] = func;
                 });
             };
     
-        if ( body.constructor === "[object Object]" ) {
-            Class = function()  {};
-        } else {
-            Class = body.constructor;
-            delete body.constructor;
-        }
+            if( body.constructor === "[object Object]" ) {
+                Class = function()  {};
+            } else {
+                Class = body.constructor;
+                delete body.constructor;
+            }
     
-        if (SuperClass) {
+        if ( SuperClass ) {
             SuperClassEmpty = function()  {};
             SuperClassEmpty.prototype = SuperClass.prototype;
             Class.prototype = new SuperClassEmpty();
@@ -289,17 +270,44 @@
             extend( Class, SuperClass, false );
         }
     
-        extend( Class.prototype, body );
+        extend(Class.prototype, body);
     
         return Class;
-    }
+    };
 
-    core$core$$nodeTree = core$core$$uClass({
+    var core$uClass$$default = core$uClass$$uClass;
+
+    var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree,
+        
+        /**
+         * Internal method to extend ugma with methods - either 
+         * the nodeTree or the domTree
+         */ 
+        core$core$$implement = function( obj, callback, mixin )  {
+    
+            if ( !callback ) callback = function( method, strategy )  {return strategy};
+    
+            helpers$$forOwn(obj, function( method, func )  {
+                var args = [ method ].concat( func );
+                ( mixin ? core$core$$nodeTree : core$core$$domTree ).prototype[ method ] = callback.apply( null, args );
+    
+                if ( mixin ) core$core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
+            });
+        },
+        /**
+         * Internal 'instanceOf' method
+         */
+        core$core$$instanceOf = function(node)  {return typeof node._ != null};
+
+    /**
+     * nodeTree class
+     */
+    core$core$$nodeTree = core$uClass$$default({
         constructor: function(node) {
     
-                if ( this ) {
-                    if ( node ) {
-                        this[ 0 ] = node;
+                if (this) {
+                    if (node) {
+                        this[0] = node;
                         // use a generated property to store a reference
                         // to the wrapper for circular object binding
                         node._ugma = this;
@@ -308,24 +316,31 @@
                     }
                 } else {
                     // create a wrapper only once for each native element
-                    return node ? node._ugma || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
+                    return node ? node._ugma || new core$core$$nodeTree(node) : new core$core$$dummyTree();
                 }
             },
-            toString: function() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
+            toString: function() { return "<" + this[0].tagName.toLowerCase() + ">" }
     });
 
-    core$core$$domTree = core$core$$uClass(core$core$$nodeTree, {
-        constructor: function(node) { return core$core$$nodeTree.call( this, node.documentElement ) },
+    /**
+     * domTree class
+     */
+    core$core$$domTree = core$uClass$$default(core$core$$nodeTree, {
+        constructor: function(node) { return core$core$$nodeTree.call(this, node.documentElement) },
         toString: function() { return "#document" }
     });
 
-    core$core$$dummyTree = core$core$$uClass(core$core$$nodeTree, {
+    /**
+     * dummyTree class
+     */
+
+    core$core$$dummyTree = core$uClass$$default(core$core$$nodeTree, {
         constructor: function() {},
         toString: function() { return "" }
     });
 
     // Set a new document, and define a local copy of ugma
-    var core$core$$ugma = new core$core$$domTree( document );
+    var core$core$$ugma = new core$core$$domTree(DOCUMENT);
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -392,7 +407,7 @@
         return null;
     };
 
-    helpers$$implement({
+    core$core$$implement({
         /**
          * Returns all child nodes in a collection of children filtered by optional selector
          * @param  {String} [selector] css selector
@@ -438,7 +453,7 @@
 
     var modules$classes$$reClass = /[\n\t\r]/g;
 
-    helpers$$implement({
+    core$core$$implement({
        
        /**
         * Adds a class(es) or an array of class names
@@ -544,7 +559,7 @@
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Returns a copy of a DOM node.
        * @param {Boolean} [deep=true] true if all descendants should also be cloned, or false otherwise
@@ -559,7 +574,7 @@
 
     // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
-    helpers$$implement({
+    core$core$$implement({
      /**
       * Return the closest element matching the selector
       * @param {String} [selector] css selector
@@ -584,7 +599,7 @@
         }
     }, null, function()  {return function()  {return new core$core$$dummyTree()}} );
 
-    helpers$$implement({
+    core$core$$implement({
      /**
       * Check if element is inside of context
       * @param  {ugma wrapped Object} element to check
@@ -619,7 +634,7 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
-    helpers$$implement({
+    core$core$$implement({
         /**
          * Read or write inner content of the element
          * @param  {Mixed}  [content]  optional value to set
@@ -769,7 +784,7 @@
         }
     }
 
-    helpers$$implement({
+    core$core$$implement({
       /**
         * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
         * @param  {String|Object}      name    style property name or key/value object
@@ -878,7 +893,7 @@
         return value;
     };
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Getter/setter of a data entry value. Tries to read the appropriate
        * HTML5 data-* attribute if it exists
@@ -928,7 +943,7 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    helpers$$implement({
+    core$core$$implement({
       /**
         * Remove child nodes of current element from the DOM
         * @chainable
@@ -1072,7 +1087,8 @@
                 
                 // early stop in case of default action
                 if ( util$eventhandler$$EventHandler.veto === eventType ) return;
-                
+    
+                // http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Registration-interfaces
                 var eventTarget = e.target || node.ownerDocument.documentElement;
                 
                 // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).
@@ -1115,7 +1131,7 @@
 
     var util$eventhandler$$default = util$eventhandler$$EventHandler;
 
-    helpers$$implement({
+    core$core$$implement({
         
        /**
         * Bind an event to a callback function for one or more events to the selected elements. 
@@ -1171,7 +1187,7 @@
     
                 node.addEventListener( handler._eventType || eventType, handler, !!handler.capturing );
     
-                // store event entry
+                  // store the event handler
                 handlers.push( handler );
     
         } else if ( helpers$$is(eventType, "object") ) {
@@ -1194,7 +1210,7 @@
     }}, function()  {return RETURN_THIS});
 
 
-    helpers$$implement({
+    core$core$$implement({
     
        /**
         * Remove one or many callbacks.
@@ -1247,7 +1263,7 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    helpers$$implement({
+    core$core$$implement({
        
        /**
         * Trigger one or many events, firing all bound callbacks. 
@@ -1482,7 +1498,7 @@
 
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
-    helpers$$implement({
+    core$core$$implement({
        
       /**
        * Get HTML5 Custom Data Attributes, property or attribute value by name
@@ -1524,7 +1540,7 @@
         }
     }, null, function()  {return function()  {}});
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Returns true if the requested attribute/property is specified on the given element, and false otherwise.
        * @param  {String} [name] property/attribute name or array of names
@@ -1541,7 +1557,7 @@
         }
     }, null, function()  {return RETURN_FALSE} );
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Append global css styles
        * @param {String}         selector  css selector
@@ -1569,7 +1585,7 @@
         }
     });
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Import external scripts on the page and call optional callback when it will be done
        * @param {...String} urls       script file urls
@@ -1612,7 +1628,7 @@
     // 
     // Section: 4.2.5 Interface ChildNode
 
-    helpers$$implement({
+    core$core$$implement({
         
        /**
         *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
@@ -1758,7 +1774,7 @@
         
     }}, function()  {return RETURN_THIS} );
 
-    helpers$$implement({
+    core$core$$implement({
       /**
          * Invokes a function for element if it's not empty and return array of results
          * @param  {Function}  fn         function to invoke
@@ -1822,7 +1838,7 @@
     });
 
     var util$pseudoClasses$$default = util$pseudoClasses$$pseudoClasses;
-    helpers$$implement({
+    core$core$$implement({
        /**
          * Returns `true` if the element would be selected by the specified selector string; otherwise, returns `false`.
          * @param  {String} selector Selector to match against element
@@ -1840,7 +1856,83 @@
         }
     }, null, function()  {return RETURN_FALSE} );
 
-    helpers$$implement({
+    var modules$mutate$$ExtensionHandler = function(selector, condition, mixins, index)  {
+        var ctr = mixins.hasOwnProperty("constructor") && mixins.constructor,
+            matcher = util$selectormatcher$$default(selector);
+    
+        return function(node, mock)  {
+            var el = core$core$$nodeTree(node),
+                extension = el._.extension;
+    
+            if (!extension) {
+                el._.extension = extension = [];
+            }
+    
+            // skip previously invoked or mismatched elements
+            if (~extension.indexOf(index) || !matcher(node)) return;
+            // mark extension as invoked
+            extension.push(index);
+    
+            if (mock === true || condition(el) !== false) {
+                // apply all private/public members to the element's interface
+                var privateFunctions = Object.keys(mixins).filter(function(prop)  {
+                    var value = mixins[prop];
+    
+                    if (prop !== "constructor") {
+                        el[prop] = value;
+    
+                        return !mock && prop[0] === "_";
+                    }
+                });
+    
+                // invoke constructor if it exists
+                // make a safe call so live extensions can't break each other
+                if (ctr) helpers$$invoke(el, ctr);
+                // remove event handlers from element's interface
+                privateFunctions.forEach(function(prop)  {
+                    delete el[prop];
+                });
+            }
+        };
+    };
+
+
+    core$core$$implement({
+    
+        mutate: function(selector, condition, definition) {
+    
+            if (arguments.length === 2) {
+                definition = condition;
+                condition = true;
+            }
+    
+            if (typeof condition === "boolean") condition = condition ? RETURN_TRUE : RETURN_FALSE;
+            if (typeof definition === "function") definition = {
+                constructor: definition
+            };
+    
+            if (!definition || typeof definition !== "object" || typeof condition !== "function") minErr$$minErr();
+    
+            var node = this[0],
+                mappings = this._.mutations;
+    
+            if (!mappings) {
+                this._.mutations = mappings = [];
+            }
+    
+            var ext = modules$mutate$$ExtensionHandler(selector, condition, definition, mappings.length);
+    
+            mappings.push(ext);
+            // live extensions are always async - append CSS asynchronously
+            WINDOW.setTimeout(function()  {
+                helpers$$each(node.ownerDocument.querySelectorAll(selector), ext);
+            }, 0);
+    
+    
+        }
+    });
+
+    core$core$$implement({
        /**
         * Calculates offset of the current element
         * @return object with left, top, bottom, right, width and height properties
@@ -1881,7 +1973,7 @@
        
     }, null, function(methodName)  {return function()  { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 }} );
 
-    helpers$$implement({
+    core$core$$implement({
         // This method will return documentElement in the following cases:
         // 1) For the element inside the iframe without offsetParent, this method will return
         //    documentElement of the parent window
@@ -1910,7 +2002,7 @@
     var modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
         modules$query$$rescape  = /'|\\/g;
 
-    helpers$$implement({
+    core$core$$implement({
      /**
       * Find the first matched element by css selector
       * @param  {String} selector css selector
@@ -1984,7 +2076,7 @@
         
         WINDOW.addEventListener( "load", modules$ready$$pageLoaded); // fallback to window.onload for others
     }
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Add a function to execute when the DOM is ready
        * @param {Function} callback event listener
@@ -2011,7 +2103,7 @@
        return (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "OPTION");
    };
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Set property/attribute value by name
        * @param {String|Object|Array}   name    property/attribute name
@@ -2113,7 +2205,7 @@
 
     // Chrome/Safari/Opera have serious bug with tabbing to the <object> tree:
     // https://code.google.com/p/chromium/issues/detail?id=255150
-    helpers$$implement({
+    core$core$$implement({
         shadow: function(name) {var callback = arguments[1];if(callback === void 0)callback = function()  {};
             var contexts = this._.shadow || ( this._.shadow = {} ),
                 data = contexts[name] || [];
@@ -2147,7 +2239,7 @@
         }
     }, null, function()  {return function()  {return RETURN_FALSE}} );
 
-    helpers$$implement({
+    core$core$$implement({
     
         /**
          * Get / set text content of a node
@@ -2186,7 +2278,7 @@
     
     }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
 
-    helpers$$implement({
+    core$core$$implement({
         /**
          * Returns all sibling nodes in a collection of children filtered by optional selector
          * @param  {String} [selector] css selector
@@ -2221,7 +2313,7 @@
     
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
-    helpers$$implement({
+    core$core$$implement({
       /**
        * Subscribe on particular properties / attributes, and get notified if they are changing
        * @param  {String}   name     property/attribute name
@@ -2256,9 +2348,10 @@
             }
     }, null, function()  {return RETURN_THIS} );
 
-    helpers$$implement({
+    core$core$$implement({
+    
         /**
-         * Find first element filtered by optional selector
+         * Find first element to the supplied element filtered by optional selector
          * @param {String} [selector] css selector
          * @chainable
          * @example
@@ -2266,7 +2359,7 @@
          */
         first: "firstElementChild",
         /**
-         * Find last element filtered by optional selector
+         * Find last element to the supplied element filtered by optional selector
          * @param {String} [selector] css selector
          * @chainable
          * @example
@@ -2333,7 +2426,7 @@
         return all ? helpers$$map( descendants, core$core$$nodeTree ) : core$core$$nodeTree( currentNode );
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
 
-    helpers$$implement({
+    core$core$$implement({
         /**
          * Show an element
          * @param {Function} [callback]
@@ -2440,30 +2533,34 @@
         });
     };
 
-    var template$indexing$$reIndex = /(\$+)(?:@(-)?(\d+)?)?/g,
-        template$indexing$$reDollar = /\$/g,
-        template$indexing$$indexing = function( num, term )  {
-            var index = num = num >= 1600 ? /* max 1600 HTML elements */ 1600 : ( num <= 0 ? 1 : num ),
-                result = new Array( index );
+    var template$multiple$$dollarRegex = /\$/g,
+        template$multiple$$indexRegex = /(\$+)(?:@(-)?(\d+)?)?/g,
+        template$multiple$$multiple = function( num, term )  {
     
-            while (index--) {
-                result[ index ] = term.replace( template$indexing$$reIndex, function( expr, fmt, sign, base )  {
-                    var pos = ( sign ? num - index - 1 : index ) + ( base ? +base : 1 );
+            /**
+             * Set limit to 'max' 1600 HTML  created at once
+             * else ' new Array' will throw, and the whole 
+             * process will become slow if more then 1800.
+             */
+    
+            if ( num >= 1600 ) num = 1600;
+            
+            // normalize to avoid negative values
+            if ( num <= 0 ) num = 1;
+    
+            var i = num,
+                result = new Array( i );
+    
+            // while loop iteration gives best performance
+            while ( i-- ) {
+                result[ i ] = term.replace( template$multiple$$indexRegex, function( expr, fmt, sign, base )  {
+                    var pos = ( sign ? num - i - 1 : i ) + ( base ? +base : 1 );
                     // handle zero-padded index values, like $$$ etc.
-                    return ( fmt + pos ).slice( -fmt.length ).replace( template$indexing$$reDollar, "0" );
+                    return ( fmt + pos ).slice( -fmt.length ).replace( template$multiple$$dollarRegex, "0" );
                 });
             }
             return result;
         };
-
-    function template$injection$$injection(term, adjusted) {
-        return function( html )  {
-             // find index of where to inject the term
-             var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
-             // inject the term into the HTML string
-             return html.slice( 0, index ) + term + html.slice( index );
-         };
-     }
 
     var template$operators$$default = {
         "(" : 1,
@@ -2488,6 +2585,15 @@
     
         return " " + name + "=" + quote + value + quote;
     }
+
+    function template$replaceAttr$$replaceAttr( term, adjusted ) {
+        return function( html )  {
+             // find index of where to inject the term
+             var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
+             // inject the term into the HTML string
+             return html.slice( 0, index ) + term + html.slice( index );
+         };
+     }
 
     /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -2590,12 +2696,12 @@
         },
         // filter for escaping unsafe XML characters: <, >, &, ', " and
         // prevent XSS attacks
-        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]})},
+        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} )},
         template$process$$process = function( template )  {
     
         var stack = [];
     
-        helpers$$each(template, function(str)  {
+        helpers$$each( template, function( str )  {
     
             if ( str in template$operators$$default ) {
     
@@ -2604,18 +2710,16 @@
     
                 if ( helpers$$is( node, "string" ) ) node = [ template$processTag$$processTag( node ) ];
     
-                if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) {
-                    minErr$$minErr("emmet()", "This operation is not supported" );
-                }
+                if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) minErr$$minErr("ugma.render()", "This operation is not supported" );
     
                 if (str === "#" ) { // id
-                    value = template$injection$$injection(" id=\"" + value + "\"" );
+                    value = template$replaceAttr$$replaceAttr(" id=\"" + value + "\"" );
                 } else if ( str === "." ) { // class
-                    value = template$injection$$injection(" class=\"" + value + "\"" );
+                    value = template$replaceAttr$$replaceAttr(" class=\"" + value + "\"" );
                 } else if ( str === "[" ) { // id
-                    value = template$injection$$injection( value.replace( template$process$$attributes, template$parseAttr$$parseAttr ) );
+                    value = template$replaceAttr$$replaceAttr( value.replace( template$process$$attributes, template$parseAttr$$parseAttr ) );
                 } else if ( str === "*" ) { // universal selector 
-                    node = template$indexing$$indexing( +value, node.join( "" ) );
+                    node = template$multiple$$multiple( +value, node.join( "" ) );
                 } else if ( str === "`" ) { // Back tick
                     stack.unshift(node);
                     // escape unsafe HTML symbols
@@ -2624,7 +2728,7 @@
                     value = helpers$$is( value, "string" ) ? template$processTag$$processTag( value ) : value.join( "" );
     
                     if ( str === ">" ) {
-                        value = template$injection$$injection( value, true );
+                        value = template$replaceAttr$$replaceAttr( value, true );
                     } else {
                         node.push( value );
                     }
@@ -2639,7 +2743,7 @@
         return template.length === 1 ? template$processTag$$processTag( stack[ 0 ] ) : stack[ 0 ].join( "" );
     };
 
-    helpers$$implement({
+    core$core$$implement({
          /**
          * Create a new nodeTree from Emmet or HTML string in memory
          * @param  {String}       value     Emmet or HTML string
@@ -2709,7 +2813,7 @@
     // Current codename on the framework.
     core$core$$ugma.version = "trackira";
 
-    helpers$$implement({
+    core$core$$implement({
         /**
          * Extend ugma with methods
          * @param  {Object}    mixin       methods container
@@ -2738,7 +2842,7 @@
          */
         extend: function(mixin, namespace) {
             if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
-            return mixin ? namespace ? helpers$$implement( mixin ) : helpers$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
+            return mixin ? namespace ? core$core$$implement( mixin ) : core$core$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
         }
     });
 

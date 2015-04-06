@@ -2,11 +2,12 @@
  * @module matches
  */
 
-import { implement, is      } from "../helpers";
-import { RETURN_FALSE       } from "../const";
-import { minErr             } from "../minErr";
-import   SelectorMatcher      from "../util/selectormatcher";
-import   pseudoClasses        from "../util/pseudoClasses";
+import { implement       } from "../core/core";
+import { is              } from "../helpers";
+import { RETURN_FALSE    } from "../const";
+import { minErr          } from "../minErr";
+import   SelectorMatcher   from "../util/selectormatcher";
+import   pseudoClasses     from "../util/pseudoClasses";
 
  // Reference: https://dom.spec.whatwg.org/#dom-element-matches
 implement({

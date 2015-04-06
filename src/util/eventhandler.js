@@ -36,7 +36,8 @@ var getEventProperty = (name, e, eventType, node, target, currentTarget) => {
             
             // early stop in case of default action
             if ( EventHandler.veto === eventType ) return;
-            
+
+            // http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Registration-interfaces
             var eventTarget = e.target || node.ownerDocument.documentElement;
             
             // Safari 6.0+ may fire events on text nodes (Node.TEXT_NODE is 3).

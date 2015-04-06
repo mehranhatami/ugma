@@ -2,9 +2,10 @@
  * @module extend
  */
 
-import { implement, is, isArray } from "../helpers"; 
-import { minErr        } from "../minErr";
-import { RETURN_THIS   } from "../const";
+import { implement    } from "../core/core";
+import { is, isArray  } from "../helpers"; 
+import { minErr       } from "../minErr";
+import { RETURN_THIS  } from "../const";
 
 implement({
     /**

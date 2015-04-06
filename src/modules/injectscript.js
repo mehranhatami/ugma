@@ -2,8 +2,9 @@
  * @module injectscript
  */
 
-import { implement, injectElement, is, sliceArgs } from "../helpers";
-import { minErr                                  } from "../minErr";
+import { implement                    } from "../core/core";
+import { injectElement, is, sliceArgs } from "../helpers";
+import { minErr                       } from "../minErr";
 
 implement({
   /**

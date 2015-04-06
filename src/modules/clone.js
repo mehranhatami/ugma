@@ -2,9 +2,9 @@
  * @module clone
  */
 
-import { nodeTree, dummyTree  } from "../core/core";
-import { minErr               } from "../minErr";
-import { implement, is        } from "../helpers";
+import { nodeTree, dummyTree, implement } from "../core/core";
+import { minErr                         } from "../minErr";
+import { is                             } from "../helpers";
 
 // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 

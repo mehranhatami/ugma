@@ -2,10 +2,10 @@
  * @module closest
  */
 
-import { nodeTree, dummyTree     } from "../core/core";
-import   SelectorMatcher           from "../util/selectormatcher";
-import { implement, is           } from "../helpers";
-import { minErr                  } from "../minErr";
+import { nodeTree, dummyTree, implement  } from "../core/core";
+import   SelectorMatcher                   from "../util/selectormatcher";
+import { is                              } from "../helpers";
+import { minErr                          } from "../minErr";
 
 // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
