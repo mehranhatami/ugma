@@ -1,4 +1,4 @@
-function injection(term, adjusted) {
+function replaceAttr( term, adjusted ) {
     return ( html ) => {
          // find index of where to inject the term
          var index = adjusted ? html.lastIndexOf( "<" ) : html.indexOf( ">" );
@@ -10,4 +10,4 @@ function injection(term, adjusted) {
 /*
  * Export interface
  */
- export { injection };
+ export { replaceAttr };

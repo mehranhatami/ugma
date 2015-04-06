@@ -2,13 +2,13 @@
  * @module process
  */
 
-import { is, each   }   from "../helpers";
-import { minErr     }   from "../minErr";
-import { parseAttr  }   from "../template/parseAttr";
-import { injection  }   from "../template/injection";
-import { processTag }   from "../template/processTag";
-import { indexing   }   from "../template/indexing";
-import operators        from "../template/operators";
+import { is, each     }   from "../helpers";
+import { minErr       }   from "../minErr";
+import { parseAttr    }   from "../template/parseAttr";
+import { replaceAttr  }   from "../template/replaceAttr";
+import { processTag   }   from "../template/processTag";
+import { multiple     }   from "../template/multiple";
+import operators          from "../template/operators";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -28,12 +28,12 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     },
     // filter for escaping unsafe XML characters: <, >, &, ', " and
     // prevent XSS attacks
-    escapeChars = ( str ) => str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ]),
+    escapeChars = ( str ) => str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] ),
     process = ( template ) => {
 
     let stack = [];
 
-    each(template, (str) => {
+    each( template, ( str ) => {
 
         if ( str in operators ) {
 
@@ -42,18 +42,16 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
 
             if ( is( node, "string" ) ) node = [ processTag( node ) ];
 
-            if ( is( node, "undefined" ) || is( value, "undefined" ) ) {
-                minErr("emmet()", "This operation is not supported" );
-            }
+            if ( is( node, "undefined" ) || is( value, "undefined" ) ) minErr("ugma.render()", "This operation is not supported" );
 
             if (str === "#" ) { // id
-                value = injection(" id=\"" + value + "\"" );
+                value = replaceAttr(" id=\"" + value + "\"" );
             } else if ( str === "." ) { // class
-                value = injection(" class=\"" + value + "\"" );
+                value = replaceAttr(" class=\"" + value + "\"" );
             } else if ( str === "[" ) { // id
-                value = injection( value.replace( attributes, parseAttr ) );
+                value = replaceAttr( value.replace( attributes, parseAttr ) );
             } else if ( str === "*" ) { // universal selector 
-                node = indexing( +value, node.join( "" ) );
+                node = multiple( +value, node.join( "" ) );
             } else if ( str === "`" ) { // Back tick
                 stack.unshift(node);
                 // escape unsafe HTML symbols
@@ -62,7 +60,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
                 value = is( value, "string" ) ? processTag( value ) : value.join( "" );
 
                 if ( str === ">" ) {
-                    value = injection( value, true );
+                    value = replaceAttr( value, true );
                 } else {
                     node.push( value );
                 }
