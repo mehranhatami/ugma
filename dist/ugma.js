@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 14:05:35 GMT
+ * Build date: Mon, 06 Apr 2015 14:31:57 GMT
  */
 (function() {
     "use strict";
@@ -252,11 +252,7 @@
      * For the global scope we have *ugma.extend()*
      * to make it easier for end-devs to create plugins.
      *
-     * ugmas main goal is to be as fast as it can, and
-     * provide easy solutions to end-devs.
-     *
      */
-
 
     var core$core$$uClass = function()  {
     
@@ -264,34 +260,34 @@
             mixin = arguments[ len - 1 ],
             SuperClass = len > 1 ? arguments[ 0 ] : null,
             Class, SuperClassEmpty,
+            noop = function()  {},
             extend = function( obj, extension, overwrite )  {
     
                 // failsave if something goes wrong
                 if ( !obj || !extension) return obj || extension || {};
     
-                if ( overwrite === false ) {
-    
-                    helpers$$forOwn( extension, function( prop, func )  {
-                        if ( !( prop in obj ) ) obj[ prop ] = func;
-                    });
-    
-                } else {
-    
-                    helpers$$forOwn( extension, function( prop, func )  {
+                helpers$$forOwn( extension, function( prop, func )  {
+        
+                    if ( overwrite === false ) {
+                    
+                       if ( !( prop in obj ) ) obj[ prop ] = func;
+                    
+                    } else {
+                    
                         obj[ prop ] = func;
-                    });
-            }
-       };
+                    }
+                });
+        };
     
         if ( helpers$$is(mixin.constructor, "object") ) {
-            Class = function()  {};
+            Class = noop;
         } else {
             Class = mixin.constructor;
             delete mixin.constructor;
         }
     
         if (SuperClass) {
-            SuperClassEmpty = function()  {};
+            SuperClassEmpty = noop;
             SuperClassEmpty.prototype = SuperClass.prototype;
             Class.prototype = new SuperClassEmpty();
             Class.prototype.constructor = Class;
@@ -299,6 +295,7 @@
     
             extend( Class, SuperClass, false );
         }
+       
         extend( Class.prototype, mixin );
     
         return Class;
@@ -309,6 +306,7 @@
       */
     
     core$core$$dummyTree = core$core$$uClass({
+        // dummy function - does nothing
             constructor: function() {},
             toString: function() { return "" }
         }),

@@ -2,10 +2,10 @@
  * @module core
  */
 
-import { DOCUMENT  } from "../const";
+import { DOCUMENT             } from "../const";
 import { forOwn, is, isArray  } from "../helpers";
-import { minErr       } from "../minErr";
-import { RETURN_THIS  } from "../const";
+import { minErr               } from "../minErr";
+import { RETURN_THIS          } from "../const";
 
 /**
  * uClass - class system
@@ -20,11 +20,7 @@ import { RETURN_THIS  } from "../const";
  * For the global scope we have *ugma.extend()*
  * to make it easier for end-devs to create plugins.
  *
- * ugmas main goal is to be as fast as it can, and
- * provide easy solutions to end-devs.
- *
  */
-
 
 var uClass = () => {
 
@@ -32,34 +28,34 @@ var uClass = () => {
         mixin = arguments[ len - 1 ],
         SuperClass = len > 1 ? arguments[ 0 ] : null,
         Class, SuperClassEmpty,
+        noop = () => {},
         extend = ( obj, extension, overwrite ) => {
 
             // failsave if something goes wrong
             if ( !obj || !extension) return obj || extension || {};
 
-            if ( overwrite === false ) {
-
-                forOwn( extension, ( prop, func ) => {
-                    if ( !( prop in obj ) ) obj[ prop ] = func;
-                });
-
-            } else {
-
-                forOwn( extension, ( prop, func ) => {
+            forOwn( extension, ( prop, func ) => {
+    
+                if ( overwrite === false ) {
+                
+                   if ( !( prop in obj ) ) obj[ prop ] = func;
+                
+                } else {
+                
                     obj[ prop ] = func;
-                });
-        }
-   };
+                }
+            });
+    };
 
     if ( is(mixin.constructor, "object") ) {
-        Class = () => {};
+        Class = noop;
     } else {
         Class = mixin.constructor;
         delete mixin.constructor;
     }
 
     if (SuperClass) {
-        SuperClassEmpty = () => {};
+        SuperClassEmpty = noop;
         SuperClassEmpty.prototype = SuperClass.prototype;
         Class.prototype = new SuperClassEmpty();
         Class.prototype.constructor = Class;
@@ -67,6 +63,7 @@ var uClass = () => {
 
         extend( Class, SuperClass, false );
     }
+   
     extend( Class.prototype, mixin );
 
     return Class;
@@ -77,6 +74,7 @@ var uClass = () => {
   */
 
 dummyTree = uClass({
+    // dummy function - does nothing
         constructor() {},
         toString() { return "" }
     }),
