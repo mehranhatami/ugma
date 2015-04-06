@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 12:32:52 GMT
+ * Build date: Mon, 06 Apr 2015 12:52:02 GMT
  */
 (function() {
     "use strict";
@@ -343,8 +343,9 @@
       /**
        * Internal 'instanceOf' method
        */
-       
-       core$core$$instanceOf = function( node )  {return typeof node._ != null};
+    
+       // Double negation considered slower than a straight null check.   
+       core$core$$instanceOf = function( node )  {return node.constructor && node._ != null};
 
     // Set a new document, and define a local copy of ugma
 
@@ -636,7 +637,7 @@
     
             var reference = this[ 0 ];
     
-            if ( other._ ) {
+            if ( core$core$$instanceOf(other) ) {
     
                  other = other[ 0 ];
     
@@ -1757,7 +1758,7 @@
                 } else {
                     content = core$core$$ugma.renderAll( content );
                 }
-            } else if ( content._ ) {
+            } else if ( core$core$$instanceOf(content) ) {
                 content = [ content ];
             }
             
@@ -1774,7 +1775,7 @@
                     }
     
                     helpers$$each( content, function( el ) {
-                        fragment.appendChild( el._ ? el[ 0 ] : el );
+                        fragment.appendChild( core$core$$instanceOf(el) ? el[ 0 ] : el );
                     });
                 }
             }

@@ -111,8 +111,9 @@ dummyTree = uClass({
   /**
    * Internal 'instanceOf' method
    */
-   
-   instanceOf = ( node ) => typeof node._ != null;
+
+   // Double negation considered slower than a straight null check.   
+   instanceOf = ( node ) => node.constructor && node._ != null;
 
   // Set a new document, and define a local copy of ugma
     
@@ -129,4 +130,4 @@ dummyTree = uClass({
 /*
  * Export interface
  */
-export { implement, nodeTree, dummyTree, domTree, ugma };
+export { implement, instanceOf, nodeTree, dummyTree, domTree, ugma };

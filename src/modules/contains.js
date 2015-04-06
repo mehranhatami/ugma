@@ -2,9 +2,9 @@
  * @module contains
  */
 
-import { implement       } from "../core/core";
-import { minErr          } from "../minErr";
-import { RETURN_FALSE    } from "../const";
+import { implement, instanceOf  } from "../core/core";
+import { minErr                 } from "../minErr";
+import { RETURN_FALSE           } from "../const";
 
 implement({
  /**
@@ -27,7 +27,7 @@ implement({
 
         var reference = this[ 0 ];
 
-        if ( other._ ) {
+        if ( instanceOf(other) ) {
 
              other = other[ 0 ];
 

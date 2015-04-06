@@ -2,10 +2,10 @@
  * @module manipulation
  */
 
-import { RETURN_THIS                          } from "../const";
-import { ugma, nodeTree, implement            } from "../core/core";
-import { minErr                               } from "../minErr";
-import { isArray, trim, each, is, sliceArgs   } from "../helpers";
+import { RETURN_THIS                           } from "../const";
+import { ugma, nodeTree, implement, instanceOf } from "../core/core";
+import { minErr                                } from "../minErr";
+import { isArray, trim, each, is, sliceArgs    } from "../helpers";
 
 // https://dom.spec.whatwg.org
 // 
@@ -124,7 +124,7 @@ implement({
             } else {
                 content = ugma.renderAll( content );
             }
-        } else if ( content._ ) {
+        } else if ( instanceOf(content) ) {
             content = [ content ];
         }
         
@@ -141,7 +141,7 @@ implement({
                 }
 
                 each( content, function( el ) {
-                    fragment.appendChild( el._ ? el[ 0 ] : el );
+                    fragment.appendChild( instanceOf(el) ? el[ 0 ] : el );
                 });
             }
         }
