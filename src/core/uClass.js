@@ -2,54 +2,51 @@
  * @module uClass
  */
 
-import { forOwn } from "../helpers";
-
+import { forOwn, is } from "../helpers";
 
 var uClass = () => {
 
     var len = arguments.length,
-        body = arguments[len - 1],
-        SuperClass = len > 1 ? arguments[0] : null,
-        hasImplementClasses = len > 2,
+        mixin = arguments[ len - 1 ],
+        SuperClass = len > 1 ? arguments[ 0 ] : null,
         Class, SuperClassEmpty,
-        extend = (obj, extension, override) => {
-            var prop;
-            if (override === false) {
-                for (prop in extension)
-                    if (!(prop in obj))
-                        obj[prop] = extension[prop];
+        // helper for merging classes with each other
+        extend = ( obj, extension, overwrite ) => {
+
+            // failsave if something goes wrong
+            if ( !obj || !extension) return obj || extension || {};
+
+            if ( overwrite === false ) {
+
+                forOwn( extension, ( prop, func ) => {
+                    if ( !( prop in obj ) ) obj[ prop ] = func;
+                });
+
             } else {
-                for (prop in extension)
-                    obj[prop] = extension[prop];
-                if (extension.toString !== Object.prototype.toString)
-                    obj.toString = extension.toString;
+
+                forOwn( extension, ( prop, func ) => {
+                    obj[ prop ] = func;
+                });
             }
-        },
-        extendClass = (Class, extension, override) => {
-            extend(Class.prototype, extension, override);
         };
 
-    if (body.constructor === Object) {
-        Class = function() {};
+    if ( is(mixin.constructor, "object") ) {
+        Class = () => {};
     } else {
-        Class = body.constructor;
-        delete body.constructor;
+        Class = mixin.constructor;
+        delete mixin.constructor;
     }
 
     if (SuperClass) {
-        SuperClassEmpty = function() {};
+        SuperClassEmpty = () => {};
         SuperClassEmpty.prototype = SuperClass.prototype;
         Class.prototype = new SuperClassEmpty();
         Class.prototype.constructor = Class;
         Class.Super = SuperClass;
-        extend(Class, SuperClass, false);
+
+        extend( Class, SuperClass, false );
     }
-
-    if (hasImplementClasses)
-        for (var i = 1; i < len - 1; i++)
-            extend(Class.prototype, arguments[i].prototype, false);
-
-    extendClass(Class, body);
+    extend( Class.prototype, mixin );
 
     return Class;
 };
