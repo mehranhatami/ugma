@@ -7,6 +7,25 @@ import { forOwn, is, isArray  } from "../helpers";
 import { minErr       } from "../minErr";
 import { RETURN_THIS  } from "../const";
 
+/**
+ * uClass - class system
+ *
+ * NOTE!! uClass is only for *internally* usage, and should
+ * not be exposed to the global scope.
+ *
+ * uClass *only* purpose is to provide a faster
+ * 'inheritance' solution for ugma then native 
+ * javascript functions such Object.create() can do.
+ *
+ * For the global scope we have *ugma.extend()*
+ * to make it easier for end-devs to create plugins.
+ *
+ * ugmas main goal is to be as fast as it can, and
+ * provide easy solutions to end-devs.
+ *
+ */
+
+
 var uClass = () => {
 
     var len = arguments.length,
@@ -122,9 +141,19 @@ dummyTree = uClass({
  /**
   * Hook 'eventHooks' on ugma namespace
   */
-  ugma.extend = (mixin, namespace) => {
-        if( !is( mixin, "object" )  || isArray( mixin ) ) minErr();
-        return mixin ? namespace ? implement( mixin ) : implement( mixin, null, () => RETURN_THIS ) : false;
+  ugma.extend = (mixin, callback) => {
+      
+        if( !is( mixin, "object" )  || isArray( mixin ) ) minErr( "ugma.extend", "The first argument is not a object.");
+        
+        if(mixin) {
+            
+            // Extend ...
+            if( callback && is(callback, "boolean") ) return implement( mixin );
+            
+             return implement( mixin, null, !is(callback, "function") ? () => RETURN_THIS : callback );
+        }
+        
+        return false;        
     };
 
 /*

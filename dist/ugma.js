@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 12:52:02 GMT
+ * Build date: Mon, 06 Apr 2015 13:49:49 GMT
  */
 (function() {
     "use strict";
@@ -239,6 +239,25 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
+    /**
+     * uClass - class system
+     *
+     * NOTE!! uClass is only for *internally* usage, and should
+     * not be exposed to the global scope.
+     *
+     * uClass *only* purpose is to provide a faster
+     * 'inheritance' solution for ugma then native 
+     * javascript functions such Object.create() can do.
+     *
+     * For the global scope we have *ugma.extend()*
+     * to make it easier for end-devs to create plugins.
+     *
+     * ugmas main goal is to be as fast as it can, and
+     * provide easy solutions to end-devs.
+     *
+     */
+
+
     var core$core$$uClass = function()  {
     
         var len = arguments.length,
@@ -354,9 +373,19 @@
     /**
      * Hook 'eventHooks' on ugma namespace
      */
-    core$core$$ugma.extend = function(mixin, namespace)  {
-          if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr();
-          return mixin ? namespace ? core$core$$implement( mixin ) : core$core$$implement( mixin, null, function()  {return RETURN_THIS} ) : false;
+    core$core$$ugma.extend = function(mixin, callback)  {
+        
+          if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr( "ugma.extend", "The first argument is not a object.");
+          
+          if(mixin) {
+              
+              // Extend ...
+              if( callback && helpers$$is(callback, "boolean") ) return core$core$$implement( mixin );
+              
+               return core$core$$implement( mixin, null, !helpers$$is(callback, "function") ? function()  {return RETURN_THIS} : callback );
+          }
+          
+          return false;        
       };
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
