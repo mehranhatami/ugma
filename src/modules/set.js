@@ -47,7 +47,7 @@ implement({
         }
 
         var hook = accessorhooks.set[ name ],
-            subscription = ( this._._subscription || {} )[ name ],
+            subscription = ( this._.subscription || {} )[ name ],
             previousValue;
 
         // grab the previous value if it's already a subscription on this attribute / property,

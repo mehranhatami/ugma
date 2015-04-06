@@ -36,7 +36,7 @@ if ( INTERNET_EXPLORER ) {
 // https://code.google.com/p/chromium/issues/detail?id=255150
 implement({
     shadow( name, callback = () => {} ) {
-        var contexts = this._._shadow || ( this._._shadow = {} ),
+        var contexts = this._.shadow || ( this._.shadow = {} ),
             data = contexts[name] || [];
 
         if (data[ 0 ] ) {

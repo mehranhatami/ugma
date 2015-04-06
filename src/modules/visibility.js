@@ -65,13 +65,13 @@ implement({
         style = node.style,
         computed = computeStyle( node ),
         isHidden = condition,
-        frameId = this._._frame,
+        frameId = this._.frame,
         done = () => {
             this.set( "aria-hidden", String( isHidden ) );
 
             style.visibility = isHidden ? "hidden" : "inherit";
 
-            this._._frame = null;
+            this._.frame = null;
 
             if ( callback ) callback( this );
         };
@@ -84,7 +84,7 @@ implement({
     if ( !node.ownerDocument.documentElement.contains( node ) ) {
         done();
     } else {
-        this._._frame = requestFrame( done );
+        this._.frame = requestFrame( done );
     }
 
     return this;

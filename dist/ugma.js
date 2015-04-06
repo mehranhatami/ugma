@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 05 Apr 2015 23:24:50 GMT
+ * Build date: Mon, 06 Apr 2015 02:19:59 GMT
  */
 (function() {
     "use strict";
@@ -973,7 +973,7 @@
         return function( e )  {
             if ( !debouncing ) {
                 debouncing = true;
-                node._._raf = util$raf$$requestFrame( function()  {
+                node._.raf = util$raf$$requestFrame( function()  {
                     handler( e );
                     debouncing = false;
                 });
@@ -1165,7 +1165,7 @@
                 eventTypes = helpers$$inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
                 i = eventTypes.length,
                 handler,
-                handlers = this._._handlers || ( this._._handlers = [] );
+                handlers = this._.handlers || ( this._.handlers = [] );
     
                 handler = util$eventhandler$$default( this, eventType, selector, callback, args, single );
     
@@ -1222,7 +1222,7 @@
     
                     // Cancel previous frame if it exists
                     if ( self._._raf ) {
-                          util$raf$$cancelFrame( self._._raf );
+                          util$raf$$cancelFrame( self._.raf );
                         // Zero out rAF id used during the animation
                         self._._raf = null;
                     }
@@ -1230,7 +1230,7 @@
                     node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
                 };
     
-            this._._handlers = helpers$$filter(this._._handlers, function( handler )  {
+            this._.handlers = helpers$$filter(this._.handlers, function( handler )  {
     
                 var skip = eventType !== handler.eventType;
     
@@ -2045,7 +2045,7 @@
             }
     
             var hook = util$accessorhooks$$default.set[ name ],
-                subscription = ( this._._subscription || {} )[ name ],
+                subscription = ( this._.subscription || {} )[ name ],
                 previousValue;
     
             // grab the previous value if it's already a subscription on this attribute / property,
@@ -2115,7 +2115,7 @@
     // https://code.google.com/p/chromium/issues/detail?id=255150
     helpers$$implement({
         shadow: function(name) {var callback = arguments[1];if(callback === void 0)callback = function()  {};
-            var contexts = this._._shadow || ( this._._shadow = {} ),
+            var contexts = this._.shadow || ( this._.shadow = {} ),
                 data = contexts[name] || [];
     
             if (data[ 0 ] ) {
@@ -2231,7 +2231,7 @@
        *     link.subscribe("value", function(value, oldValue) { });
        */
         subscribe: function(name, callback) {
-                var subscription = this._._subscription || ( this._._subscription = [] );
+                var subscription = this._.subscription || ( this._.subscription = [] );
     
                 if ( !subscription[ name ] ) subscription[ name ] = [];
     
@@ -2248,7 +2248,7 @@
       *     link.unsubscribe("value", function(value, oldValue) { });
       */
        unsubscribe: function(name, callback) {
-                var subscription = this._._subscription;
+                var subscription = this._.subscription;
     
                 if ( subscription[ name ] ) subscription[ name ] = helpers$$filter( subscription[ name ], function( cb )  {return cb !== callback} );
     
@@ -2390,13 +2390,13 @@
             style = node.style,
             computed = helpers$$computeStyle( node ),
             isHidden = condition,
-            frameId = this._._frame,
+            frameId = this._.frame,
             done = function()  {
                 this$0.set( "aria-hidden", String( isHidden ) );
     
                 style.visibility = isHidden ? "hidden" : "inherit";
     
-                this$0._._frame = null;
+                this$0._.frame = null;
     
                 if ( callback ) callback( this$0 );
             };
@@ -2409,7 +2409,7 @@
         if ( !node.ownerDocument.documentElement.contains( node ) ) {
             done();
         } else {
-            this._._frame = util$raf$$requestFrame( done );
+            this._.frame = util$raf$$requestFrame( done );
         }
     
         return this;
@@ -2663,7 +2663,7 @@
         if (!helpers$$is(value, "string")) minErr$$minErr(methodName + "()", "Not supported.");
     
         var doc = this[0].ownerDocument,
-            sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
+            sandbox = this._.sandbox || (this._.sandbox = doc.createElement("div"));
     
         var nodes, el;
     

@@ -12,7 +12,7 @@ function debounce( handler, node ) {
     return ( e ) => {
         if ( !debouncing ) {
             debouncing = true;
-            node._._raf = requestFrame( () => {
+            node._.raf = requestFrame( () => {
                 handler( e );
                 debouncing = false;
             });

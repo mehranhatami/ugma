@@ -32,7 +32,7 @@ implement({
     if (!is(value, "string")) minErr(methodName + "()", "Not supported.");
 
     var doc = this[0].ownerDocument,
-        sandbox = this._._sandbox || (this._._sandbox = doc.createElement("div"));
+        sandbox = this._.sandbox || (this._.sandbox = doc.createElement("div"));
 
     var nodes, el;
 

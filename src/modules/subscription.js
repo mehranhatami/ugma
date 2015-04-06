@@ -15,7 +15,7 @@ implement({
    *     link.subscribe("value", function(value, oldValue) { });
    */
     subscribe( name, callback ) {
-            var subscription = this._._subscription || ( this._._subscription = [] );
+            var subscription = this._.subscription || ( this._.subscription = [] );
 
             if ( !subscription[ name ] ) subscription[ name ] = [];
 
@@ -32,7 +32,7 @@ implement({
   *     link.unsubscribe("value", function(value, oldValue) { });
   */
    unsubscribe(name, callback) {
-            var subscription = this._._subscription;
+            var subscription = this._.subscription;
 
             if ( subscription[ name ] ) subscription[ name ] = filter( subscription[ name ], ( cb ) => cb !== callback );
 

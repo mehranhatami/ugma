@@ -59,7 +59,7 @@ implement({
             eventTypes = inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
             i = eventTypes.length,
             handler,
-            handlers = this._._handlers || ( this._._handlers = [] );
+            handlers = this._.handlers || ( this._.handlers = [] );
 
             handler = EventHandler( this, eventType, selector, callback, args, single );
 
@@ -116,7 +116,7 @@ implement({
 
                 // Cancel previous frame if it exists
                 if ( self._._raf ) {
-                      cancelFrame( self._._raf );
+                      cancelFrame( self._.raf );
                     // Zero out rAF id used during the animation
                     self._._raf = null;
                 }
@@ -124,7 +124,7 @@ implement({
                 node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
             };
 
-        this._._handlers = filter(this._._handlers, ( handler ) => {
+        this._.handlers = filter(this._.handlers, ( handler ) => {
 
             var skip = eventType !== handler.eventType;
 
