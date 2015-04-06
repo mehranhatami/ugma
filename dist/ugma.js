@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 07:44:09 GMT
+ * Build date: Mon, 06 Apr 2015 08:45:01 GMT
  */
 (function() {
     "use strict";
@@ -239,105 +239,118 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
+
     var core$uClass$$uClass = function()  {
+    
         var len = arguments.length,
-            body = arguments[ len - 1 ],
-            SuperClass = len > 1 ? arguments[ 0 ] : null,
+            body = arguments[len - 1],
+            SuperClass = len > 1 ? arguments[0] : null,
+            hasImplementClasses = len > 2,
             Class, SuperClassEmpty,
-            extend = function( obj, extension )  {
-    
-                // failsave if something goes wrong
-                if( !obj || !extension ) return obj || extension || {};
-    
-                helpers$$forOwn( extension, function( prop, func )  {
-                    obj[ prop ] = func;
-                });
+            extend = function(obj, extension, override)  {
+                var prop;
+                if (override === false) {
+                    for (prop in extension)
+                        if (!(prop in obj))
+                            obj[prop] = extension[prop];
+                } else {
+                    for (prop in extension)
+                        obj[prop] = extension[prop];
+                    if (extension.toString !== Object.prototype.toString)
+                        obj.toString = extension.toString;
+                }
+            },
+            extendClass = function(Class, extension, override)  {
+                extend(Class.prototype, extension, override);
             };
     
-            if( body.constructor === "[object Object]" ) {
-                Class = function()  {};
-            } else {
-                Class = body.constructor;
-                delete body.constructor;
-            }
+        if (body.constructor === Object) {
+            Class = function() {};
+        } else {
+            Class = body.constructor;
+            delete body.constructor;
+        }
     
-        if ( SuperClass ) {
-            SuperClassEmpty = function()  {};
+        if (SuperClass) {
+            SuperClassEmpty = function() {};
             SuperClassEmpty.prototype = SuperClass.prototype;
             Class.prototype = new SuperClassEmpty();
             Class.prototype.constructor = Class;
             Class.Super = SuperClass;
-            extend( Class, SuperClass, false );
+            extend(Class, SuperClass, false);
         }
     
-        extend(Class.prototype, body);
+        if (hasImplementClasses)
+            for (var i = 1; i < len - 1; i++)
+                extend(Class.prototype, arguments[i].prototype, false);
+    
+        extendClass(Class, body);
     
         return Class;
     };
 
     var core$uClass$$default = core$uClass$$uClass;
 
-    var core$core$$nodeTree, core$core$$dummyTree, core$core$$domTree,
+    /**
+     * dummyTree class
+    */
+    var core$core$$dummyTree = core$uClass$$default({
+            constructor: function() {},
+            toString: function() { return "" }
+        }),
+    
+        /**
+         * nodeTree class
+         */
+        core$core$$nodeTree = core$uClass$$default(core$core$$dummyTree, {
+            constructor: function(node) {
+    
+                    if (this) {
+                        if (node) {
+                            this[0] = node;
+                            // use a generated property to store a reference
+                            // to the wrapper for circular object binding
+                            node._ugma = this;
+    
+                            this._ = {};
+                        }
+                    } else {
+                        // create a wrapper only once for each native element
+                        return node ? node._ugma || new core$core$$nodeTree(node) : new core$core$$dummyTree();
+                    }
+                },
+                toString: function() { return "<" + this[0].tagName.toLowerCase() + ">" }
+        }),
+    
+        /**
+         * domTree class
+         */
+        core$core$$domTree = core$uClass$$default(core$core$$nodeTree, {
+            constructor: function(node) { return core$core$$domTree.Super.call(this, node.documentElement) },
+                toString: function() { return "#document" }
+        }),
         
         /**
          * Internal method to extend ugma with methods - either 
          * the nodeTree or the domTree
-         */ 
-        core$core$$implement = function( obj, callback, mixin )  {
+         */
+        core$core$$implement = function(obj, callback, mixin)  {
     
-            if ( !callback ) callback = function( method, strategy )  {return strategy};
+            if (!callback) callback = function(method, strategy)  {return strategy};
     
-            helpers$$forOwn(obj, function( method, func )  {
-                var args = [ method ].concat( func );
-                ( mixin ? core$core$$nodeTree : core$core$$domTree ).prototype[ method ] = callback.apply( null, args );
+            helpers$$forOwn(obj, function(method, func)  {
+                var args = [method].concat(func);
+                (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[method] = callback.apply(null, args);
     
-                if ( mixin ) core$core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
+                if (mixin) core$core$$dummyTree.prototype[method] = mixin.apply(null, args);
             });
         },
-        /**
-         * Internal 'instanceOf' method
-         */
-        core$core$$instanceOf = function(node)  {return typeof node._ != null};
-
-    /**
-     * nodeTree class
-     */
-    core$core$$nodeTree = core$uClass$$default({
-        constructor: function(node) {
-    
-                if (this) {
-                    if (node) {
-                        this[0] = node;
-                        // use a generated property to store a reference
-                        // to the wrapper for circular object binding
-                        node._ugma = this;
-    
-                        this._ = {};
-                    }
-                } else {
-                    // create a wrapper only once for each native element
-                    return node ? node._ugma || new core$core$$nodeTree(node) : new core$core$$dummyTree();
-                }
-            },
-            toString: function() { return "<" + this[0].tagName.toLowerCase() + ">" }
-    });
-
-    /**
-     * domTree class
-     */
-    core$core$$domTree = core$uClass$$default(core$core$$nodeTree, {
-        constructor: function(node) { return core$core$$nodeTree.call(this, node.documentElement) },
-        toString: function() { return "#document" }
-    });
-
-    /**
-     * dummyTree class
-     */
-
-    core$core$$dummyTree = core$uClass$$default(core$core$$nodeTree, {
-        constructor: function() {},
-        toString: function() { return "" }
-    });
+        
+      /**
+       * Internal 'instanceOf' method
+       */
+       
+       core$core$$instanceOf = function(node)  {return typeof node._ != null};
 
     // Set a new document, and define a local copy of ugma
     var core$core$$ugma = new core$core$$domTree(DOCUMENT);

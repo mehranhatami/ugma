@@ -4,38 +4,52 @@
 
 import { forOwn } from "../helpers";
 
+
 var uClass = () => {
+
     var len = arguments.length,
-        body = arguments[ len - 1 ],
-        SuperClass = len > 1 ? arguments[ 0 ] : null,
+        body = arguments[len - 1],
+        SuperClass = len > 1 ? arguments[0] : null,
+        hasImplementClasses = len > 2,
         Class, SuperClassEmpty,
-        extend = ( obj, extension ) => {
-
-            // failsave if something goes wrong
-            if( !obj || !extension ) return obj || extension || {};
-
-            forOwn( extension, ( prop, func ) => {
-                obj[ prop ] = func;
-            });
+        extend = (obj, extension, override) => {
+            var prop;
+            if (override === false) {
+                for (prop in extension)
+                    if (!(prop in obj))
+                        obj[prop] = extension[prop];
+            } else {
+                for (prop in extension)
+                    obj[prop] = extension[prop];
+                if (extension.toString !== Object.prototype.toString)
+                    obj.toString = extension.toString;
+            }
+        },
+        extendClass = (Class, extension, override) => {
+            extend(Class.prototype, extension, override);
         };
 
-        if( body.constructor === "[object Object]" ) {
-            Class = () => {};
-        } else {
-            Class = body.constructor;
-            delete body.constructor;
-        }
+    if (body.constructor === Object) {
+        Class = function() {};
+    } else {
+        Class = body.constructor;
+        delete body.constructor;
+    }
 
-    if ( SuperClass ) {
-        SuperClassEmpty = () => {};
+    if (SuperClass) {
+        SuperClassEmpty = function() {};
         SuperClassEmpty.prototype = SuperClass.prototype;
         Class.prototype = new SuperClassEmpty();
         Class.prototype.constructor = Class;
         Class.Super = SuperClass;
-        extend( Class, SuperClass, false );
+        extend(Class, SuperClass, false);
     }
 
-    extend(Class.prototype, body);
+    if (hasImplementClasses)
+        for (var i = 1; i < len - 1; i++)
+            extend(Class.prototype, arguments[i].prototype, false);
+
+    extendClass(Class, body);
 
     return Class;
 };
