@@ -13,7 +13,6 @@ implement({
    * @return {Boolean} true if exist
    * @chainable
    * @example
-   * 
    *
    *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
    *

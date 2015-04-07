@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 06:43:28 GMT
+ * Build date: Tue, 07 Apr 2015 07:40:46 GMT
  */
 (function() {
     "use strict";
@@ -668,6 +668,7 @@
     var util$support$$default = util$support$$support;
 
     var util$accessorhooks$$langFix = /_/g,
+        util$accessorhooks$$removeAttr = function( node, key )  {return node.removeAttribute( key )},
         util$accessorhooks$$accessorHooks = {
             // boolean attributes
             booleans: {},
@@ -697,7 +698,6 @@
                     }
                     return node.value;
                 },
-    
                 undefined: function( node )  {
                     switch ( node.tagName ) {
                         case "SELECT":
@@ -713,24 +713,41 @@
             // setter
             set: {
                 lang: function( node, value )  {
-                    // correct locale browser language before setting the attribute             
-                    // e.g. from zh_CN to zh-cn, from en_US to en-us
-                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
+    
+                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
+                    if ( value == null ) {
+                        util$accessorhooks$$removeAttr( node, "lang" );
+                    } else {
+                        // correct locale browser language before setting the attribute             
+                        // e.g. from zh_CN to zh-cn, from en_US to en-us
+                        node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
+                    }
                 },
     
                 style: function( node, value )  {
-                    node.style.cssText = value;
+                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
+                    if ( value == null ) {
+                        util$accessorhooks$$removeAttr(node, "style" );
+                    } else {
+                        node.style.cssText = value;
+                    }
                 },
                 title: function( node, value )  {
-                    var doc = node.ownerDocument;
+                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
+                    if ( value == null ) {
+                        util$accessorhooks$$removeAttr( node, "title" );
+                    } else {
     
-                    ( node === doc.documentElement ? doc : node ).title = value;
+                        var doc = node.ownerDocument;
+    
+                        ( node === doc.documentElement ? doc : node ).title = value;
+                    }
                 },
-                value: function( node, value )  {
+                value: function(node, value)  {
     
                     if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
-                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
+                        if ( helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
     
                     } else {
                         node.value = value;
@@ -791,16 +808,16 @@
 
     // Attributes that are booleans
     helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
+          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
-        util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
+        util$accessorhooks$$accessorHooks.set[ name.toLowerCase() ] = function( node, value )  {
            // completely remove the boolean attributes when set to false, otherwise set it to true
-            node[ key ] = !!value ? true : false;
+            node[ name ] = !!value ? true : false;
             // set / remove boolean attributes
             node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
            // booleans
-        util$accessorhooks$$accessorHooks.booleans[ key.toLowerCase() ] = key;
+        util$accessorhooks$$accessorHooks.booleans[ name.toLowerCase() ] = name;
         };
     });
 
@@ -864,10 +881,10 @@
          *      ugma.query("#test").has("checked");
          *      // true
          *
-         *    ugma.query("#test").clear("checked");
+         *     ugma.query("#test").clear("checked");
          *
-         *      ugma.query("#test").has("checked");
-         *      // false
+         *     ugma.query("#test").has("checked");
+         *     // false
          */
         clear: function(name) {
     
@@ -876,6 +893,7 @@
     
             // Check for boolean attributes
             if (util$accessorhooks$$default.booleans[lowercasedName]) {
+                // Set corresponding property to false
                 node[name] = false;
                 node.removeAttribute(lowercasedName);
             } else {
@@ -905,9 +923,10 @@
        *      clone[0].children;
        *      // -> HTMLCollection[]
        *  
-       *      var deepClone = $('original').clone(true);
+       *      var deepClone = ugma.query('original').clone(true);
        *      deepClone[0].className;
        *      // -> "original"
+       *
        *      deepClone[0].children;
        *      // -> HTMLCollection[div.original_child]
        */
@@ -1761,7 +1780,6 @@
        * @return {Boolean} true if exist
        * @chainable
        * @example
-       * 
        *
        *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
        *
@@ -2351,7 +2369,7 @@
                     node[ name ] = value;
                 } else {
                     // node's attribute
-                    node.setAttribute( name, value );
+                    node.setAttribute( name, value + "" );
                 }
                 // set array of key values
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");

@@ -25,9 +25,10 @@ implement({
    *      clone[0].children;
    *      // -> HTMLCollection[]
    *  
-   *      var deepClone = $('original').clone(true);
+   *      var deepClone = ugma.query('original').clone(true);
    *      deepClone[0].className;
    *      // -> "original"
+   *
    *      deepClone[0].children;
    *      // -> HTMLCollection[div.original_child]
    */

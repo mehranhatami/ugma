@@ -68,7 +68,7 @@ implement({
                 node[ name ] = value;
             } else {
                 // node's attribute
-                node.setAttribute( name, value );
+                node.setAttribute( name, value + "" );
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");

@@ -22,10 +22,10 @@ implement({
      *      ugma.query("#test").has("checked");
      *      // true
      *
-     *    ugma.query("#test").clear("checked");
+     *     ugma.query("#test").clear("checked");
      *
-     *      ugma.query("#test").has("checked");
-     *      // false
+     *     ugma.query("#test").has("checked");
+     *     // false
      */
     clear(name) {
 
@@ -34,6 +34,7 @@ implement({
 
         // Check for boolean attributes
         if (accessorhooks.booleans[lowercasedName]) {
+            // Set corresponding property to false
             node[name] = false;
             node.removeAttribute(lowercasedName);
         } else {
