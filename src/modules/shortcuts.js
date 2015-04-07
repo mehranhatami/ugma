@@ -5,6 +5,8 @@
 import { implement   } from "../core/core";
 import { RETURN_THIS } from "../const";
 
+var rreturn = /\r/g;
+
 implement({
 
     /**
@@ -12,7 +14,7 @@ implement({
      * @param {String|Object|Array}   value   textContent
      * @chainable
      * @example
-     *     link.text('New content');
+     *     link.text('A sunny day!');
      */
     text: "textContent",
     /**
@@ -21,25 +23,41 @@ implement({
      * @chainable
      * @example
      *     link.html();
-     *     link.html('<span>more</span>');
+     *     link.html('<span>Hello!</span>');
      */
     html: "innerHTML",
+    /**
+     * Get / set attribute on a node
+     * @param {String|Object|Array}   value   attribute name
+     * @chainable
+     * @example
+     *     link.attr(); // get
+     *     link.attr('attrName', 'attrValue'); // set
+     *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+     */   
+    attr: "attribute",
     /**
      * Get / set the value attribute on a node
      * @param {String|Object|Array}   value   attribute name
      * @chainable
      * @example
-     *     link.attr('attrName'); // get
-     *     link.attr('attrName', 'attrValue'); // set
-     *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+     *     link.val(); // get
+     *     link.val('foo', 'bar'); // set
      */   
-    attr: "attribute",
+    val: "value"
    
 }, ( methodName, property ) => function( value ) {
 
     if ( arguments.length === 0 ) {
-        return this.get( property );
+
+        var ret = this.get( property );
+        
+        if(methodName !== "val") return ret;
+        
+        // Handle most common string cases
+        return ret.replace( rreturn, "" );
     }
+    
     this.set( property, value );
 
 }, ( methodName ) => () => () => RETURN_THIS );

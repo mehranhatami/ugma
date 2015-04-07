@@ -1,8 +1,8 @@
 /**
  * @module value
  */
-import { implement   } from "../core/core";
-import { isArray     } from "../helpers";
+import { implement, instanceOf  } from "../core/core";
+import { isArray                } from "../helpers";
 
 implement({
     /**
@@ -19,7 +19,7 @@ implement({
   
        if ( arguments.length === 0 ) return this.get();
 
-       if ( val._ || isArray( val ) ) return this.set( "" ).append( val );
+       if ( instanceOf( val ) || isArray( val ) ) return this.set( "" ).append( val );
 
        return this.set( val );
     }

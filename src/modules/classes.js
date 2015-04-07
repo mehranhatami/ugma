@@ -72,8 +72,9 @@ implement({
     *      // -> false    
     */
     hasClass: [ "contains", false, ( node, token ) => {
-        return ( (" " + node[ 0 ].className + " " )
-            .replace( reClass, " " ).indexOf( " " + token + " " ) > -1 );
+        if ( (" " + node[ 0 ].className + " " ).replace( reClass, " " ).indexOf( " " + token + " " ) > -1 ) return true;
+        
+        return false;
     }],
    /**
     * Toggle the `class` in the class list. Optionally force state via `condition`
@@ -117,12 +118,12 @@ implement({
 
     if ( !iteration ) {
 
-        return function( token, force ) {
+        return function( token, stateVal ) {
            
-            if ( is( force, "boolean") && nativeMethodName === "toggle" ) {
-                this[ force ? "addClass" : "removeClass" ]( token );
+            if ( is( stateVal, "boolean") && nativeMethodName === "toggle" ) {
+                this[ stateVal ? "addClass" : "removeClass" ]( token );
 
-                return force;
+                return stateVal;
             }
 
             if ( !is( token, "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
