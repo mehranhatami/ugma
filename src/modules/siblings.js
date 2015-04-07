@@ -18,6 +18,16 @@ implement({
      * Returns the first sibling node in a collection of children filtered by index
      * @param  {Number} index child index
      * @chainable
+     *     
+     *      <ul>
+     *        <li id="golden-delicious">Golden Delicious</li>
+     *        <li id="mutsu">Mutsu</li>
+     *        <li id="mcintosh">McIntosh</li>
+     *        <li id="ida-red">Ida Red</li>
+     *      </ul>
+     *
+     *      ugma.query('#mutsu').siblings();
+     *      // -> [li#golden-delicious, li#mutsu, li#mcintosh, li#ida-red]
      */
     sibling: false
 

@@ -27,8 +27,23 @@ implement({
      * @param {String} [selector] css selector
      * @chainable
      * @example
-     * @example
-     *    link.last();
+     *
+     *      <div id="australopithecus">
+     *        <div id="homo-erectus"><!-- Latin is super -->
+     *          <div id="homo-neanderthalensis"></div>
+     *          <div id="homo-sapiens"></div>
+     *        </div>
+     *      </div>
+     *
+     *      ugma.query('#australopithecus').first().get("id")
+     *      // -> div#homo-erectus
+     *
+     *      ugma.query('#homo-erectus')[0].firstChild
+     *      // -> comment node "Latin is super"
+     *
+     *      ugma.query('#homo-erectus').first()
+     *      // -> div#homo-neanderthalensis
+     *
      */
     last: "lastElementChild",
     /**
@@ -45,17 +60,68 @@ implement({
      * @param {String} [selector] css selector
      * @chainable
      * @example
-     *    link.prev();                       
-     *    link.prev("b");                    
-     */
-    prev: "previousElementSibling",
+     *
+     *      <ul id="fruits">
+     *        <li id="apples">
+     *          <h3 id="title">Apples</h3>
+     *          <ul id="list-of-apples">
+     *            <li id="golden-delicious">Golden Delicious</li>
+     *            <li id="mutsu">Mutsu</li>
+     *            <li id="mcintosh" class="yummy">McIntosh</li>
+     *            <li id="ida-red" class="yummy">Ida Red</li>
+     *          </ul>
+     *          <p id="saying">An apple a day keeps the doctor away.</p>  
+     *        </li>
+     *      </ul>
+     *
+     *  Get the first sibling after "#title":
+     *  
+     *      ugma.query('title').next();
+     *      // -> ul#list-of-apples
+     *
+     *  Get the first sibling after "#title" with node name "p":
+     *
+     *      ugma.query('title').next('p');
+     *      // -> p#sayings
+     *
+     *  Get the first sibling after "#golden-delicious" with class name "yummy":
+     *      
+     *      ugma.query('golden-delicious').next('.yummy');
+     *      // -> li#mcintosh
+     *
+     *  Try to get the first sibling after "#ida-red":
+     *
+     *      ugma.query('ida-red').next();
+     *      // -> undefined   
+     */   
+      prev: "previousElementSibling",
     /**
      * Find all next sibling elements filtered by optional selector
      * @param {String} [selector] css selector
      * @chainable
      * @example
-     *    link.prevAll();
-     *    link.prevAll("b");
+     *
+     *      <ul id="fruits">
+     *        <li id="apples">
+     *          <h3>Apples</h3>
+     *          <ul id="list-of-apples">
+     *            <li id="golden-delicious" class="yummy">Golden Delicious</li>
+     *            <li id="mutsu" class="yummy">Mutsu</li>
+     *            <li id="mcintosh">McIntosh</li>
+     *            <li id="ida-red">Ida Red</li>
+     *          </ul>
+     *          <p id="saying">An apple a day keeps the doctor away.</p>  
+     *        </li>
+     *      </ul>
+     * Get the first previous sibling of "#saying":
+     *  
+     *      $('saying').prev();
+     *      // -> ul#list-of-apples
+     *
+     *  Get the first previous sibling of "#ida-red" with class name "yummy":
+     *
+     *      ugma.query('#ida-red').prev('.yummy').get("id");
+     *      // -> li#mutsu
      */
     nextAll: "nextElementSibling",
     /**
