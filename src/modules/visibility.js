@@ -14,9 +14,20 @@ implement({
      * @param {Function} [callback]
      * @chainable
      * @example
+     *     
+     *  Show a single element:
+     *     
      *    link.show(); // displays element
      *
      *    foo.show(function() { });
+     *
+     *  Show multiple elements using 'native' Array.prototype.forEach:
+     *  
+     *    ugma.queryAll('.foo').forEach(function(node) { node.show(); ); }  // 'this' keyword can also be used
+     *  
+     *  Show single element using callback:
+     *  
+     *    foo.show(function() { query(#.bar").hide()   });
      */
     show: false,
     /**
@@ -24,9 +35,18 @@ implement({
      * @param {Function} [callback]
      * @chainable
      * @example
-     * link.hide(); // hides element
+     *     
+     *  Show a single element:
+     *     
+     *    link.hide(); // hide element
      *
-     * foo.hide(function() { });
+     *  Hide multiple elements using 'native' Array.prototype.forEach:
+     *  
+     *    ugma.queryAll('.foo').forEach(function(node) { node.hide(); ); } // 'this' keyword can also be used
+     *  
+     *  Hide single element using callback:
+     *  
+     *    foo.hide(function() { query(#.bar").show()   });
      */
     hide: true,
 

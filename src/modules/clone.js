@@ -12,6 +12,24 @@ implement({
   /**
    * Returns a copy of a DOM node.
    * @param {Boolean} [deep=true] true if all descendants should also be cloned, or false otherwise
+   * @chainable
+   * @example
+   *
+   *      <div class="original">
+   *        <div class="original_child"></div>
+   *      </div>
+   *  
+   *      var clone = ugma.query('.original').clone(false);
+   *      clone[0].className;
+   *      // -> "original"
+   *      clone[0].children;
+   *      // -> HTMLCollection[]
+   *  
+   *      var deepClone = $('original').clone(true);
+   *      deepClone[0].className;
+   *      // -> "original"
+   *      deepClone[0].children;
+   *      // -> HTMLCollection[div.original_child]
    */
     clone( deep ) {
         
