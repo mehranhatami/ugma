@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 08:10:13 GMT
+ * Build date: Tue, 07 Apr 2015 08:49:47 GMT
  */
 (function() {
     "use strict";
@@ -579,8 +579,9 @@
         *      // -> false    
         */
         hasClass: [ "contains", false, function( node, token )  {
-            return ( (" " + node[ 0 ].className + " " )
-                .replace( modules$classes$$reClass, " " ).indexOf( " " + token + " " ) > -1 );
+            if ( (" " + node[ 0 ].className + " " ).replace( modules$classes$$reClass, " " ).indexOf( " " + token + " " ) > -1 ) return true;
+            
+            return false;
         }],
        /**
         * Toggle the `class` in the class list. Optionally force state via `condition`
@@ -624,12 +625,12 @@
     
         if ( !iteration ) {
     
-            return function( token, force ) {
+            return function( token, stateVal ) {
                
-                if ( helpers$$is( force, "boolean") && nativeMethodName === "toggle" ) {
-                    this[ force ? "addClass" : "removeClass" ]( token );
+                if ( helpers$$is( stateVal, "boolean") && nativeMethodName === "toggle" ) {
+                    this[ stateVal ? "addClass" : "removeClass" ]( token );
     
-                    return force;
+                    return stateVal;
                 }
     
                 if ( !helpers$$is( token, "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
@@ -1014,7 +1015,7 @@
       
            if ( arguments.length === 0 ) return this.get();
     
-           if ( val._ || helpers$$isArray( val ) ) return this.set( "" ).append( val );
+           if ( core$core$$instanceOf( val ) || helpers$$isArray( val ) ) return this.set( "" ).append( val );
     
            return this.set( val );
         }
@@ -2440,6 +2441,8 @@
         }
     }, null, function()  {return function()  {return RETURN_FALSE}} );
 
+    var modules$shortcuts$$rreturn = /\r/g;
+
     core$core$$implement({
     
         /**
@@ -2447,7 +2450,7 @@
          * @param {String|Object|Array}   value   textContent
          * @chainable
          * @example
-         *     link.text('New content');
+         *     link.text('A sunny day!');
          */
         text: "textContent",
         /**
@@ -2456,25 +2459,41 @@
          * @chainable
          * @example
          *     link.html();
-         *     link.html('<span>more</span>');
+         *     link.html('<span>Hello!</span>');
          */
         html: "innerHTML",
+        /**
+         * Get / set attribute on a node
+         * @param {String|Object|Array}   value   attribute name
+         * @chainable
+         * @example
+         *     link.attr(); // get
+         *     link.attr('attrName', 'attrValue'); // set
+         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+         */   
+        attr: "attribute",
         /**
          * Get / set the value attribute on a node
          * @param {String|Object|Array}   value   attribute name
          * @chainable
          * @example
-         *     link.attr('attrName'); // get
-         *     link.attr('attrName', 'attrValue'); // set
-         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+         *     link.val(); // get
+         *     link.val('foo', 'bar'); // set
          */   
-        attr: "attribute",
+        val: "value"
        
     }, function( methodName, property )  {return function( value ) {
     
         if ( arguments.length === 0 ) {
-            return this.get( property );
+    
+            var ret = this.get( property );
+            
+            if(methodName !== "val") return ret;
+            
+            // Handle most common string cases
+            return ret.replace( modules$shortcuts$$rreturn, "" );
         }
+        
         this.set( property, value );
     
     }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
