@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 03:35:31 GMT
+ * Build date: Tue, 07 Apr 2015 05:25:38 GMT
  */
 (function() {
     "use strict";
@@ -655,6 +655,236 @@
           
           return RETURN_THIS;
       });
+
+    var util$support$$support = {};
+
+    /**
+      Expose 'support' to the ugma namespace
+    */
+
+    core$core$$ugma.support = util$support$$support;
+
+
+    var util$support$$default = util$support$$support;
+
+    var util$accessorhooks$$langFix = /_/g,
+        util$accessorhooks$$accessorHooks = {
+            // boolean attributes
+            booleans: {},
+            // getter
+            get: {
+                // special case - setting a style
+                style: function( node )  {return node.style.cssText},
+                title: function( node )  {
+                    var doc = node.ownerDocument;
+    
+                    return ( node === doc.documentElement ? doc : node ).title;
+                },
+                tabIndex: function( node )  {return node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1},
+                option: function( node )  {
+                    // Support: IE<11
+                    // option.value not trimmed
+                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+                },
+                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
+    
+                value: function( node )  {
+    
+                    // Support: Android<4.4
+                    // Default value for a checkbox should be "on"
+                    if ( node.type === "checkbox" && !util$support$$default.checkOn ) {
+                        return node.getAttribute( "value" ) === null ? "on" : node.value;
+                    }
+                    return node.value;
+                },
+    
+                undefined: function( node )  {
+                    switch ( node.tagName ) {
+                        case "SELECT":
+                            return util$accessorhooks$$accessorHooks.get.select( node );
+                        case "OPTION":
+                            return util$accessorhooks$$accessorHooks.get.option( node );
+                        default:
+                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+                    }
+                },
+                type: function( node )  {return node.getAttribute( "type" ) || node.type}
+            },
+            // setter
+            set: {
+                lang: function( node, value )  {
+                    // correct locale browser language before setting the attribute             
+                    // e.g. from zh_CN to zh-cn, from en_US to en-us
+                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
+                },
+    
+                style: function( node, value )  {
+                    node.style.cssText = value;
+                },
+                title: function( node, value )  {
+                    var doc = node.ownerDocument;
+    
+                    ( node === doc.documentElement ? doc : node ).title = value;
+                },
+                value: function( node, value )  {
+    
+                    if ( node.tagName === "SELECT" ) {
+                        // selectbox has special case
+                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
+    
+                    } else {
+                        node.value = value;
+                    }
+                }
+            }
+        };
+
+    (function() {
+        var input = DOCUMENT.createElement( "input" ),
+            select = DOCUMENT.createElement( "select" ),
+            opt = select.appendChild( DOCUMENT.createElement( "option" ) );
+    
+        input.type = "checkbox";
+    
+        // Support: Android<4.4
+        // Default value for a checkbox should be "on"
+         util$support$$default.checkOn = input.value !== "";
+    
+        // Support: IE<=11+
+        // Must access selectedIndex to make default options select
+         util$support$$default.optSelected = opt.selected;
+    
+        // Support: IE<=11+
+        // An input loses its value after becoming a radio
+        input = DOCUMENT.createElement( "input" );
+        input.value = "t";
+        input.type = "radio";
+        util$support$$default.radioValue = input.value === "t";
+    })();
+
+    // Support: IE<=11+
+    if ( !util$support$$default.radioValue ) {
+        util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
+    
+            if ( value === "radio" ) {
+                var val = node.value;
+    
+                node.setAttribute( "type", val );
+                
+                if ( value ) node.value = val;
+    
+            } else {
+                node.type = value;
+            }
+        };
+    }
+
+    if ( !util$support$$default.optSelected ) {
+        util$accessorhooks$$accessorHooks.get.selected = function( node )  {
+            var parent = node.parentNode;
+            /* jshint ignore:start */
+            if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
+            /* jshint ignore:end */
+            return null;
+        };
+    }
+
+    // Attributes that are booleans
+    helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
+        // For Boolean attributes we need to give them a special treatment, and set 
+        // the corresponding property to either true or false
+        util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
+           // completely remove the boolean attributes when set to false, otherwise set it to true
+            node[ key ] = !!value ? true : false;
+            // set / remove boolean attributes
+            node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
+           // booleans
+        util$accessorhooks$$accessorHooks.booleans[ key.toLowerCase() ] = key;
+        };
+    });
+
+    // properties written as camelCase
+    helpers$$each((
+       // 6.4.3 The tabindex attribute
+        ("tabIndex "         +
+        "readOnly "         +
+        "maxLength "        +
+        "cellSpacing "      +
+        "cellPadding "      +
+        "rowSpan "          +
+        "colSpan "          +
+        "useMap "           +
+        "dateTime  "        +
+        "innerHTML "        +
+        "frameBorder "      +
+        // 6.6.1 Making document regions editable: The contenteditable content attribute
+        "contentEditable "  +
+        "textContent "      +
+        "valueType "        +
+        "defaultValue "     +
+        "accessKey "        +
+        "encType "          +
+        "readOnly  "        +
+        "vAlign  " + "longDesc") ).split( " " ), function( key ) {
+        util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
+    });
+
+    /**
+     * Hook 'accessorHooks' on the ugma namespace
+     */
+
+    core$core$$ugma.accessorHooks = function( mixin, where )  {
+       // Stop here if 'where' is not a typeof string
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
+      
+        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+  
+            helpers$$forOwn( mixin, function( key, value )  {
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
+            });
+        }
+    };
+
+    var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
+
+    core$core$$implement({
+        /**
+         * Clear a property/attribute on the node
+         * @param  {String}   name    property/attribute name
+         * @example 
+         *
+         *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
+         *
+         *      ugma.query("#test").has("checked");
+         *      // false
+         *
+         *      ugma.query("#test").set("checked", "checked");
+         *
+         *      ugma.query("#test").has("checked");
+         *      // true
+         *
+         *    ugma.query("#test").clear("checked");
+         *
+         *      ugma.query("#test").has("checked");
+         *      // false
+         */
+        clear: function(name) {
+    
+            var node = this[0],
+                lowercasedName = name.toLowerCase();
+    
+            // Check for boolean attributes
+            if (util$accessorhooks$$default.booleans[lowercasedName]) {
+                node[name] = false;
+                node.removeAttribute(lowercasedName);
+            } else {
+                node.removeAttribute(name);
+            }
+            return this;
+        }
+    
+    }, null, function()  {return RETURN_FALSE});
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
@@ -1473,196 +1703,6 @@
       }
     }, null, function()  {return RETURN_TRUE} );
 
-    var util$support$$support = {};
-
-    /**
-      Expose 'support' to the ugma namespace
-    */
-
-    core$core$$ugma.support = util$support$$support;
-
-
-    var util$support$$default = util$support$$support;
-
-    var util$accessorhooks$$langFix = /_/g,
-        util$accessorhooks$$accessorHooks = {
-    
-            get: {
-                // special case - setting a style
-                style: function( node )  {return node.style.cssText},
-                title: function( node )  {
-                    var doc = node.ownerDocument;
-    
-                    return ( node === doc.documentElement ? doc : node ).title;
-                },
-                tabIndex: function( node )  {return node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1},
-                option: function( node )  {
-                    // Support: IE<11
-                    // option.value not trimmed
-                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
-                },
-                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
-    
-                value: function( node )  {
-    
-                    // Support: Android<4.4
-                    // Default value for a checkbox should be "on"
-                    if ( node.type === "checkbox" && !util$support$$default.checkOn ) {
-                        return node.getAttribute( "value" ) === null ? "on" : node.value;
-                    }
-                    return node.value;
-                },
-    
-                undefined: function( node )  {
-                    switch ( node.tagName ) {
-                        case "SELECT":
-                            return util$accessorhooks$$accessorHooks.get.select( node );
-                        case "OPTION":
-                            return util$accessorhooks$$accessorHooks.get.option( node );
-                        default:
-                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
-                    }
-                },
-                type: function( node )  {return node.getAttribute( "type" ) || node.type}
-            },
-    
-            set: {
-                lang: function( node, value )  {
-                    // correct locale browser language before setting the attribute             
-                    // e.g. from zh_CN to zh-cn, from en_US to en-us
-                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
-                },
-    
-                style: function( node, value )  {
-                    node.style.cssText = value;
-                },
-                title: function( node, value )  {
-                    var doc = node.ownerDocument;
-    
-                    ( node === doc.documentElement ? doc : node ).title = value;
-                },
-                value: function( node, value )  {
-    
-                    if ( node.tagName === "SELECT" ) {
-                        // selectbox has special case
-                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
-    
-                    } else {
-                        node.value = value;
-                    }
-                }
-            }
-        };
-
-    (function() {
-        var input = DOCUMENT.createElement( "input" ),
-            select = DOCUMENT.createElement( "select" ),
-            opt = select.appendChild( DOCUMENT.createElement( "option" ) );
-    
-        input.type = "checkbox";
-    
-        // Support: Android<4.4
-        // Default value for a checkbox should be "on"
-         util$support$$default.checkOn = input.value !== "";
-    
-        // Support: IE<=11+
-        // Must access selectedIndex to make default options select
-         util$support$$default.optSelected = opt.selected;
-    
-        // Support: IE<=11+
-        // An input loses its value after becoming a radio
-        input = DOCUMENT.createElement( "input" );
-        input.value = "t";
-        input.type = "radio";
-        util$support$$default.radioValue = input.value === "t";
-    })();
-
-
-
-    // Support: IE<=11+
-    if ( !util$support$$default.radioValue ) {
-        util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
-    
-            if ( value === "radio" ) {
-                var val = node.value;
-    
-                node.setAttribute( "type", val );
-                
-                if ( value ) node.value = val;
-    
-            } else {
-                node.type = value;
-            }
-        };
-    }
-
-    if ( !util$support$$default.optSelected ) {
-        util$accessorhooks$$accessorHooks.get.selected = function( node )  {
-            var parent = node.parentNode;
-            /* jshint ignore:start */
-            if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
-            /* jshint ignore:end */
-            return null;
-        };
-    }
-
-    // Attributes that are booleans
-    helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
-        // For Boolean attributes we need to give them a special treatment, and set 
-        // the corresponding property to either true or false
-        util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
-           // completely remove the boolean attributes when set to false, otherwise set it to true
-            node[ key ] = !!value ? true : false;
-            // set / remove boolean attributes
-            node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
-        };
-    });
-
-    // properties written as camelCase
-    helpers$$each((
-       // 6.4.3 The tabindex attribute
-        ("tabIndex "         +
-        "readOnly "         +
-        "maxLength "        +
-        "cellSpacing "      +
-        "cellPadding "      +
-        "rowSpan "          +
-        "colSpan "          +
-        "useMap "           +
-        "dateTime  "        +
-        "innerHTML "        +
-        "frameBorder "      +
-        // 6.6.1 Making document regions editable: The contenteditable content attribute
-        "contentEditable "  +
-        "textContent "      +
-        "valueType "        +
-        "defaultValue "     +
-        "accessKey "        +
-        "encType "          +
-        "readOnly  "        +
-        "vAlign  " + "longDesc") ).split( " " ), function( key ) {
-        util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
-    });
-
-    /**
-     * Hook 'accessorHooks' on the ugma namespace
-     */
-
-    core$core$$ugma.accessorHooks = function( mixin, where )  {
-       // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
-      
-        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-  
-            helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
-            });
-        }
-    };
-
-    var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
-
     core$core$$implement({
        
       /**
@@ -1722,7 +1762,16 @@
        * @chainable
        * @example
        * 
-       *    link.has('fooBar');  true / false
+       *
+       *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
+       *
+       *      ugma.query("#test").has("checked");
+       *      // false
+       *
+       *      ugma.query("#test").set("checked", "checked");
+       *
+       *      ugma.query("#test").has("checked");
+       *      // true
        */
        has: function(name) {
             if ( !helpers$$is( name, "string" ) ) minErr$$minErr( "has()", "Not a valid property/attribute" );
@@ -2029,82 +2078,6 @@
                 return !!checker( this[ 0 ] );
         }
     }, null, function()  {return RETURN_FALSE} );
-
-    var modules$mutate$$ExtensionHandler = function(selector, condition, mixins, index)  {
-        var ctr = mixins.hasOwnProperty("constructor") && mixins.constructor,
-            matcher = util$selectormatcher$$default(selector);
-    
-        return function(node, mock)  {
-            var el = core$core$$nodeTree(node),
-                extension = el._.extension;
-    
-            if (!extension) {
-                el._.extension = extension = [];
-            }
-    
-            // skip previously invoked or mismatched elements
-            if (~extension.indexOf(index) || !matcher(node)) return;
-            // mark extension as invoked
-            extension.push(index);
-    
-            if (mock === true || condition(el) !== false) {
-                // apply all private/public members to the element's interface
-                var privateFunctions = Object.keys(mixins).filter(function(prop)  {
-                    var value = mixins[prop];
-    
-                    if (prop !== "constructor") {
-                        el[prop] = value;
-    
-                        return !mock && prop[0] === "_";
-                    }
-                });
-    
-                // invoke constructor if it exists
-                // make a safe call so live extensions can't break each other
-                if (ctr) helpers$$invoke(el, ctr);
-                // remove event handlers from element's interface
-                privateFunctions.forEach(function(prop)  {
-                    delete el[prop];
-                });
-            }
-        };
-    };
-
-
-    core$core$$implement({
-    
-        mutate: function(selector, condition, definition) {
-    
-            if (arguments.length === 2) {
-                definition = condition;
-                condition = true;
-            }
-    
-            if (typeof condition === "boolean") condition = condition ? RETURN_TRUE : RETURN_FALSE;
-            if (typeof definition === "function") definition = {
-                constructor: definition
-            };
-    
-            if (!definition || typeof definition !== "object" || typeof condition !== "function") minErr$$minErr();
-    
-            var node = this[0],
-                mappings = this._.mutations;
-    
-            if (!mappings) {
-                this._.mutations = mappings = [];
-            }
-    
-            var ext = modules$mutate$$ExtensionHandler(selector, condition, definition, mappings.length);
-    
-            mappings.push(ext);
-            // live extensions are always async - append CSS asynchronously
-            WINDOW.setTimeout(function()  {
-                helpers$$each(node.ownerDocument.querySelectorAll(selector), ext);
-            }, 0);
-    
-    
-        }
-    });
 
     core$core$$implement({
        /**
