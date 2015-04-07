@@ -16,10 +16,28 @@ import { adjustCSS                                           } from "../util/adj
      * @param  {String|Function}    [value] style property value or functor
      * @chainable
      * @example
-     * link.css('padding-left'); // get
-     * link.css('color', '#f00'); // set
-     * link.css({'border-width', '1px'}, {'display', 'inline-block}); // set multiple
+     *
+     * // #Getter
+     *
+     *    link.css('fontSize');
+     *    // -> '12px'
+     *
+     *  // #Setter
+     *
+     *     link.css({
+     *        cssFloat: 'left',
+     *        opacity: 0.5
+     *      });
+     *      // -> Element
+     *      
+     *      link.css({
+     *        'float': 'left', // notice how float is surrounded by single quotes
+     *        opacity: 0.5
+     *      });
+     *      // -> Element
+     *  
      */
+     
      css(name, value) {
          
          var len = arguments.length,

@@ -18,9 +18,17 @@ implement({
     * @param  {...String} classNames class name(s)
     * @chainable
     * @example
-    * link.addClass('bar');
-    * link.addClass('bar', 'foo');
-    */   
+    * 
+    *      <div id="foo" class="apple fruit"></div>
+    *
+    *      ugma.query('#foo')[0].className;
+    *      // -> 'apple fruit'
+    *
+    *      ugma.query('#foo').addClass('food');
+    *
+    *      ugma.query('#foo')[0].className;
+    *      // -> 'apple fruit food'
+    */
     addClass: [ "add", true, ( node, token ) => {
         var existingClasses = ( " " + node[ 0 ].className + " " ).replace( reClass, " " );
 
@@ -35,8 +43,14 @@ implement({
     * @param  {...String} classNames class name(s)
     * @chainable
     * @example
-    * link.removeClass('bar');
-    * link.removeClass('bar' , 'foo');
+    * 
+    *      <div id="foo" class="apple fruit food"></div>
+    *  
+    *      ugma.query('#foo').removeClass('food');
+    *      // -> Element
+    *      
+    *      ugma.query('#foo')[0].className;
+    *      // -> 'apple fruit'
     */
     removeClass: [ "remove", true, ( node, token ) => {
         node[ 0 ].className = (" " + node[ 0 ].className + " ")
@@ -47,7 +61,15 @@ implement({
     * @param  {...String} classNames class name(s)
     * @chainable
     * @example
-    * link.hasClass('bar');
+    *  
+    *      <div id="foo" class="apple fruit food"></div>
+    *
+    *
+    *      ugma.query('#foo').hasClass('fruit');
+    *      // -> true
+    *      
+    *      ugma.query('#foo').hasClass('vegetable');
+    *      // -> false    
     */
     hasClass: [ "contains", false, ( node, token ) => {
         return ( (" " + node[ 0 ].className + " " )
@@ -58,8 +80,20 @@ implement({
     * @param  {...String} classNames class name(s)
     * @chainable
     * @example
-    * link.toggleClass('bar');
-    * link.toggleClass('bar', 'foo');
+    * 
+    *      <div id="foo" class="apple"></div>
+    *
+    *      ugma.query('#foo').hasClass('fruit');
+    *      // -> false
+    *      
+    *      ugma.query('#foo').toggleClass('fruit');
+    *      // -> true
+    *      
+    *      ugma.query('#foo').hasClass('fruit');
+    *      // -> true
+    *  
+    *      ugma.query('#foo').toggleClass('fruit', true);
+    *      // -> true
     */    
     toggleClass: ["toggle", false, ( el, token ) => {
         var hasClass = el.hasClass( token );

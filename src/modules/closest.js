@@ -16,7 +16,18 @@ implement({
   * @Following the Element#closest specs  
   * @chainable
   * @example
-  *    link.closest('.mehran');
+  *
+  *        <body>
+  *          <div id="father">
+  *            <div id="kid">
+  *            </div>
+  *          </div>
+  *        </body>
+  *      </html>
+  *
+  *   ugma.query('#kid').closest()
+  *
+  *      // -> [div#father]
   */
     closest( selector ) {
         if ( selector && !is( selector, "string" ) ) minErr( "closest()", "The string did not match the expected pattern" );
