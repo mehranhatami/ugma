@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 05:25:38 GMT
+ * Build date: Tue, 07 Apr 2015 06:43:28 GMT
  */
 (function() {
     "use strict";
@@ -1183,11 +1183,11 @@
                 
                 var getValue = function( name )  {
                     var getter = util$styleAccessor$$default.get[ name ] || util$styleAccessor$$default._default( name, style ),
-   
+                        // Try inline styles first
                         value = helpers$$is( getter, "function" ) ? getter( style ) : style[ getter ];
    
-                    if ( !value ) {
-   
+                    if ( !value || value === "auto" ) {
+                        // Reluctantly retrieve the computed style.
                         if ( !computed ) computed = helpers$$computeStyle(node, "" );
    
                         value = helpers$$is( getter, "function" ) ? getter( computed ) : computed[ getter ];
@@ -1271,7 +1271,7 @@
 
     core$core$$implement({
       /**
-       * Getter/setter of a data entry value. Tries to read the appropriate
+       * Get / set a key/value pair of custom metadata on the element. Tries to read the appropriate
        * HTML5 data-* attribute if it exists
        * @param  {String|Object|Array}  key(s)  data key or key/value object or array of keys
        * @param  {Object}               [value] data value to store
@@ -2113,7 +2113,7 @@
        *
        *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
        *
-       *   ugma.query('rectangle').width();
+       *   ugma.query('#rectangle').width();
        *      // -> 200
        */    
        width: function() { return this.offset().width },
@@ -2125,7 +2125,7 @@
        *
        *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
        *
-       *   ugma.query('rectangle').height();
+       *   ugma.query('#rectangle').height();
        *      // -> 100
        */    
        height: function() { return this.offset().height }
@@ -2269,6 +2269,27 @@
             }
         }
     });
+
+    core$core$$implement({
+     /**
+      * Scrolls the window so that the `element` appears at the top of the viewport.
+      * @example
+      * 
+      *  link.scrollTo();
+      *   // -> Element 
+      * 
+      *  link.scrollTo(20, 100);
+      *   // -> Element 
+      */
+        scrollTo: function(x, y) {
+          
+          var node = this[0],
+              offset = this.offset();
+          
+          WINDOW.scrollTo(x || offset.left, y || offset.top);
+    
+        }
+    }, null, function()  {return RETURN_FALSE});
 
     var modules$set$$objectTag = "[object Object]",
         modules$set$$getTagName = function( node )  {
