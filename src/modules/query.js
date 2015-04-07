@@ -14,11 +14,25 @@ implement({
  /**
   * Find the first matched element by css selector
   * @param  {String} selector css selector
+  * @example
+  *
+  *      ugma.query('#foo'); 
+  *      // first, single element
   */
     query: "",
  /**
   * Find all matched elements by css selector
   * @param  {String} selector css selector
+  * @example
+  *
+  *      ugma.queryAll('#div'); 
+  *      // return an array with multiple divs
+  *
+  *      ugma.query('a[href="#"]');
+  *      // -> all links with a href attribute of value "#"
+  *
+  *      ugma.query('div:empty');
+  *      // -> all DIVs without content (i.e., whitespace-only)
   */
    queryAll: "All"
 

@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 06 Apr 2015 14:31:57 GMT
+ * Build date: Tue, 07 Apr 2015 03:35:31 GMT
  */
 (function() {
     "use strict";
@@ -525,9 +525,17 @@
         * @param  {...String} classNames class name(s)
         * @chainable
         * @example
-        * link.addClass('bar');
-        * link.addClass('bar', 'foo');
-        */   
+        * 
+        *      <div id="foo" class="apple fruit"></div>
+        *
+        *      ugma.query('#foo')[0].className;
+        *      // -> 'apple fruit'
+        *
+        *      ugma.query('#foo').addClass('food');
+        *
+        *      ugma.query('#foo')[0].className;
+        *      // -> 'apple fruit food'
+        */
         addClass: [ "add", true, function( node, token )  {
             var existingClasses = ( " " + node[ 0 ].className + " " ).replace( modules$classes$$reClass, " " );
     
@@ -542,8 +550,14 @@
         * @param  {...String} classNames class name(s)
         * @chainable
         * @example
-        * link.removeClass('bar');
-        * link.removeClass('bar' , 'foo');
+        * 
+        *      <div id="foo" class="apple fruit food"></div>
+        *  
+        *      ugma.query('#foo').removeClass('food');
+        *      // -> Element
+        *      
+        *      ugma.query('#foo')[0].className;
+        *      // -> 'apple fruit'
         */
         removeClass: [ "remove", true, function( node, token )  {
             node[ 0 ].className = (" " + node[ 0 ].className + " ")
@@ -554,7 +568,15 @@
         * @param  {...String} classNames class name(s)
         * @chainable
         * @example
-        * link.hasClass('bar');
+        *  
+        *      <div id="foo" class="apple fruit food"></div>
+        *
+        *
+        *      ugma.query('#foo').hasClass('fruit');
+        *      // -> true
+        *      
+        *      ugma.query('#foo').hasClass('vegetable');
+        *      // -> false    
         */
         hasClass: [ "contains", false, function( node, token )  {
             return ( (" " + node[ 0 ].className + " " )
@@ -565,8 +587,20 @@
         * @param  {...String} classNames class name(s)
         * @chainable
         * @example
-        * link.toggleClass('bar');
-        * link.toggleClass('bar', 'foo');
+        * 
+        *      <div id="foo" class="apple"></div>
+        *
+        *      ugma.query('#foo').hasClass('fruit');
+        *      // -> false
+        *      
+        *      ugma.query('#foo').toggleClass('fruit');
+        *      // -> true
+        *      
+        *      ugma.query('#foo').hasClass('fruit');
+        *      // -> true
+        *  
+        *      ugma.query('#foo').toggleClass('fruit', true);
+        *      // -> true
         */    
         toggleClass: ["toggle", false, function( el, token )  {
             var hasClass = el.hasClass( token );
@@ -628,6 +662,24 @@
       /**
        * Returns a copy of a DOM node.
        * @param {Boolean} [deep=true] true if all descendants should also be cloned, or false otherwise
+       * @chainable
+       * @example
+       *
+       *      <div class="original">
+       *        <div class="original_child"></div>
+       *      </div>
+       *  
+       *      var clone = ugma.query('.original').clone(false);
+       *      clone[0].className;
+       *      // -> "original"
+       *      clone[0].children;
+       *      // -> HTMLCollection[]
+       *  
+       *      var deepClone = $('original').clone(true);
+       *      deepClone[0].className;
+       *      // -> "original"
+       *      deepClone[0].children;
+       *      // -> HTMLCollection[div.original_child]
        */
         clone: function(deep) {
             
@@ -646,7 +698,18 @@
       * @Following the Element#closest specs  
       * @chainable
       * @example
-      *    link.closest('.mehran');
+      *
+      *        <body>
+      *          <div id="father">
+      *            <div id="kid">
+      *            </div>
+      *          </div>
+      *        </body>
+      *      </html>
+      *
+      *   ugma.query('#kid').closest()
+      *
+      *      // -> [div#father]
       */
         closest: function(selector) {
             if ( selector && !helpers$$is( selector, "string" ) ) minErr$$minErr( "closest()", "The string did not match the expected pattern" );
@@ -856,10 +919,28 @@
         * @param  {String|Function}    [value] style property value or functor
         * @chainable
         * @example
-        * link.css('padding-left'); // get
-        * link.css('color', '#f00'); // set
-        * link.css({'border-width', '1px'}, {'display', 'inline-block}); // set multiple
+        *
+        * // #Getter
+        *
+        *    link.css('fontSize');
+        *    // -> '12px'
+        *
+        *  // #Setter
+        *
+        *     link.css({
+        *        cssFloat: 'left',
+        *        opacity: 0.5
+        *      });
+        *      // -> Element
+        *      
+        *      link.css({
+        *        'float': 'left', // notice how float is surrounded by single quotes
+        *        opacity: 0.5
+        *      });
+        *      // -> Element
+        *  
         */
+        
         css: function(name, value) {var this$0 = this;
             
             var len = arguments.length,
@@ -1013,10 +1094,11 @@
         * Remove child nodes of current element from the DOM
         * @chainable
         * @example
+        *
         *    link.empty();
         */
         empty: function() { return this.set( "" ) }
-    }, null, function()  {return RETURN_THIS});
+    }, null, function()  {return RETURN_THIS} );
 
     var util$raf$$lastTime = 0,
         util$raf$$requestAnimationFrame =
@@ -1206,8 +1288,22 @@
         * @param  {Function}      callback    event callback
         * @chainable
         * @example
-        *    link.on('click', callback);
-        *    link.on(['click', 'focus'], '.item', handler);
+        *    
+        *      ugma.query("#foo").on("click", function() {
+        *        // ...
+        *      });
+        *    
+        *      ugma.query("#foo").on(['click', 'focus'], '.item', function() {
+        *        // ...
+        *      });
+        *    
+        *      ugma.query("#foo").on("click", "a.comment", function() {
+        *        // ...
+        *      });
+        *    
+        *      ugma.query("#foo").on("click", ['target', 'keyCode'], function(target, keyCode) {
+        *        // ...
+        *      });
         */
         on: false,
        /**
@@ -1284,8 +1380,12 @@
         * @param  {Function|String} [callback] event handler
         * @chainable
         * @example
-        *     link.off('click', callback);
-        *     link.off();
+        *    
+        *      ugma.query("#foo").off();
+        *    
+        *      ugma.query("#foo").off("click", function() {
+        *        // ...
+        *      });
         */
         off: function(eventType, selector, callback) {
             if ( !helpers$$is( eventType,"string" ) ) minErr$$minErr("off()", "The first argument need to be a string" );
@@ -1571,8 +1671,17 @@
        * @return {String|Object} a value of property or attribute
        * @chainable
        * @example
-       *   link.get('attrName');    // get
-       *   link.get('data-fooBar'); // get
+       *
+       *   <a id="tag" href="/tags/prototype" rel="tag" title="view related bookmarks." my_widget="some info.">Hatami</a>
+       *
+       *      ugma.query('#tag').get('href');
+       *      // -> '/tags/prototype'
+       *
+       *      ugma.query('#tag').get('title');
+       *      // -> 'view related bookmarks.'
+       *
+       *      ugma.query('#tag').get('my_widget');
+       *      // -> 'some info.'
        */
        
         get: function(name) {var this$0 = this;
@@ -2027,13 +2136,25 @@
       /**
        * Calculate width based on element's offset
        * @return {Number} element width in pixels
+       * @example
+       *
+       *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
+       *
+       *   ugma.query('rectangle').width();
+       *      // -> 200
        */    
        width: function() { return this.offset().width },
      
       /**
        * Calculate height based on element's offset
        * @return {Number} element height in pixels
-       */
+       * @example
+       *
+       *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
+       *
+       *   ugma.query('rectangle').height();
+       *      // -> 100
+       */    
        height: function() { return this.offset().height }
        
     }, null, function(methodName)  {return function()  { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 }} );
@@ -2071,11 +2192,25 @@
      /**
       * Find the first matched element by css selector
       * @param  {String} selector css selector
+      * @example
+      *
+      *      ugma.query('#foo'); 
+      *      // first, single element
       */
         query: "",
      /**
       * Find all matched elements by css selector
       * @param  {String} selector css selector
+      * @example
+      *
+      *      ugma.queryAll('#div'); 
+      *      // return an array with multiple divs
+      *
+      *      ugma.query('a[href="#"]');
+      *      // -> all links with a href attribute of value "#"
+      *
+      *      ugma.query('div:empty');
+      *      // -> all DIVs without content (i.e., whitespace-only)
       */
        queryAll: "All"
     
@@ -2354,6 +2489,16 @@
          * Returns the first sibling node in a collection of children filtered by index
          * @param  {Number} index child index
          * @chainable
+         *     
+         *      <ul>
+         *        <li id="golden-delicious">Golden Delicious</li>
+         *        <li id="mutsu">Mutsu</li>
+         *        <li id="mcintosh">McIntosh</li>
+         *        <li id="ida-red">Ida Red</li>
+         *      </ul>
+         *
+         *      ugma.query('#mutsu').siblings();
+         *      // -> [li#golden-delicious, li#mutsu, li#mcintosh, li#ida-red]
          */
         sibling: false
     
@@ -2428,8 +2573,23 @@
          * @param {String} [selector] css selector
          * @chainable
          * @example
-         * @example
-         *    link.last();
+         *
+         *      <div id="australopithecus">
+         *        <div id="homo-erectus"><!-- Latin is super -->
+         *          <div id="homo-neanderthalensis"></div>
+         *          <div id="homo-sapiens"></div>
+         *        </div>
+         *      </div>
+         *
+         *      ugma.query('#australopithecus').first().get("id")
+         *      // -> div#homo-erectus
+         *
+         *      ugma.query('#homo-erectus')[0].firstChild
+         *      // -> comment node "Latin is super"
+         *
+         *      ugma.query('#homo-erectus').first()
+         *      // -> div#homo-neanderthalensis
+         *
          */
         last: "lastElementChild",
         /**
@@ -2446,17 +2606,68 @@
          * @param {String} [selector] css selector
          * @chainable
          * @example
-         *    link.prev();                       
-         *    link.prev("b");                    
-         */
-        prev: "previousElementSibling",
+         *
+         *      <ul id="fruits">
+         *        <li id="apples">
+         *          <h3 id="title">Apples</h3>
+         *          <ul id="list-of-apples">
+         *            <li id="golden-delicious">Golden Delicious</li>
+         *            <li id="mutsu">Mutsu</li>
+         *            <li id="mcintosh" class="yummy">McIntosh</li>
+         *            <li id="ida-red" class="yummy">Ida Red</li>
+         *          </ul>
+         *          <p id="saying">An apple a day keeps the doctor away.</p>  
+         *        </li>
+         *      </ul>
+         *
+         *  Get the first sibling after "#title":
+         *  
+         *      ugma.query('title').next();
+         *      // -> ul#list-of-apples
+         *
+         *  Get the first sibling after "#title" with node name "p":
+         *
+         *      ugma.query('title').next('p');
+         *      // -> p#sayings
+         *
+         *  Get the first sibling after "#golden-delicious" with class name "yummy":
+         *      
+         *      ugma.query('golden-delicious').next('.yummy');
+         *      // -> li#mcintosh
+         *
+         *  Try to get the first sibling after "#ida-red":
+         *
+         *      ugma.query('ida-red').next();
+         *      // -> undefined   
+         */   
+          prev: "previousElementSibling",
         /**
          * Find all next sibling elements filtered by optional selector
          * @param {String} [selector] css selector
          * @chainable
          * @example
-         *    link.prevAll();
-         *    link.prevAll("b");
+         *
+         *      <ul id="fruits">
+         *        <li id="apples">
+         *          <h3>Apples</h3>
+         *          <ul id="list-of-apples">
+         *            <li id="golden-delicious" class="yummy">Golden Delicious</li>
+         *            <li id="mutsu" class="yummy">Mutsu</li>
+         *            <li id="mcintosh">McIntosh</li>
+         *            <li id="ida-red">Ida Red</li>
+         *          </ul>
+         *          <p id="saying">An apple a day keeps the doctor away.</p>  
+         *        </li>
+         *      </ul>
+         * Get the first previous sibling of "#saying":
+         *  
+         *      $('saying').prev();
+         *      // -> ul#list-of-apples
+         *
+         *  Get the first previous sibling of "#ida-red" with class name "yummy":
+         *
+         *      ugma.query('#ida-red').prev('.yummy').get("id");
+         *      // -> li#mutsu
          */
         nextAll: "nextElementSibling",
         /**
@@ -2497,9 +2708,20 @@
          * @param {Function} [callback]
          * @chainable
          * @example
+         *     
+         *  Show a single element:
+         *     
          *    link.show(); // displays element
          *
          *    foo.show(function() { });
+         *
+         *  Show multiple elements using 'native' Array.prototype.forEach:
+         *  
+         *    ugma.queryAll('.foo').forEach(function(node) { node.show(); ); }  // 'this' keyword can also be used
+         *  
+         *  Show single element using callback:
+         *  
+         *    foo.show(function() { query(#.bar").hide()   });
          */
         show: false,
         /**
@@ -2507,9 +2729,18 @@
          * @param {Function} [callback]
          * @chainable
          * @example
-         * link.hide(); // hides element
+         *     
+         *  Show a single element:
+         *     
+         *    link.hide(); // hide element
          *
-         * foo.hide(function() { });
+         *  Hide multiple elements using 'native' Array.prototype.forEach:
+         *  
+         *    ugma.queryAll('.foo').forEach(function(node) { node.hide(); ); } // 'this' keyword can also be used
+         *  
+         *  Hide single element using callback:
+         *  
+         *    foo.hide(function() { query(#.bar").show()   });
          */
         hide: true,
     

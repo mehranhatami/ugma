@@ -20,8 +20,22 @@ implement({
     * @param  {Function}      callback    event callback
     * @chainable
     * @example
-    *    link.on('click', callback);
-    *    link.on(['click', 'focus'], '.item', handler);
+    *    
+    *      ugma.query("#foo").on("click", function() {
+    *        // ...
+    *      });
+    *    
+    *      ugma.query("#foo").on(['click', 'focus'], '.item', function() {
+    *        // ...
+    *      });
+    *    
+    *      ugma.query("#foo").on("click", "a.comment", function() {
+    *        // ...
+    *      });
+    *    
+    *      ugma.query("#foo").on("click", ['target', 'keyCode'], function(target, keyCode) {
+    *        // ...
+    *      });
     */
     on: false,
    /**
@@ -98,8 +112,12 @@ implement({
     * @param  {Function|String} [callback] event handler
     * @chainable
     * @example
-    *     link.off('click', callback);
-    *     link.off();
+    *    
+    *      ugma.query("#foo").off();
+    *    
+    *      ugma.query("#foo").off("click", function() {
+    *        // ...
+    *      });
     */
     off( eventType, selector, callback ) {
         if ( !is( eventType,"string" ) ) minErr("off()", "The first argument need to be a string" );
