@@ -28,7 +28,11 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     },
     // filter for escaping unsafe XML characters: <, >, &, ', " and
     // prevent XSS attacks
-    escapeChars = ( str ) => str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] ),
+    escapeChars = ( str ) => {
+       // always make sure the'str' argument is a string, in a few 'rare' 
+       // cases it could be an array, and ugma will throw
+       return is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] )
+    },
     process = ( template ) => {
 
     let stack = [];
