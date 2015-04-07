@@ -39,7 +39,7 @@ implement({
    *
    *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
    *
-   *   ugma.query('rectangle').width();
+   *   ugma.query('#rectangle').width();
    *      // -> 200
    */    
    width() { return this.offset().width },
@@ -51,7 +51,7 @@ implement({
    *
    *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
    *
-   *   ugma.query('rectangle').height();
+   *   ugma.query('#rectangle').height();
    *      // -> 100
    */    
    height() { return this.offset().height }

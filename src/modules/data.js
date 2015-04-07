@@ -9,7 +9,7 @@ import { readData                  } from "../util/readData";
 
 implement({
   /**
-   * Getter/setter of a data entry value. Tries to read the appropriate
+   * Get / set a key/value pair of custom metadata on the element. Tries to read the appropriate
    * HTML5 data-* attribute if it exists
    * @param  {String|Object|Array}  key(s)  data key or key/value object or array of keys
    * @param  {Object}               [value] data value to store

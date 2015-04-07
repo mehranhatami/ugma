@@ -50,11 +50,11 @@ import { adjustCSS                                           } from "../util/adj
              
              var getValue = ( name ) => {
                  var getter = styleAccessor.get[ name ] || styleAccessor._default( name, style ),
-
+                     // Try inline styles first
                      value = is( getter, "function" ) ? getter( style ) : style[ getter ];
 
-                 if ( !value ) {
-
+                 if ( !value || value === "auto" ) {
+                     // Reluctantly retrieve the computed style.
                      if ( !computed ) computed = computeStyle(node, "" );
 
                      value = is( getter, "function" ) ? getter( computed ) : computed[ getter ];
