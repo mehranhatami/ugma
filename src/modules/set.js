@@ -59,11 +59,11 @@ implement({
             // handle executable functions
             if (is(value, "function")) value = value( this );
 
-            if ( hook ) {
-                hook( node, value );
-            } else if ( value == null ) {
+            if ( value == null ) {
                 // removes an attribute from an HTML element.
                 node.removeAttribute( name || name.toLowerCase() );
+            } else if ( hook ) {
+                hook( node, value );
             } else if ( name in node ) {
                 node[ name ] = value;
             } else {

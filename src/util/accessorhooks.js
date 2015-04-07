@@ -9,7 +9,6 @@ import { minErr                                  } from "../minErr";
 import   support                                   from "../util/support";
 
 var langFix = /_/g,
-    removeAttr = ( node, key ) => node.removeAttribute( key ),
     accessorHooks = {
         // boolean attributes
         booleans: {},
@@ -39,6 +38,7 @@ var langFix = /_/g,
                 }
                 return node.value;
             },
+
             undefined: ( node ) => {
                 switch ( node.tagName ) {
                     case "SELECT":
@@ -54,41 +54,24 @@ var langFix = /_/g,
         // setter
         set: {
             lang: ( node, value ) => {
-
-                // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                if ( value == null ) {
-                    removeAttr( node, "lang" );
-                } else {
-                    // correct locale browser language before setting the attribute             
-                    // e.g. from zh_CN to zh-cn, from en_US to en-us
-                    node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() );
-                }
+                // correct locale browser language before setting the attribute             
+                // e.g. from zh_CN to zh-cn, from en_US to en-us
+                node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() );
             },
 
             style: ( node, value ) => {
-                // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                if ( value == null ) {
-                    removeAttr(node, "style" );
-                } else {
-                    node.style.cssText = value;
-                }
+                node.style.cssText = value;
             },
             title: ( node, value ) => {
-                // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                if ( value == null ) {
-                    removeAttr( node, "title" );
-                } else {
+                var doc = node.ownerDocument;
 
-                    var doc = node.ownerDocument;
-
-                    ( node === doc.documentElement ? doc : node ).title = value;
-                }
+                ( node === doc.documentElement ? doc : node ).title = value;
             },
-            value: (node, value) => {
+            value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
                     // selectbox has special case
-                    if ( every.call( node.options, ( o ) => !( o.selected = o.value === value ) ) ) node.selectedIndex = -1;
+                    if ( every.call(node.options, ( o ) => !( o.selected = o.value === value ) ) ) node.selectedIndex = -1;
 
                 } else {
                     node.value = value;
@@ -149,16 +132,16 @@ if ( !support.optSelected ) {
 
 // Attributes that are booleans
 each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
+      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
-    accessorHooks.set[ name.toLowerCase() ] = ( node, value ) => {
+    accessorHooks.set[ key.toLowerCase() ] = ( node, value ) => {
        // completely remove the boolean attributes when set to false, otherwise set it to true
-        node[ name ] = !!value ? true : false;
+        node[ key ] = !!value ? true : false;
         // set / remove boolean attributes
         node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
        // booleans
-    accessorHooks.booleans[ name.toLowerCase() ] = name;
+    accessorHooks.booleans[ key.toLowerCase() ] = key;
     };
 });
 

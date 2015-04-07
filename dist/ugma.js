@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 07:40:46 GMT
+ * Build date: Tue, 07 Apr 2015 07:49:36 GMT
  */
 (function() {
     "use strict";
@@ -668,7 +668,6 @@
     var util$support$$default = util$support$$support;
 
     var util$accessorhooks$$langFix = /_/g,
-        util$accessorhooks$$removeAttr = function( node, key )  {return node.removeAttribute( key )},
         util$accessorhooks$$accessorHooks = {
             // boolean attributes
             booleans: {},
@@ -698,6 +697,7 @@
                     }
                     return node.value;
                 },
+    
                 undefined: function( node )  {
                     switch ( node.tagName ) {
                         case "SELECT":
@@ -713,41 +713,24 @@
             // setter
             set: {
                 lang: function( node, value )  {
-    
-                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                    if ( value == null ) {
-                        util$accessorhooks$$removeAttr( node, "lang" );
-                    } else {
-                        // correct locale browser language before setting the attribute             
-                        // e.g. from zh_CN to zh-cn, from en_US to en-us
-                        node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
-                    }
+                    // correct locale browser language before setting the attribute             
+                    // e.g. from zh_CN to zh-cn, from en_US to en-us
+                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
                 },
     
                 style: function( node, value )  {
-                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                    if ( value == null ) {
-                        util$accessorhooks$$removeAttr(node, "style" );
-                    } else {
-                        node.style.cssText = value;
-                    }
+                    node.style.cssText = value;
                 },
                 title: function( node, value )  {
-                    // follow the DOM specs, and "always" remove an attribute, if null 'value'
-                    if ( value == null ) {
-                        util$accessorhooks$$removeAttr( node, "title" );
-                    } else {
+                    var doc = node.ownerDocument;
     
-                        var doc = node.ownerDocument;
-    
-                        ( node === doc.documentElement ? doc : node ).title = value;
-                    }
+                    ( node === doc.documentElement ? doc : node ).title = value;
                 },
-                value: function(node, value)  {
+                value: function( node, value )  {
     
                     if ( node.tagName === "SELECT" ) {
                         // selectbox has special case
-                        if ( helpers$$every.call( node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
+                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
     
                     } else {
                         node.value = value;
@@ -808,16 +791,16 @@
 
     // Attributes that are booleans
     helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
+          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
-        util$accessorhooks$$accessorHooks.set[ name.toLowerCase() ] = function( node, value )  {
+        util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
            // completely remove the boolean attributes when set to false, otherwise set it to true
-            node[ name ] = !!value ? true : false;
+            node[ key ] = !!value ? true : false;
             // set / remove boolean attributes
             node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
            // booleans
-        util$accessorhooks$$accessorHooks.booleans[ name.toLowerCase() ] = name;
+        util$accessorhooks$$accessorHooks.booleans[ key.toLowerCase() ] = key;
         };
     });
 
@@ -2360,11 +2343,11 @@
                 // handle executable functions
                 if (helpers$$is(value, "function")) value = value( this );
     
-                if ( hook ) {
-                    hook( node, value );
-                } else if ( value == null ) {
+                if ( value == null ) {
                     // removes an attribute from an HTML element.
                     node.removeAttribute( name || name.toLowerCase() );
+                } else if ( hook ) {
+                    hook( node, value );
                 } else if ( name in node ) {
                     node[ name ] = value;
                 } else {
