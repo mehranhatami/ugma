@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 07:49:36 GMT
+ * Build date: Tue, 07 Apr 2015 08:10:13 GMT
  */
 (function() {
     "use strict";
@@ -791,16 +791,21 @@
 
     // Attributes that are booleans
     helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
+          "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
-        util$accessorhooks$$accessorHooks.set[ key.toLowerCase() ] = function( node, value )  {
-           // completely remove the boolean attributes when set to false, otherwise set it to true
-            node[ key ] = !!value ? true : false;
-            // set / remove boolean attributes
-            node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
-           // booleans
-        util$accessorhooks$$accessorHooks.booleans[ key.toLowerCase() ] = key;
+        util$accessorhooks$$accessorHooks.set[ name.toLowerCase() ] = function( node, value )  {
+            
+            if ( value === false ) {
+                // completely remove the boolean attributes when set to false, otherwise set it to true
+                node[ name ] = false;
+                node.removeAttribute( name );
+            } else {
+                node[ name ] = true;
+                node.setAttribute( value, value );
+            }
+        // populate 'accessorHooks.booleans'
+        util$accessorhooks$$accessorHooks.booleans[ name.toLowerCase() ] = name;
         };
     });
 
@@ -874,7 +879,7 @@
             var node = this[0],
                 lowercasedName = name.toLowerCase();
     
-            // Check for boolean attributes
+            // Boolean attributes get special treatment
             if (util$accessorhooks$$default.booleans[lowercasedName]) {
                 // Set corresponding property to false
                 node[name] = false;
@@ -2343,9 +2348,10 @@
                 // handle executable functions
                 if (helpers$$is(value, "function")) value = value( this );
     
-                if ( value == null ) {
-                    // removes an attribute from an HTML element.
-                    node.removeAttribute( name || name.toLowerCase() );
+               // use the 'clear()' method here, so we can be 100%
+                // sure that we take good care of the boolean attributes
+               if ( value == null ) {
+                   this.clear(name);
                 } else if ( hook ) {
                     hook( node, value );
                 } else if ( name in node ) {

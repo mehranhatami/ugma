@@ -59,9 +59,10 @@ implement({
             // handle executable functions
             if (is(value, "function")) value = value( this );
 
-            if ( value == null ) {
-                // removes an attribute from an HTML element.
-                node.removeAttribute( name || name.toLowerCase() );
+           // use the 'clear()' method here, so we can be 100%
+            // sure that we take good care of the boolean attributes
+           if ( value == null ) {
+               this.clear(name);
             } else if ( hook ) {
                 hook( node, value );
             } else if ( name in node ) {

@@ -132,16 +132,21 @@ if ( !support.optSelected ) {
 
 // Attributes that are booleans
 each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( key ) {
+      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
     // For Boolean attributes we need to give them a special treatment, and set 
     // the corresponding property to either true or false
-    accessorHooks.set[ key.toLowerCase() ] = ( node, value ) => {
-       // completely remove the boolean attributes when set to false, otherwise set it to true
-        node[ key ] = !!value ? true : false;
-        // set / remove boolean attributes
-        node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
-       // booleans
-    accessorHooks.booleans[ key.toLowerCase() ] = key;
+    accessorHooks.set[ name.toLowerCase() ] = ( node, value ) => {
+        
+        if ( value === false ) {
+			// completely remove the boolean attributes when set to false, otherwise set it to true
+			node[ name ] = false;
+            node.removeAttribute( name );
+		} else {
+			node[ name ] = true;
+			node.setAttribute( value, value );
+		}
+    // populate 'accessorHooks.booleans'
+    accessorHooks.booleans[ name.toLowerCase() ] = name;
     };
 });
 

@@ -32,7 +32,7 @@ implement({
         var node = this[0],
             lowercasedName = name.toLowerCase();
 
-        // Check for boolean attributes
+        // Boolean attributes get special treatment
         if (accessorhooks.booleans[lowercasedName]) {
             // Set corresponding property to false
             node[name] = false;
