@@ -10,7 +10,9 @@ import   support                                   from "../util/support";
 
 var langFix = /_/g,
     accessorHooks = {
-
+        // boolean attributes
+        booleans: {},
+        // getter
         get: {
             // special case - setting a style
             style: ( node ) => node.style.cssText,
@@ -49,7 +51,7 @@ var langFix = /_/g,
             },
             type: ( node ) => node.getAttribute( "type" ) || node.type
         },
-
+        // setter
         set: {
             lang: ( node, value ) => {
                 // correct locale browser language before setting the attribute             
@@ -101,8 +103,6 @@ var langFix = /_/g,
     support.radioValue = input.value === "t";
 })();
 
-    
-
 // Support: IE<=11+
 if ( !support.radioValue ) {
     accessorHooks.set.type = ( node, value ) => {
@@ -140,6 +140,8 @@ each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden sc
         node[ key ] = !!value ? true : false;
         // set / remove boolean attributes
         node[ !!value ? "setAttribute" : "removeAttribute" ]( value );
+       // booleans
+    accessorHooks.booleans[ key.toLowerCase() ] = key;
     };
 });
 

@@ -7,124 +7,56 @@ import { forOwn, is, isArray  } from "../helpers";
 import { minErr               } from "../minErr";
 import { RETURN_THIS          } from "../const";
 
-/**
- * uClass - class system
- *
- * NOTE!! uClass is only for *internally* usage, and should
- * not be exposed to the global scope.
- *
- * uClass *only* purpose is to provide a faster
- * 'inheritance' solution for ugma then native 
- * javascript functions such Object.create() can do.
- *
- * For the global scope we have *ugma.extend()*
- * to make it easier for end-devs to create plugins.
- *
- */
+function dummyTree() {}
 
-var uClass = () => {
+    function nodeTree(node) {
+        if (this instanceof nodeTree) {
+            if (node) {
+                this[0] = node;
+                this._ = {};
 
-    var len = arguments.length,
-        mixin = arguments[ len - 1 ],
-        SuperClass = len > 1 ? arguments[ 0 ] : null,
-        Class, SuperClassEmpty,
-        noop = () => {},
-        extend = ( obj, extension, overwrite ) => {
+                node._ugma = this;
 
-            // failsave if something goes wrong
-            if ( !obj || !extension) return obj || extension || {};
+                return this;
+            }
+        } else {
 
-            forOwn( extension, ( prop, func ) => {
-    
-                if ( overwrite === false ) {
-                
-                   if ( !( prop in obj ) ) obj[ prop ] = func;
-                
-                } else {
-                
-                    obj[ prop ] = func;
-                }
-            });
+            return node ? node._ugma || new nodeTree(node) : new dummyTree();
+        }
+    }
+
+    function domTree(node) {
+        // use documentElement for a domTree wrapper
+        return nodeTree.call(this, node.documentElement);
+    }
+
+    nodeTree.prototype = {
+        toString: function() {
+            return "<" + this[0].tagName.toLowerCase() + ">";
+        }
     };
 
-    if ( is(mixin.constructor, "object") ) {
-        Class = noop;
-    } else {
-        Class = mixin.constructor;
-        delete mixin.constructor;
-    }
+    dummyTree.prototype = new nodeTree();
+    dummyTree.prototype.toString = function() { return "" };
 
-    if (SuperClass) {
-        SuperClassEmpty = noop;
-        SuperClassEmpty.prototype = SuperClass.prototype;
-        Class.prototype = new SuperClassEmpty();
-        Class.prototype.constructor = Class;
-        Class.Super = SuperClass;
+    domTree.prototype = new nodeTree();
+    domTree.prototype.toString = function() { return "#document" };
 
-        extend( Class, SuperClass, false );
-    }
-   
-    extend( Class.prototype, mixin );
-
-    return Class;
-},
-
-  /**
-   * dummyTree class
-  */
-
-dummyTree = uClass({
-    // dummy function - does nothing
-        constructor() {},
-        toString() { return "" }
-    }),
-
-    /**
-     * nodeTree class
-     */
-    nodeTree = uClass( dummyTree, {
-        // Main constructor
-        constructor( node ) {
-
-            if ( this ) {
-
-                 this[ 0 ] = node;
-                 this._ = {};  
-  
-                 node._ugma = this;
-               
-                return this;
-            } 
-
-          return node ? node._ugma || new nodeTree( node ) : new dummyTree();
-       },
-        toString() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
-    }),
-
-    /**
-     * domTree class
-     */
-    domTree = uClass( nodeTree, {
-        constructor( node ) { return domTree.Super.call( this, node.documentElement ) },
-            toString() { return "#document" }
-    }),
-    
     /**
      * Internal method to extend ugma with methods - either 
      * the nodeTree or the domTree
      */
-    implement = ( obj, callback, mixin ) => {
+    var implement = (obj, callback, mixin) => {
 
-        if ( !callback ) callback = ( method, strategy ) => strategy;
+            if (!callback) callback = (method, strategy) => strategy;
 
-        forOwn( obj, ( method, func ) => {
-            var args = [ method ].concat( func );
-            (mixin ? nodeTree : domTree).prototype[ method ] = callback.apply( null, args );
+            forOwn(obj, (method, func) => {
+                var args = [method].concat(func);
+                (mixin ? nodeTree : domTree).prototype[method] = callback.apply(null, args);
 
-            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
-        });
-    },
-    
+                if (mixin) dummyTree.prototype[method] = mixin.apply(null, args);
+            });
+        },
   /**
    * Internal 'instanceOf' method
    */

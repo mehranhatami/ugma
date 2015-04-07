@@ -14,7 +14,16 @@ implement({
    * @chainable
    * @example
    * 
-   *    link.has('fooBar');  true / false
+   *
+   *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
+   *
+   *      ugma.query("#test").has("checked");
+   *      // false
+   *
+   *      ugma.query("#test").set("checked", "checked");
+   *
+   *      ugma.query("#test").has("checked");
+   *      // true
    */
    has(name) {
         if ( !is( name, "string" ) ) minErr( "has()", "Not a valid property/attribute" );

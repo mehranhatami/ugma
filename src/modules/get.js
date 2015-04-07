@@ -16,8 +16,17 @@ implement({
    * @return {String|Object} a value of property or attribute
    * @chainable
    * @example
-   *   link.get('attrName');    // get
-   *   link.get('data-fooBar'); // get
+   *
+   *   <a id="tag" href="/tags/prototype" rel="tag" title="view related bookmarks." my_widget="some info.">Hatami</a>
+   *
+   *      ugma.query('#tag').get('href');
+   *      // -> '/tags/prototype'
+   *
+   *      ugma.query('#tag').get('title');
+   *      // -> 'view related bookmarks.'
+   *
+   *      ugma.query('#tag').get('my_widget');
+   *      // -> 'some info.'
    */
    
     get(name) {
