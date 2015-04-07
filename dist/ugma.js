@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.1
+ * Javascript framework 0.0.2a
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 11:35:24 GMT
+ * Build date: Tue, 07 Apr 2015 11:46:06 GMT
  */
 (function() {
     "use strict";
@@ -3013,9 +3013,9 @@
         // filter for escaping unsafe XML characters: <, >, &, ', " and
         // prevent XSS attacks
         template$process$$escapeChars = function( str )  {
-         // always make sure  the'str' argument is a string , in a few 'rare' 
-         //  cases, the 'str' argument could be an array and ugma will throw
-           return helpers$$is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} )
+           // always make sure the'str' argument is a string, in a few 'rare' 
+           // cases it could be an array, and ugma will throw
+           return helpers$$is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} );
         },
         template$process$$process = function( template )  {
     
@@ -3161,7 +3161,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.1";
+    core$core$$ugma.version = "0.0.2a";
 
     WINDOW.ugma = core$core$$ugma;
 })();

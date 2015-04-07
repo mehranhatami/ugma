@@ -1,6 +1,6 @@
 {
   "name": "ugma",
-  "version": "0.0.1",
+  "version": "0.0.2a",
   "codename": "trackira",
   "main": [
     "dist/ugma.js"

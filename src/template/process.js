@@ -31,7 +31,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     escapeChars = ( str ) => {
        // always make sure the'str' argument is a string, in a few 'rare' 
        // cases it could be an array, and ugma will throw
-       return is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] )
+       return is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] );
     },
     process = ( template ) => {
 
