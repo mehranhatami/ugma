@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 08:49:47 GMT
+ * Build date: Tue, 07 Apr 2015 11:35:24 GMT
  */
 (function() {
     "use strict";
@@ -3012,7 +3012,11 @@
         },
         // filter for escaping unsafe XML characters: <, >, &, ', " and
         // prevent XSS attacks
-        template$process$$escapeChars = function( str )  {return str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} )},
+        template$process$$escapeChars = function( str )  {
+         // always make sure  the'str' argument is a string , in a few 'rare' 
+         //  cases, the 'str' argument could be an array and ugma will throw
+           return helpers$$is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} )
+        },
         template$process$$process = function( template )  {
     
         var stack = [];
