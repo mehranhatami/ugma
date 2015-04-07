@@ -33,7 +33,7 @@ implement({
              name = el.name;
 
             if ( el.disabled || !name ) continue;
-
+/* jshint ignore:start */
             switch ( el.type ) {
                 case "select-multiple":
 
@@ -42,7 +42,7 @@ implement({
                 case "select-one":
 
                     for ( nodeOptions = ( el.options ), i = 0, len = nodeOptions.length; i < len; ) {
-                        option = ( wrapped[ i++ ] );
+                        option = ( nodeOptions[ i++ ] );
                         if ( option.selected ) {
                             if ( name in result ) {
                                 result[ name ].push( option.value );
@@ -77,6 +77,7 @@ implement({
                 default:
                     result[ name ] = el.value;
             }
+/* jshint ignore:end */
         }
 
         return result;
