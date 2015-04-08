@@ -3,7 +3,7 @@
  */
 
 import { WINDOW, INTERNET_EXPLORER, RETURN_FALSE    } from "../const";
-import { domTree, ugma, implement                   } from "../core/core";
+import { DOM, ugma, implement                   } from "../core/core";
 
 // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
 // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
@@ -40,7 +40,7 @@ implement({
 
         if (data[ 0 ] ) {
             // callback is always async
-            WINDOW.setTimeout(() => { callback(data[ 1 ] ) }, 1 );
+            WINDOW.setTimeout( () => { callback(data[ 1 ] ) }, 1 );
 
             return data[ 0 ];
         }
@@ -53,7 +53,7 @@ implement({
             if ( ctx.addClass( name ).css( "position" ) === "static" ) ctx.css( "position", "relative" );
 
             // store new context root internally and invoke callback
-            callback( data[ 1 ] = new domTree( object.contentDocument ) );
+            callback( data[ 1 ] = new DOM( object.contentDocument ) );
         };
 
         this.before( ctx );

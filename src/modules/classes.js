@@ -32,9 +32,7 @@ implement({
     addClass: [ "add", true, ( node, token ) => {
         var existingClasses = ( " " + node[ 0 ].className + " " ).replace( reClass, " " );
 
-        if ( existingClasses.indexOf( " " + token + " " ) === -1 ) {
-            existingClasses += token + " ";
-        }
+        if ( existingClasses.indexOf( " " + token + " " ) === -1 ) existingClasses += token + " ";
 
         node[ 0 ].className = trim(existingClasses);
     }],
@@ -53,8 +51,7 @@ implement({
     *      // -> 'apple fruit'
     */
     removeClass: [ "remove", true, ( node, token ) => {
-        node[ 0 ].className = (" " + node[ 0 ].className + " ")
-            .replace(reClass, " ").replace(" " + token + " ", " ");
+        node[ 0 ].className = (" " + node[ 0 ].className + " ").replace(reClass, " ").replace(" " + token + " ", " ");
     }],
    /**
     * Check if element contains class name
@@ -136,7 +133,7 @@ implement({
                 
                 for (var i = 0, len = arguments.length; i < len; i++) {    
                 
-                if ( !is(arguments[ i ], "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
+                if ( !is( arguments[ i ], "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
 
                 strategy( this, arguments[ i ] );
             }

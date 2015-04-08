@@ -4,7 +4,7 @@
 
 import { slice, map, is        } from "../helpers";
 import { WINDOW                } from "../const";
-import { nodeTree              } from "../core/core";
+import { Nodes              } from "../core/core";
 import   SelectorMatcher         from "./selectormatcher";
 import   eventhooks              from "./eventhooks";
 
@@ -14,9 +14,9 @@ var getEventProperty = (name, e, eventType, node, target, currentTarget) => {
     
     switch( name ) {
      case "type":              return eventType;
-     case "target":            return nodeTree( target );
-     case "currentTarget":     return nodeTree( currentTarget );
-     case "relatedTarget":     return nodeTree( e.relatedTarget );  
+     case "target":            return Nodes( target );
+     case "currentTarget":     return Nodes( currentTarget );
+     case "relatedTarget":     return Nodes( e.relatedTarget );  
     }
 
     var value = e[ name ];

@@ -3,7 +3,7 @@
  */
 
 
-import { implement, nodeTree  } from "../core/core";
+import { implement, Nodes  } from "../core/core";
 import { RETURN_FALSE, HTML   } from "../const";
 
 implement({
@@ -22,12 +22,12 @@ implement({
             offsetParent = node.offsetParent || HTML,
             isInline = this.css( "display" ) === "inline";
 
-        if ( !isInline && offsetParent ) return nodeTree( offsetParent );
+        if ( !isInline && offsetParent ) return Nodes( offsetParent );
 
-        while ( offsetParent && nodeTree(offsetParent).css( "position" ) === "static" ) {
+        while ( offsetParent && Nodes(offsetParent).css( "position" ) === "static" ) {
             offsetParent = offsetParent.offsetParent;
         }
 
-        return nodeTree( offsetParent );
+        return Nodes( offsetParent );
     }
 }, null, () => RETURN_FALSE);

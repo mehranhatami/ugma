@@ -2,7 +2,7 @@
  * @module closest
  */
 
-import { nodeTree, dummyTree, implement  } from "../core/core";
+import { Nodes, Shallow, implement       } from "../core/core";
 import   SelectorMatcher                   from "../util/selectormatcher";
 import { is                              } from "../helpers";
 import { minErr                          } from "../minErr";
@@ -41,6 +41,6 @@ implement({
         for (; parentNode; parentNode = parentNode.parentElement )
            if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) break;
 
-        return nodeTree( parentNode );
+        return Nodes( parentNode );
     }
-}, null, () => () => new dummyTree() );
+}, null, () => () => new Shallow() );

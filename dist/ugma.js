@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.3a
+ * Javascript framework 0.0.3b
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 13:10:22 GMT
+ * Build date: Wed, 08 Apr 2015 14:33:41 GMT
  */
 (function() {
     "use strict";
@@ -302,19 +302,19 @@
     },
     
       /**
-       * dummyTree class
+       * Shallow class
       */
     
-    core$core$$dummyTree = core$core$$uClass({
+    core$core$$Shallow = core$core$$uClass({
         // dummy function - does nothing
             constructor: function() {},
             toString: function() { return "" }
         }),
     
         /**
-         * nodeTree class
+         * Nodes class
          */
-        core$core$$nodeTree = core$core$$uClass( core$core$$dummyTree, {
+        core$core$$Nodes = core$core$$uClass( core$core$$Shallow, {
             // Main constructor
             constructor: function(node) {
     
@@ -328,22 +328,22 @@
                     return this;
                 } 
     
-              return node ? node._ugma || new core$core$$nodeTree( node ) : new core$core$$dummyTree();
+              return node ? node._ugma || new core$core$$Nodes( node ) : new core$core$$Shallow();
            },
             toString: function() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
         }),
     
         /**
-         * domTree class
+         * DOM class
          */
-        core$core$$domTree = core$core$$uClass( core$core$$nodeTree, {
-            constructor: function(node) { return core$core$$domTree.Super.call( this, node.documentElement ) },
+        core$core$$DOM = core$core$$uClass( core$core$$Nodes, {
+            constructor: function(node) { return core$core$$DOM.Super.call( this, node.documentElement ) },
                 toString: function() { return "#document" }
         }),
         
         /**
          * Internal method to extend ugma with methods - either 
-         * the nodeTree or the domTree
+         * the Nodes or the DOM
          */
         core$core$$implement = function( obj, callback, mixin )  {
     
@@ -351,9 +351,9 @@
     
             helpers$$forOwn( obj, function( method, func )  {
                 var args = [ method ].concat( func );
-                (mixin ? core$core$$nodeTree : core$core$$domTree).prototype[ method ] = callback.apply( null, args );
+                (mixin ? core$core$$Nodes : core$core$$DOM).prototype[ method ] = callback.apply( null, args );
     
-                if ( mixin ) core$core$$dummyTree.prototype[ method ] = mixin.apply( null, args );
+                if ( mixin ) core$core$$Shallow.prototype[ method ] = mixin.apply( null, args );
             });
         },
         
@@ -366,7 +366,7 @@
 
     // Set a new document, and define a local copy of ugma
 
-    var core$core$$ugma = new core$core$$domTree( DOCUMENT );
+    var core$core$$ugma = new core$core$$DOM( DOCUMENT );
 
     /**
       * Extend ugma with methods
@@ -506,14 +506,14 @@
         if ( all ) {
             if ( matcher ) children = helpers$$filter( children, matcher );
     
-            return helpers$$map(children, core$core$$nodeTree);
+            return helpers$$map(children, core$core$$Nodes);
         } 
             // Avoid negative children, normalize to 0
         if ( selector < 0 ) selector = children.length + selector;
     
-           return core$core$$nodeTree( children[ selector ] );
+           return core$core$$Nodes( children[ selector ] );
         
-    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
+    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$Shallow()}} );
 
     /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -540,9 +540,7 @@
         addClass: [ "add", true, function( node, token )  {
             var existingClasses = ( " " + node[ 0 ].className + " " ).replace( modules$classes$$reClass, " " );
     
-            if ( existingClasses.indexOf( " " + token + " " ) === -1 ) {
-                existingClasses += token + " ";
-            }
+            if ( existingClasses.indexOf( " " + token + " " ) === -1 ) existingClasses += token + " ";
     
             node[ 0 ].className = helpers$$trim(existingClasses);
         }],
@@ -561,8 +559,7 @@
         *      // -> 'apple fruit'
         */
         removeClass: [ "remove", true, function( node, token )  {
-            node[ 0 ].className = (" " + node[ 0 ].className + " ")
-                .replace(modules$classes$$reClass, " ").replace(" " + token + " ", " ");
+            node[ 0 ].className = (" " + node[ 0 ].className + " ").replace(modules$classes$$reClass, " ").replace(" " + token + " ", " ");
         }],
        /**
         * Check if element contains class name
@@ -644,7 +641,7 @@
                     
                     for (var i = 0, len = arguments.length; i < len; i++) {    
                     
-                    if ( !helpers$$is(arguments[ i ], "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
+                    if ( !helpers$$is( arguments[ i ], "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
     
                     strategy( this, arguments[ i ] );
                 }
@@ -657,31 +654,6 @@
           
           return RETURN_THIS;
       });
-
-    core$core$$implement({
-        /**
-         * Clear a property/attribute on the node
-         * @param  {String}   name    property/attribute name
-         * @example 
-         *
-         *   <a id='test' href='#'>set-test</a><input id='set_input'/><input id='set_input1'/><form id='form' action='formaction'>
-         *
-         *      ugma.query("#test").has("checked");
-         *      // false
-         *
-         *      ugma.query("#test").set("checked", "checked");
-         *
-         *      ugma.query("#test").has("checked");
-         *      // true
-         *
-         *     ugma.query("#test").clear("checked");
-         *
-         *     ugma.query("#test").has("checked");
-         *     // false
-         */
-        clear: function(name) { return this.set(name, null) }
-    
-    }, null, function()  {return RETURN_THIS});
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
@@ -713,9 +685,9 @@
             
             if ( !helpers$$is( deep, "boolean" ) ) minErr$$minErr( "clone()", "This element can not be cloned." );
             
-            return new core$core$$nodeTree( this[ 0 ].cloneNode( deep) );
+            return new core$core$$Nodes( this[ 0 ].cloneNode( deep) );
         }
-    }, null, function()  {return function()  {return new core$core$$dummyTree()}} );
+    }, null, function()  {return function()  {return new core$core$$Shallow()}} );
 
     // Reference: https://dom.spec.whatwg.org/#dom-element-closest 
 
@@ -751,9 +723,9 @@
             for (; parentNode; parentNode = parentNode.parentElement )
                if (parentNode.nodeType === 1 && ( !matches || matches( parentNode ) ) ) break;
     
-            return core$core$$nodeTree( parentNode );
+            return core$core$$Nodes( parentNode );
         }
-    }, null, function()  {return function()  {return new core$core$$dummyTree()}} );
+    }, null, function()  {return function()  {return new core$core$$Shallow()}} );
 
     core$core$$implement({
      /**
@@ -1240,9 +1212,9 @@
         
         switch( name ) {
          case "type":              return eventType;
-         case "target":            return core$core$$nodeTree( target );
-         case "currentTarget":     return core$core$$nodeTree( currentTarget );
-         case "relatedTarget":     return core$core$$nodeTree( e.relatedTarget );  
+         case "target":            return core$core$$Nodes( target );
+         case "currentTarget":     return core$core$$Nodes( currentTarget );
+         case "relatedTarget":     return core$core$$Nodes( e.relatedTarget );  
         }
     
         var value = e[ name ];
@@ -1852,7 +1824,7 @@
        /**
         *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1865,7 +1837,7 @@
        /**
         * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1877,7 +1849,7 @@
        /**
         * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1890,7 +1862,7 @@
        /**
         * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1903,7 +1875,7 @@
        /**
         * Replace current element with HTMLString or a ugma wrapped object
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1917,7 +1889,7 @@
        /**
         * Remove current element from the DOM
         *
-        * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+        * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
         * @return {Object} The wrapped collection
         * @chainable
         * @example
@@ -1947,7 +1919,7 @@
     
             // Handle native DOM elements 
             // e.g. link.append(document.createElement('li'));
-            if ( native && content.nodeType === 1 ) content = core$core$$nodeTree( content );
+            if ( native && content.nodeType === 1 ) content = core$core$$Nodes( content );
     
             if ( helpers$$is( content, "function" ) ) content = content( this$0 );
     
@@ -2144,13 +2116,13 @@
                 offsetParent = node.offsetParent || HTML,
                 isInline = this.css( "display" ) === "inline";
     
-            if ( !isInline && offsetParent ) return core$core$$nodeTree( offsetParent );
+            if ( !isInline && offsetParent ) return core$core$$Nodes( offsetParent );
     
-            while ( offsetParent && core$core$$nodeTree(offsetParent).css( "position" ) === "static" ) {
+            while ( offsetParent && core$core$$Nodes(offsetParent).css( "position" ) === "static" ) {
                 offsetParent = offsetParent.offsetParent;
             }
     
-            return core$core$$nodeTree( offsetParent );
+            return core$core$$Nodes( offsetParent );
         }
     }, null, function()  {return RETURN_FALSE});
 
@@ -2212,7 +2184,7 @@
                 if ( (old = node.getAttribute( "id" )) ) {
                     nid = old.replace( modules$query$$rescape, "\\$&" );
                 } else {
-                    nid = "__ugma_trackira__";
+                    nid = "__ugma_mehran__";
                     node.setAttribute("id", nid);
                 }
     
@@ -2226,9 +2198,9 @@
             if (!old) node.removeAttribute("id");
         }
     
-            return all ? helpers$$map(result, core$core$$nodeTree) : core$core$$nodeTree(result);
+            return all ? helpers$$map(result, core$core$$Nodes) : core$core$$Nodes(result);
             
-    }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$dummyTree()}});
+    }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$Shallow()}});
 
     var modules$ready$$readyCallbacks = [],
         // Supports: IE9+
@@ -2425,7 +2397,7 @@
     
             if (data[ 0 ] ) {
                 // callback is always async
-                WINDOW.setTimeout(function()  { callback(data[ 1 ] ) }, 1 );
+                WINDOW.setTimeout( function()  { callback(data[ 1 ] ) }, 1 );
     
                 return data[ 0 ];
             }
@@ -2438,7 +2410,7 @@
                 if ( ctx.addClass( name ).css( "position" ) === "static" ) ctx.css( "position", "relative" );
     
                 // store new context root internally and invoke callback
-                callback( data[ 1 ] = new core$core$$domTree( object.contentDocument ) );
+                callback( data[ 1 ] = new core$core$$DOM( object.contentDocument ) );
             };
     
             this.before( ctx );
@@ -2628,8 +2600,8 @@
             }
         }
     
-        return all ? helpers$$map( descendants, core$core$$nodeTree ) : core$core$$nodeTree( currentNode );
-    }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$dummyTree()}} );
+        return all ? helpers$$map( descendants, core$core$$Nodes ) : core$core$$Nodes( currentNode );
+    }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$Shallow()}} );
 
     core$core$$implement({
         /**
@@ -2975,13 +2947,13 @@
 
     core$core$$implement({
          /**
-         * Create a new nodeTree from Emmet or HTML string in memory
+         * Create a new DOM node from Emmet or HTML string in memory
          * @param  {String}       value     Emmet or HTML string
          * @param  {Object|Array} [varMap]  key/value map of variables
          */
         render: "",
         /**
-         * Create a new array of nodeTree from Emmet or HTML string in memory
+         * Create a new array of Nodes from Emmet or HTML string in memory
          * @param  {String}       value     Emmet or HTML string
          * @param  {Object|Array} [varMap]  key/value map of variables
          * @function
@@ -2992,7 +2964,7 @@
     
         // Create native DOM elements
         // e.g. "document.createElement('div')"
-        if (value.nodeType === 1) return core$core$$nodeTree(value);
+        if (value.nodeType === 1) return core$core$$Nodes(value);
     
         if (!helpers$$is(value, "string")) minErr$$minErr(methodName + "()", "Not supported.");
     
@@ -3005,7 +2977,7 @@
     
             nodes = doc.createElement( value );
     
-            if ( all ) nodes = [ new core$core$$nodeTree( nodes ) ];
+            if ( all ) nodes = [ new core$core$$Nodes( nodes ) ];
     
         } else {
     
@@ -3029,7 +3001,7 @@
                 if (el.nodeType === 1) {
     
                     if ( all ) {
-                        nodes.push( new core$core$$nodeTree( el ) );
+                        nodes.push( new core$core$$Nodes( el ) );
                     } else {
                         nodes = el;
     
@@ -3038,16 +3010,16 @@
                 }
             }
         }
-        return all ? nodes : core$core$$nodeTree( nodes );
+        return all ? nodes : core$core$$Nodes( nodes );
     }});
     // Current codename on the framework.
-    core$core$$ugma.version = "trackira";
+    core$core$$ugma.version = "mehran";
 
     // Create a ugma wrapper object for a native DOM element or a
     // jQuery element. E.g. (ugma.native($('#foo')[0]))
     core$core$$ugma.native = function(node)  {
         var nodeType = node && node.nodeType;
-        return ( nodeType === 9 ? core$core$$domTree : core$core$$nodeTree )( nodeType === 1 || nodeType === 9 ? node : null );
+        return ( nodeType === 9 ? core$core$$DOM : core$core$$Nodes )( nodeType === 1 || nodeType === 9 ? node : null );
     };
 
     /*
@@ -3071,7 +3043,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.3a";
+    core$core$$ugma.version = "0.0.3b";
 
     WINDOW.ugma = core$core$$ugma;
 })();

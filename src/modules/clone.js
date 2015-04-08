@@ -2,7 +2,7 @@
  * @module clone
  */
 
-import { nodeTree, dummyTree, implement } from "../core/core";
+import { Nodes, Shallow, implement } from "../core/core";
 import { minErr                         } from "../minErr";
 import { is                             } from "../helpers";
 
@@ -36,6 +36,6 @@ implement({
         
         if ( !is( deep, "boolean" ) ) minErr( "clone()", "This element can not be cloned." );
         
-        return new nodeTree( this[ 0 ].cloneNode( deep) );
+        return new Nodes( this[ 0 ].cloneNode( deep) );
     }
-}, null, () => () => new dummyTree() );
+}, null, () => () => new Shallow() );

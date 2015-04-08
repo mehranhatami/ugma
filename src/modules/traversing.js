@@ -7,7 +7,7 @@
  * http://www.w3.org/TR/ElementTraversal/
  */
 
-import { nodeTree, dummyTree, implement  } from "../core/core";
+import { Nodes, Shallow, implement       } from "../core/core";
 import SelectorMatcher                     from "../util/selectormatcher";
 import { is, map                         } from "../helpers";
 import { minErr                          } from "../minErr";
@@ -153,5 +153,5 @@ implement({
         }
     }
 
-    return all ? map( descendants, nodeTree ) : nodeTree( currentNode );
-}, ( methodName ) => () => methodName.slice( -3 ) === "All" ? [] : new dummyTree() );
+    return all ? map( descendants, Nodes ) : Nodes( currentNode );
+}, ( methodName ) => () => methodName.slice( -3 ) === "All" ? [] : new Shallow() );

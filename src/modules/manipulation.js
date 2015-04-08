@@ -3,7 +3,7 @@
  */
 
 import { RETURN_THIS                           } from "../const";
-import { ugma, nodeTree, implement, instanceOf } from "../core/core";
+import { ugma, Nodes, implement, instanceOf    } from "../core/core";
 import { minErr                                } from "../minErr";
 import { isArray, trim, each, is, sliceArgs    } from "../helpers";
 
@@ -16,7 +16,7 @@ implement({
    /**
     *  Append HTMLString, native DOM element or a ugma wrapped object to the current element
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -29,7 +29,7 @@ implement({
    /**
     * Prepend  HTMLString, native DOM element or a ugma wrapped object to the current element
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -41,7 +41,7 @@ implement({
    /**
     * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -54,7 +54,7 @@ implement({
    /**
     * Insert HTMLString, native DOM element or a ugma wrapped object after the current element
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -67,7 +67,7 @@ implement({
    /**
     * Replace current element with HTMLString or a ugma wrapped object
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -81,7 +81,7 @@ implement({
    /**
     * Remove current element from the DOM
     *
-    * @param {Mixed} content HTMLString, nodeTree, native DOM element or functor that returns content
+    * @param {Mixed} content HTMLString, Nodes, native DOM element or functor that returns content
     * @return {Object} The wrapped collection
     * @chainable
     * @example
@@ -111,7 +111,7 @@ implement({
 
         // Handle native DOM elements 
         // e.g. link.append(document.createElement('li'));
-        if ( native && content.nodeType === 1 ) content = nodeTree( content );
+        if ( native && content.nodeType === 1 ) content = Nodes( content );
 
         if ( is( content, "function" ) ) content = content( this );
 

@@ -4,19 +4,19 @@
 
 import { ERROR_MSG                 } from "../const";
 import { minErr                    } from "../minErr";
-import { ugma, nodeTree, implement } from "../core/core";
+import { ugma, Nodes, implement } from "../core/core";
 import   tagCache                    from "../template/template";
 import { reduce, is, trim          } from "../helpers";
 
 implement({
      /**
-     * Create a new nodeTree from Emmet or HTML string in memory
+     * Create a new DOM node from Emmet or HTML string in memory
      * @param  {String}       value     Emmet or HTML string
      * @param  {Object|Array} [varMap]  key/value map of variables
      */
     render: "",
     /**
-     * Create a new array of nodeTree from Emmet or HTML string in memory
+     * Create a new array of Nodes from Emmet or HTML string in memory
      * @param  {String}       value     Emmet or HTML string
      * @param  {Object|Array} [varMap]  key/value map of variables
      * @function
@@ -27,7 +27,7 @@ implement({
 
     // Create native DOM elements
     // e.g. "document.createElement('div')"
-    if (value.nodeType === 1) return nodeTree(value);
+    if (value.nodeType === 1) return Nodes(value);
 
     if (!is(value, "string")) minErr(methodName + "()", "Not supported.");
 
@@ -40,7 +40,7 @@ implement({
 
         nodes = doc.createElement( value );
 
-        if ( all ) nodes = [ new nodeTree( nodes ) ];
+        if ( all ) nodes = [ new Nodes( nodes ) ];
 
     } else {
 
@@ -64,7 +64,7 @@ implement({
             if (el.nodeType === 1) {
 
                 if ( all ) {
-                    nodes.push( new nodeTree( el ) );
+                    nodes.push( new Nodes( el ) );
                 } else {
                     nodes = el;
 
@@ -73,5 +73,5 @@ implement({
             }
         }
     }
-    return all ? nodes : nodeTree( nodes );
+    return all ? nodes : Nodes( nodes );
 });

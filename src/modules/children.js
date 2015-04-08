@@ -3,7 +3,7 @@
  */
 
 import { minErr                          } from "../minErr";
-import { implement, nodeTree, dummyTree  } from "../core/core";
+import { implement, Nodes, Shallow  } from "../core/core";
 import   SelectorMatcher                  from "../util/selectormatcher";
 import { map, filter, is                 } from "../helpers";
 
@@ -40,11 +40,11 @@ implement({
     if ( all ) {
         if ( matcher ) children = filter( children, matcher );
 
-        return map(children, nodeTree);
+        return map(children, Nodes);
     } 
         // Avoid negative children, normalize to 0
     if ( selector < 0 ) selector = children.length + selector;
 
-       return nodeTree( children[ selector ] );
+       return Nodes( children[ selector ] );
     
-}, ( methodName, all ) => () => all ? [] : new dummyTree() );
+}, ( methodName, all ) => () => all ? [] : new Shallow() );

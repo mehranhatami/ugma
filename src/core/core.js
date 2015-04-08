@@ -70,19 +70,19 @@ var uClass = () => {
 },
 
   /**
-   * dummyTree class
+   * Shallow class
   */
 
-dummyTree = uClass({
+Shallow = uClass({
     // dummy function - does nothing
         constructor() {},
         toString() { return "" }
     }),
 
     /**
-     * nodeTree class
+     * Nodes class
      */
-    nodeTree = uClass( dummyTree, {
+    Nodes = uClass( Shallow, {
         // Main constructor
         constructor( node ) {
 
@@ -96,22 +96,22 @@ dummyTree = uClass({
                 return this;
             } 
 
-          return node ? node._ugma || new nodeTree( node ) : new dummyTree();
+          return node ? node._ugma || new Nodes( node ) : new Shallow();
        },
         toString() { return "<" + this[ 0 ].tagName.toLowerCase() + ">" }
     }),
 
     /**
-     * domTree class
+     * DOM class
      */
-    domTree = uClass( nodeTree, {
-        constructor( node ) { return domTree.Super.call( this, node.documentElement ) },
+    DOM = uClass( Nodes, {
+        constructor( node ) { return DOM.Super.call( this, node.documentElement ) },
             toString() { return "#document" }
     }),
     
     /**
      * Internal method to extend ugma with methods - either 
-     * the nodeTree or the domTree
+     * the Nodes or the DOM
      */
     implement = ( obj, callback, mixin ) => {
 
@@ -119,9 +119,9 @@ dummyTree = uClass({
 
         forOwn( obj, ( method, func ) => {
             var args = [ method ].concat( func );
-            (mixin ? nodeTree : domTree).prototype[ method ] = callback.apply( null, args );
+            (mixin ? Nodes : DOM).prototype[ method ] = callback.apply( null, args );
 
-            if ( mixin ) dummyTree.prototype[ method ] = mixin.apply( null, args );
+            if ( mixin ) Shallow.prototype[ method ] = mixin.apply( null, args );
         });
     },
     
@@ -134,7 +134,7 @@ dummyTree = uClass({
 
   // Set a new document, and define a local copy of ugma
     
-    var ugma = new domTree( DOCUMENT );
+    var ugma = new DOM( DOCUMENT );
 
    /**
      * Extend ugma with methods
@@ -178,4 +178,4 @@ dummyTree = uClass({
 /*
  * Export interface
  */
-export { implement, instanceOf, nodeTree, dummyTree, domTree, ugma };
+export { implement, instanceOf, Nodes, Shallow, DOM, ugma };

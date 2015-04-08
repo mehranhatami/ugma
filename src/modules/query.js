@@ -3,7 +3,7 @@
  */
 
 import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
-import { nodeTree, dummyTree, implement    } from "../core/core";
+import { Nodes, Shallow, implement         } from "../core/core";
 import { minErr                            } from "../minErr";
 import { is, map, invoke                   } from "../helpers";
 
@@ -79,6 +79,6 @@ implement({
         if (!old) node.removeAttribute("id");
     }
 
-        return all ? map(result, nodeTree) : nodeTree(result);
+        return all ? map(result, Nodes) : Nodes(result);
         
-}, (methodName, all) => () => all ? [] : new dummyTree());
+}, (methodName, all) => () => all ? [] : new Shallow());
