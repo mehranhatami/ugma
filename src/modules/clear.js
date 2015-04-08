@@ -2,8 +2,8 @@
  * @module clear
  */
 
-import { implement    } from "../core/core";
-import { RETURN_THIS  } from "../const";
+import { implement   } from "../core/core";
+import { RETURN_THIS } from "../const";
 
 implement({
     /**

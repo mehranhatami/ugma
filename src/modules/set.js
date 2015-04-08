@@ -68,7 +68,14 @@ implement({
 
         if ( is(name, "string" ) ) {
 
-            // All attributes are lowercase
+            /**
+             *
+             * The National Information Exchange Model (NIEM: http://en.wikipedia.org/wiki/National_Information_Exchange_Model) says to use:
+             *
+             * -  Upper CamelCase (PascalCase) for elements.
+             * -  lower camelCase for attributes.
+             */
+
                var lowercasedName = name.toLowerCase();
 
             // handle executable functions

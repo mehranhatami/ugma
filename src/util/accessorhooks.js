@@ -125,7 +125,7 @@ if ( !support.optSelected ) {
 // properties written as camelCase
 each((
    // 6.4.3 The tabindex attribute
-    "readOnly "         +
+    "readOnly "         +   // Whether to allow the value to be edited by the user
     "tabIndex "         +
     "maxLength "        +
     "cellSpacing "      +
@@ -146,6 +146,22 @@ each((
     "accessKey "        +
     "encType "          +
     "vAlign  "          +
+    "formAction "       +  // URL to use for form submission
+    "formMethod "       +  // HTTP method to use for form submission
+    "formNoValidate "   +  // Bypass form control validation for form submission 
+    "formTarget "       +  // Browsing context for form submission
+    "inputMode "        +  // Hint for selecting an input modality
+    "maxLength "        +  // Maximum length of value
+    "minLength "        +  // Minimum length of value
+    "defaultValue "     +
+    "valueAsDate "      +
+    "valueLow "         +
+    "valueHeight "      +
+    "willValidate "     +
+    "checkValidity "    +  // Returns true if the form's controls are all valid; otherwise, returns false.
+    "reportValidity "   +  // Returns true if the form's controls are all valid; otherwise, returns false and informs the user.
+    "selectionStart "   +
+    "selectionEnd "     +
     "longDesc" ).split( " " ), ( key )  => {
     accessorHooks.get[ key.toLowerCase() ] = ( node ) => node[ key ];
 });
