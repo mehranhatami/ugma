@@ -27,6 +27,11 @@ implement({
    *
    *      ugma.query('#tag').get('my_widget');
    *      // -> 'some info.'
+   *
+   * @other examples
+   *
+   *    link.get('attrName');              // get
+   *    link.get("data-a1");               // get data-* attribute
    */
    
     get(name) {

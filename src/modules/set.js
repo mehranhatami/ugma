@@ -20,10 +20,18 @@ implement({
    * @param {String|Object|Array}   name    property/attribute name
    * @param {String|Function}       value   property/attribute value or functor
    * @chainable
-   * @example
-   *    link.set('attrName', 'attrValue'); // set
-   *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
-   *    link.set("data-fooBar", "foo"); // set custom attribute data-custom
+   * @example 
+   *
+   *    link.set('attrName', 'attrValue');                  // set
+   *    link.set({'attr1', 'value1'}, {'attr2', 'value2});  // object with key-value pairs
+   *    link.set("data-fooBar", "foo");                     // set custom attribute data-custom
+   *    link.set(["autocomplete", "autocorrect"], "off");   // array of key values
+   *    link.set("attrName", null);                         // remove attribute / property value
+   *
+   * @boolean attributes - example
+   *
+   *    link.set("checked", checked);    // handle boolean attributes by using name as value ( better performance )
+   *    link.set("checked", true);       // set custom attribute data-custom
    */
     set( name, value ) {
 

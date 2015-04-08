@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Tue, 07 Apr 2015 11:46:06 GMT
+ * Build date: Wed, 08 Apr 2015 01:35:43 GMT
  */
 (function() {
     "use strict";
@@ -793,9 +793,12 @@
     // Attributes that are booleans
     helpers$$each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
           "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
+              
+              var attrValue = name.toLowerCase();
+    
         // For Boolean attributes we need to give them a special treatment, and set 
         // the corresponding property to either true or false
-        util$accessorhooks$$accessorHooks.set[ name.toLowerCase() ] = function( node, value )  {
+        util$accessorhooks$$accessorHooks.set[ attrValue ] = function( node, value )  {
             
             if ( value === false ) {
                 // completely remove the boolean attributes when set to false, otherwise set it to true
@@ -806,7 +809,7 @@
                 node.setAttribute( value, value );
             }
         // populate 'accessorHooks.booleans'
-        util$accessorhooks$$accessorHooks.booleans[ name.toLowerCase() ] = name;
+        util$accessorhooks$$accessorHooks.booleans[ attrValue ] = name;
         };
     });
 
@@ -1730,6 +1733,11 @@
        *
        *      ugma.query('#tag').get('my_widget');
        *      // -> 'some info.'
+       *
+       * @other examples
+       *
+       *    link.get('attrName');              // get
+       *    link.get("data-a1");               // get data-* attribute
        */
        
         get: function(name) {var this$0 = this;
@@ -2298,6 +2306,85 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
+    core$core$$implement({
+    
+        serialize: function(node) {
+    
+            var result = {};
+    
+            if ("form" in node) {
+                node = [node];
+            } else if ("elements" in node) {
+                node = node.elements;
+            } else {
+                node = [];
+            }
+    
+            var el, 
+                option, 
+                name,
+                nodeOptions,
+                i = 0,
+                len = node.length;
+    
+            for (; i < len; ) {
+                
+                el = ( node[ i++ ] );
+                
+                 name = el.name;
+    
+                if ( el.disabled || !name ) continue;
+    /* jshint ignore:start */
+                switch ( el.type ) {
+                    case "select-multiple":
+    
+                        result[ name ] = [];
+    
+                    case "select-one":
+    
+                        for ( nodeOptions = ( el.options ), i = 0, len = nodeOptions.length; i < len; ) {
+                            option = ( nodeOptions[ i++ ] );
+                            if ( option.selected ) {
+                                if ( name in result ) {
+                                    result[ name ].push( option.value );
+                                } else {
+                                    result[ name ] = option.value;
+                                }
+                            }
+                        }
+    
+                        break;
+    
+                    case undefined:
+                    case "fieldset": // fieldset
+                    case "file": // file input
+                    case "submit": // submit button
+                    case "reset": // reset button
+                    case "button": // custom button
+                        break;
+    
+                    case "checkbox": // checkbox
+                        if ( el.checked && result[ name ] ) {
+                            if ( helpers$$is( result[ name ], "string" ) ) {
+                                result[ name ] = [ result[ name] ];
+                            }
+    
+                            result[ name ].push( el.value );
+    
+                            break;
+                        }
+                    case "radio": // radio button
+                        if ( !el.checked ) break;
+                    default:
+                        result[ name ] = el.value;
+                }
+    /* jshint ignore:end */
+            }
+    
+            return result;
+        }
+    });
+
     var modules$set$$objectTag = "[object Object]",
         modules$set$$getTagName = function( node )  {
         var tag = node.tagName;
@@ -2310,10 +2397,18 @@
        * @param {String|Object|Array}   name    property/attribute name
        * @param {String|Function}       value   property/attribute value or functor
        * @chainable
-       * @example
-       *    link.set('attrName', 'attrValue'); // set
-       *    link.set({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
-       *    link.set("data-fooBar", "foo"); // set custom attribute data-custom
+       * @example 
+       *
+       *    link.set('attrName', 'attrValue');                  // set
+       *    link.set({'attr1', 'value1'}, {'attr2', 'value2});  // object with key-value pairs
+       *    link.set("data-fooBar", "foo");                     // set custom attribute data-custom
+       *    link.set(["autocomplete", "autocorrect"], "off");   // array of key values
+       *    link.set("attrName", null);                         // remove attribute / property value
+       *
+       * @boolean attributes - example
+       *
+       *    link.set("checked", checked);    // handle boolean attributes by using name as value ( better performance )
+       *    link.set("checked", true);       // set custom attribute data-custom
        */
         set: function(name, value) {var this$0 = this;
     
@@ -2896,9 +2991,10 @@
         quote = value && helpers$$inArray( value, "\"" ) >= 0 ? "'" : "\"";
     
         if ( helpers$$is( rawValue, "string" ) ) value = rawValue;
-        
+        // handle boolean attributes by using name as value
         if ( !helpers$$is( value, "string" ) ) value = name;
-    
+       
+        // always wrap attribute values with quotes even they don't exist
         return " " + name + "=" + quote + value + quote;
     }
 
