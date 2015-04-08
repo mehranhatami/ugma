@@ -5,11 +5,22 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 12:53:35 GMT
+ * Build date: Wed, 08 Apr 2015 13:10:22 GMT
  */
 (function() {
     "use strict";
-    var WINDOW = window;
+    function minErr$$minErr(module, msg) {
+        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
+        // use the arrow method here. And the function will fail BIG TIME !!
+        var wrapper = function() {
+            this.message = module ? ( msg ? msg : "This operation is not supported" ) +
+                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : "The string did not match the expected pattern";
+            // use the name on the framework
+            this.name = "ugma";
+        };
+        wrapper.prototype = Object.create( Error.prototype );
+        throw new wrapper( module, msg );
+    }var WINDOW = window;
     var DOCUMENT = document;
     var HTML = DOCUMENT.documentElement;
 
@@ -228,19 +239,6 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
-    function minErr$$minErr(module, msg) {
-        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
-        // use the arrow method here. And the function will fail BIG TIME !!
-        var wrapper = function() {
-            this.message = module ? ( msg ? msg : "This operation is not supported" ) +
-                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : "The string did not match the expected pattern";
-            // use the name on the framework
-            this.name = "ugma";
-        };
-        wrapper.prototype = Object.create( Error.prototype );
-        throw new wrapper( module, msg );
-    }
-
     /**
      * uClass - class system
      *
@@ -408,50 +406,6 @@
           
           return false;        
       };
-
-    var modules$attr$$BOOLEAN_ATTR = {};
-
-    helpers$$each(( "compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-    "noresize selected defer defaultChecked autofocus controls autoplay autofocus loop" ).split( " " ), function( value )   {
-     modules$attr$$BOOLEAN_ATTR[value.toLowerCase()] = value;
-    });
-
-    core$core$$implement({
-    
-        /**
-         * Get / set attribute on a node
-         * @param {String|Object|Array}   value   attribute name
-         * @chainable
-         * @example
-         *     link.attr(); // get
-         *     link.attr('attrName', 'attrValue'); // set
-         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
-         */
-    
-        attr: function(name, value) {
-    
-            var node = this[0],
-                lowercasedName = name.toLowerCase();
-    
-            if ( modules$attr$$BOOLEAN_ATTR[lowercasedName ] ) {
-                if ( helpers$$is( value, "defined" ) ) {
-                    if ( !!value ) {
-                        node[ name ] = true;
-                        node.setAttribute( name, lowercasedName );
-                    } else {
-                        node[ name ] = false;
-                        node.removeAttribute( lowercasedName );
-                    }
-                } else {
-                    return node[ name ] ? lowercasedName : undefined;
-                }
-            } else if ( helpers$$is( value, "defined" ) ) {
-                node.setAttribute(name, value );
-            } else if ( node.getAttribute ) {
-                return node.getAttribute( name );
-            }
-        }
-    }, null, function()  {return RETURN_THIS} );
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -2497,98 +2451,6 @@
             return data[ 0 ] = ctx;
         }
     }, null, function()  {return function()  {return RETURN_FALSE}} );
-
-    var modules$shortcuts$$rreturn = /\r/g;
-
-    core$core$$implement({
-    
-        /**
-         * Get / set text content of a node
-         * @param {String|Object|Array}   value   textContent
-         * @chainable
-         * @example
-         *     link.text('A sunny day!');
-         */
-        text: "textContent",
-        /**
-         * Get / set HTML content of a node
-         * @param {String|Object|Array}   value   innerHTML content
-         * @chainable
-         * @example
-         *     link.html();
-         *     link.html('<span>Hello!</span>');
-         */
-        html: "innerHTML",
-        /**
-         * Get / set the value attribute on a node
-         * @param {String|Object|Array}   value   attribute name
-         * @chainable
-         * @example
-         *     link.val(); // get
-         *     link.val('foo', 'bar'); // set
-         */   
-        val: "value"
-       
-    }, function( methodName, property )  {return function( value ) {
-    
-        if ( arguments.length === 0 ) {
-    
-            var ret = this.get( property );
-            
-            if(methodName !== "val") return ret;
-            
-            // Handle most common string cases
-            return ret.replace( modules$shortcuts$$rreturn, "" );
-        }
-        
-        this.set( property, value );
-    
-    }}, function( methodName )  {return function()  {return function()  {return RETURN_THIS}}} );
-
-    core$core$$implement({
-        /**
-         * Returns all sibling nodes in a collection of children filtered by optional selector
-         * @param  {String} [selector] css selector
-         * @chainable
-         */
-        siblings: true,
-        /**
-         * Returns the first sibling node in a collection of children filtered by index
-         * @param  {Number} index child index
-         * @chainable
-         *     
-         *      <ul>
-         *        <li id="golden-delicious">Golden Delicious</li>
-         *        <li id="mutsu">Mutsu</li>
-         *        <li id="mcintosh">McIntosh</li>
-         *        <li id="ida-red">Ida Red</li>
-         *      </ul>
-         *
-         *      ugma.query('#mutsu').siblings();
-         *      // -> [li#golden-delicious, li#mutsu, li#mcintosh, li#ida-red]
-         */
-        sibling: false
-    
-    }, function( methodName, all )  {return function( selector ) {
-    
-        if ( selector && ( !helpers$$is( selector, all ? "string" : "number" ) ) ) {
-            minErr$$minErr( methodName + "()", selector + " is not a " + ( all ? " string" : " number" ) + " value" );
-        }
-    
-        var node = this[ 0 ],
-            matcher = util$selectormatcher$$default( selector ),
-            siblings = node.parentElement.children;
-    
-        if ( all ) {
-            if ( matcher ) siblings = helpers$$filter( siblings, matcher );
-    
-            return helpers$$map(siblings, core$core$$nodeTree);
-        } 
-            if ( selector < 0 ) selector = siblings.length + selector;
-    
-            return core$core$$nodeTree( siblings[ selector ] );
-    
-    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$dummyTree()}} );
 
     core$core$$implement({
       /**
