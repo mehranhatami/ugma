@@ -71,14 +71,12 @@ implement({
             // handle executable functions
             if (is(value, "function")) value = value( this );
 
-           // use the 'clear()' method here, so we can be 100%
-            // sure that we take good care of the boolean attributes
            if ( value == null ) {
-               this.clear(name);
+                node.removeAttribute(name || name.toLowerCase() );
             } else if ( hook ) {
                 hook( node, value );
                // set property 
-            } else if ( name in node ) {
+            } else if ( !is(value, "boolean") && name in node ) { 
                 node[ name ] = value;
               // set attribute
             } else {

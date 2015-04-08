@@ -29,18 +29,7 @@ implement({
      */
     clear(name) {
 
-        var node = this[0],
-            lowercasedName = name.toLowerCase();
-
-        // Boolean attributes get special treatment
-        if (accessorhooks.booleans[lowercasedName]) {
-            // Set corresponding property to false
-            node[name] = false;
-            node.removeAttribute(lowercasedName);
-        } else {
-            node.removeAttribute(name);
-        }
-        return this;
+          return this.set(name, null);
     }
 
 }, null, () => RETURN_FALSE);

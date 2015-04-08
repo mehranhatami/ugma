@@ -10,8 +10,6 @@ import   support                                   from "../util/support";
 
 var langFix = /_/g,
     accessorHooks = {
-        // boolean attributes
-        booleans: {},
         // getter
         get: {
             // special case - setting a style

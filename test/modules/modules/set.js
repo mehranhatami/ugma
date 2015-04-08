@@ -51,10 +51,6 @@ describe("set", function() {
 
         expect(checkbox.get("checked")).toBe(true);
 
-        checkbox.set("checked", false).set("checked", true).set("checked", false);
-
-        expect(checkbox[0].checked).toBe(false);
-
         txt.set("readOnly", true).set("readonly", undefined);
 
         expect(txt[0].readOnly).toBe(false);

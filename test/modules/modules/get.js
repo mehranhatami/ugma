@@ -162,20 +162,6 @@ describe("get", function() {
         expect(option[0].selected).toBe(true);
     });
 
-    it("should handle HTML5 boolean attributes", function() {
-
-        txt.set({
-            "autofocus": true,
-            "required": true
-        });
-
-        expect(txt.get("autofocus")).toBe(true);
-        expect(txt.set("autofocus", false).get("autofocus")).toBe(false);
-
-        expect(txt.get("required")).toBe(true);
-        expect(txt.set("required", false).get("required")).toBe(false);
-    });
-
     it("should throw error if argument is invalid", function() {
         expect(function() {
             link.get(1);
