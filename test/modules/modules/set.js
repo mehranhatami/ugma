@@ -488,7 +488,7 @@ describe("set", function() {
         }).get("type")).toEqual("submit");
     });
 
-    it("accept object with overriden toString", function() {
+    it("should accept object with overriden toString", function() {
         function Type() {
             this.name = "bar";
         }
@@ -502,6 +502,11 @@ describe("set", function() {
         expect(input).not.toHaveAttr("name", "bar");
     });
 
+    it("should fix misspelled language attribute", function() {
+        expect(input.set("lang", "zh_CN")).toHaveAttr("lang", "zh-cn");
+        expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
+    });
+
     it("should add/remove boolean attributes", function() {
         var select = ugma.render("select");
         select.set("multiple", false);
@@ -509,5 +514,16 @@ describe("set", function() {
 
         select.set("multiple", true);
         expect(select.get("multiple")).toBe(true);
+    });
+    
+     it("should not set boolean attribute 'selected' to false", function() {
+        expect(input.set("selected", "selected")).toHaveAttr("selected", "selected");
+  
+        input.set("selected", false);
+        
+        expect(input.get("selected")).not.toBe(false);        
+        expect(input.get("selected")).toBe(true);        
+//        expect(input.set("selected", false)).not.toHaveAttr("selected", "selected");        
+//        expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
     });
 });

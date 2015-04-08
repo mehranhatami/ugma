@@ -62,18 +62,6 @@ var langFix = /_/g,
 
                 ( node === doc.documentElement ? doc : node ).title = value;
             },
-            selected: ( node, value ) => {
-              // removing a 'selected' boolean attribute should not set property to false.
-              // In Firefox the selected value is 1. In Chrome the selected value is 2.
-              // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
-
-              if(value === false) {
-                  node.removeAttribute( value );
-              } else {
-                node.setAttribute( value, value );
-              }  
-              
-            },
             value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
@@ -137,26 +125,43 @@ if ( !support.optSelected ) {
 }
 
 // Attributes that are booleans
-each(("compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-      "selected noresize defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name ) {
-          
-          var attrValue = name.toLowerCase();
+each( ( "compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+    "noresize selected defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), ( name ) => {
 
-    // For Boolean attributes we need to give them a special treatment, and set 
-    // the corresponding property to either true or false
-    accessorHooks.set[ attrValue ] = ( node, value ) => {
-        
-        if ( value === false ) {
-			// completely remove the boolean attributes when set to false, otherwise set it to true
-			node[ name ] = false;
-            node.removeAttribute( name );
-		} else {
-			node[ name ] = true;
-			node.setAttribute( value, value );
-		}
+    var attrValue = name.toLowerCase();
+
+    if ( name === "selected" ) {
+        accessorHooks.set.selected = ( node, value ) => {
+            // removing a 'selected' boolean attribute should not set property to false.
+            // In Firefox the selected value is 1. In Chrome the selected value is 2.
+            // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
+
+            if ( value === false ) {
+                node.removeAttribute( name );
+            } else {
+                node[ name ] = true;
+                node.setAttribute( name, name );
+            }
+        };
+
+    } else {
+        accessorHooks.set[ attrValue ] = ( node, value ) => {
+            // For Boolean attributes we need to give them a special treatment, and set 
+            // the corresponding property to either true or false
+
+            if (value === false) {
+                // completely remove the boolean attributes when set to false, otherwise set it to true
+                node[ name ] = false;
+                node.removeAttribute( name );
+            } else {
+                node[ name ] = true;
+                node.setAttribute( name, name );
+            }
+        };
+    }
     // populate 'accessorHooks.booleans'
-    accessorHooks.booleans[ attrValue ] = name;
-    };
+    accessorHooks.booleans[attrValue] = name;
+
 });
 
 // properties written as camelCase
