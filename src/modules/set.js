@@ -76,7 +76,7 @@ implement({
             } else if ( hook ) {
                 hook( node, value );
                // set property 
-            } else if ( !is(value, "boolean") && name in node ) { 
+            } else if ( name in node ) { 
                 node[ name ] = value;
               // set attribute
             } else {

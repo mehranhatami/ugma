@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 08:46:11 GMT
+ * Build date: Wed, 08 Apr 2015 10:22:42 GMT
  */
 (function() {
     "use strict";
@@ -671,8 +671,6 @@
 
     var util$accessorhooks$$langFix = /_/g,
         util$accessorhooks$$accessorHooks = {
-            // boolean attributes
-            booleans: {},
             // getter
             get: {
                 // special case - setting a style
@@ -851,18 +849,7 @@
          */
         clear: function(name) {
     
-            var node = this[0],
-                lowercasedName = name.toLowerCase();
-    
-            // Boolean attributes get special treatment
-            if (util$accessorhooks$$default.booleans[lowercasedName]) {
-                // Set corresponding property to false
-                node[name] = false;
-                node.removeAttribute(lowercasedName);
-            } else {
-                node.removeAttribute(name);
-            }
-            return this;
+              return this.set(name, null);
         }
     
     }, null, function()  {return RETURN_FALSE});
@@ -2342,14 +2329,12 @@
                 // handle executable functions
                 if (helpers$$is(value, "function")) value = value( this );
     
-               // use the 'clear()' method here, so we can be 100%
-                // sure that we take good care of the boolean attributes
                if ( value == null ) {
-                   this.clear(name);
+                    node.removeAttribute(name || name.toLowerCase() );
                 } else if ( hook ) {
                     hook( node, value );
                    // set property 
-                } else if ( name in node ) {
+                } else if ( name in node ) { 
                     node[ name ] = value;
                   // set attribute
                 } else {

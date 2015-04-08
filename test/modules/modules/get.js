@@ -162,6 +162,7 @@ describe("get", function() {
         expect(option[0].selected).toBe(true);
     });
 
+
     it("should throw error if argument is invalid", function() {
         expect(function() {
             link.get(1);
