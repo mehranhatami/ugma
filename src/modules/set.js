@@ -68,11 +68,15 @@ implement({
 
         if ( is(name, "string" ) ) {
 
+            // All attributes are lowercase
+               var lowercasedName = name.toLowerCase();
+
             // handle executable functions
             if (is(value, "function")) value = value( this );
 
-           if ( value == null ) {
-                node.removeAttribute(name || name.toLowerCase() );
+            if ( value == null ) {
+                node.removeAttribute( name );
+            // Grab necessary hook if one is defined
             } else if ( hook ) {
                 hook( node, value );
                // set property 
@@ -80,8 +84,7 @@ implement({
                 node[ name ] = value;
               // set attribute
             } else {
-                // node's attribute
-                node.setAttribute( name, value + "" );
+                node.setAttribute( lowercasedName, value + "" );
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");

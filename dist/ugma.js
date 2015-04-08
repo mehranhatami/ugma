@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 10:22:42 GMT
+ * Build date: Wed, 08 Apr 2015 11:07:30 GMT
  */
 (function() {
     "use strict";
@@ -658,174 +658,6 @@
           return RETURN_THIS;
       });
 
-    var util$support$$support = {};
-
-    /**
-      Expose 'support' to the ugma namespace
-    */
-
-    core$core$$ugma.support = util$support$$support;
-
-
-    var util$support$$default = util$support$$support;
-
-    var util$accessorhooks$$langFix = /_/g,
-        util$accessorhooks$$accessorHooks = {
-            // getter
-            get: {
-                // special case - setting a style
-                style: function( node )  {return node.style.cssText},
-                title: function( node )  {
-                    var doc = node.ownerDocument;
-    
-                    return ( node === doc.documentElement ? doc : node ).title;
-                },
-                tabIndex: function( node )  {return node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1},
-                option: function( node )  {
-                    // Support: IE<11
-                    // option.value not trimmed
-                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
-                },
-                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
-    
-                value: function( node )  {
-    
-                    // Support: Android<4.4
-                    // Default value for a checkbox should be "on"
-                    if ( node.type === "checkbox" && !util$support$$default.checkOn ) {
-                        return node.getAttribute( "value" ) === null ? "on" : node.value;
-                    }
-                    return node.value;
-                },
-    
-                undefined: function( node )  {
-                    switch ( node.tagName ) {
-                        case "SELECT":
-                            return util$accessorhooks$$accessorHooks.get.select( node );
-                        case "OPTION":
-                            return util$accessorhooks$$accessorHooks.get.option( node );
-                        default:
-                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
-                    }
-                },
-                type: function( node )  {return node.getAttribute( "type" ) || node.type}
-            },
-            // setter
-            set: {
-                // correct locale browser language before setting the attribute             
-                // e.g. from zh_CN to zh-cn, from en_US to en-us
-                lang:  function( node, value )  { node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() ) },
-                style: function( node, value )  { node.style.cssText = value },
-                title: function( node, value )  {
-                    var doc = node.ownerDocument;
-    
-                    ( node === doc.documentElement ? doc : node ).title = value;
-                },
-                value: function( node, value )  {
-    
-                    if ( node.tagName === "SELECT" ) {
-                        // selectbox has special case
-                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
-    
-                    } else {
-                        node.value = value;
-                    }
-                }
-            }
-        };
-
-    (function() {
-        var input = DOCUMENT.createElement( "input" ),
-            select = DOCUMENT.createElement( "select" ),
-            opt = select.appendChild( DOCUMENT.createElement( "option" ) );
-    
-        input.type = "checkbox";
-    
-        // Support: Android<4.4
-        // Default value for a checkbox should be "on"
-         util$support$$default.checkOn = input.value !== "";
-    
-        // Support: IE<=11+
-        // Must access selectedIndex to make default options select
-         util$support$$default.optSelected = opt.selected;
-    
-        // Support: IE<=11+
-        // An input loses its value after becoming a radio
-        input.type = "radio";
-        input.value = "t";
-        util$support$$default.radioValue = input.value === "t";
-    })();
-
-    // Support: IE<=11+
-    if ( !util$support$$default.radioValue ) {
-        util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
-    
-            if ( value === "radio" ) {
-                var val = node.value;
-    
-                node.setAttribute( "type", val );
-                
-                if ( value ) node.value = val;
-    
-            } else {
-                node.type = value;
-            }
-        };
-    }
-
-    if ( !util$support$$default.optSelected ) {
-        util$accessorhooks$$accessorHooks.get.selected = function( node )  {
-            var parent = node.parentNode;
-            /* jshint ignore:start */
-            if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
-            /* jshint ignore:end */
-            return null;
-        };
-    }
-
-    // properties written as camelCase
-    helpers$$each((
-       // 6.4.3 The tabindex attribute
-        ("readOnly "         +
-        "tabIndex "         +
-        "maxLength "        +
-        "cellSpacing "      +
-        "cellPadding "      +
-        "rowSpan "          +
-        "colSpan "          +
-        "useMap "           +
-        "dateTime  "        +
-        "innerHTML "        +
-        "frameBorder "      +
-        // 6.6.1 Making document regions editable: The contenteditable content attribute
-        "contentEditable "  +
-        "textContent "      +
-        "valueType "        +
-        "defaultValue "     +
-        "accessKey "        +
-        "encType "          +
-        "vAlign  " + "longDesc") ).split( " " ), function( key ) {
-        util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
-    });
-
-    /**
-     * Hook 'accessorHooks' on the ugma namespace
-     */
-
-    core$core$$ugma.accessorHooks = function( mixin, where )  {
-       // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
-      
-        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-  
-            helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
-            });
-        }
-    };
-
-    var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
-
     core$core$$implement({
         /**
          * Clear a property/attribute on the node
@@ -847,12 +679,9 @@
          *     ugma.query("#test").has("checked");
          *     // false
          */
-        clear: function(name) {
+        clear: function(name) { return this.set(name, null) }
     
-              return this.set(name, null);
-        }
-    
-    }, null, function()  {return RETURN_FALSE});
+    }, null, function()  {return RETURN_THIS});
 
     // Reference: https://dom.spec.whatwg.org/#dom-node-clonenode
 
@@ -1672,6 +1501,176 @@
       }
     }, null, function()  {return RETURN_TRUE} );
 
+    var util$support$$support = {};
+
+    /**
+      Expose 'support' to the ugma namespace
+    */
+
+    core$core$$ugma.support = util$support$$support;
+
+
+    var util$support$$default = util$support$$support;
+
+    var util$accessorhooks$$langFix = /_/g,
+        util$accessorhooks$$accessorHooks = {
+            // getter
+            get: {
+                // special case - setting a style
+                style: function( node )  {return node.style.cssText},
+                title: function( node )  {
+                    var doc = node.ownerDocument;
+    
+                    return ( node === doc.documentElement ? doc : node ).title;
+                },
+                tabIndex: function( node )  {return node.hasAttribute( "tabindex" ) || FOCUSABLE.test( node.nodeName ) || node.href ? node.tabIndex : -1},
+                option: function( node )  {
+                    // Support: IE<11
+                    // option.value not trimmed
+                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+                },
+                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
+    
+                value: function( node )  {
+    
+                    // Support: Android<4.4
+                    // Default value for a checkbox should be "on"
+                    if ( node.type === "checkbox" && !util$support$$default.checkOn ) {
+                        return node.getAttribute( "value" ) === null ? "on" : node.value;
+                    }
+                    return node.value;
+                },
+    
+                undefined: function( node )  {
+                    switch ( node.tagName ) {
+                        case "SELECT":
+                            return util$accessorhooks$$accessorHooks.get.select( node );
+                        case "OPTION":
+                            return util$accessorhooks$$accessorHooks.get.option( node );
+                        default:
+                            return node[ node.type && "value" in node ? "value" : "innerHTML" ];
+                    }
+                },
+                type: function( node )  {return node.getAttribute( "type" ) || node.type}
+            },
+            // setter
+            set: {
+                // correct locale browser language before setting the attribute             
+                // e.g. from zh_CN to zh-cn, from en_US to en-us
+                lang:  function( node, value )  { node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() ) },
+                style: function( node, value )  { node.style.cssText = value },
+                title: function( node, value )  {
+                    var doc = node.ownerDocument;
+    
+                    ( node === doc.documentElement ? doc : node ).title = value;
+                },
+                value: function( node, value )  {
+    
+                    if ( node.tagName === "SELECT" ) {
+                        // selectbox has special case
+                        if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
+    
+                    } else {
+                        node.value = value;
+                    }
+                }
+            }
+        };
+
+    (function() {
+        var input = DOCUMENT.createElement( "input" ),
+            select = DOCUMENT.createElement( "select" ),
+            opt = select.appendChild( DOCUMENT.createElement( "option" ) );
+    
+        input.type = "checkbox";
+    
+        // Support: Android<4.4
+        // Default value for a checkbox should be "on"
+         util$support$$default.checkOn = input.value !== "";
+    
+        // Support: IE<=11+
+        // Must access selectedIndex to make default options select
+         util$support$$default.optSelected = opt.selected;
+    
+        // Support: IE<=11+
+        // An input loses its value after becoming a radio
+        input.type = "radio";
+        input.value = "t";
+        util$support$$default.radioValue = input.value === "t";
+    })();
+
+    // Support: IE<=11+
+    if ( !util$support$$default.radioValue ) {
+        util$accessorhooks$$accessorHooks.set.type = function( node, value )  {
+    
+            if ( value === "radio" ) {
+                var val = node.value;
+    
+                node.setAttribute( "type", val );
+                
+                if ( value ) node.value = val;
+    
+            } else {
+                node.type = value;
+            }
+        };
+    }
+
+    if ( !util$support$$default.optSelected ) {
+        util$accessorhooks$$accessorHooks.get.selected = function( node )  {
+            var parent = node.parentNode;
+            /* jshint ignore:start */
+            if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
+            /* jshint ignore:end */
+            return null;
+        };
+    }
+
+    // properties written as camelCase
+    helpers$$each((
+       // 6.4.3 The tabindex attribute
+        ("readOnly "         +
+        "tabIndex "         +
+        "maxLength "        +
+        "cellSpacing "      +
+        "cellPadding "      +
+        "rowSpan "          +
+        "colSpan "          +
+        "useMap "           +
+        "dateTime  "        +
+        "innerHTML "        +
+        "frameBorder "      +
+        // 6.6.1 Making document regions editable: The contenteditable content attribute
+        "contentEditable "  +
+        "textContent "      +
+        "valueType "        +
+        "defaultValue "     +
+        "noValidate "       +
+        "acceptCharset "    +
+        "accessKey "        +
+        "encType "          +
+        "vAlign  " + "longDesc") ).split( " " ), function( key )   {
+        util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
+    });
+
+    /**
+     * Hook 'accessorHooks' on the ugma namespace
+     */
+
+    core$core$$ugma.accessorHooks = function( mixin, where )  {
+       // Stop here if 'where' is not a typeof string
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
+      
+        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+  
+            helpers$$forOwn( mixin, function( key, value )  {
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
+            });
+        }
+    };
+
+    var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
+
     core$core$$implement({
        
       /**
@@ -2326,11 +2325,15 @@
     
             if ( helpers$$is(name, "string" ) ) {
     
+                // All attributes are lowercase
+                   var lowercasedName = name.toLowerCase();
+    
                 // handle executable functions
                 if (helpers$$is(value, "function")) value = value( this );
     
-               if ( value == null ) {
-                    node.removeAttribute(name || name.toLowerCase() );
+                if ( value == null ) {
+                    node.removeAttribute( name );
+                // Grab necessary hook if one is defined
                 } else if ( hook ) {
                     hook( node, value );
                    // set property 
@@ -2338,8 +2341,7 @@
                     node[ name ] = value;
                   // set attribute
                 } else {
-                    // node's attribute
-                    node.setAttribute( name, value + "" );
+                    node.setAttribute( lowercasedName, value + "" );
                 }
                 // set array of key values
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");

@@ -2,9 +2,8 @@
  * @module clear
  */
 
-import { implement       } from "../core/core";
-import { RETURN_FALSE    } from "../const";
-import   accessorhooks     from "../util/accessorhooks";
+import { implement    } from "../core/core";
+import { RETURN_THIS  } from "../const";
 
 implement({
     /**
@@ -27,9 +26,6 @@ implement({
      *     ugma.query("#test").has("checked");
      *     // false
      */
-    clear(name) {
+    clear(name) { return this.set(name, null) }
 
-          return this.set(name, null);
-    }
-
-}, null, () => RETURN_FALSE);
+}, null, () => RETURN_THIS);

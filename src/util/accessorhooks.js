@@ -141,10 +141,12 @@ each((
     "textContent "      +
     "valueType "        +
     "defaultValue "     +
+    "noValidate "       +
+    "acceptCharset "    +
     "accessKey "        +
     "encType "          +
     "vAlign  "          +
-    "longDesc" ).split( " " ), function( key ) {
+    "longDesc" ).split( " " ), ( key )  => {
     accessorHooks.get[ key.toLowerCase() ] = ( node ) => node[ key ];
 });
 
