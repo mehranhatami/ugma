@@ -28,6 +28,10 @@ implement({
    *    link.set(["autocomplete", "autocorrect"], "off");   // array of key values
    *    link.set("attrName", null);                         // remove attribute / property value
    *
+   *    link.set("innerHTML", "Hello, World!");             // set 'innerHTML'
+   *    link.set("textContent", "I'm pure text");           // set 'textContent'
+   *    link.set("value", "valueProp");                     // set 'value'
+   *
    * @boolean attributes - example
    *
    *    link.set("checked", checked);    // handle boolean attributes by using name as value ( better performance )

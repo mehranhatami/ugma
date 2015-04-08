@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 01:35:43 GMT
+ * Build date: Wed, 08 Apr 2015 01:40:12 GMT
  */
 (function() {
     "use strict";
@@ -1738,6 +1738,8 @@
        *
        *    link.get('attrName');              // get
        *    link.get("data-a1");               // get data-* attribute
+       *    link.get("outerHTML");             // get 'outerHTML'
+       *    link.get("textContent");           // get 'textContent'
        */
        
         get: function(name) {var this$0 = this;
@@ -2404,6 +2406,10 @@
        *    link.set("data-fooBar", "foo");                     // set custom attribute data-custom
        *    link.set(["autocomplete", "autocorrect"], "off");   // array of key values
        *    link.set("attrName", null);                         // remove attribute / property value
+       *
+       *    link.set("innerHTML", "Hello, World!");             // set 'innerHTML'
+       *    link.set("textContent", "I'm pure text");           // set 'textContent'
+       *    link.set("value", "valueProp");                     // set 'value'
        *
        * @boolean attributes - example
        *

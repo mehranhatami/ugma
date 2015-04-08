@@ -32,6 +32,8 @@ implement({
    *
    *    link.get('attrName');              // get
    *    link.get("data-a1");               // get data-* attribute
+   *    link.get("outerHTML");             // get 'outerHTML'
+   *    link.get("textContent");           // get 'textContent'
    */
    
     get(name) {
