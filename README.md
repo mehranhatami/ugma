@@ -10,7 +10,7 @@ There is no documentation, but examples are given in the comments inside the sou
 
 ##How to use?
 
-Familiar with DOM Living and native javasript?
+Familiar with DOM Living and native javascript?
 
 ```javascript
 
