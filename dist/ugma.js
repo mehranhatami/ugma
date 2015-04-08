@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 04:39:01 GMT
+ * Build date: Wed, 08 Apr 2015 04:46:30 GMT
  */
 (function() {
     "use strict";
@@ -716,17 +716,24 @@
             set: {
                 // correct locale browser language before setting the attribute             
                 // e.g. from zh_CN to zh-cn, from en_US to en-us
-                lang: function( node, value )  {return node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() )},
-                style: function( node, value )   {return node.style.cssText = value},
+                lang:  function( node, value )  { node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() ) },
+                style: function( node, value )  { node.style.cssText = value },
                 title: function( node, value )  {
                     var doc = node.ownerDocument;
     
                     ( node === doc.documentElement ? doc : node ).title = value;
                 },
-              // removing a 'selected' boolean attribute should not set property to false.
-              // In Firefox the selected value is 1. In Chrome the selected value is 2.
-              // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
-                selected: function( node, value )  {return node.setAttribute( value, value )},
+                selected: function( node, value )  {
+                  // removing a 'selected' boolean attribute should not set property to false.
+                  // In Firefox the selected value is 1. In Chrome the selected value is 2.
+                  // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
+    
+                  if(value === false) {
+                      node.removeAttribute( value );
+                  } else {
+                    node.setAttribute( value, value );
+                  }  
+                },
                 value: function( node, value )  {
     
                     if ( node.tagName === "SELECT" ) {
