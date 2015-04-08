@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 11:07:30 GMT
+ * Build date: Wed, 08 Apr 2015 11:47:20 GMT
  */
 (function() {
     "use strict";
@@ -1629,7 +1629,7 @@
     // properties written as camelCase
     helpers$$each((
        // 6.4.3 The tabindex attribute
-        ("readOnly "         +
+        ("readOnly "         +   // Whether to allow the value to be edited by the user
         "tabIndex "         +
         "maxLength "        +
         "cellSpacing "      +
@@ -1649,7 +1649,23 @@
         "acceptCharset "    +
         "accessKey "        +
         "encType "          +
-        "vAlign  " + "longDesc") ).split( " " ), function( key )   {
+        "vAlign  "          +
+        "formAction "       +  // URL to use for form submission
+        "formMethod "       +  // HTTP method to use for form submission
+        "formNoValidate "   +  // Bypass form control validation for form submission 
+        "formTarget "       +  // Browsing context for form submission
+        "inputMode "        +  // Hint for selecting an input modality
+        "maxLength "        +  // Maximum length of value
+        "minLength "        +  // Minimum length of value
+        "defaultValue "     +
+        "valueAsDate "      +
+        "valueLow "         +
+        "valueHeight "      +
+        "willValidate "     +
+        "checkValidity "    +  // Returns true if the form's controls are all valid; otherwise, returns false.
+        "reportValidity "   +  // Returns true if the form's controls are all valid; otherwise, returns false and informs the user.
+        "selectionStart "   +
+        "selectionEnd " + "longDesc") ).split( " " ), function( key )   {
         util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
     });
 
@@ -2325,7 +2341,14 @@
     
             if ( helpers$$is(name, "string" ) ) {
     
-                // All attributes are lowercase
+                /**
+                 *
+                 * The National Information Exchange Model (NIEM: http://en.wikipedia.org/wiki/National_Information_Exchange_Model) says to use:
+                 *
+                 * -  Upper CamelCase (PascalCase) for elements.
+                 * -  lower camelCase for attributes.
+                 */
+    
                    var lowercasedName = name.toLowerCase();
     
                 // handle executable functions
