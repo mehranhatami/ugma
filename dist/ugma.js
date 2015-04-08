@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 05:34:42 GMT
+ * Build date: Wed, 08 Apr 2015 05:59:17 GMT
  */
 (function() {
     "use strict";
@@ -2253,10 +2253,11 @@
                 
                 selector = nid + selector.split(",").join("," + nid);
             }
-    
-            result = helpers$$invoke(context, "querySelector" + all, selector);
-    
-            if (!old) node.removeAttribute("id");
+              try {
+                     result = context["querySelector" + all](selector);
+                 } catch (err) {} finally {
+                     node.removeAttribute("id");
+                 }
         }
     
             return all ? helpers$$map(result, core$core$$nodeTree) : core$core$$nodeTree(result);
