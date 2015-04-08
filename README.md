@@ -36,3 +36,26 @@ ugma.query(".bar").forEach( function(node) {
 All **all** methods returns an native array and let you use libraries such as loadash and underscore.
 
 Mote info about how ugma works, you find here: https://dom.spec.whatwg.org/
+
+For templating, Emmet syntax are used.  
+
+Reference: http://docs.emmet.io/cheat-sheet/
+
+
+```javascript
+
+// render HTML ( done in memory - not touching DOM )
+
+var div_one = ugma.render("div") // 1 div tags
+
+var div_two = ugma.renderAll("div*2") // 2 div tags [Array]
+
+// Append to DOM (touch DOM only once)
+
+ugma.append( div_two);
+
+```
+
+
+
+
