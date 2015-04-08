@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 01:40:12 GMT
+ * Build date: Wed, 08 Apr 2015 04:39:01 GMT
  */
 (function() {
     "use strict";
@@ -421,6 +421,7 @@
                 // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
                  p in HTML && p );
         }, null ),
+        //
         util$selectormatcher$$query = function( node, selector )  {
     
             // match elem with all selected elems of parent
@@ -443,24 +444,24 @@
             var matches = util$selectormatcher$$quickMatch.exec(selector);
     
             if (matches) {
-                if ( matches[ 1 ]) matches[ 1 ] = matches[ 1 ].toLowerCase();
-                if ( matches[ 3 ]) matches[ 3 ] = matches[ 3 ].split("=");
-                if ( matches[ 4 ]) matches[ 4 ] = " " + matches[ 4 ] + " ";
+                if ( matches[ 1 ] ) matches[ 1 ] = matches[ 1 ].toLowerCase();
+                if ( matches[ 3 ] ) matches[ 3 ] = matches[ 3 ].split( "=" );
+                if ( matches[ 4 ] ) matches[ 4 ] = " " + matches[ 4 ] + " ";
             }
     
-            return function(node) {
+            return function( node ) {
                 var result, found;
     
                 for (; node && node.nodeType === 1; node = node.parentNode) {
                     if (matches) {
                         result = (
-                            ( !matches[ 1 ] || node.nodeName.toLowerCase() === matches[ 1 ]) &&
-                            ( !matches[ 2 ] || node.id === matches[ 2 ]) &&
-                            ( !matches[ 3 ] || (matches[ 3 ][ 1 ] ? node.getAttribute(matches[ 3 ][ 0 ] ) === matches[ 3 ][ 1 ] : node.hasAttribute(matches[ 3 ][ 0 ]))) &&
-                            ( !matches[ 4 ] || (" " + node.className + " ").indexOf(matches[ 4 ]) >= 0 )
+                            ( !matches[ 1 ] || node.nodeName.toLowerCase() === matches[ 1 ] ) &&
+                            ( !matches[ 2 ] || node.id === matches[ 2 ] ) &&
+                            ( !matches[ 3 ] || (matches[ 3 ][ 1 ] ? node.getAttribute( matches[ 3 ][ 0 ] ) === matches[ 3 ][ 1 ] : node.hasAttribute(matches[ 3 ][ 0 ] ) ) ) &&
+                            ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                         );
                     } else {
-                        result = util$selectormatcher$$matchesMethod ? node[util$selectormatcher$$matchesMethod](selector) : util$selectormatcher$$query(node, selector);
+                        result = util$selectormatcher$$matchesMethod ? node[ util$selectormatcher$$matchesMethod ]( selector ) : util$selectormatcher$$query( node, selector );
                     }
     
                     if (result || !context || node === context) break;
@@ -713,20 +714,19 @@
             },
             // setter
             set: {
-                lang: function( node, value )  {
-                    // correct locale browser language before setting the attribute             
-                    // e.g. from zh_CN to zh-cn, from en_US to en-us
-                    node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() );
-                },
-    
-                style: function( node, value )  {
-                    node.style.cssText = value;
-                },
+                // correct locale browser language before setting the attribute             
+                // e.g. from zh_CN to zh-cn, from en_US to en-us
+                lang: function( node, value )  {return node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() )},
+                style: function( node, value )   {return node.style.cssText = value},
                 title: function( node, value )  {
                     var doc = node.ownerDocument;
     
                     ( node === doc.documentElement ? doc : node ).title = value;
                 },
+              // removing a 'selected' boolean attribute should not set property to false.
+              // In Firefox the selected value is 1. In Chrome the selected value is 2.
+              // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
+                selected: function( node, value )  {return node.setAttribute( value, value )},
                 value: function( node, value )  {
     
                     if ( node.tagName === "SELECT" ) {
@@ -757,9 +757,8 @@
     
         // Support: IE<=11+
         // An input loses its value after becoming a radio
-        input = DOCUMENT.createElement( "input" );
-        input.value = "t";
         input.type = "radio";
+        input.value = "t";
         util$support$$default.radioValue = input.value === "t";
     })();
 
@@ -2456,8 +2455,10 @@
                    this.clear(name);
                 } else if ( hook ) {
                     hook( node, value );
+                   // set property 
                 } else if ( name in node ) {
                     node[ name ] = value;
+                  // set attribute
                 } else {
                     // node's attribute
                     node.setAttribute( name, value + "" );

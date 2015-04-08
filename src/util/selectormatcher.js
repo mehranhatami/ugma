@@ -20,6 +20,7 @@ var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
             // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
              p in HTML && p );
     }, null ),
+    //
     query = ( node, selector ) => {
 
         // match elem with all selected elems of parent
@@ -46,24 +47,24 @@ export default function(selector, context) {
         var matches = quickMatch.exec(selector);
 
         if (matches) {
-            if ( matches[ 1 ]) matches[ 1 ] = matches[ 1 ].toLowerCase();
-            if ( matches[ 3 ]) matches[ 3 ] = matches[ 3 ].split("=");
-            if ( matches[ 4 ]) matches[ 4 ] = " " + matches[ 4 ] + " ";
+            if ( matches[ 1 ] ) matches[ 1 ] = matches[ 1 ].toLowerCase();
+            if ( matches[ 3 ] ) matches[ 3 ] = matches[ 3 ].split( "=" );
+            if ( matches[ 4 ] ) matches[ 4 ] = " " + matches[ 4 ] + " ";
         }
 
-        return function(node) {
+        return function( node ) {
             var result, found;
 
             for (; node && node.nodeType === 1; node = node.parentNode) {
                 if (matches) {
                     result = (
-                        ( !matches[ 1 ] || node.nodeName.toLowerCase() === matches[ 1 ]) &&
-                        ( !matches[ 2 ] || node.id === matches[ 2 ]) &&
-                        ( !matches[ 3 ] || (matches[ 3 ][ 1 ] ? node.getAttribute(matches[ 3 ][ 0 ] ) === matches[ 3 ][ 1 ] : node.hasAttribute(matches[ 3 ][ 0 ]))) &&
-                        ( !matches[ 4 ] || (" " + node.className + " ").indexOf(matches[ 4 ]) >= 0 )
+                        ( !matches[ 1 ] || node.nodeName.toLowerCase() === matches[ 1 ] ) &&
+                        ( !matches[ 2 ] || node.id === matches[ 2 ] ) &&
+                        ( !matches[ 3 ] || (matches[ 3 ][ 1 ] ? node.getAttribute( matches[ 3 ][ 0 ] ) === matches[ 3 ][ 1 ] : node.hasAttribute(matches[ 3 ][ 0 ] ) ) ) &&
+                        ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                     );
                 } else {
-                    result = matchesMethod ? node[matchesMethod](selector) : query(node, selector);
+                    result = matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
                 }
 
                 if (result || !context || node === context) break;

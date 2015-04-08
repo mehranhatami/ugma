@@ -77,8 +77,10 @@ implement({
                this.clear(name);
             } else if ( hook ) {
                 hook( node, value );
+               // set property 
             } else if ( name in node ) {
                 node[ name ] = value;
+              // set attribute
             } else {
                 // node's attribute
                 node.setAttribute( name, value + "" );

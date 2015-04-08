@@ -53,20 +53,19 @@ var langFix = /_/g,
         },
         // setter
         set: {
-            lang: ( node, value ) => {
-                // correct locale browser language before setting the attribute             
-                // e.g. from zh_CN to zh-cn, from en_US to en-us
-                node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() );
-            },
-
-            style: ( node, value ) => {
-                node.style.cssText = value;
-            },
+            // correct locale browser language before setting the attribute             
+            // e.g. from zh_CN to zh-cn, from en_US to en-us
+            lang:  ( node, value ) => node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() ),
+            style: ( node, value ) =>  node.style.cssText = value,
             title: ( node, value ) => {
                 var doc = node.ownerDocument;
 
                 ( node === doc.documentElement ? doc : node ).title = value;
             },
+            // removing a 'selected' boolean attribute should not set property to false.
+            // In Firefox the selected value is 1. In Chrome the selected value is 2.
+            // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
+            selected: ( node, value ) => node.setAttribute( value, value ),
             value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
@@ -97,9 +96,8 @@ var langFix = /_/g,
 
     // Support: IE<=11+
     // An input loses its value after becoming a radio
-    input = DOCUMENT.createElement( "input" );
-    input.value = "t";
     input.type = "radio";
+    input.value = "t";
     support.radioValue = input.value === "t";
 })();
 
