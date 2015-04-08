@@ -27,16 +27,6 @@ implement({
      */
     html: "innerHTML",
     /**
-     * Get / set attribute on a node
-     * @param {String|Object|Array}   value   attribute name
-     * @chainable
-     * @example
-     *     link.attr(); // get
-     *     link.attr('attrName', 'attrValue'); // set
-     *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
-     */   
-    attr: "attribute",
-    /**
      * Get / set the value attribute on a node
      * @param {String|Object|Array}   value   attribute name
      * @chainable

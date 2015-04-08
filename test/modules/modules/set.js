@@ -67,20 +67,15 @@ describe("set", function() {
         first.set("Case", undefined);
 
         expect(first.get("case")).toBe(null);
-
     });
 
-    it("should return reference to 'this'", function() {
-        expect(link.set("id", "t")).toBe(link);
-    });
+    it("should add/remove boolean attributes", function() {
+        var select = ugma.render("select");
+        select.set("multiple", false);
+        expect(select.get("multiple")).not.toBeUndefined();
 
-    it("should set the class name of an element", function() {
-        link.set("class", "some_class");
-        expect(link[0].className).toEqual("some_class");
-    });
-
-    it("should update an appropriate native object attribute", function() {
-        expect(link.set("data-test", "t")).toHaveAttr("data-test", "t");
+        select.set("multiple", true);
+        expect(select.get("multiple")).toBe(true);
     });
 
 
@@ -159,13 +154,6 @@ describe("set", function() {
         expect(clone[0].getAttribute("tabindex")).toBe("1");
     });
 
-    it("should try to update an appropriate native object property first", function() {
-        link.set("href", "#test");
-
-        expect(link).toHaveAttr("href", "#test");
-        expect(link).not.toHaveAttr("href", "#");
-    });
-
     it("should set and remove value attributes", function() {
 
         jasmine.sandbox.set("<select name='select1' id='select1'>" +
@@ -242,21 +230,32 @@ describe("set", function() {
         expect(ugma.query("#select5").content()).toBe("");
     });
 
+
+    it("should return reference to 'this'", function() {
+        expect(link.set("id", "t")).toBe(link);
+        // expect(inputs.set("id", "t")).toBe(inputs);
+    });
+
+    it("should update an appropriate native object attribute", function() {
+        expect(link.set("data-test", "t")).toHaveAttr("data-test", "t");
+    });
+
+    it("should try to update an appropriate native object property first", function() {
+        link.set("href", "#test");
+
+        expect(link).toHaveAttr("href", "#test");
+        expect(link).not.toHaveAttr("href", "#");
+    });
+
     it("should remove attribute if value is null or undefined", function() {
         expect(link.set("id", null)).not.toHaveAttr("id");
         expect(link.set("href", undefined)).not.toHaveAttr("href");
-
-        expect(link.set(null)[0].innerHTML).toBe("");
-        expect(link.set("12345")[0].innerHTML).not.toBe("");
-        expect(link.set(undefined)[0].innerHTML).toBe("");
-
     });
 
     it("should accept primitive types", function() {
         expect(link.set(1)).toHaveHtml("1");
         expect(link.set(true)).toHaveHtml("true");
     });
-
 
     it("should accept function", function() {
         var spy = jasmine.createSpy("setter").and.returnValue("test_changed");
@@ -308,7 +307,6 @@ describe("set", function() {
 
         expect(ugma.set("title", "abc")).toBe(ugma);
         expect(document.title).toBe("abc");
-
     });
 
     it("should access cssText for the style property", function() {
@@ -348,17 +346,6 @@ describe("set", function() {
         expect(input).toHaveProp("value", value);
     });
 
-    it("should emulate defaultValue for select", function() {
-        jasmine.sandbox.set("<select id='test_select'><option>a</option><option>b</option><option>c</option></select>");
-
-        var select = ugma.query("#test_select"),
-            selected = function(el) {
-                return el.get("selected");
-            };
-
-        expect(select.children().filter(selected)[0].get()).toBe("a");
-    });
-
     it("should set select value properly", function() {
         var select = ugma.render("<select><option>AM</option><option>PM</option></select>");
 
@@ -367,6 +354,32 @@ describe("set", function() {
         expect(select.get()).toBe("PM");
         select.set("MM");
         expect(select.get()).toBe("");
+    });
+
+    it("should accept function", function() {
+        var spy = jasmine.createSpy("set").and.returnValue("ok");
+
+        link.set(spy);
+        input.set(spy);
+
+        expect(spy.calls.count()).toBe(2);
+
+        expect(link).toHaveHtml("ok");
+        expect(input).toHaveProp("value", "ok");
+    });
+
+    it("accept object with overriden toString", function() {
+        function Type() {
+            this.name = "bar";
+        }
+
+        Type.prototype.toString = function() {
+            return "foo";
+        };
+
+        input.set(new Type());
+        expect(input.get()).toBe("foo");
+        expect(input).not.toHaveAttr("name", "bar");
     });
 
     it("should set the html of select", function() {
@@ -412,16 +425,6 @@ describe("set", function() {
         expect(link[0].id).toEqual("apple");
         expect(link[0].title).toEqual("some_title");
         expect(link[0].innerHTML).toEqual("some_content");
-    });
-
-
-    it("should set various attributes of a script element", function() {
-        link.set({
-            type: "text/javascript",
-            defer: "defer"
-        });
-        expect(link[0].type).toEqual("text/javascript");
-        expect(link[0].defer).toBeTruthy();
     });
 
     it("should set various attributes of a table element", function() {
@@ -505,25 +508,5 @@ describe("set", function() {
     it("should fix misspelled language attribute", function() {
         expect(input.set("lang", "zh_CN")).toHaveAttr("lang", "zh-cn");
         expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
-    });
-
-    it("should add/remove boolean attributes", function() {
-        var select = ugma.render("select");
-        select.set("multiple", false);
-        expect(select.get("multiple")).not.toBeUndefined();
-
-        select.set("multiple", true);
-        expect(select.get("multiple")).toBe(true);
-    });
-    
-     it("should not set boolean attribute 'selected' to false", function() {
-        expect(input.set("selected", "selected")).toHaveAttr("selected", "selected");
-  
-        input.set("selected", false);
-        
-        expect(input.get("selected")).not.toBe(false);        
-        expect(input.get("selected")).toBe(true);        
-//        expect(input.set("selected", false)).not.toHaveAttr("selected", "selected");        
-//        expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
     });
 });

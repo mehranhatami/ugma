@@ -16,12 +16,10 @@ describe("get", function() {
         tabIndex = ugma.query("#tabindex");
     });
 
-
     it("should return nodes outerHTML", function() {
-      expect(tabIndex.get("outerHTML")).not.toBeUndefined();
+        expect(tabIndex.get("outerHTML")).not.toBeUndefined();
     });
-    
-    
+
     it("could absent any parameter", function() {
         expect(link.get()).toBe("get-test");
         expect(input.get()).toBe("test");
@@ -34,8 +32,8 @@ describe("get", function() {
         expect(select.get()).toBe("a3");
         expect(select.child(0).get()).toBe("a1");
         expect(select.child(1).get()).toBe("a3");
-    });    
-    
+    });
+
     it("should return a CSS string representing the Element's styles", function() {
         var style = "font-size:12px;color:rgb(255,255,255)";
         var myElement = ugma.render("div").set("style", style);
@@ -162,11 +160,10 @@ describe("get", function() {
 
         expect(option.get("selected")).toBe(true);
         expect(option[0].selected).toBe(true);
-
     });
 
     it("should handle HTML5 boolean attributes", function() {
-   
+
         txt.set({
             "autofocus": true,
             "required": true
@@ -179,11 +176,46 @@ describe("get", function() {
         expect(txt.set("required", false).get("required")).toBe(false);
     });
 
-    it("should return undefined for non-existing attributes on input", function() {
-        var elm = ugma.render("input");
-        expect(elm.get("readonly")).toBeFalsy();
-        expect(elm.get("readOnly")).toBeFalsy();
-        expect(elm.get("disabled")).toBeFalsy();
+    it("should throw error if argument is invalid", function() {
+        expect(function() {
+            link.get(1);
+        }).toThrow();
+        expect(function() {
+            link.get(true);
+        }).toThrow();
+        expect(function() {
+            link.get({});
+        }).toThrow();
+        expect(function() {
+            link.get(function() {});
+        }).toThrow();
+    });
+
+    it("should polyfill textContent", function() {
+        expect(link.get("textContent")).toBe("get-test");
+        expect(form.get("textContent")).toBe("");
+    });
+
+    it("should return null if attribute doesn't exist", function() {
+        expect(link.get("xxx")).toBeNull();
+        expect(link.get("data-test")).toBeNull();
+    });
+
+    it("should fix camel cased attributes", function() {
+        expect(input.get("readonly")).toBe(true);
+        expect(input.get("tabindex")).toBe(10);
+    });
+
+    it("should return cssText on accessing style property", function() {
+        expect(input.get("style")).toBe("");
+
+        input.css("float", "left");
+
+        expect(input.get("style").trim().toLowerCase().indexOf("float: left")).toBe(0);
+    });
+
+    it("should return undefined for empty node", function() {
+        expect(ugma.query("some-node").get("attr")).toBeUndefined();
     });
 
     it("should read element property", function() {
@@ -211,27 +243,6 @@ describe("get", function() {
         expect(function() {
             link.get(function() {});
         }).toThrow();
-    });
-
-    it("should polyfill textContent", function() {
-        expect(link.get("textContent")).toBe("get-test");
-        expect(form.get("textContent")).toBe("");
-    });
-
-    it("should set/get the boolean value of loop, controls, and autoplay", function() {
-
-        tabIndex.set({
-            innerHTML: "<video loop controls autoplay>"
-        });
-
-        var video = tabIndex.query("video");
-
-        if ("loop" in video[0]) {
-            expect(video.get("loop")).toBe(true);
-            expect(video.set("loop", false).get("loop")).toBe(false);
-        }
-        expect(video.set("controls", false).get("controls")).toBe(false);
-        expect(video.set("autoplay", false).get("autoplay")).toBe(false);
     });
 
     it("should set a number (so no string) as html", function() {
@@ -340,6 +351,7 @@ describe("get", function() {
         expect(input.get("tabindex")).toBe(10);
     });
 
+
     it("should return cssText on accessing style property", function() {
         expect(input.get("style")).toBe("");
 
@@ -367,18 +379,9 @@ describe("get", function() {
     });
 
     it("should return null for non-existing attributes", function() {
-      var elm = ugma.render("div.any>`a`");
-      expect(elm.get("non-existing")).toBeNull();
+        var elm = ugma.render("div.any>`a`");
+        expect(elm.get("non-existing")).toBeNull();
     });
-    
-     it("should return null for non-existing attributes on input", function() {
-      
-      input.set("readonly", null);
-      
-      expect(input.get("readonly")).toBeFalsy();
-      expect(input.get("readOnly")).toBeFalsy();
-      expect(input.get("disabled")).toBeFalsy();
-    }); 
 
     it("should return the text of the selected option for a select element", function() {
         var form = ugma.render("form");
@@ -421,4 +424,5 @@ describe("get", function() {
             expect(input.get("value")).toEqual("abc");
         });
     });
+
 });

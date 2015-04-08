@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.2b
+ * Javascript framework 0.0.3a
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 06:01:20 GMT
+ * Build date: Wed, 08 Apr 2015 08:46:11 GMT
  */
 (function() {
     "use strict";
@@ -785,51 +785,11 @@
         };
     }
 
-    // Attributes that are booleans
-    helpers$$each( ( "compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
-        "noresize selected defer defaultChecked autofocus controls autoplay autofocus loop").split(" "), function( name )  {
-    
-        var attrValue = name.toLowerCase();
-    
-        if ( name === "selected" ) {
-            util$accessorhooks$$accessorHooks.set.selected = function( node, value )  {
-                // removing a 'selected' boolean attribute should not set property to false.
-                // In Firefox the selected value is 1. In Chrome the selected value is 2.
-                // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-option-selected
-    
-                if ( value === false ) {
-                    node.removeAttribute( name );
-                } else {
-                    node[ name ] = true;
-                    node.setAttribute( name, name );
-                }
-            };
-    
-        } else {
-            util$accessorhooks$$accessorHooks.set[ attrValue ] = function( node, value )  {
-                // For Boolean attributes we need to give them a special treatment, and set 
-                // the corresponding property to either true or false
-    
-                if (value === false) {
-                    // completely remove the boolean attributes when set to false, otherwise set it to true
-                    node[ name ] = false;
-                    node.removeAttribute( name );
-                } else {
-                    node[ name ] = true;
-                    node.setAttribute( name, name );
-                }
-            };
-        }
-        // populate 'accessorHooks.booleans'
-        util$accessorhooks$$accessorHooks.booleans[attrValue] = name;
-    
-    });
-
     // properties written as camelCase
     helpers$$each((
        // 6.4.3 The tabindex attribute
-        ("tabIndex "         +
-        "readOnly "         +
+        ("readOnly "         +
+        "tabIndex "         +
         "maxLength "        +
         "cellSpacing "      +
         "cellPadding "      +
@@ -846,7 +806,6 @@
         "defaultValue "     +
         "accessKey "        +
         "encType "          +
-        "readOnly  "        +
         "vAlign  " + "longDesc") ).split( " " ), function( key ) {
         util$accessorhooks$$accessorHooks.get[ key.toLowerCase() ] = function( node )  {return node[ key ]};
     });
@@ -2253,11 +2212,10 @@
                 
                 selector = nid + selector.split(",").join("," + nid);
             }
-              try {
-                     result = context["querySelector" + all](selector);
-                 } catch (err) {} finally {
-                     node.removeAttribute("id");
-                 }
+    
+            result = helpers$$invoke(context, "querySelector" + all, selector);
+    
+            if (!old) node.removeAttribute("id");
         }
     
             return all ? helpers$$map(result, core$core$$nodeTree) : core$core$$nodeTree(result);
@@ -2320,85 +2278,6 @@
     
         }
     }, null, function()  {return RETURN_FALSE});
-
-    core$core$$implement({
-    
-        serialize: function(node) {
-    
-            var result = {};
-    
-            if ("form" in node) {
-                node = [node];
-            } else if ("elements" in node) {
-                node = node.elements;
-            } else {
-                node = [];
-            }
-    
-            var el, 
-                option, 
-                name,
-                nodeOptions,
-                i = 0,
-                len = node.length;
-    
-            for (; i < len; ) {
-                
-                el = ( node[ i++ ] );
-                
-                 name = el.name;
-    
-                if ( el.disabled || !name ) continue;
-    /* jshint ignore:start */
-                switch ( el.type ) {
-                    case "select-multiple":
-    
-                        result[ name ] = [];
-    
-                    case "select-one":
-    
-                        for ( nodeOptions = ( el.options ), i = 0, len = nodeOptions.length; i < len; ) {
-                            option = ( nodeOptions[ i++ ] );
-                            if ( option.selected ) {
-                                if ( name in result ) {
-                                    result[ name ].push( option.value );
-                                } else {
-                                    result[ name ] = option.value;
-                                }
-                            }
-                        }
-    
-                        break;
-    
-                    case undefined:
-                    case "fieldset": // fieldset
-                    case "file": // file input
-                    case "submit": // submit button
-                    case "reset": // reset button
-                    case "button": // custom button
-                        break;
-    
-                    case "checkbox": // checkbox
-                        if ( el.checked && result[ name ] ) {
-                            if ( helpers$$is( result[ name ], "string" ) ) {
-                                result[ name ] = [ result[ name] ];
-                            }
-    
-                            result[ name ].push( el.value );
-    
-                            break;
-                        }
-                    case "radio": // radio button
-                        if ( !el.checked ) break;
-                    default:
-                        result[ name ] = el.value;
-                }
-    /* jshint ignore:end */
-            }
-    
-            return result;
-        }
-    });
 
     var modules$set$$objectTag = "[object Object]",
         modules$set$$getTagName = function( node )  {
@@ -2578,16 +2457,6 @@
          *     link.html('<span>Hello!</span>');
          */
         html: "innerHTML",
-        /**
-         * Get / set attribute on a node
-         * @param {String|Object|Array}   value   attribute name
-         * @chainable
-         * @example
-         *     link.attr(); // get
-         *     link.attr('attrName', 'attrValue'); // set
-         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
-         */   
-        attr: "attribute",
         /**
          * Get / set the value attribute on a node
          * @param {String|Object|Array}   value   attribute name
@@ -3278,7 +3147,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.2b";
+    core$core$$ugma.version = "0.0.3a";
 
     WINDOW.ugma = core$core$$ugma;
 })();

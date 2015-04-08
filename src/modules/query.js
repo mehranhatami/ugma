@@ -73,11 +73,10 @@ implement({
             
             selector = nid + selector.split(",").join("," + nid);
         }
-          try {
-                 result = context["querySelector" + all](selector);
-             } catch (err) {} finally {
-                 node.removeAttribute("id");
-             }
+
+        result = invoke(context, "querySelector" + all, selector);
+
+        if (!old) node.removeAttribute("id");
     }
 
         return all ? map(result, nodeTree) : nodeTree(result);
