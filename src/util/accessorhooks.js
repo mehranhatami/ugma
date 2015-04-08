@@ -122,7 +122,12 @@ if ( !support.optSelected ) {
     };
 }
 
-// properties written as camelCase
+/**
+ * Properties written as camelCase
+ *
+ * https://html.spec.whatwg.org/multipage/forms.html
+ */
+ 
 each((
    // 6.4.3 The tabindex attribute
     "readOnly "         +   // Whether to allow the value to be edited by the user

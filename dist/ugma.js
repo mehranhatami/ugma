@@ -5,22 +5,11 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 11:47:20 GMT
+ * Build date: Wed, 08 Apr 2015 12:53:35 GMT
  */
 (function() {
     "use strict";
-    function minErr$$minErr(module, msg) {
-        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
-        // use the arrow method here. And the function will fail BIG TIME !!
-        var wrapper = function() {
-            this.message = module ? ( msg ? msg : "This operation is not supported" ) +
-                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : "The string did not match the expected pattern";
-            // use the name on the framework
-            this.name = "ugma";
-        };
-        wrapper.prototype = Object.create( Error.prototype );
-        throw new wrapper( module, msg );
-    }var WINDOW = window;
+    var WINDOW = window;
     var DOCUMENT = document;
     var HTML = DOCUMENT.documentElement;
 
@@ -239,6 +228,19 @@
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
+    function minErr$$minErr(module, msg) {
+        // NOTE! The 'es6transpiller' will convert 'this' to '$this0' if we try to
+        // use the arrow method here. And the function will fail BIG TIME !!
+        var wrapper = function() {
+            this.message = module ? ( msg ? msg : "This operation is not supported" ) +
+                ( module.length > 4 ? " -> Module: " + module : " -> Core " ) : "The string did not match the expected pattern";
+            // use the name on the framework
+            this.name = "ugma";
+        };
+        wrapper.prototype = Object.create( Error.prototype );
+        throw new wrapper( module, msg );
+    }
+
     /**
      * uClass - class system
      *
@@ -406,6 +408,50 @@
           
           return false;        
       };
+
+    var modules$attr$$BOOLEAN_ATTR = {};
+
+    helpers$$each(( "compact nowrap ismap declare noshade disabled readOnly multiple hidden scoped multiple async " +
+    "noresize selected defer defaultChecked autofocus controls autoplay autofocus loop" ).split( " " ), function( value )   {
+     modules$attr$$BOOLEAN_ATTR[value.toLowerCase()] = value;
+    });
+
+    core$core$$implement({
+    
+        /**
+         * Get / set attribute on a node
+         * @param {String|Object|Array}   value   attribute name
+         * @chainable
+         * @example
+         *     link.attr(); // get
+         *     link.attr('attrName', 'attrValue'); // set
+         *     link.attr({'attr1', 'value1'}, {'attr2', 'value2}); // set multiple
+         */
+    
+        attr: function(name, value) {
+    
+            var node = this[0],
+                lowercasedName = name.toLowerCase();
+    
+            if ( modules$attr$$BOOLEAN_ATTR[lowercasedName ] ) {
+                if ( helpers$$is( value, "defined" ) ) {
+                    if ( !!value ) {
+                        node[ name ] = true;
+                        node.setAttribute( name, lowercasedName );
+                    } else {
+                        node[ name ] = false;
+                        node.removeAttribute( lowercasedName );
+                    }
+                } else {
+                    return node[ name ] ? lowercasedName : undefined;
+                }
+            } else if ( helpers$$is( value, "defined" ) ) {
+                node.setAttribute(name, value );
+            } else if ( node.getAttribute ) {
+                return node.getAttribute( name );
+            }
+        }
+    }, null, function()  {return RETURN_THIS} );
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -1626,7 +1672,12 @@
         };
     }
 
-    // properties written as camelCase
+    /**
+     * Properties written as camelCase
+     *
+     * https://html.spec.whatwg.org/multipage/forms.html
+     */
+
     helpers$$each((
        // 6.4.3 The tabindex attribute
         ("readOnly "         +   // Whether to allow the value to be edited by the user
@@ -1723,6 +1774,7 @@
             if ( hook ) return hook(node, name);
     
             if ( helpers$$is(name, "string") ) {
+                
                 // if no DOM object property method is present... 
                 if (name in node) return node[ name ];
                 

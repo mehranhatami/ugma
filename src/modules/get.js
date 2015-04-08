@@ -44,6 +44,7 @@ implement({
         if ( hook ) return hook(node, name);
 
         if ( is(name, "string") ) {
+            
             // if no DOM object property method is present... 
             if (name in node) return node[ name ];
             
