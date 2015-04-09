@@ -54,7 +54,7 @@ var langFix = /_/g,
             // correct locale browser language before setting the attribute             
             // e.g. from zh_CN to zh-cn, from en_US to en-us
             lang:  ( node, value ) => { node.setAttribute( "lang", value.replace( langFix, "-" ).toLowerCase() ) },
-            style: ( node, value ) => { node.style.cssText = value },
+            style: ( node, value ) => { node.style.cssText = "" + value },
             title: ( node, value ) => {
                 var doc = node.ownerDocument;
 

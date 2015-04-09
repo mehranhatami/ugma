@@ -86,7 +86,7 @@ implement({
             // Grab necessary hook if one is defined
             } else if ( hook ) {
                 hook( node, value );
-               // set property 
+             // Handle everything which isn't a DOM element node
             } else if ( name in node ) { 
                 node[ name ] = value;
               // set attribute

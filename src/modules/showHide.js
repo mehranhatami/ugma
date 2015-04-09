@@ -68,18 +68,16 @@ implement({
 
 }, ( methodName, condition ) => function( state, callback ) {
 
-    // Boolean toggle()
-    if ( methodName === "toggle" && is( state, "boolean" ) ) {
-        condition = state;
-        state = null;
-    }
+    if ( !is( state, "string" ) ) {
 
-    if ( !is(state, "string" ) ) {
-        callback = state;
-        state = null;
-    }
+        // Boolean toggle()
+        if ( methodName === "toggle" && is( state, "boolean" ) ) condition = state;
 
-    if ( callback && !is( callback, "function") ) minErr( methodName + "()", "This operation is not supported" );
+            callback = state;
+            state = null;
+    }
+    
+    if ( callback && !is( callback, "function" ) ) minErr( methodName + "()", "This operation is not supported" );
 
     var node = this[ 0 ],
         style = node.style,
@@ -96,11 +94,12 @@ implement({
             if ( callback ) callback( this );
         };
 
-    if ( !is(isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
+    if ( !is( isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
 
     // cancel previous frame if it exists
     if ( frameId ) cancelFrame( frameId );
-
+    
+    // detached nodes
     if ( !node.ownerDocument.documentElement.contains( node ) ) {
         done();
     } else {

@@ -45,8 +45,8 @@ implement({
 
         if ( is(name, "string") ) {
             
-            // if no DOM object property method is present... 
-            if (name in node) return node[ name ];
+            // If applicable, access the attribute via the DOM 0 way
+            if (name in node || node[ name ] !== undefined) return node[ name ];
             
            return /^data-/.test( name ) ? 
                // try to fetch HTML5 `data-*` attribute      
