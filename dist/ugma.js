@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.3b
+ * Javascript framework 0.0.4a
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 05:02:14 GMT
+ * Build date: Thu, 09 Apr 2015 05:42:18 GMT
  */
 (function() {
     "use strict";
@@ -3057,7 +3057,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.3b";
+    core$core$$ugma.version = "0.0.4a";
 
     WINDOW.ugma = core$core$$ugma;
 })();

@@ -40,6 +40,7 @@ describe("manipulation", function() {
             expect(root.append("text")).toEqual(root);
             expect(root.get()).toEqual("text");
         });
+        
     });
 
     describe("prepend", function() {

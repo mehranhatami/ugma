@@ -33,4 +33,13 @@ describe("children", function() {
         expect(list.children("a").length).toBe(0);
         expect(list.children("li").length).toBe(3);
     });
+
+    it("should throw error if arguments are invalid", function() {
+        expect(function() {
+            link.children({});
+        }).toThrow();
+        expect(function() {
+            link.children(function() {});
+        }).toThrow();
+    });
 });
