@@ -4,23 +4,32 @@
 
 import { DOCUMENT, HTML, VENDOR_PREFIXES } from "../const";
 import { minErr                          } from "../minErr";
-import { is, map                         } from "../helpers";
+import { is                              } from "../helpers";
 
 // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-    matchesMethod = map(VENDOR_PREFIXES.concat( null ), ( p ) => {
-        return ( p ? p.toLowerCase() + "M" : "m" ) + "atchesSelector";
-    }).reduceRight( ( propName, p ) => {
-        return propName ||
-            // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
-            ( HTML.matches && "matches" ||
-            // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
-             p in HTML && p );
-    }, null ),
-    //
+    matchesMethod = (function() {
+        // matchesSelector has been renamed to matches. Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches.
+        // Ranges of browsers's support. Ref http://caniuse.com/#search=matches
+        // So check for the standard method name first
+        if (HTML.matches) return "matches";
+
+        // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
+        if (HTML.matchesSelector) return "matchesSelector";
+
+        // Support: Chome <= 33, IE9, Opera 11.5+ (prefixed)
+        var method, prefixes = VENDOR_PREFIXES,
+            index = prefixes.length;
+
+        while (index--) {
+            method = prefixes[index].toLowerCase() + "MatchesSelector";
+            if (HTML[method]) return method;
+        }
+    })(),
+    
     query = ( node, selector ) => {
 
         // match elem with all selected elems of parent
@@ -64,7 +73,7 @@ export default function(selector, context) {
                         ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                     );
                 } else {
-                    result = matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
+                    result = node[ matchesMethod ]( selector ); //matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
                 }
 
                 if (result || !context || node === context) break;

@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 05:42:18 GMT
+ * Build date: Thu, 09 Apr 2015 06:27:44 GMT
  */
 (function() {
     "use strict";
@@ -420,16 +420,25 @@
     /* es6-transpiler has-iterators:false, has-generators: false */
 
     var util$selectormatcher$$quickMatch = /^(\w*)(?:#([\w\-]+))?(?:\[([\w\-\=]+)\])?(?:\.([\w\-]+))?$/,
-        util$selectormatcher$$matchesMethod = helpers$$map(VENDOR_PREFIXES.concat( null ), function( p )  {
-            return ( p ? p.toLowerCase() + "M" : "m" ) + "atchesSelector";
-        }).reduceRight( function( propName, p )  {
-            return propName ||
-                // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
-                ( HTML.matches && "matches" ||
-                // Support: Chome <= 33, IE9, Opera 11.5+,  (prefixed)
-                 p in HTML && p );
-        }, null ),
-        //
+        util$selectormatcher$$matchesMethod = (function() {
+            // matchesSelector has been renamed to matches. Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches.
+            // Ranges of browsers's support. Ref http://caniuse.com/#search=matches
+            // So check for the standard method name first
+            if (HTML.matches) return "matches";
+    
+            // Support: Chrome 34+, Gecko 34+, Safari 7.1, IE10+ (unprefixed)
+            if (HTML.matchesSelector) return "matchesSelector";
+    
+            // Support: Chome <= 33, IE9, Opera 11.5+ (prefixed)
+            var method, prefixes = VENDOR_PREFIXES,
+                index = prefixes.length;
+    
+            while (index--) {
+                method = prefixes[index].toLowerCase() + "MatchesSelector";
+                if (HTML[method]) return method;
+            }
+        })(),
+        
         util$selectormatcher$$query = function( node, selector )  {
     
             // match elem with all selected elems of parent
@@ -469,7 +478,7 @@
                             ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                         );
                     } else {
-                        result = util$selectormatcher$$matchesMethod ? node[ util$selectormatcher$$matchesMethod ]( selector ) : util$selectormatcher$$query( node, selector );
+                        result = node[ util$selectormatcher$$matchesMethod ]( selector ); //matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
                     }
     
                     if (result || !context || node === context) break;
