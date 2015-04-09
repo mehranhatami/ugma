@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 08:10:58 GMT
+ * Build date: Thu, 09 Apr 2015 08:32:57 GMT
  */
 (function() {
     "use strict";
@@ -1735,9 +1735,10 @@
 
     // All methods we want to hook on the 'ugma namespace' we list here
 
-    core$core$$ugma.camelize  = helpers$$camelize;
-    core$core$$ugma.computeStyle  = helpers$$computeStyle;
-    core$core$$ugma.proxy     = helpers$$proxy;
+    core$core$$ugma.camelize                 = helpers$$camelize;
+    core$core$$ugma.computeStyle             = helpers$$computeStyle;
+    core$core$$ugma.proxy                    = helpers$$proxy;
+    core$core$$ugma.deserializeValue         = util$readData$$deserializeValue;
 
     core$core$$implement({
       /**
