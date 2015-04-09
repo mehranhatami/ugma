@@ -3,7 +3,7 @@
  */
 
 import { DOCUMENT, WINDOW, INTERNET_EXPLORER  } from "../const";
-import { ugma                                 } from "../core/core";
+import { ugma, implement                      } from "../core/core";
 import { each, is, isArray, forOwn            } from "../helpers";
 import { debounce                             } from "../util/debounce";
 
@@ -54,11 +54,14 @@ if (INTERNET_EXPLORER < 10) {
 }
 
 /**
- * Hook 'eventHooks' on ugma namespace
+ * Make 'eventHooks' global
+ * Has to use the "implement" API method here, so this will be accessible
+ * inside the 'shadow DOM' implementation.
  */
-
-  ugma.eventHooks = ( mixin ) => {
-    
+ 
+ implement({
+     
+  eventHooks:(  mixin ) => {
       if ( is( mixin, "object" ) && !isArray( mixin ) ) {
 
           forOwn( mixin, ( key, value ) => {
@@ -66,7 +69,10 @@ if (INTERNET_EXPLORER < 10) {
               eventHooks[ key ] = mixin;
           });
       }
-  };
+  }
+  
+ });
+
 
 /*
  * Export interface

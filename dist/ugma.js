@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.4a
+ * Javascript framework 0.0.4b
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 08:32:57 GMT
+ * Build date: Thu, 09 Apr 2015 09:38:51 GMT
  */
 (function() {
     "use strict";
@@ -848,20 +848,26 @@
     };
 
     /**
-     * Hook 'styleHooks' on ugma namespace
+     * Make 'styleHooks' global
+     * Has to use the "implement" API method here, so this will be accessible
+     * inside the 'shadow DOM' implementation.
      */
 
-    core$core$$ugma.styleHooks = function( mixin, where )  {
-       // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleHooks()", "Not a valid string value" );
-      
-        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-  
-            helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleHooks$$styleHooks[ where ][ key ] = mixin;
-            });
-        }
-    };
+    core$core$$implement({
+        
+     styleHooks:function( mixin, where )  {
+        // Stop here if 'where' is not a typeof string
+         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleHooks()", "Not a valid string value" );
+       
+         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+   
+             helpers$$forOwn( mixin, function( key, value )  {
+                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleHooks$$styleHooks[ where ][ key ] = mixin;
+             });
+         }
+     }
+   
+    });
 
     var util$styleHooks$$default = util$styleHooks$$styleHooks;
     function util$adjustCSS$$adjustCSS( root, prop, parts, computed ) {
@@ -1200,19 +1206,25 @@
     }
 
     /**
-     * Hook 'eventHooks' on ugma namespace
+     * Make 'eventHooks' global
+     * Has to use the "implement" API method here, so this will be accessible
+     * inside the 'shadow DOM' implementation.
      */
 
-    core$core$$ugma.eventHooks = function( mixin )  {
-      
-        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-  
-            helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
-                util$eventhooks$$eventHooks[ key ] = mixin;
-            });
-        }
-    };
+    core$core$$implement({
+        
+     eventHooks:function(  mixin )  {
+         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+   
+             helpers$$forOwn( mixin, function( key, value )  {
+                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
+                 util$eventhooks$$eventHooks[ key ] = mixin;
+             });
+         }
+     }
+     
+    });
+
 
     var util$eventhooks$$default = util$eventhooks$$eventHooks;
 
@@ -1657,20 +1669,27 @@
     });
 
     /**
-     * Hook 'accessorHooks' on the ugma namespace
+     * Make 'accessorHooks' global
+     * Has to use the "implement" API method here, so this will be accessible
+     * inside the 'shadow DOM' implementation.
      */
 
-    core$core$$ugma.accessorHooks = function( mixin, where )  {
-       // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
-      
-        if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-  
-            helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
-            });
-        }
-    };
+    core$core$$implement({
+        
+     styleHooks:function(  mixin, where )  {
+        // Stop here if 'where' is not a typeof string
+         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
+       
+         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
+   
+             helpers$$forOwn( mixin, function( key, value )  {
+                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
+             });
+         }
+     }
+     
+    });
+
 
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
@@ -2847,17 +2866,27 @@
         template$template$$tagCache = { "": "" };
 
     // Expose 'templateHooks' to the global scope
-    core$core$$ugma.templateHooks = function( obj )  {
-    
+
+    /**
+     * Make 'eventHooks' global
+     * Has to use the "implement" API method here, so this will be accessible
+     * inside the 'shadow DOM' implementation.
+     */
+
+    core$core$$implement({
+        
+     templateHooks:function(  obj )  {
         if ( helpers$$is( obj, "object" ) && !helpers$$isArray( obj ) ) {
-    
-            helpers$$forOwn( obj, function( key, value )  {
-                if ( helpers$$is( value, "string" ) ) {
-                    template$template$$templateHooks[ key ] = value;
-                }
-            });
-        }
-    };
+   
+           helpers$$forOwn( obj, function( key, value )  {
+               if ( helpers$$is( value, "string" ) ) {
+                   template$template$$templateHooks[ key ] = value;
+               }
+           });
+       }
+     }
+     
+    });
 
     core$core$$ugma.template = function( template, args ) {
     
@@ -3087,7 +3116,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.4a";
+    core$core$$ugma.version = "0.0.4b";
 
     WINDOW.ugma = core$core$$ugma;
 })();

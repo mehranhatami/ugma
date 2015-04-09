@@ -2,7 +2,7 @@
  * @module template
  */
 
-import { ugma                       } from "../core/core";
+import { ugma, implement            } from "../core/core";
 import { is, each, forOwn, isArray  } from "../helpers";
 import { minErr                     } from "../minErr";
 import { process                    } from "../template/process";
@@ -18,9 +18,17 @@ var dot = /\./g,
     tagCache = { "": "" };
 
 // Expose 'templateHooks' to the global scope
-ugma.templateHooks = ( obj ) => {
 
-    if ( is( obj, "object" ) && !isArray( obj ) ) {
+/**
+ * Make 'eventHooks' global
+ * Has to use the "implement" API method here, so this will be accessible
+ * inside the 'shadow DOM' implementation.
+ */
+ 
+ implement({
+     
+  templateHooks:(  obj ) => {
+     if ( is( obj, "object" ) && !isArray( obj ) ) {
 
         forOwn( obj, ( key, value ) => {
             if ( is( value, "string" ) ) {
@@ -28,7 +36,9 @@ ugma.templateHooks = ( obj ) => {
             }
         });
     }
-};
+  }
+  
+ });
 
 ugma.template = function( template, args ) {
 

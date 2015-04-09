@@ -2,7 +2,7 @@
  * @module accessorHooks
  */
 
-import { ugma                                    } from "../core/core";
+import { ugma, implement                         } from "../core/core";
 import { trim, each, forOwn, every, is, isArray  } from "../helpers";
 import { DOCUMENT, WINDOW, FOCUSABLE             } from "../const";
 import { minErr                                  } from "../minErr";
@@ -172,10 +172,14 @@ each((
 });
 
 /**
- * Hook 'accessorHooks' on the ugma namespace
+ * Make 'accessorHooks' global
+ * Has to use the "implement" API method here, so this will be accessible
+ * inside the 'shadow DOM' implementation.
  */
-
-  ugma.accessorHooks = ( mixin, where ) => {
+ 
+ implement({
+     
+  styleHooks:(  mixin, where ) => {
      // Stop here if 'where' is not a typeof string
       if( !is( where, "string" ) ) minErr( "ugma.accessorHooks()", "Not a valid string value" );
     
@@ -185,8 +189,11 @@ each((
               if( is( value, "string" ) || is( value, "function" ) ) accessorHooks[ where ][ key ] = mixin;
           });
       }
-  };
+  }
   
+ });
+  
+    
 /*
  * Export interface
  */

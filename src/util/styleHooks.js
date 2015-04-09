@@ -2,7 +2,7 @@
  * @module styleHooks
  */
 
-import { ugma                                                    } from "../core/core";
+import { ugma, implement                                         } from "../core/core";
 import { minErr                                                  } from "../minErr";
 import { filter, map, keys, camelize, each, forOwn, is, isArray  } from "../helpers";
 import { VENDOR_PREFIXES, HTML                                   } from "../const";
@@ -73,10 +73,14 @@ styleHooks._default = function(name, style) {
 };
 
 /**
- * Hook 'styleHooks' on ugma namespace
+ * Make 'styleHooks' global
+ * Has to use the "implement" API method here, so this will be accessible
+ * inside the 'shadow DOM' implementation.
  */
-
-  ugma.styleHooks = ( mixin, where ) => {
+ 
+ implement({
+     
+  styleHooks:( mixin, where ) => {
      // Stop here if 'where' is not a typeof string
       if( !is( where, "string" ) ) minErr( "ugma.styleHooks()", "Not a valid string value" );
     
@@ -86,8 +90,10 @@ styleHooks._default = function(name, style) {
               if( is( value, "string" ) || is( value, "function" ) ) styleHooks[ where ][ key ] = mixin;
           });
       }
-  };
-  
+  }
+
+ });
+
 /*
  * Export interface
  */
