@@ -51,8 +51,8 @@ implement({
            return /^data-/.test( name ) ? 
                // try to fetch HTML5 `data-*` attribute      
                   readData( node, name ) : 
-                //... fallback to the getAttribute method, or return null
-                  node.getAttribute( name ) || null;
+                //... fallback to the getAttribute method, and let non-existent attributes return null
+                  node.getAttribute( name );
 
         } else if ( isArray( name ) ) {
             var obj = {};

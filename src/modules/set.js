@@ -91,7 +91,8 @@ implement({
                 node[ name ] = value;
               // set attribute
             } else {
-                node.setAttribute( lowercasedName, value + "" );
+                // // convert the value to a string 
+                node.setAttribute( lowercasedName, "" + value);
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");

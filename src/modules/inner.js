@@ -1,5 +1,5 @@
 /**
- * @module value
+ * @module inner
  */
 import { implement, instanceOf  } from "../core/core";
 import { isArray                } from "../helpers";
@@ -15,7 +15,7 @@ implement({
      *     var div = ugma.render("div>a+b");
      *     div.value(ugma.render("i"));
      */
-     content( val ) {
+     inner( val ) {
   
        if ( arguments.length === 0 ) return this.get();
 

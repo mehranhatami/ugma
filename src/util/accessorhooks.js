@@ -63,7 +63,7 @@ var langFix = /_/g,
             value: ( node, value ) => {
 
                 if ( node.tagName === "SELECT" ) {
-                    // selectbox has special case
+                    // We need to handle select boxes special
                     if ( every.call(node.options, ( o ) => !( o.selected = o.value === value ) ) ) node.selectedIndex = -1;
 
                 } else {

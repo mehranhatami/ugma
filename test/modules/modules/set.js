@@ -192,42 +192,42 @@ describe("set", function() {
 
         expect(txt.get("value")).toBe("Test");
 
-        expect(ugma.query("#select2").content()).toBe("3");
+        expect(ugma.query("#select2").inner()).toBe("3");
 
-        expect(ugma.query("#select3").content()).toBe("1");
+        expect(ugma.query("#select3").inner()).toBe("1");
 
         expect(ugma.query("#select2").get("selectedIndex")).toBe(3);
 
-        expect(ugma.query("#option3c").content()).toBe("2");
+        expect(ugma.query("#option3c").inner()).toBe("2");
 
-        expect(ugma.query("#option3a").content()).toBe("");
+        expect(ugma.query("#option3a").inner()).toBe("");
 
-        expect(ugma.query("#option3e").content()).toBe("no value");
+        expect(ugma.query("#option3e").inner()).toBe("no value");
 
-        expect(ugma.query("#option3a").content()).toBe("");
+        expect(ugma.query("#option3a").inner()).toBe("");
 
-        ugma.query("#select3").content("");
+        ugma.query("#select3").inner("");
 
-        expect(ugma.query("#select3").content()).toBe("");
+        expect(ugma.query("#select3").inner()).toBe("");
 
-        expect(ugma.query("#select3").content()).toBe("");
+        expect(ugma.query("#select3").inner()).toBe("");
 
-        expect(ugma.query("#select5").content()).toBe("3");
-
-        // use content() method for this
-        ugma.query("#select5").content(1);
-
-        // check content on ambiguous select.
-        expect(ugma.query("#select5").content()).toBe("1");
+        expect(ugma.query("#select5").inner()).toBe("3");
 
         // use content() method for this
-        ugma.query("#select5").content(3);
+        ugma.query("#select5").inner(1);
 
         // check content on ambiguous select.
-        expect(ugma.query("#select5").content()).toBe("3");
+        expect(ugma.query("#select5").inner()).toBe("1");
 
-        ugma.query("#select5").content("");
-        expect(ugma.query("#select5").content()).toBe("");
+        // use content() method for this
+        ugma.query("#select5").inner(3);
+
+        // check content on ambiguous select.
+        expect(ugma.query("#select5").inner()).toBe("3");
+
+        ugma.query("#select5").inner("");
+        expect(ugma.query("#select5").inner()).toBe("");
     });
 
 
@@ -443,14 +443,14 @@ describe("set", function() {
     it("should replace child element(s) from node with provided element", function() {
         var div = ugma.render("div>a+a");
         expect(div[0].childNodes.length).toBe(2);
-        expect(div.content(ugma.render("b"))).toBe(div);
+        expect(div.inner(ugma.render("b"))).toBe(div);
         expect(div[0].childNodes.length).toBe(1);
         expect(div.child(0)).toHaveTag("b");
     });
 
     it("should set value of text input to provided string value", function() {
         var input = ugma.render("input[value=foo]");
-        expect(input.content("bar")).toBe(input);
+        expect(input.inner("bar")).toBe(input);
         expect(input).toHaveProp("value", "bar");
     });
 

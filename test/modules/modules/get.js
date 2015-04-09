@@ -316,7 +316,7 @@ describe("get", function() {
         var div = ugma.render("div>a+a"),
             input = ugma.render("input[value=foo]");
 
-        expect(div.content().toLowerCase()).toBe("<a></a><a></a>");
+        expect(div.inner().toLowerCase()).toBe("<a></a><a></a>");
         expect(input.get()).toBe("foo");
     });
 
