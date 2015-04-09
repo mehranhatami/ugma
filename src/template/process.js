@@ -31,7 +31,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     escapeChars = ( str ) => {
        // always make sure the'str' argument is a string, in a few 'rare' 
        // cases it could be an array, and ugma will throw
-       return is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] );
+       return is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] );
     },
     process = ( template ) => {
 
@@ -46,9 +46,9 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
 
             if ( is( node, "string" ) ) node = [ processTag( node ) ];
 
-            if ( is( node, "undefined" ) || is( value, "undefined" ) ) minErr("ugma.render()", "This operation is not supported" );
+            if ( is( node, "undefined" ) || is( value, "undefined" ) ) minErr( "ugma.render()", "This operation is not supported" );
 
-            if (str === "#" ) { // id
+            if ( str === "#" ) { // id
                 value = replaceAttr(" id=\"" + value + "\"" );
             } else if ( str === "." ) { // class
                 value = replaceAttr(" class=\"" + value + "\"" );

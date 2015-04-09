@@ -3,7 +3,7 @@
  */
 
 import { implement                          } from "../core/core";
-import { invoke, isArray, each, is, forOwn  } from "../helpers";
+import { proxy, isArray, each, is, forOwn   } from "../helpers";
 import { minErr                             } from "../minErr";
 import { RETURN_THIS                        } from "../const";
 import   accessorhooks                        from "../util/accessorhooks";
@@ -106,7 +106,7 @@ implement({
         }
 
         // Trigger all relevant attribute / nameerty changes.
-        if ( subscription && previousValue !== value )  each( subscription, ( cb ) => { invoke(this, cb, value, previousValue) } );
+        if ( subscription && previousValue !== value )  each( subscription, ( cb ) => { proxy(this, cb, value, previousValue) } );
 
         return this;
     }

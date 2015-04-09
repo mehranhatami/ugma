@@ -5,7 +5,7 @@
 import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
 import { Nodes, Shallow, implement         } from "../core/core";
 import { minErr                            } from "../minErr";
-import { is, map, invoke                   } from "../helpers";
+import { is, map, proxy                    } from "../helpers";
 
 var fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
     rescape  = /'|\\/g;
@@ -74,7 +74,7 @@ implement({
             selector = nid + selector.split(",").join("," + nid);
         }
 
-        result = invoke(context, "querySelector" + all, selector);
+        result = proxy(context, "querySelector" + all, selector);
 
         if (!old) node.removeAttribute("id");
     }

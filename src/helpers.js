@@ -166,16 +166,24 @@ export const isArray = Array.isArray;
         return -1;
     },
 
-    invoke = (context, fn, arg1, arg2) => {
-        if ( is(fn, "string" ) ) fn = context[ fn ];
+    // Bind a function to a context, optionally partially applying 
+	// one or two arguments.
+    proxy = ( context, fn, arg1, arg2 ) => {
+
+        if ( is( fn, "string" ) ) fn = context[ fn ];
+
+        // Quick check to determine if target is callable
+        if ( !is( fn, "function" ) ) return undefined;
 
         try {
             return fn.call( context, arg1, arg2 );
         } catch ( err ) {
-            WINDOW.setTimeout( () => { throw err }, 1 );
+            WINDOW.setTimeout( () => {
+                throw err;
+            }, 1);
 
             return false;
-        }
+       }    
     },
 
     // Faster alternative then slice.call
@@ -226,4 +234,4 @@ export const isArray = Array.isArray;
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, trim, inArray, invoke, sliceArgs, camelize, computeStyle, injectElement };
+export { each, map, forOwn, filter, is, trim, inArray, proxy, sliceArgs, camelize, computeStyle, injectElement };

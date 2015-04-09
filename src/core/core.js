@@ -134,7 +134,7 @@ Shallow = uClass({
 
   // Set a new document, and define a local copy of ugma
     
-    var ugma = new DOM( DOCUMENT );
+    var ugma = new  DOM( DOCUMENT );
 
    /**
      * Extend ugma with methods

@@ -6,7 +6,7 @@ import { RETURN_THIS, RETURN_TRUE                                   } from "../c
 import   EventHandler                                                 from "../util/eventhandler";
 import   eventhooks                                                   from "../util/eventhooks";
 import { implement                                                  } from "../core/core";
-import { isArray, keys, each, forOwn, is, inArray, filter, invoke   } from "../helpers";
+import { isArray, keys, each, forOwn, is, inArray, filter, proxy    } from "../helpers";
 import { minErr                                                     } from "../minErr";
 import { cancelFrame                                                } from "../util/raf";
 
@@ -196,7 +196,7 @@ implement({
         // prevent re-triggering of the current event
         EventHandler.veto = type;
 
-        invoke( node, type );
+        proxy( node, type );
 
         EventHandler.veto = null;
     }
