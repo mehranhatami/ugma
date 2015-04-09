@@ -55,6 +55,34 @@ var div_two = ugma.renderAll("div*2") // 2 div tags [Array]
 ugma.append( div_two);
 
 ```
+##DOM
+
+ugma is DOM, and it's own document. Just after the DOM living specs. You can create multiple documents or shadows.
+
+```javascript
+
+// Access ugma as root
+
+alert(ugma);
+
+```
+
+So you don't need to query for document to do your magic because ugma *is* the document itself.
+
+Example on difference between jQuery:
+
+```javascript
+
+// jQuery
+
+$(document).on('click', function() {  });
+
+// ugma
+
+ugma.on('click', function() {  });
+
+```
+
 
 ##Shadow DOM
 
