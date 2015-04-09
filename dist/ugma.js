@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Wed, 08 Apr 2015 14:33:41 GMT
+ * Build date: Thu, 09 Apr 2015 05:02:14 GMT
  */
 (function() {
     "use strict";
@@ -182,16 +182,24 @@
            return -1;
        },
    
-       helpers$$invoke = function(context, fn, arg1, arg2)  {
-           if ( helpers$$is(fn, "string" ) ) fn = context[ fn ];
+       // Bind a function to a context, optionally partially applying 
+       // one or two arguments.
+       helpers$$proxy = function( context, fn, arg1, arg2 )  {
+   
+           if ( helpers$$is( fn, "string" ) ) fn = context[ fn ];
+   
+           // Quick check to determine if target is callable
+           if ( !helpers$$is( fn, "function" ) ) return undefined;
    
            try {
                return fn.call( context, arg1, arg2 );
            } catch ( err ) {
-               WINDOW.setTimeout( function()  { throw err }, 1 );
+               WINDOW.setTimeout( function()  {
+                   throw err;
+               }, 1);
    
                return false;
-           }
+          }    
        },
    
        // Faster alternative then slice.call
@@ -366,7 +374,7 @@
 
     // Set a new document, and define a local copy of ugma
 
-    var core$core$$ugma = new core$core$$DOM( DOCUMENT );
+    var core$core$$ugma = new  core$core$$DOM( DOCUMENT );
 
     /**
       * Extend ugma with methods
@@ -762,113 +770,88 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
-    core$core$$implement({
-        /**
-         * Read or write inner content of the element
-         * @param  {Mixed}  [content]  optional value to set
-         * @chainable
-         * @example
-         *     link.content('New value');
-         *
-         *     var div = ugma.render("div>a+b");
-         *     div.value(ugma.render("i"));
-         */
-         content: function(val) {
-      
-           if ( arguments.length === 0 ) return this.get();
-    
-           if ( core$core$$instanceOf( val ) || helpers$$isArray( val ) ) return this.set( "" ).append( val );
-    
-           return this.set( val );
-        }
-    }, null, function()  {return function() {
-        
-        if ( arguments.length ) return this;
-        
-    }});
-
-
-
-
-    var util$styleAccessor$$UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
+    var util$styleHooks$$unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
         "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
         "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
-        "overflow rotate3d border-right-color border-top-color text-decoration-color text-emphasis-color " +
+        "overflow rotate3d border-right-color border-top-color " +
         // SVG-related properties
         "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+    
+        // Add in style property hooks for overriding the default
+        // behavior of getting and setting a style property    
         
-        util$styleAccessor$$styleAccessor = { get: {}, set: {} },
-        util$styleAccessor$$directions = ["Top", "Right", "Bottom", "Left"],
-        util$styleAccessor$$shortHand = {
+        util$styleHooks$$styleHooks = { get: {}, set: {} },
+        util$styleHooks$$directions = ["Top", "Right", "Bottom", "Left"],
+        util$styleHooks$$shortHand = {
             font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
             borderRadius:   ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomRightRadius", "borderBottomLeftRadius"],
-            padding:        helpers$$map( util$styleAccessor$$directions, function( dir )  {return "padding" + dir} ),
-            margin:         helpers$$map( util$styleAccessor$$directions, function( dir )  {return "margin" + dir} ),
-            "border-width": helpers$$map( util$styleAccessor$$directions, function( dir )  {return "border" + dir + "Width"} ),
-            "border-style": helpers$$map( util$styleAccessor$$directions, function( dir )  {return "border" + dir + "Style"} )
+            padding:        helpers$$map( util$styleHooks$$directions, function( dir )  {return "padding" + dir} ),
+            margin:         helpers$$map( util$styleHooks$$directions, function( dir )  {return "margin" + dir} ),
+            "border-width": helpers$$map( util$styleHooks$$directions, function( dir )  {return "border" + dir + "Width"} ),
+            "border-style": helpers$$map( util$styleHooks$$directions, function( dir )  {return "border" + dir + "Style"} )
         };
 
     // Don't automatically add 'px' to these possibly-unitless properties
-    helpers$$each(util$styleAccessor$$UnitlessNumber, function( propName )  {
+    helpers$$each(util$styleHooks$$unitless, function( propName )  {
         var stylePropName = helpers$$camelize(propName);
     
-        util$styleAccessor$$styleAccessor.get[ propName ] = stylePropName;
-        util$styleAccessor$$styleAccessor.set[ propName ] = function( value, style )  {
+        util$styleHooks$$styleHooks.get[ propName ] = stylePropName;
+        util$styleHooks$$styleHooks.set[ propName ] = function( value, style )  {
             style[stylePropName] = value + "";
         };
     });
 
     // normalize property shortcuts
-    helpers$$forOwn(util$styleAccessor$$shortHand, function(key, props)  {
+    helpers$$forOwn(util$styleHooks$$shortHand, function( key, props )  {
     
-        util$styleAccessor$$styleAccessor.get[ key ] = function(style)  {
+        util$styleHooks$$styleHooks.get[ key ] = function( style )  {
             var result = [],
-                hasEmptyStyleValue = function(prop, index)  {
-                    result.push(prop === "/" ? prop : style[ prop ]);
+                hasEmptyStyleValue = function( prop, index )  {
+                    result.push( prop === "/" ? prop : style[ prop ] );
     
-                    return !result[index];
+                    return !result[ index ];
                 };
     
-            return props.some(hasEmptyStyleValue) ? "" : result.join(" ");
+            return props.some( hasEmptyStyleValue ) ? "" : result.join( " " );
         };
     
-        util$styleAccessor$$styleAccessor.set[ key ] = function(value, style)  {
-            if (value && "cssText" in style) {
+        util$styleHooks$$styleHooks.set[ key ] = function(value, style)  {
+            if ( value && "cssText" in style ) {
                 // normalize setting complex property across browsers
                 style.cssText += ";" + key + ":" + value;
             } else {
-                helpers$$each( props, function(name)  {return style[ name ] = typeof value === "number" ? value + "px" : value + ""} );
+                helpers$$each( props, function( name )  {return style[ name ] = typeof value === "number" ? value + "px" : value + ""} );
             }
         };
     });
 
-    util$styleAccessor$$styleAccessor._default = function(name, style) {
+    util$styleHooks$$styleHooks._default = function(name, style) {
         var propName = helpers$$camelize( name );
     
-        if (!(propName in style)) {
-            propName = helpers$$filter( helpers$$map(VENDOR_PREFIXES, function( prefix )  {return prefix + propName[ 0 ].toUpperCase() + propName.slice( 1 )}), function( prop )  {return prop in style})[ 0 ];
+        if ( !( propName in style ) ) {
+            propName = helpers$$filter( helpers$$map( VENDOR_PREFIXES, function( prefix )  {return prefix + propName[ 0 ].toUpperCase() + propName.slice( 1 )} ), function( prop )  {return prop in style} )[ 0 ];
         }
     
         return this.get[ name ] = this.set[ name ] = propName;
     };
 
     /**
-     * Hook 'styleAccessor' on ugma namespace
+     * Hook 'styleHooks' on ugma namespace
      */
 
-    core$core$$ugma.styleAccessor = function( mixin, where )  {
+    core$core$$ugma.styleHooks = function( mixin, where )  {
        // Stop here if 'where' is not a typeof string
-        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleAccessor()", "Not a valid string value" );
+        if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleHooks()", "Not a valid string value" );
       
         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
   
             helpers$$forOwn( mixin, function( key, value )  {
-                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleAccessor$$styleAccessor[ where ][ key ] = mixin;
+                if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleHooks$$styleHooks[ where ][ key ] = mixin;
             });
         }
     };
 
-    var util$styleAccessor$$default = util$styleAccessor$$styleAccessor;
+    var util$styleHooks$$default = util$styleHooks$$styleHooks;
     function util$adjustCSS$$adjustCSS( root, prop, parts, computed ) {
     
         var adjusted,
@@ -914,7 +897,7 @@
 
     core$core$$implement({
       /**
-        * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
+        * Get and set the style property on a DOM Node
         * @param  {String|Object}      name    style property name or key/value object
         * @param  {String|Function}    [value] style property value or functor
         * @chainable
@@ -952,7 +935,7 @@
             if ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) {
                 
                 var getValue = function( name )  {
-                    var getter = util$styleAccessor$$default.get[ name ] || util$styleAccessor$$default._default( name, style ),
+                    var getter = util$styleHooks$$default.get[ name ] || util$styleHooks$$default._default( name, style ),
                         // Try inline styles first
                         value = helpers$$is( getter, "function" ) ? getter( style ) : style[ getter ];
    
@@ -977,7 +960,7 @@
    
             if ( len === 2 && helpers$$is( name, "string" ) ) {
              
-                var ret, setter = util$styleAccessor$$default.set[ name ] || util$styleAccessor$$default._default( name, style );
+                var ret, setter = util$styleHooks$$default.set[ name ] || util$styleHooks$$default._default( name, style );
    
                 if ( helpers$$is( value, "function" ) ) value = value( this );
    
@@ -986,7 +969,7 @@
                 // Convert '+=' or '-=' to relative numbers
                 if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
    
-                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed || helpers$$computeStyle(node));
+                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed || helpers$$computeStyle( node ) );
    
                     if ( ret && ret[ 3 ] ) value += ret[ 3 ];
                 }
@@ -994,7 +977,7 @@
                 if ( helpers$$is( setter, "function" ) ) {
                     setter ( value, style );
                 } else {
-                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : "" + value; // cast to string 
+                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : value;
                 }
             } else if ( len === 1 && name && helpers$$is( name, "object" ) ) {
                 
@@ -1464,7 +1447,7 @@
             // prevent re-triggering of the current event
             util$eventhandler$$default.veto = type;
     
-            helpers$$invoke( node, type );
+            helpers$$proxy( node, type );
     
             util$eventhandler$$default.veto = null;
         }
@@ -1530,7 +1513,7 @@
                 // correct locale browser language before setting the attribute             
                 // e.g. from zh_CN to zh-cn, from en_US to en-us
                 lang:  function( node, value )  { node.setAttribute( "lang", value.replace( util$accessorhooks$$langFix, "-" ).toLowerCase() ) },
-                style: function( node, value )  { node.style.cssText = value },
+                style: function( node, value )  { node.style.cssText = "" + value },
                 title: function( node, value )  {
                     var doc = node.ownerDocument;
     
@@ -1539,7 +1522,7 @@
                 value: function( node, value )  {
     
                     if ( node.tagName === "SELECT" ) {
-                        // selectbox has special case
+                        // We need to handle select boxes special
                         if ( helpers$$every.call(node.options, function( o )  {return !( o.selected = o.value === value )} ) ) node.selectedIndex = -1;
     
                     } else {
@@ -1701,14 +1684,14 @@
     
             if ( helpers$$is(name, "string") ) {
                 
-                // if no DOM object property method is present... 
-                if (name in node) return node[ name ];
+                // If applicable, access the attribute via the DOM 0 way
+                if (name in node || node[ name ] !== undefined) return node[ name ];
                 
                return /^data-/.test( name ) ? 
                    // try to fetch HTML5 `data-*` attribute      
                       util$readData$$readData( node, name ) : 
-                    //... fallback to the getAttribute method, or return null
-                      node.getAttribute( name ) || null;
+                    //... fallback to the getAttribute method, and let non-existent attributes return null
+                      node.getAttribute( name );
     
             } else if ( helpers$$isArray( name ) ) {
                 var obj = {};
@@ -1722,6 +1705,10 @@
             }
         }
     }, null, function()  {return function()  {}});
+
+    core$core$$ugma.camelize  = helpers$$camelize;
+    core$core$$ugma.computeStyle  = helpers$$computeStyle;
+    core$core$$ugma.proxy     = helpers$$proxy;
 
     core$core$$implement({
       /**
@@ -1815,6 +1802,35 @@
         }
     });
 
+    core$core$$implement({
+        /**
+         * Read or write inner content of the element
+         * @param  {Mixed}  [content]  optional value to set
+         * @chainable
+         * @example
+         *
+         *     link.content('New value');
+         *
+         *     var div = ugma.render("div>a+b");
+         *     div.inner(ugma.render("i"));
+         */
+         inner: function(value) {
+      
+           if ( arguments.length === 0 ) return this.get();
+    
+           if ( core$core$$instanceOf( value ) || helpers$$isArray( value ) ) return this.set( "" ).append( value );
+    
+           return this.set( value );
+        }
+    }, null, function()  {return function() {
+        
+        if ( arguments.length ) return this;
+        
+    }});
+
+
+
+
     // https://dom.spec.whatwg.org
     // 
     // Section: 4.2.5 Interface ChildNode
@@ -1901,7 +1917,7 @@
         remove: [ "", false, true, function( node )  {
             node.parentNode.removeChild( node );
         }]
-    }, function(methodName, adjacentHTML, native, requiresParent, strategy)  {return function() {var this$0 = this;
+    }, function( methodName, adjacentHTML, native, requiresParent, strategy )  {return function() {var this$0 = this;
         
           var contents = helpers$$sliceArgs( arguments ),
               node = this[ 0 ];
@@ -1927,7 +1943,7 @@
             if ( helpers$$isArray( content ) && !helpers$$is( content[ 0 ], "object" ) ) content = content.join();
     
             if ( helpers$$is( content, "string" ) ) {
-                if (helpers$$is( fragment, "string" ) ) {
+                if ( helpers$$is( fragment, "string" ) ) {
                     fragment += helpers$$trim( content );
                 } else {
                     content = core$core$$ugma.renderAll( content );
@@ -1936,7 +1952,7 @@
                 content = [ content ];
             }
             
-            // should handle documentFragment
+            // Handle documentFragment
             if ( content.nodeType === 11 ) {
                 fragment = content;
             } else {
@@ -1949,7 +1965,7 @@
                     }
     
                     helpers$$each( content, function( el ) {
-                        fragment.appendChild( core$core$$instanceOf(el) ? el[ 0 ] : el );
+                        fragment.appendChild( core$core$$instanceOf( el ) ? el[ 0 ] : el );
                     });
                 }
             }
@@ -1978,9 +1994,21 @@
         }
     }, null, function()  {return function()  {return []}} );
 
-    var util$pseudoClasses$$pseudoClasses = {
+    var util$pseudoClasses$$createButtonPseudo = function( type )  {
+            return function( node )  {
+                var name = node.nodeName;
+                return ( name === "INPUT" || name === "BUTTON" ) && node.type === type;
+            };
+        },
+        util$pseudoClasses$$createInputPseudo = function( type )  {
+            return function( node )  {
+                var name = node.nodeName;
+                return name === "INPUT" && node.type === type;
+            };
+        },
+        util$pseudoClasses$$pseudoClasses = {
     
-            ":input": function( node )  {return FOCUSABLE.test(node.nodeName)},
+            ":input": function( node )  {return FOCUSABLE.test( node.nodeName )},
     
             ":selected": function( node )  {
                 // Accessing this property makes selected-by-default
@@ -1991,33 +2019,16 @@
                 /* jshint ignore:end */
                 return node.selected === true;
             },
-            ":enabled": function( node )   {return !node.disabled},
+            ":enabled":  function( node )   {return !node.disabled},
             ":disabled": function( node )  {return node.disabled},
             // In CSS3, :checked should return both checked and selected elements
             // http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
     
-            ":checked": function( node )  {return !!("checked" in node ? node.checked : node.selected)},
-    
-            ":focus": function( node )  {return node === node.ownerDocument.activeElement},
-    
-            ":visible": function( node )  {return !util$pseudoClasses$$pseudoClasses[ ":hidden" ](node)},
-    
-            ":hidden": function( node )  {return node.style.visibility === "hidden" || node.style.display === "none"} 
+            ":checked": function( node )  {return !!( "checked" in node ? node.checked : node.selected )},
+            ":focus":   function( node )  {return node === node.ownerDocument.activeElement},
+            ":visible": function( node )  {return !util$pseudoClasses$$pseudoClasses[ ":hidden" ]( node )},
+            ":hidden":  function( node )   {return node.style.visibility === "hidden" || node.style.display === "none"}  
         };
-
-    function util$pseudoClasses$$createButtonPseudo( type ) {
-        return function( node )  {
-            var name = node.nodeName;
-            return (name === "INPUT" || name === "BUTTON") && node.type === type;
-        };
-    }
-
-    function util$pseudoClasses$$createInputPseudo( type ) {
-        return function( node )  {
-            var name = node.nodeName;
-            return name === "INPUT" && node.type === type;
-        };
-    }
 
     // Add button/input type pseudos
     helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
@@ -2193,7 +2204,7 @@
                 selector = nid + selector.split(",").join("," + nid);
             }
     
-            result = helpers$$invoke(context, "querySelector" + all, selector);
+            result = helpers$$proxy(context, "querySelector" + all, selector);
     
             if (!old) node.removeAttribute("id");
         }
@@ -2337,12 +2348,13 @@
                 // Grab necessary hook if one is defined
                 } else if ( hook ) {
                     hook( node, value );
-                   // set property 
+                 // Handle everything which isn't a DOM element node
                 } else if ( name in node ) { 
                     node[ name ] = value;
                   // set attribute
                 } else {
-                    node.setAttribute( lowercasedName, value + "" );
+                    // // convert the value to a string 
+                    node.setAttribute( lowercasedName, "" + value);
                 }
                 // set array of key values
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");
@@ -2356,7 +2368,7 @@
             }
     
             // Trigger all relevant attribute / nameerty changes.
-            if ( subscription && previousValue !== value )  helpers$$each( subscription, function( cb )  { helpers$$invoke(this$0, cb, value, previousValue) } );
+            if ( subscription && previousValue !== value )  helpers$$each( subscription, function( cb )  { helpers$$proxy(this$0, cb, value, previousValue) } );
     
             return this;
         }
@@ -2423,6 +2435,111 @@
             return data[ 0 ] = ctx;
         }
     }, null, function()  {return function()  {return RETURN_FALSE}} );
+
+    core$core$$implement({
+        /**
+         * Show an element
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         *     
+         *  Show a single element:
+         *     
+         *    link.show(); // displays element
+         *
+         *    link.show(function() { });
+         *
+         *  Show multiple elements using 'native' Array.prototype.forEach:
+         *  
+         *    ugma.queryAll('.foo').forEach(function(node) { node.show(); ); }  // 'this' keyword can also be used
+         *  
+         *  Show single element using callback:
+         *  
+         *    link.show(function() { query(#.bar").hide()   });
+         */
+        show: false,
+        /**
+         * Hide an element
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         *     
+         *  Show a single element:
+         *     
+         *    link.hide(); // hide element
+         *
+         *  Hide multiple elements using 'native' Array.prototype.forEach:
+         *  
+         *    ugma.queryAll('.foo').forEach(function(node) { node.hide(); ); } // 'this' keyword can also be used
+         *  
+         *  Hide single element using callback:
+         *  
+         *    link.hide(function() { query(#.bar").show()   });
+         */
+        hide: true,
+    
+        /**
+         * Toggle an element
+         * @param {Boolean}  
+         * @param {Function} [callback]
+         * @chainable
+         * @example
+         *
+         * link.toggle();         // toggles element visibility
+         * link.toggle(true);     // forces 'true' state
+         * link.toggle(false);    // forces 'false' state
+         *
+         * link.toggle(function() { 
+         *
+         *      //..
+         * });
+         *
+         */
+        toggle: null
+    
+    }, function( methodName, condition )  {return function( state, callback ) {var this$0 = this;
+    
+        if ( !helpers$$is( state, "string" ) ) {
+    
+            // Boolean toggle()
+            if ( methodName === "toggle" && helpers$$is( state, "boolean" ) ) condition = state;
+    
+                callback = state;
+                state = null;
+        }
+        
+        if ( callback && !helpers$$is( callback, "function" ) ) minErr$$minErr( methodName + "()", "This operation is not supported" );
+    
+        var node = this[ 0 ],
+            style = node.style,
+            computed = helpers$$computeStyle( node ),
+            isHidden = condition,
+            frameId = this._.frame,
+            done = function()  {
+                this$0.set( "aria-hidden", String( isHidden ) );
+    
+                style.visibility = isHidden ? "hidden" : "inherit";
+    
+                this$0._.frame = null;
+    
+                if ( callback ) callback( this$0 );
+            };
+    
+        if ( !helpers$$is( isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
+    
+        // cancel previous frame if it exists
+        if ( frameId ) util$raf$$cancelFrame( frameId );
+        
+        // detached nodes
+        if ( !node.ownerDocument.documentElement.contains( node ) ) {
+            done();
+        } else {
+            this._.frame = util$raf$$requestFrame( done );
+        }
+    
+        return this;
+    
+    }}, function()  {return function()  {return RETURN_THIS}} );
 
     core$core$$implement({
       /**
@@ -2603,121 +2720,18 @@
         return all ? helpers$$map( descendants, core$core$$Nodes ) : core$core$$Nodes( currentNode );
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$Shallow()}} );
 
-    core$core$$implement({
-        /**
-         * Show an element
-         * @param {Function} [callback]
-         * @chainable
-         * @example
-         *     
-         *  Show a single element:
-         *     
-         *    link.show(); // displays element
-         *
-         *    foo.show(function() { });
-         *
-         *  Show multiple elements using 'native' Array.prototype.forEach:
-         *  
-         *    ugma.queryAll('.foo').forEach(function(node) { node.show(); ); }  // 'this' keyword can also be used
-         *  
-         *  Show single element using callback:
-         *  
-         *    foo.show(function() { query(#.bar").hide()   });
-         */
-        show: false,
-        /**
-         * Hide an element
-         * @param {Function} [callback]
-         * @chainable
-         * @example
-         *     
-         *  Show a single element:
-         *     
-         *    link.hide(); // hide element
-         *
-         *  Hide multiple elements using 'native' Array.prototype.forEach:
-         *  
-         *    ugma.queryAll('.foo').forEach(function(node) { node.hide(); ); } // 'this' keyword can also be used
-         *  
-         *  Hide single element using callback:
-         *  
-         *    foo.hide(function() { query(#.bar").show()   });
-         */
-        hide: true,
-    
-        /**
-         * Toggle an element
-         * @param {Boolean}  
-         * @param {Function} [callback]
-         * @chainable
-         * @example
-         * link.toggle(); // toggles element visibility
-         *
-         * link.toggle(true); // forces 'true' state
-         *
-         * link.toggle(false); // forces 'false' state
-         *
-         * foo.toggle(function() { });
-         */
-        toggle: null
-    
-    }, function( methodName, condition )  {return function( state, callback ) {var this$0 = this;
-    
-        // Boolean toggle()
-        if ( methodName === "toggle" && helpers$$is( state, "boolean" ) ) {
-            condition = state;
-            state = null;
-        }
-    
-        if ( !helpers$$is(state, "string" ) ) {
-            callback = state;
-            state = null;
-        }
-    
-        if ( callback && !helpers$$is( callback, "function") ) minErr$$minErr( methodName + "()", "This operation is not supported" );
-    
-        var node = this[ 0 ],
-            style = node.style,
-            computed = helpers$$computeStyle( node ),
-            isHidden = condition,
-            frameId = this._.frame,
-            done = function()  {
-                this$0.set( "aria-hidden", String( isHidden ) );
-    
-                style.visibility = isHidden ? "hidden" : "inherit";
-    
-                this$0._.frame = null;
-    
-                if ( callback ) callback( this$0 );
-            };
-    
-        if ( !helpers$$is(isHidden, "boolean" ) ) isHidden = computed.visibility !== "hidden";
-    
-        // cancel previous frame if it exists
-        if ( frameId ) util$raf$$cancelFrame( frameId );
-    
-        if ( !node.ownerDocument.documentElement.contains( node ) ) {
-            done();
-        } else {
-            this._.frame = util$raf$$requestFrame( done );
-        }
-    
-        return this;
-    
-    }}, function()  {return function()  {return RETURN_THIS}} );
-
     var template$format$$reVar = /\{([\w\-]+)\}/g;
 
     // 'format' a placeholder value with it's original content 
     // @example
     // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
-    core$core$$ugma.format = function(template, varMap) {
+    core$core$$ugma.format = function( template, varMap )  {
         // Enforce data types on user input
-        if (!helpers$$is(template, "string")) template = String(template);
+        if ( !helpers$$is( template, "string" ) ) template = String( template );
     
         if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
     
-        return template.replace(template$format$$reVar, function(placeholder, name, index)  {
+        return template.replace( template$format$$reVar, function( placeholder, name, index )  {
             if ( name in varMap ) {
                 placeholder = varMap[ name ];
     
@@ -2868,7 +2882,7 @@
     };
 
     // populate empty tag names with result
-    helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" });
+    helpers$$each( "area base br col hr img input link meta param command keygen source".split(" "), function( tag )  { template$template$$tagCache[ tag ] = "<" + tag + ">" } );
 
     var template$template$$default = template$template$$tagCache;
     // return tag's from tagCache with tag type
@@ -2897,7 +2911,7 @@
         template$process$$escapeChars = function( str )  {
            // always make sure the'str' argument is a string, in a few 'rare' 
            // cases it could be an array, and ugma will throw
-           return helpers$$is( str, "string") && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} );
+           return helpers$$is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} );
         },
         template$process$$process = function( template )  {
     
@@ -2912,9 +2926,9 @@
     
                 if ( helpers$$is( node, "string" ) ) node = [ template$processTag$$processTag( node ) ];
     
-                if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) minErr$$minErr("ugma.render()", "This operation is not supported" );
+                if ( helpers$$is( node, "undefined" ) || helpers$$is( value, "undefined" ) ) minErr$$minErr( "ugma.render()", "This operation is not supported" );
     
-                if (str === "#" ) { // id
+                if ( str === "#" ) { // id
                     value = template$replaceAttr$$replaceAttr(" id=\"" + value + "\"" );
                 } else if ( str === "." ) { // class
                     value = template$replaceAttr$$replaceAttr(" class=\"" + value + "\"" );
