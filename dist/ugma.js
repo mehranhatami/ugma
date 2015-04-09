@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 06:27:44 GMT
+ * Build date: Thu, 09 Apr 2015 08:10:58 GMT
  */
 (function() {
     "use strict";
@@ -229,20 +229,23 @@
    
     /**
      * http://www.w3.org/TR/DOM-Level-2-Style
+     *
+     * Support for pseudo-elements in getComputedStyle for plug-ins
+     *
      */
    
-       helpers$$computeStyle = function( node )  {
+       helpers$$computeStyle = function( node, pseudoElement )  {
            // Support: IE<=11+, Firefox<=30+
            // IE throws on elements created in popups
            // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-           if ( node.ownerDocument.defaultView.opener ) {
+           if ( node && node.ownerDocument.defaultView.opener ) {
                return ( node.ownerDocument.defaultView ||
                    // This will work if the ownerDocument is a shadow DOM element
-                   DOCUMENT.defaultView ).getComputedStyle( node );
+                   DOCUMENT.defaultView ).getComputedStyle( node, pseudoElement || null );
            }
-           return WINDOW.getComputedStyle( node );
+           return WINDOW.getComputedStyle( node, pseudoElement || null );
        },
-   
+       // inject elements in the document.head
        helpers$$injectElement = function( node )  {
            if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
@@ -1010,6 +1013,31 @@
     }});
 
     var util$readData$$multiDash = /([A-Z])/g,
+        util$readData$$rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
+    
+     /**
+      * "true"  => true
+      * "false" => false
+      * "null"  => null
+      * "42"    => 42
+      * "42.5"  => 42.5
+      * "08"    => "08"
+      * JSON    => parse if valid
+      * String  => self
+      */
+      util$readData$$deserializeValue = function(value)  {
+        try {
+          return value ?
+            value === "true" ||
+            ( value === "false" ? false :
+              value === "null" ? null :
+              +value + "" === value ? +value :
+              util$readData$$rbrace.test(value) ? JSON.parse(value) :
+              value )
+            : value;
+        } catch ( err ) {}
+      },
+    
         // Read the specified attribute from the equivalent HTML5 `data-*` attribute,
         util$readData$$readData = function( node, value )  {
     
@@ -1018,17 +1046,7 @@
     
         value = node.getAttribute( value );
     
-        if ( value != null ) {
-    
-            // object notation syntax should have JSON.stringify form
-            if ( value[ 0 ] === "{" && value[ value.length - 1 ] === "}" ) {
-                try {
-                    value = JSON.parse( value );
-                } catch ( err ) {}
-            }
-        }
-    
-        return value;
+        return helpers$$is( value, "string") ? util$readData$$deserializeValue(value) : null;
     };
 
     core$core$$implement({
@@ -1714,6 +1732,8 @@
             }
         }
     }, null, function()  {return function()  {}});
+
+    // All methods we want to hook on the 'ugma namespace' we list here
 
     core$core$$ugma.camelize  = helpers$$camelize;
     core$core$$ugma.computeStyle  = helpers$$computeStyle;

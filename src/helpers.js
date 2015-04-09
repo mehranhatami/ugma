@@ -213,20 +213,23 @@ export const isArray = Array.isArray;
 
  /**
   * http://www.w3.org/TR/DOM-Level-2-Style
+  *
+  * Support for pseudo-elements in getComputedStyle for plug-ins
+  *
   */
 
-    computeStyle = ( node ) => {
+    computeStyle = ( node, pseudoElement ) => {
         // Support: IE<=11+, Firefox<=30+
         // IE throws on elements created in popups
         // FF meanwhile throws on frame elements through 'defaultView.getComputedStyle'
-        if ( node.ownerDocument.defaultView.opener ) {
+        if ( node && node.ownerDocument.defaultView.opener ) {
             return ( node.ownerDocument.defaultView ||
                 // This will work if the ownerDocument is a shadow DOM element
-                DOCUMENT.defaultView ).getComputedStyle( node );
+                DOCUMENT.defaultView ).getComputedStyle( node, pseudoElement || null );
         }
-        return WINDOW.getComputedStyle( node );
+        return WINDOW.getComputedStyle( node, pseudoElement || null );
     },
-
+    // inject elements in the document.head
     injectElement = ( node ) => {
         if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
     };
