@@ -93,7 +93,7 @@ implement({
     remove: [ "", false, true, ( node ) => {
         node.parentNode.removeChild( node );
     }]
-}, (methodName, adjacentHTML, native, requiresParent, strategy) => function() {
+}, ( methodName, adjacentHTML, native, requiresParent, strategy ) => function() {
     
       var contents = sliceArgs( arguments ),
           node = this[ 0 ];
@@ -119,7 +119,7 @@ implement({
         if ( isArray( content ) && !is( content[ 0 ], "object" ) ) content = content.join();
 
         if ( is( content, "string" ) ) {
-            if (is( fragment, "string" ) ) {
+            if ( is( fragment, "string" ) ) {
                 fragment += trim( content );
             } else {
                 content = ugma.renderAll( content );
@@ -128,7 +128,7 @@ implement({
             content = [ content ];
         }
         
-        // should handle documentFragment
+        // Handle documentFragment
         if ( content.nodeType === 11 ) {
             fragment = content;
         } else {
@@ -141,7 +141,7 @@ implement({
                 }
 
                 each( content, function( el ) {
-                    fragment.appendChild( instanceOf(el) ? el[ 0 ] : el );
+                    fragment.appendChild( instanceOf( el ) ? el[ 0 ] : el );
                 });
             }
         }

@@ -1,5 +1,5 @@
 /**
- * @module visibility
+ * @module showHide
  */
 
 import { ugma, implement             } from "../core/core";
@@ -19,7 +19,7 @@ implement({
      *     
      *    link.show(); // displays element
      *
-     *    foo.show(function() { });
+     *    link.show(function() { });
      *
      *  Show multiple elements using 'native' Array.prototype.forEach:
      *  
@@ -27,7 +27,7 @@ implement({
      *  
      *  Show single element using callback:
      *  
-     *    foo.show(function() { query(#.bar").hide()   });
+     *    link.show(function() { query(#.bar").hide()   });
      */
     show: false,
     /**
@@ -46,7 +46,7 @@ implement({
      *  
      *  Hide single element using callback:
      *  
-     *    foo.hide(function() { query(#.bar").show()   });
+     *    link.hide(function() { query(#.bar").show()   });
      */
     hide: true,
 
@@ -56,13 +56,16 @@ implement({
      * @param {Function} [callback]
      * @chainable
      * @example
-     * link.toggle(); // toggles element visibility
      *
-     * link.toggle(true); // forces 'true' state
+     * link.toggle();         // toggles element visibility
+     * link.toggle(true);     // forces 'true' state
+     * link.toggle(false);    // forces 'false' state
      *
-     * link.toggle(false); // forces 'false' state
+     * link.toggle(function() { 
      *
-     * foo.toggle(function() { });
+     *      //..
+     * });
+     *
      */
     toggle: null
 

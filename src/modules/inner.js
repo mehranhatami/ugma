@@ -10,18 +10,19 @@ implement({
      * @param  {Mixed}  [content]  optional value to set
      * @chainable
      * @example
+     *
      *     link.content('New value');
      *
      *     var div = ugma.render("div>a+b");
-     *     div.value(ugma.render("i"));
+     *     div.inner(ugma.render("i"));
      */
-     inner( val ) {
+     inner( value ) {
   
        if ( arguments.length === 0 ) return this.get();
 
-       if ( instanceOf( val ) || isArray( val ) ) return this.set( "" ).append( val );
+       if ( instanceOf( value ) || isArray( value ) ) return this.set( "" ).append( value );
 
-       return this.set( val );
+       return this.set( value );
     }
 }, null, () => function() {
     

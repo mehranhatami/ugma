@@ -6,12 +6,12 @@ import { RCSSNUM                                             } from "../const";
 import { implement                                           } from "../core/core";
 import { isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
 import { minErr                                              } from "../minErr";
-import   styleAccessor                                         from "../util/styleAccessor";
+import   styleHooks                                            from "../util/styleHooks";
 import { adjustCSS                                           } from "../util/adjustCSS";
 
  implement({
    /**
-     * Get the value of a style property for the DOM Node, or set one or more style properties for a DOM Node.
+     * Get and set the style property on a DOM Node
      * @param  {String|Object}      name    style property name or key/value object
      * @param  {String|Function}    [value] style property value or functor
      * @chainable
@@ -38,7 +38,7 @@ import { adjustCSS                                           } from "../util/adj
      *  
      */
      
-     css(name, value) {
+     css( name, value ) {
          
          var len = arguments.length,
              node = this[ 0 ],
@@ -49,7 +49,7 @@ import { adjustCSS                                           } from "../util/adj
          if ( len === 1 && ( is( name, "string" ) || isArray( name ) ) ) {
              
              var getValue = ( name ) => {
-                 var getter = styleAccessor.get[ name ] || styleAccessor._default( name, style ),
+                 var getter = styleHooks.get[ name ] || styleHooks._default( name, style ),
                      // Try inline styles first
                      value = is( getter, "function" ) ? getter( style ) : style[ getter ];
 
@@ -74,7 +74,7 @@ import { adjustCSS                                           } from "../util/adj
 
          if ( len === 2 && is( name, "string" ) ) {
           
-             var ret, setter = styleAccessor.set[ name ] || styleAccessor._default( name, style );
+             var ret, setter = styleHooks.set[ name ] || styleHooks._default( name, style );
 
              if ( is( value, "function" ) ) value = value( this );
 
@@ -83,7 +83,7 @@ import { adjustCSS                                           } from "../util/adj
              // Convert '+=' or '-=' to relative numbers
              if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
 
-                 value = adjustCSS( this, setter, ret, computed || computeStyle(node));
+                 value = adjustCSS( this, setter, ret, computed || computeStyle( node ) );
 
                  if ( ret && ret[ 3 ] ) value += ret[ 3 ];
              }
@@ -91,7 +91,7 @@ import { adjustCSS                                           } from "../util/adj
              if ( is( setter, "function" ) ) {
                  setter ( value, style );
              } else {
-                 style[ setter ] = is( value, "number" ) ? value + "px" : "" + value; // cast to string 
+                 style[ setter ] = is( value, "number" ) ? value + "px" : value;
              }
          } else if ( len === 1 && name && is( name, "object" ) ) {
              

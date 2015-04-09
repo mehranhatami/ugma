@@ -1,5 +1,5 @@
 /**
- * @module styleAccessor
+ * @module styleHooks
  */
 
 import { ugma                                                    } from "../core/core";
@@ -7,14 +7,17 @@ import { minErr                                                  } from "../minE
 import { filter, map, keys, camelize, each, forOwn, is, isArray  } from "../helpers";
 import { VENDOR_PREFIXES, HTML                                   } from "../const";
 
-var UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
+var unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
     "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
     "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
-    "overflow rotate3d border-right-color border-top-color text-decoration-color text-emphasis-color " +
+    "overflow rotate3d border-right-color border-top-color " +
     // SVG-related properties
     "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+
+    // Add in style property hooks for overriding the default
+	// behavior of getting and setting a style property    
     
-    styleAccessor = { get: {}, set: {} },
+    styleHooks = { get: {}, set: {} },
     directions = ["Top", "Right", "Bottom", "Left"],
     shortHand = {
         font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
@@ -26,61 +29,61 @@ var UnitlessNumber = ("box-flex box-flex-group column-count flex flex-grow flex-
     };
 
 // Don't automatically add 'px' to these possibly-unitless properties
-each(UnitlessNumber, ( propName ) => {
+each(unitless, ( propName ) => {
     var stylePropName = camelize(propName);
 
-    styleAccessor.get[ propName ] = stylePropName;
-    styleAccessor.set[ propName ] = ( value, style ) => {
+    styleHooks.get[ propName ] = stylePropName;
+    styleHooks.set[ propName ] = ( value, style ) => {
         style[stylePropName] = value + "";
     };
 });
 
 // normalize property shortcuts
-forOwn(shortHand, (key, props) => {
+forOwn(shortHand, ( key, props ) => {
 
-    styleAccessor.get[ key ] = (style) => {
+    styleHooks.get[ key ] = ( style ) => {
         var result = [],
-            hasEmptyStyleValue = (prop, index) => {
-                result.push(prop === "/" ? prop : style[ prop ]);
+            hasEmptyStyleValue = ( prop, index ) => {
+                result.push( prop === "/" ? prop : style[ prop ] );
 
-                return !result[index];
+                return !result[ index ];
             };
 
-        return props.some(hasEmptyStyleValue) ? "" : result.join(" ");
+        return props.some( hasEmptyStyleValue ) ? "" : result.join( " " );
     };
 
-    styleAccessor.set[ key ] = (value, style) => {
-        if (value && "cssText" in style) {
+    styleHooks.set[ key ] = (value, style) => {
+        if ( value && "cssText" in style ) {
             // normalize setting complex property across browsers
             style.cssText += ";" + key + ":" + value;
         } else {
-            each( props, (name) => style[ name ] = typeof value === "number" ? value + "px" : value + "" );
+            each( props, ( name ) => style[ name ] = typeof value === "number" ? value + "px" : value + "" );
         }
     };
 });
 
-styleAccessor._default = function(name, style) {
+styleHooks._default = function(name, style) {
     var propName = camelize( name );
 
-    if (!(propName in style)) {
-        propName = filter( map(VENDOR_PREFIXES, ( prefix ) => prefix + propName[ 0 ].toUpperCase() + propName.slice( 1 )), ( prop ) => prop in style)[ 0 ];
+    if ( !( propName in style ) ) {
+        propName = filter( map( VENDOR_PREFIXES, ( prefix ) => prefix + propName[ 0 ].toUpperCase() + propName.slice( 1 ) ), ( prop ) => prop in style )[ 0 ];
     }
 
     return this.get[ name ] = this.set[ name ] = propName;
 };
 
 /**
- * Hook 'styleAccessor' on ugma namespace
+ * Hook 'styleHooks' on ugma namespace
  */
 
-  ugma.styleAccessor = ( mixin, where ) => {
+  ugma.styleHooks = ( mixin, where ) => {
      // Stop here if 'where' is not a typeof string
-      if( !is( where, "string" ) ) minErr( "ugma.styleAccessor()", "Not a valid string value" );
+      if( !is( where, "string" ) ) minErr( "ugma.styleHooks()", "Not a valid string value" );
     
       if ( is( mixin, "object" ) && !isArray( mixin ) ) {
 
           forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) ) styleAccessor[ where ][ key ] = mixin;
+              if( is( value, "string" ) || is( value, "function" ) ) styleHooks[ where ][ key ] = mixin;
           });
       }
   };
@@ -89,4 +92,4 @@ styleAccessor._default = function(name, style) {
  * Export interface
  */
 
-export default styleAccessor;
+export default styleHooks;
