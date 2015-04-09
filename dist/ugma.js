@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 09:38:51 GMT
+ * Build date: Thu, 09 Apr 2015 13:56:09 GMT
  */
 (function() {
     "use strict";
@@ -3088,12 +3088,27 @@
     // Current codename on the framework.
     core$core$$ugma.version = "mehran";
 
-    // Create a ugma wrapper object for a native DOM element or a
-    // jQuery element. E.g. (ugma.native($('#foo')[0]))
-    core$core$$ugma.native = function(node)  {
-        var nodeType = node && node.nodeType;
-        return ( nodeType === 9 ? core$core$$DOM : core$core$$Nodes )( nodeType === 1 || nodeType === 9 ? node : null );
-    };
+    core$core$$implement({
+    
+        /**
+         * Create a wrapper object for a native DOM element or a jQuery element.
+         * @param {Object}  [node]  native element
+         * @return {Nodes} a wrapper object
+         * @example
+         *
+         *   ugma.native(document.body);  // using the 'ugma' document
+         *  
+         *  ugma.native( $("#foo") )  // using 'ugma' document and wrap a jQuery object
+         *
+         * NOTE! If you create a .shadow(), this API method will
+         * create wrapper objects that will only be accessible inside
+         * the newly .shadow() and not in other DOM trees.
+         */
+        native: function(node) {
+            var nodeType = node && node.nodeType;
+            return ( nodeType === 9 ? core$core$$DOM : core$core$$Nodes )( nodeType === 1 || nodeType === 9 ? node : null );
+        }
+    });
 
     /*
      * Map over the previous value of the `ugma` namespace variable, so that it can be restored later on.
