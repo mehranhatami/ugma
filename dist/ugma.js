@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 13:56:09 GMT
+ * Build date: Thu, 09 Apr 2015 14:01:51 GMT
  */
 (function() {
     "use strict";
@@ -1752,12 +1752,12 @@
         }
     }, null, function()  {return function()  {}});
 
-    // All methods we want to hook on the 'ugma namespace' we list here
-
-    core$core$$ugma.camelize                 = helpers$$camelize;
-    core$core$$ugma.computeStyle             = helpers$$computeStyle;
-    core$core$$ugma.proxy                    = helpers$$proxy;
-    core$core$$ugma.deserializeValue         = util$readData$$deserializeValue;
+    core$core$$implement({
+          camelize: helpers$$camelize,
+          computeStyle: helpers$$computeStyle,
+          proxy: helpers$$proxy,
+          deserializeValue: util$readData$$deserializeValue,
+      });
 
     core$core$$implement({
       /**
@@ -3102,8 +3102,9 @@
          *
          * NOTE! If you create a .shadow(), this API method will
          * create wrapper objects that will only be accessible inside
-         * the newly .shadow() and not in other DOM trees.
+         * the newly created .shadow() and not in other DOM trees.
          */
+         
         native: function(node) {
             var nodeType = node && node.nodeType;
             return ( nodeType === 9 ? core$core$$DOM : core$core$$Nodes )( nodeType === 1 || nodeType === 9 ? node : null );

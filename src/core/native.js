@@ -18,8 +18,9 @@ implement({
      *
      * NOTE! If you create a .shadow(), this API method will
      * create wrapper objects that will only be accessible inside
-     * the newly .shadow() and not in other DOM trees.
+     * the newly created .shadow() and not in other DOM trees.
      */
+     
     native( node ) {
         var nodeType = node && node.nodeType;
         return ( nodeType === 9 ? DOM : Nodes )( nodeType === 1 || nodeType === 9 ? node : null );

@@ -1,14 +1,16 @@
 
 // Export internal API functions in the `ugma` namespace
 
-import { ugma                              } from "../core/core";
-import { camelize, computeStyle, proxy, is } from "../helpers";
-import { deserializeValue                          } from "../util/readData";
+import { implement                           } from "../core/core";
+import { camelize, computeStyle, proxy, is   } from "../helpers";
+import { deserializeValue                    } from "../util/readData";
   
-  // All methods we want to hook on the 'ugma namespace' we list here
-  
-  ugma.camelize                 = camelize;
-  ugma.computeStyle             = computeStyle;
-  ugma.proxy                    = proxy;
-  ugma.deserializeValue         = deserializeValue;
-  
+  // All API functions we want expose to the 'ugma namespace', or
+  // the .shadow() DOM trees, we list here
+
+implement({
+      camelize: camelize,
+      computeStyle: computeStyle,
+      proxy: proxy,
+      deserializeValue: deserializeValue,
+  });
