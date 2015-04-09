@@ -56,4 +56,81 @@ ugma.append( div_two);
 
 ```
 
+##Shadow DOM
+
+**ugma** supports Shadow DOM, but have it's own implementation of it. When you are using Shadow DOM or ugmas implementation - .shadow(), be aware that nothing that are hooked on the *ugma* namespace will be available in your shadow. This because it's a totaly different document you are working on.
+
+```javascript
+
+// Create a 'shadow', and attach a event handler on the shadow document.
+
+ugma.query('body').shadow('foo', function(core) {
+  // This 'click' event will only work inside the created 'shadow'
+  // Click outside the shadow, and nothing happen.
+   core.on('click', function() { alert("Hello!"); });
+});
+
+```
+All .shadow() work the same way as ugma, but are a different document. Just the same as native shadow DOM. That means that you can use query[All] or other API methods on nodes outside the shadow. That will not work.
+
+The root of the created shadow are the first argument.
+
+```javascript
+
+// 'core' are the new document. It's work the same way as 'ugma' document.
+
+ugma.query('body').shadow('foo', function(core) { });
+
+```
+
+Difference between .shadow() and shadow DOM, is that in ugma you can have multiple shadows on each DOM node - just give them a unique name.
+
+```javascript
+
+// Create 3 shadows on the document body.
+
+ugma.query('body').shadow('foo', function(core) { });
+
+ugma.query('body').shadow('bar', function(core) { });
+
+ugma.query('body').shadow('zoo', function(core) { });
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
