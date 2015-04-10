@@ -22,7 +22,7 @@ export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 // Internet Explorer. It only tell if the console in IE are open, and
 // can give serious issues in the code.
 
-   var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
+  var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
   export const INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
 
 /**

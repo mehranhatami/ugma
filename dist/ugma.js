@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 10 Apr 2015 01:09:10 GMT
+ * Build date: Fri, 10 Apr 2015 01:32:21 GMT
  */
 (function() {
     "use strict";
@@ -30,7 +30,7 @@
     var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
     // Internet Explorer
-    // WARNING! document.documentMode can't be used to identify
+    // WARNING! 'document.documentMode' can't be used to identify
     // Internet Explorer. It only tell if the console in IE are open, and
     // can give serious issues in the code.
 
@@ -2411,11 +2411,6 @@
     // Note! There are more cons then pros in this, and it's important to know that the shadow() method
     // is not SEO friendly
     //        
-    var modules$shadow$$MUTATION_WRAPPER =  "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]";
-
-    if ( INTERNET_EXPLORER ) {
-        modules$shadow$$MUTATION_WRAPPER = modules$shadow$$MUTATION_WRAPPER.replace( "position:absolute", "width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute").replace( "data=`about:blank` ", "" );
-    }
 
     // Chrome/Safari/Opera have serious bug with tabbing to the <object> tree:
     // https://code.google.com/p/chromium/issues/detail?id=255150
@@ -2430,9 +2425,12 @@
     
                 return data[ 0 ];
             }
-    
-            var ctx = core$core$$ugma.render(modules$shadow$$MUTATION_WRAPPER),
+            
+            var ctx = core$core$$ugma.render(INTERNET_EXPLORER ? 
+                   "div[style=overflow:hidden]>object[type=text/html style=`width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute` width=100% height=100%]" :
+                    "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]"),
                 object = ctx.get( "firstChild" );
+                
             // set onload handler before adding element to the DOM
             object.onload = function()  {
                 // apply user-defined styles for the context
