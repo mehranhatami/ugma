@@ -25,6 +25,7 @@ var arrayProto = Array.prototype;
 
 export const every = arrayProto.every;
 export const slice = arrayProto.slice;
+export const keys  = Object.keys;
 
 /**
  * Determine whether the argument is an array.
@@ -103,7 +104,7 @@ export const isArray = Array.isArray;
             var obj = object || {},
                 key,
                 index = -1,
-                props = Object.keys( obj ),
+                props = keys( obj ),
                 length = props.length;
 
             while (++index < length) {

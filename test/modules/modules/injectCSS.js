@@ -1,6 +1,24 @@
 describe("ugma.injectCSS", function() {
     "use strict";
 
+it("should accept selector with style object", function() {
+        jasmine.sandbox.set("<a id='importStyles2'></a>");
+
+        var link = ugma.query("#importStyles2");
+
+        expect(link.css("display")).not.toBe("none");
+        ugma.injectCSS("#importStyles2", {"display": "none", "some-prop": "test"});
+        expect(link.css("display")).toBe("none");
+
+        var unknownProp = link.css("some-prop");
+        // different browsers handle unknown properties differently
+        if (unknownProp) {
+            expect(unknownProp).toBe("test");
+        } else {
+            expect(unknownProp).toBeUndefined();
+        }
+    });
+
     it("should accept selector with style string", function() {
         jasmine.sandbox.set("<a id='injectCSS1'></a>");
 
