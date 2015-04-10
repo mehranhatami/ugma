@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 10 Apr 2015 03:27:57 GMT
+ * Build date: Fri, 10 Apr 2015 03:40:39 GMT
  */
 (function() {
     "use strict";
@@ -1753,95 +1753,6 @@
         }
     }, null, function()  {return RETURN_FALSE} );
 
-    var $$$util$stylehooks$$unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
-        "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
-        "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
-        "overflow rotate3d border-right-color border-top-color " +
-        // SVG-related properties
-        "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
-    
-        // Add in style property hooks for overriding the default
-        // behavior of getting and setting a style property    
-        
-        $$$util$stylehooks$$styleHooks = { get: {}, set: {} },
-        $$$util$stylehooks$$directions = ["Top", "Right", "Bottom", "Left"],
-        $$$util$stylehooks$$shortHand = {
-            font:           ["fontStyle", "fontSize", "/", "lineHeight", "fontFamily"],
-            borderRadius:   ["borderTopLeftRadius", "borderTopRightRadius", "borderBottomRightRadius", "borderBottomLeftRadius"],
-            padding:        helpers$$map( $$$util$stylehooks$$directions, function( dir )  {return "padding" + dir} ),
-            margin:         helpers$$map( $$$util$stylehooks$$directions, function( dir )  {return "margin" + dir} ),
-            "border-width": helpers$$map( $$$util$stylehooks$$directions, function( dir )  {return "border" + dir + "Width"} ),
-            "border-style": helpers$$map( $$$util$stylehooks$$directions, function( dir )  {return "border" + dir + "Style"} )
-        };
-
-    // Don't automatically add 'px' to these possibly-unitless properties
-    helpers$$each($$$util$stylehooks$$unitless, function( propName )  {
-        var stylePropName = helpers$$camelize(propName);
-    
-        $$$util$stylehooks$$styleHooks.get[ propName ] = stylePropName;
-        $$$util$stylehooks$$styleHooks.set[ propName ] = function( value, style )  {
-            style[stylePropName] = value + "";
-        };
-    });
-
-    // normalize property shortcuts
-    helpers$$forOwn($$$util$stylehooks$$shortHand, function( key, props )  {
-    
-        $$$util$stylehooks$$styleHooks.get[ key ] = function( style )  {
-            var result = [],
-                hasEmptyStyleValue = function( prop, index )  {
-                    result.push( prop === "/" ? prop : style[ prop ] );
-    
-                    return !result[ index ];
-                };
-    
-            return props.some( hasEmptyStyleValue ) ? "" : result.join( " " );
-        };
-    
-        $$$util$stylehooks$$styleHooks.set[ key ] = function(value, style)  {
-            if ( value && "cssText" in style ) {
-                // normalize setting complex property across browsers
-                style.cssText += ";" + key + ":" + value;
-            } else {
-                helpers$$each( props, function( name )  {return style[ name ] = typeof value === "number" ? value + "px" : value + ""} );
-            }
-        };
-    });
-
-    $$$util$stylehooks$$styleHooks._default = function(name, style) {
-        var propName = helpers$$camelize( name );
-    
-        if ( !( propName in style ) ) {
-            propName = helpers$$filter( helpers$$map( VENDOR_PREFIXES, function( prefix )  {return prefix + propName[ 0 ].toUpperCase() + propName.slice( 1 )} ), function( prop )  {return prop in style} )[ 0 ];
-        }
-    
-        return this.get[ name ] = this.set[ name ] = propName;
-    };
-
-    /**
-     * Make 'styleHooks' global
-     * Has to use the "implement" API method here, so this will be accessible
-     * inside the 'shadow DOM' implementation.
-     */
-
-    core$core$$implement({
-        
-     styleHooks:function( mixin, where )  {
-        // Stop here if 'where' is not a typeof string
-         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleHooks()", "Not a valid string value" );
-       
-         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-   
-             helpers$$forOwn( mixin, function( key, value )  {
-                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) $$$util$stylehooks$$styleHooks[ where ][ key ] = mixin;
-             });
-         }
-     }
-   
-    });
-
-    var $$$util$stylehooks$$default = $$$util$stylehooks$$styleHooks;
-
     core$core$$implement({
     
         /**
@@ -1862,9 +1773,9 @@
                 var objCSS = function( styleContent )  {
                     // use styleObj to collect all style props for a new CSS rule
                     var styleObj = helpers$$keys( styleContent ).reduce( function( styleObj, prop )  {
-                        var hook = $$$util$stylehooks$$default.set[ prop ];
-    
-                        if ( hook ) {
+                        var hook = util$styleHooks$$default.set[ prop ];
+                            
+                        if ( hook && helpers$$is( hook, "function" ) ) {
                             hook( styleObj, styleContent[ prop ] );
                         } else {
                             styleObj[ prop ] = styleContent[ prop ];

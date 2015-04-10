@@ -9,7 +9,7 @@ import { implement                          } from "../core/core";
 import { DOCUMENT                           } from "../const";
 import { minErr                             } from "../minErr";
 import { injectElement, is, each, map, keys } from "../helpers";
-import styleHooks                             from "../util/stylehooks";
+import   styleHooks                           from "../util/styleHooks";
 
 implement({
 
@@ -32,8 +32,8 @@ implement({
                 // use styleObj to collect all style props for a new CSS rule
                 var styleObj = keys( styleContent ).reduce( ( styleObj, prop ) => {
                     var hook = styleHooks.set[ prop ];
-
-                    if ( hook ) {
+                        
+                    if ( hook && is( hook, "function" ) ) {
                         hook( styleObj, styleContent[ prop ] );
                     } else {
                         styleObj[ prop ] = styleContent[ prop ];
