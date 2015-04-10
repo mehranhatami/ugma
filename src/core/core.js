@@ -2,10 +2,8 @@
  * @module core
  */
 
-import { DOCUMENT             } from "../const";
-import { forOwn, is, isArray  } from "../helpers";
-import { minErr               } from "../minErr";
-import { RETURN_THIS          } from "../const";
+import { DOCUMENT    } from "../const";
+import { forOwn, is  } from "../helpers";
 
 /**
  * uClass - class system
@@ -47,7 +45,7 @@ var uClass = () => {
             });
     };
 
-    if ( is(mixin.constructor, "object") ) {
+    if ( is( mixin.constructor, "object" ) ) {
         Class = noop;
     } else {
         Class = mixin.constructor;
@@ -136,44 +134,6 @@ Shallow = uClass({
     
     var ugma = new  DOM( DOCUMENT );
 
-   /**
-     * Extend ugma with methods
-     * @param  {Object}    mixin       methods container
-     * @param  {Boolean|Function} callback 
-     * @example
-     *
-     * ugma.extend({
-     *     foo: function() {
-     *         console.log("bar");
-     *     }
-     * });  //  link.foo();
-     *
-     * ugma.extend({
-     *     foo: function() {
-     *         console.log("bar");
-     *     }
-     * }, true); // ugma.foo();
-     *
-     *
-     * Note! The second argument - 'function' - extend the ugma.extend() with similar
-     * options as for the *internally* implement method, and let us
-     * return e.g. empty object ( {} ), array, booleans, array with values ( arr[1,2,3] )
-     */
-  
-  ugma.extend = (mixin, callback) => {
-      
-        if( !is( mixin, "object" )  || isArray( mixin ) ) minErr( "ugma.extend", "The first argument is not a object.");
-        
-        if(mixin) {
-            
-            // Extend ...
-            if( callback && is(callback, "boolean") ) return implement( mixin );
-            
-             return implement( mixin, null, !is(callback, "function") ? () => RETURN_THIS : callback );
-        }
-        
-        return false;        
-    };
 
 /*
  * Export interface
