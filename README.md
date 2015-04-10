@@ -103,6 +103,23 @@ All .shadow() work the same way as ugma, but are a different document. Just the 
 
 The root of the created shadow are the first argument.
 
+However, you can all other documents inside a *shadow*, and the API functions will work for the document you are calling.
+
+```javascript
+
+// Create a 'shadow', and attach a event handler on the shadow document.
+
+ugma.query('body').shadow('foo', function(core) {
+  
+  // Attach a click handler on the 'ugma' document
+   ugma.on('click', function() { alert("Hello!"); });
+});
+
+```
+In this example - if you click on the shadow - nothing will happen. If you click on the *ugma* document, you will see an alert with *Hello!*
+
+
+
 ```javascript
 
 // 'core' are the new document. It's work the same way as 'ugma' document.
