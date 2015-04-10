@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 10 Apr 2015 03:40:39 GMT
+ * Build date: Fri, 10 Apr 2015 04:45:21 GMT
  */
 (function() {
     "use strict";
@@ -38,8 +38,6 @@
     var INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
 
     var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
-
-    var RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
 
     /** 
      * Check to see if we"re in IE9 to see if we are in combatibility mode and provide
@@ -839,48 +837,6 @@
     });
 
     var util$styleHooks$$default = util$styleHooks$$styleHooks;
-    function util$adjustCSS$$adjustCSS( root, prop, parts, computed ) {
-    
-        var adjusted,
-            scale = 1,
-            maxIterations = 20,
-            currentValue = function() {
-                return parseFloat( computed[ prop ] );
-            },
-            initial = currentValue(),
-            unit = parts && parts[ 3 ] || "",
-            // Starting value computation is required for potential unit mismatches
-            initialInUnit = ( unit !== "px" && +initial ) && RCSSNUM.exec( computed[ prop ] );
-    
-        if (initialInUnit && initialInUnit[ 3 ] !== unit) {
-    
-            unit = unit || initialInUnit[ 3 ];
-    
-            parts = parts || [];
-    
-            // Iteratively approximate from a nonzero starting point
-            initialInUnit = +initial || 1;
-    
-            do {
-                // If previous iteration zeroed out, double until we get *something*.
-                // Use string for doubling so we don't accidentally see scale as unchanged below
-                scale = scale || ".5";
-    
-                // Adjust and apply
-                initialInUnit = initialInUnit / scale;
-                root.css(prop, initialInUnit + unit);
-    
-                // Break the loop if scale is unchanged or perfect, or if we've just had enough.
-            } while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
-        }
-    
-        if ( parts ) {
-            // Apply relative offset (+=/-=) if specified
-            adjusted = parts[ 1 ] ? ( +initialInUnit || +initial || 0 ) + ( parts[ 1 ] + 1 ) * parts[ 2 ] : +parts[ 2 ];
-    
-            return adjusted;
-        }
-    }
 
     core$core$$implement({
       /**
@@ -952,14 +908,6 @@
                 if ( helpers$$is( value, "function" ) ) value = value( this );
    
                 if ( value == null || helpers$$is( value, "boolean" ) ) value = "";
-   
-                // Convert '+=' or '-=' to relative numbers
-                if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
-   
-                    value = util$adjustCSS$$adjustCSS( this, setter, ret, computed || helpers$$computeStyle( node ) );
-   
-                    if ( ret && ret[ 3 ] ) value += ret[ 3 ];
-                }
    
                 if ( helpers$$is( setter, "function" ) ) {
                     setter ( value, style );

@@ -2,12 +2,10 @@
  * @module css
  */
 
-import { RCSSNUM                                             } from "../const";
 import { implement                                           } from "../core/core";
 import { isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
 import { minErr                                              } from "../minErr";
 import   styleHooks                                            from "../util/styleHooks";
-import { adjustCSS                                           } from "../util/adjustCSS";
 
  implement({
    /**
@@ -79,14 +77,6 @@ import { adjustCSS                                           } from "../util/adj
              if ( is( value, "function" ) ) value = value( this );
 
              if ( value == null || is( value, "boolean" ) ) value = "";
-
-             // Convert '+=' or '-=' to relative numbers
-             if ( value !== "" && ( ret = RCSSNUM.exec( value ) ) && ret[ 1 ] ) {
-
-                 value = adjustCSS( this, setter, ret, computed || computeStyle( node ) );
-
-                 if ( ret && ret[ 3 ] ) value += ret[ 3 ];
-             }
 
              if ( is( setter, "function" ) ) {
                  setter ( value, style );

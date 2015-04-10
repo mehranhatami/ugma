@@ -95,12 +95,6 @@ describe("css", function() {
                 width: "+=9"
             });
 
-            expect(hidden.css("width")).toBe("10px");
-
-            hidden.css({ width: "-=9" });
-
-            expect(hidden.css("width")).toBe("1px");
-
         });
 
         it("should return width / height on disconnected node", function() {

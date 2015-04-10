@@ -31,11 +31,6 @@ export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
  */
   export const VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
 
-/**
- * Relative numbers regEx
- */
- export const RCSSNUM = /^(?:([+-])=|)([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))([a-z%]*)$/i;
-
  /** 
   * Check to see if we"re in IE9 to see if we are in combatibility mode and provide
   *  information on preventing it
