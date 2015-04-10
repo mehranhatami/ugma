@@ -103,7 +103,15 @@ All .shadow() work the same way as ugma, but are a different document. Just the 
 
 The root of the created shadow are the first argument.
 
-However, you can all other documents inside a *shadow*, and the API functions will work for the document you are calling.
+```javascript
+
+// 'core' are the new document. It's work the same way as 'ugma' document.
+
+ugma.query('body').shadow('foo', function(core) { });
+
+```
+
+However, you can all other documents inside a *shadow*, and the API functions will *only* work for the document you are calling.
 
 ```javascript
 
@@ -118,17 +126,7 @@ ugma.query('body').shadow('foo', function(core) {
 ```
 In this example - if you click on the shadow - nothing will happen. If you click on the *ugma* document, you will see an alert with *Hello!*
 
-
-
-```javascript
-
-// 'core' are the new document. It's work the same way as 'ugma' document.
-
-ugma.query('body').shadow('foo', function(core) { });
-
-```
-
-Difference between .shadow() and shadow DOM, is that in ugma you can have multiple shadows on each DOM node - just give them a unique name.
+Note there is a small difference between .shadow() and the shadow DOM. The biggest difference is that you can have multiple shadows on each DOM node - just give them a unique name.
 
 ```javascript
 
@@ -141,41 +139,3 @@ ugma.query('body').shadow('bar', function(core) { });
 ugma.query('body').shadow('zoo', function(core) { });
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
