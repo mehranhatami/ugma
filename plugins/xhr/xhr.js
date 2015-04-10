@@ -11,15 +11,25 @@
         isObject = function( obj ) {
             return toString.call( obj ) === "[object Object]"
         },
-        toQueryString = function( params ) { return params.join( "&" ).replace( /%20/g, "+" ) },
-        mimeTypeShortcuts = { json: APPLICATION_JSON },
+        toQueryString = function( params ) {
+            // spaces should be + according to spec
+            return params.join( "&" ).replace( /%20/g, "+" );
+        },
+        mimeTypeShortcuts = {
+            json: APPLICATION_JSON
+        },
         mimeTypeStrategies = {
-            "application/json": function(text) {
-                return JSON.parse(text);
+            "application/json": function( text ) {
+                return JSON.parse( text );
+            }
+        },
+        shortcuts = function( method ) {
+            return function( url, options ) {
+                return XHR( method, url, options )
             }
         };
 
-    if ( !window.ugma ) console.warn( "ugma javascript Framework need to be included" );
+    if ( !window.ugma ) console.warn("ugma javascript Framework need to be included");
 
     if ( !Promise ) ugma.minErr( "XHR()", "In order to use XHR you have to include a Promise polyfill" );
 
@@ -43,7 +53,7 @@
             headers = {};
 
         // read default headers first
-        keys( XHR.defaults.headers).forEach( function( key ) {
+        keys( XHR.defaults.headers ).forEach( function(key) {
             headers[ key ] = XHR.defaults.headers[ key ];
         });
 
@@ -53,16 +63,18 @@
         });
 
         if ( isObject( data ) ) {
-            keys( data ).forEach(function(key) {
-                var name = encodeURIComponent( key ),
+            keys( data ).forEach(function( key ) {
+
+                var enc = encodeURIComponent,
+                    name = enc( key ),
                     value = data[ key ];
 
                 if ( isArray( value ) ) {
-                    value.forEach(function( value ) {
+                    value.forEach( function( value ) {
                         extraArgs.push( name + "=" + encodeURIComponent( value ) );
                     });
                 } else {
-                    extraArgs.push( name + "=" + encodeURIComponent( value ) );
+                    extraArgs.push( name + "=" + enc( value ) );
                 }
             });
 
@@ -90,7 +102,7 @@
             headers[ contentType ] = APPLICATION_JSON;
         }
 
-        if (contentType in headers) {
+        if ( contentType in headers ) {
             headers[ contentType ] += "; charset=" + charset;
         }
 
@@ -111,18 +123,17 @@
             promise = new Promise( function( resolve, reject ) {
                 var handleErrorResponse = function( message ) {
                     return function() {
-                        reject( new Error( message ) )
+                        reject( new Error(message ) )
                     }
                 };
 
-                xhr.open(method,
+                xhr.open( method,
                     url,
-                    true
-                    // username ?
-                    // password ?
-                );
+                    true );
 
                 xhr.timeout = options.timeout || XHR.defaults.timeout;
+
+                if ( options.before ) options.before( xhr );
 
                 // Set headers
                 for ( var key in headers ) {
@@ -155,20 +166,20 @@
 
                         // responseText is the old-school way of retrieving response (supported by IE8 & 9)
                         // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-                        var response = response = ( 'response' in xhr ) ? xhr.response : xhr.responseText,
+                        var response = response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
                             // Support: IE9
                             // sometimes IE returns 1223 when it should be 204
                             // http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
                             status = xhr.status === 1223 ? 204 : xhr.status,
                             // skip possible charset suffix
-                            parseResponse = mimeTypeStrategies[ mimeType.split( ";" )[ 0 ] ];
+                            parseResponse = mimeTypeStrategies[mimeType.split( ";" )[ 0 ] ];
 
                         if ( parseResponse ) {
                             try {
                                 // when strategy found - parse response according to it
                                 response = parseResponse( response );
                             } catch ( err ) {
-                                return reject(err);
+                                return reject( err );
                             }
                         }
 
@@ -188,15 +199,9 @@
         return promise;
     }
 
-    // define shortcuts
-    [ "get", "post", "put", "delete", "patch" ].forEach( function( method ) {
-        XHR[ method ] = function( url, options ) {
-            return XHR( method, url, options )
-        };
-    });
-
     // useful defaults
     XHR.defaults = {
+        before: "",
         timeout: 15000,
         charset: "UTF-8",
         headers: {
@@ -211,22 +216,28 @@
 
         XHR: XHR,
 
-        serialize: function(node) {
+        post: shortcuts( "post" ),
+        get: shortcuts( "get" ),
+        put: shortcuts( "put" ),
+        delete: shortcuts( "delete" ),
+        patch: shortcuts( "patch" ),
+
+        serialize: function( node ) {
 
             var result = {};
 
-            if ("form" in node) {
-                node = [node];
-            } else if ("elements" in node) {
+            if ( "form" in node ) {
+                node = [ node ];
+            } else if ( "elements" in node ) {
                 node = node.elements;
             } else {
                 node = [];
             }
 
-            var index = 0,
+            var el, index = 0,
                 length = node.length;
 
-            for (var el; index < length;) {
+            for (; index < length;) {
                 el = ( node[ index++ ] );
 
                 var name = el.name;
@@ -235,7 +246,7 @@
 
                 switch ( el.type ) {
                     case "select-multiple":
-                        result[name] = [];
+                        result[ name ] = [];
                         /* falls through */
                     case "select-one":
 
