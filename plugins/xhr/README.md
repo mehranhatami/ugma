@@ -1,6 +1,6 @@
 # XHR
 
-Lightweight, ES6-promised based implementation for working with AJAX.
+Lightweight, ES6-promised based implementation for working with AJAX. You need to have **ugma** added in your project before using this plugin, and for older browsers that don't support native Promise inthe browser - you will need to add a polyfill.
 
 # API
 
