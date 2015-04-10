@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 10 Apr 2015 01:32:21 GMT
+ * Build date: Fri, 10 Apr 2015 02:05:23 GMT
  */
 (function() {
     "use strict";
@@ -2391,44 +2391,47 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    // shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
-    // Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
-    //
-    // - unlike shadow DOM you can have several shadows for a single DOM element.
-    // - each shadow *must* have it's unique name
-    // - each shadow can be removed with the remove() method. E.g. el.shadow("foo").remove();       
-    // - the shadow root - as mentioned in the specs - is a instance of a new document, and has it
-    //   own methods such as query[All] Returned value of the method is Element that represents 
-    //   the shadow in the main document tree. Allmost the same as the specs.
-    //
-    // Equalities to the specs:
-    // ------------------------
-    //
-    // - internal DOM events do not bubble into the document tree
-    // - subtree is not accessible via query[All] (neither native querySelector[All]) 
-    //   because it's in another document.
-    //
-    // Note! There are more cons then pros in this, and it's important to know that the shadow() method
-    // is not SEO friendly
-    //        
+    /**
+     * shadow() method are developed after ideas located here: onhttp://www.w3.org/TR/shadow-dom/   
+     * Shadow is not the same as Shadow DOM, but follow the same syntax. Except a few differences.
+     * 
+     *  - unlike shadow DOM you can have several shadows for a single DOM element.
+     *  - each shadow *must* have it's unique name
+     *  - each shadow can be removed with the remove() method. E.g. el.shadow("foo").remove();       
+     *  - the shadow root - as mentioned in the specs - is a instance of a new document, and has it
+     *    own methods such as query[All] Returned value of the method is Element that represents 
+     *    the shadow in the main document tree. Allmost the same as the specs.
+     * 
+     *  Equalities to the specs:
+     *  ------------------------
+     * 
+     *  - internal DOM events do not bubble into the document tree
+     *  - subtree is not accessible via query[All] (neither native querySelector[All]) 
+     *    because it's in another document.
+     * 
+     *  Note! There are more cons then pros in this, and it's important to know that the shadow() method
+     *  is not SEO friendly
+     */
 
     // Chrome/Safari/Opera have serious bug with tabbing to the <object> tree:
     // https://code.google.com/p/chromium/issues/detail?id=255150
+
     core$core$$implement({
         shadow: function(name) {var callback = arguments[1];if(callback === void 0)callback = function()  {};
-            var contexts = this._.shadow || ( this._.shadow = {} ),
-                data = contexts[name] || [];
     
-            if (data[ 0 ] ) {
+            var shadow = this._.shadowRoot || ( this._.shadowRoot = {} ),
+                data = shadow[name] || [];
+    
+            if ( data[ 0 ] ) {
                 // callback is always async
                 WINDOW.setTimeout( function()  { callback(data[ 1 ] ) }, 1 );
     
                 return data[ 0 ];
             }
             
-            var ctx = core$core$$ugma.render(INTERNET_EXPLORER ? 
+            var ctx = core$core$$ugma.render( INTERNET_EXPLORER ? 
                    "div[style=overflow:hidden]>object[type=text/html style=`width:calc(100% + 4px);height:calc(100% + 4px);left:-2px;top:-2px;position:absolute` width=100% height=100%]" :
-                    "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]"),
+                    "div[style=overflow:hidden]>object[data=`about:blank` type=text/html style=`position:absolute` width=100% height=100%]" ),
                 object = ctx.get( "firstChild" );
                 
             // set onload handler before adding element to the DOM
@@ -2445,7 +2448,7 @@
             if ( INTERNET_EXPLORER ) object.data = "about:blank";
     
             // store context data internally
-            contexts[ name ] = data;
+            shadow[ name ] = data;
     
             return data[ 0 ] = ctx;
         }

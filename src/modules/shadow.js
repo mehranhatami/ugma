@@ -33,8 +33,8 @@ import { DOM, ugma, implement                     } from "../core/core";
 implement({
     shadow( name, callback = () => {} ) {
 
-        var contexts = this._.shadow || ( this._.shadow = {} ),
-            data = contexts[name] || [];
+        var shadow = this._.shadowRoot || ( this._.shadowRoot = {} ),
+            data = shadow[name] || [];
 
         if ( data[ 0 ] ) {
             // callback is always async
@@ -62,7 +62,7 @@ implement({
         if ( INTERNET_EXPLORER ) object.data = "about:blank";
 
         // store context data internally
-        contexts[ name ] = data;
+        shadow[ name ] = data;
 
         return data[ 0 ] = ctx;
     }
