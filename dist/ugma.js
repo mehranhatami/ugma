@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Thu, 09 Apr 2015 14:01:51 GMT
+ * Build date: Fri, 10 Apr 2015 01:09:10 GMT
  */
 (function() {
     "use strict";
@@ -29,7 +29,13 @@
     var RETURN_FALSE = function()  {return false};
     var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
-    var INTERNET_EXPLORER = document.documentMode;
+    // Internet Explorer
+    // WARNING! document.documentMode can't be used to identify
+    // Internet Explorer. It only tell if the console in IE are open, and
+    // can give serious issues in the code.
+
+    var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
+    var INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
 
     var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
 
@@ -290,7 +296,7 @@
                 });
         };
     
-        if ( helpers$$is(mixin.constructor, "object") ) {
+        if ( helpers$$is( mixin.constructor, "object" ) ) {
             Class = noop;
         } else {
             Class = mixin.constructor;
@@ -379,44 +385,6 @@
 
     var core$core$$ugma = new  core$core$$DOM( DOCUMENT );
 
-    /**
-      * Extend ugma with methods
-      * @param  {Object}    mixin       methods container
-      * @param  {Boolean|Function} callback 
-      * @example
-      *
-      * ugma.extend({
-      *     foo: function() {
-      *         console.log("bar");
-      *     }
-      * });  //  link.foo();
-      *
-      * ugma.extend({
-      *     foo: function() {
-      *         console.log("bar");
-      *     }
-      * }, true); // ugma.foo();
-      *
-      *
-      * Note! The second argument - 'function' - extend the ugma.extend() with similar
-      * options as for the *internally* implement method, and let us
-      * return e.g. empty object ( {} ), array, booleans, array with values ( arr[1,2,3] )
-      */
-
-    core$core$$ugma.extend = function(mixin, callback)  {
-        
-          if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr( "ugma.extend", "The first argument is not a object.");
-          
-          if(mixin) {
-              
-              // Extend ...
-              if( callback && helpers$$is(callback, "boolean") ) return core$core$$implement( mixin );
-              
-               return core$core$$implement( mixin, null, !helpers$$is(callback, "function") ? function()  {return RETURN_THIS} : callback );
-          }
-          
-          return false;        
-      };
 
     // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
 
@@ -3087,6 +3055,47 @@
     }});
     // Current codename on the framework.
     core$core$$ugma.version = "mehran";
+
+    /**
+      * Extend ugma with methods
+      * @param  {Object}    mixin       methods container
+      * @param  {Boolean|Function} callback 
+      * @example
+      *
+      * ugma.extend({
+      *     foo: function() {
+      *         console.log("bar");
+      *     }
+      * });  //  link.foo();
+      *
+      * ugma.extend({
+      *     foo: function() {
+      *         console.log("bar");
+      *     }
+      * }, true); // ugma.foo();
+      *
+      *
+      * Note! The second argument - 'function' - extend the ugma.extend() with similar
+      * options as for the *internally* implement method, and let us
+      * return e.g. empty object ( {} ), array, booleans, array with values ( arr[1,2,3] )
+      */
+    core$core$$implement({
+    
+      extend: function(mixin, callback) {
+        
+          if( !helpers$$is( mixin, "object" )  || helpers$$isArray( mixin ) ) minErr$$minErr( "ugma.extend", "The first argument is not a object.");
+          
+          if(mixin) {
+              
+              // Extend ...
+              if( callback && helpers$$is(callback, "boolean") ) return core$core$$implement( mixin );
+              
+               return core$core$$implement( mixin, null, !helpers$$is(callback, "function") ? function()  {return RETURN_THIS} : callback );
+          }
+          
+          return false;        
+      }
+    });
 
     core$core$$implement({
     

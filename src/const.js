@@ -18,7 +18,12 @@ export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
 // Internet Explorer
-export const INTERNET_EXPLORER = document.documentMode;
+// WARNING! 'document.documentMode' can't be used to identify
+// Internet Explorer. It only tell if the console in IE are open, and
+// can give serious issues in the code.
+
+   var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
+  export const INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
 
 /**
  * Support style names that may come passed in prefixed by adding permutations
