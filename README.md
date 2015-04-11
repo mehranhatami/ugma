@@ -180,7 +180,7 @@ $ gulp xhr
 
 // minimize the XHR plugin
 
-$ gulp XHRminify
+$ gulp minifyXHR
 
 ```
 
