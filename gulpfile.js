@@ -45,8 +45,7 @@ gulp.task("lint", function() {
         .pipe(gulpif(process.env.TRAVIS_JOB_NUMBER, jshint.reporter("fail")));
 });
 
-
-// compile - but not minify - your build
+// compile XHR source file
 gulp.task("xhr", function() {
    
         // Write the generated sourcemap
@@ -92,8 +91,6 @@ gulp.task("compile", ["xhr"], function() {
             cwd: "./src"
         })
         .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
-//        .pipe(postcss([ customProperties(), autoprefixer(autoprefixerConfig), csswring, url ]))
-       // .pipe(jsFilter)
         .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter("jshint-stylish"))
         .pipe(jshint.reporter("fail"))

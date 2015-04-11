@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Fri, 10 Apr 2015 08:43:27 GMT
+ * Build date: Sat, 11 Apr 2015 03:11:12 GMT
  */
 (function() {
     "use strict";
@@ -1670,6 +1670,7 @@
     }, null, function()  {return function()  {}});
 
     core$core$$implement({
+          minErr: minErr$$minErr,
           camelize: helpers$$camelize,
           computeStyle: helpers$$computeStyle,
           proxy: helpers$$proxy,
