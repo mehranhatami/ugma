@@ -9,7 +9,7 @@
         keys = Object.keys,
         toString = Object.prototype.toString,
         isObject = function( obj ) {
-            return toString.call( obj ) === "[object Object]"
+            return toString.call( obj ) === "[object Object]";
         },
         toQueryString = function( params ) {
             // spaces should be + according to spec
@@ -25,8 +25,8 @@
         },
         shortcuts = function( method ) {
             return function( url, options ) {
-                return XHR( method, url, options )
-            }
+                return XHR( method, url, options );
+            };
         };
 
     if ( !window.ugma ) console.warn("ugma javascript Framework need to be included");
@@ -123,8 +123,8 @@
             promise = new Promise( function( resolve, reject ) {
                 var handleErrorResponse = function( message ) {
                     return function() {
-                        reject( new Error(message ) )
-                    }
+                        reject( new Error(message ) );
+                    };
                 };
 
                 xhr.open( method,
@@ -166,7 +166,7 @@
 
                         // responseText is the old-school way of retrieving response (supported by IE8 & 9)
                         // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-                        var response = response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
+                        var response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
                             // Support: IE9
                             // sometimes IE returns 1223 when it should be 204
                             // http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
@@ -273,7 +273,7 @@
                                     result[ name ] = option.value;
                                 }
                             }
-                        };
+                        }
                         break;
 
                     case undefined:
@@ -285,7 +285,7 @@
                     case "button": // custom button
                         break;
                     case "textarea": // textarea
-                       result[ name ].push( el.value.replace(/\r?\n/g, '\r\n') )
+                       result[ name ].push( el.value.replace(/\r?\n/g, '\r\n') );
                     case "checkbox": // checkbox
                         if ( el.checked && result[ name ] ) {
                             if ( typeof result[ name ] === "string" ) {
@@ -301,7 +301,7 @@
                     default:
                         result[ name ] = el.value;
                 }
-            };
+            }
 
             return result;
         }
