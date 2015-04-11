@@ -15,7 +15,9 @@ module.exports = function(config) {
         },
         files: [
             "./test/lib/jasmine-tools.js",
+            "./test/lib/promise.js",
             "./build/ugma.js",
+            "./build/xhr.js",
             "./test/modules/**/*.js"
         ]
     });

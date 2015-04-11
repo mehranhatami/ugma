@@ -18,6 +18,7 @@ const tag_version = require("gulp-tag-version");
 const plumber = require("gulp-plumber");
 const header = require("gulp-header");
 const notify = require("gulp-notify");
+const replace = require("gulp-replace");
 const karma = require("karma").server;
 const karmaConfig = require.resolve("./conf/karma.conf");
 
@@ -44,8 +45,45 @@ gulp.task("lint", function() {
         .pipe(gulpif(process.env.TRAVIS_JOB_NUMBER, jshint.reporter("fail")));
 });
 
+
 // compile - but not minify - your build
-gulp.task("compile", function() {
+gulp.task("xhr", function() {
+   
+        // Write the generated sourcemap
+     mkdirp.sync("build/");
+
+    return gulp.src(["*.js"], {
+            cwd: "./plugins/xhr"
+        })
+        .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
+//        .pipe(postcss([ customProperties(), autoprefixer(autoprefixerConfig), csswring, url ]))
+       // .pipe(jsFilter)
+        .pipe(jshint(".jshintrc"))
+        .pipe(jshint.reporter("jshint-stylish"))
+        .pipe(jshint.reporter("fail"))
+        .pipe(replace(/\\|"/g, "\\$&")) // handle symbols need to escape
+        .pipe(compile("xhr.js", pkg))
+        .pipe(es6transpiler())
+        .pipe(header(banner = [
+            "/**",
+            " * <%= pkg.description %> <%= pkg.version %>",
+            " * <%= pkg.repository.url %>",
+            " * ",
+            " * Copyright 2014 - " + new Date().getFullYear() + " <%= pkg.author %>",
+            " * Released under the <%= pkg.license %> license",
+            " * ",
+            " * Build date: <%= new Date().toUTCString() %>",
+            " */"
+        ].join("\n") + "\n", {
+            pkg: pkg
+        }))
+        //        .pipe(browserify())
+        .pipe(gulp.dest("build/"));
+});
+
+// compile - but not minify - your build
+// compile XHR module in the same time
+gulp.task("compile", ["xhr"], function() {
    
         // Write the generated sourcemap
      mkdirp.sync("build/");
@@ -54,9 +92,12 @@ gulp.task("compile", function() {
             cwd: "./src"
         })
         .pipe(gulpif(!process.env.TRAVIS_JOB_NUMBER, plumber()))
+//        .pipe(postcss([ customProperties(), autoprefixer(autoprefixerConfig), csswring, url ]))
+       // .pipe(jsFilter)
         .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter("jshint-stylish"))
         .pipe(jshint.reporter("fail"))
+        .pipe(replace(/\\|"/g, "\\$&")) // handle symbols need to escape
         .pipe(compile("ugma.js", pkg))
         .pipe(es6transpiler())
         .pipe(header(banner = [
@@ -105,8 +146,21 @@ gulp.task("test", ["compile", "lint"], function(done) {
     });
 });
 
+
+// make a minified version of XHR
+gulp.task("XHRminify", ["test"], function() {
+    var dest = argv.tag ? "dist/" : "build/";
+
+    return gulp.src(dest + "xhr.js")
+        .pipe(uglify({
+            preserveComments: "some"
+        }))
+        .pipe(rename("xhr.min.js"))
+        .pipe(gulp.dest(dest));
+});
+
 // make a minified version
-gulp.task("minify", ["test"], function() {
+gulp.task("minify", ["XHRminify", "test"], function() {
     var dest = argv.tag ? "dist/" : "build/";
 
     return gulp.src(dest + "ugma.js")

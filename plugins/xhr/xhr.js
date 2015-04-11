@@ -1,6 +1,8 @@
+/* globals window, document */
+
 (function(ugma) {
 
-    "use strict";
+    "use strict"; /* es6-transpiler has-iterators:false, has-generators: false */
 
     var Promise = window.Promise,
         contentType = "Content-Type",
@@ -8,13 +10,9 @@
         isArray = Array.isArray,
         keys = Object.keys,
         toString = Object.prototype.toString,
-        isObject = function( obj ) {
-            return toString.call( obj ) === "[object Object]";
-        },
-        toQueryString = function( params ) {
-            // spaces should be + according to spec
-            return params.join( "&" ).replace( /%20/g, "+" );
-        },
+        HTTP_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        isObject = (o) => toString.call(o) === "[object Object]",
+        toQueryString = (params) => params.join("&").replace(/%20/g, "+"),
         mimeTypeShortcuts = {
             json: APPLICATION_JSON
         },
@@ -29,142 +27,107 @@
             };
         };
 
-    if ( !window.ugma ) console.warn("ugma javascript Framework need to be included");
+//    if ( !window.ugma ) console.warn("ugma javascript Framework need to be included");
 
     if ( !Promise ) ugma.minErr( "XHR()", "In order to use XHR you have to include a Promise polyfill" );
 
     function isSuccess( status ) {
-        return 200 <= status && status < 300 || 304;
+     return status >= 200 && status < 300 || status === 304;
     }
 
     // main XHR function
-    function XHR( method, url ) {
 
-        var options = arguments[ 2 ];
-
-        if ( options === void 0 ) options = {};
-
+    var XHR = function XHR(method, url, config = {}) {
         method = method.toUpperCase();
 
-        var charset = "charset" in options ? options.charset : XHR.defaults.charset,
-            mimeType = "mimeType" in options ? options.mimeType : XHR.defaults.mimeType,
-            data = options.data,
+        var charset = "charset" in config ? config.charset : XHR.options.charset,
+            cacheBurst = "cacheBurst" in config ? config.cacheBurst : XHR.options.cacheBurst,
+            mimeType = "mimeType" in config ? config.mimeType : XHR.options.mimeType,
+            data = config.data,
             extraArgs = [],
             headers = {};
 
         // read default headers first
-        keys( XHR.defaults.headers ).forEach( function(key) {
-            headers[ key ] = XHR.defaults.headers[ key ];
+        Object.keys(XHR.options.headers).forEach((key) => {
+            headers[key] = XHR.options.headers[key];
         });
 
         // apply request specific headers
-        keys( options.headers || {} ).forEach(function( key ) {
-            headers[ key ] = options.headers[ key ];
+        Object.keys(config.headers || {}).forEach((key) => {
+            headers[key] = config.headers[key];
         });
 
-        if ( isObject( data ) ) {
-            keys( data ).forEach(function( key ) {
+        if (isObject(data)) {
+            Object.keys(data).forEach((key) => {
+                var name = encodeURIComponent(key),
+                    value = data[key];
 
-                var enc = encodeURIComponent,
-                    name = enc( key ),
-                    value = data[ key ];
-
-                if ( isArray( value ) ) {
-                    value.forEach( function( value ) {
-                        extraArgs.push( name + "=" + encodeURIComponent( value ) );
+                if (Array.isArray(value)) {
+                    value.forEach((value) => {
+                        extraArgs.push(name + "=" + encodeURIComponent(value));
                     });
                 } else {
-                    extraArgs.push( name + "=" + enc( value ) );
+                    extraArgs.push(name + "=" + encodeURIComponent(value));
                 }
             });
 
-            if ( method === "GET" ) {
+            if (method === "GET") {
                 data = null;
             } else {
-                data = toQueryString( extraArgs );
+                data = toQueryString(extraArgs);
                 extraArgs = [];
             }
         }
 
-        if ( typeof data === "string" ) {
-            if ( method === "GET" ) {
-                extraArgs.push( data );
+        if (typeof data === "string") {
+            if (method === "GET") {
+                extraArgs.push(data);
 
                 data = null;
             } else {
-                headers[ contentType ] = "application/x-www-form-urlencoded";
+                headers[contentType] = "application/x-www-form-urlencoded";
             }
         }
 
-        if ( isObject( options.json ) ) {
-            data = JSON.stringify( options.json );
+        if (isObject(config.json)) {
+            data = JSON.stringify(config.json);
 
-            headers[ contentType ] = APPLICATION_JSON;
+            headers[contentType] = APPLICATION_JSON;
         }
 
-        if ( contentType in headers ) {
-            headers[ contentType ] += "; charset=" + charset;
+        if (contentType in headers) {
+            headers[contentType] += "; charset=" + charset;
+        }
+
+        if (cacheBurst && method === "GET") {
+            extraArgs.push(cacheBurst + "=" + Date.now());
         }
 
         // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
         // And an `X-HTTP-Method-Override` header.
-        if ( options.emulateHTTP && (method === 'PUT' || method === 'DELETE' || method === 'PATCH' || method === 'POST' || method === 'GET' ) ) {
-            extraArgs.push( options.emulateHTTP + "=" + method );
-            headers[ "X-Http-Method-Override" ] = method;
+        if ( config.emulateHTTP && (method === "PUT" || method === "DELETE" || method === "PATCH" || method === "POST" || method === "GET" ) ) {
+            extraArgs.push(config.emulateHTTP + "=" + method);
+            headers["X-Http-Method-Override"] = method;
             method = "POST";
         }
 
-        if ( extraArgs.length ) {
-            url += ( ~url.indexOf( "?" ) ? "&" : "?" ) + toQueryString( extraArgs );
+        if (extraArgs.length) {
+            url += (~url.indexOf("?") ? "&" : "?") + toQueryString(extraArgs);
         }
 
-        // Make the request, allowing the user to override any Ajax options.
-        var xhr = options.xhr || new XMLHttpRequest(),
-            promise = new Promise( function( resolve, reject ) {
-                var handleErrorResponse = function( message ) {
-                    return function() {
-                        reject( new Error(message ) );
-                    };
-                };
+        var xhr = config.xhr || new window.XMLHttpRequest(),
+            promise = new Promise((resolve, reject) => {
+                var handleErrorResponse = (message) => () => { reject(new Error(message)) };
 
-                xhr.open( method,
-                    url,
-                    true );
-
-                xhr.timeout = options.timeout || XHR.defaults.timeout;
-
-                if ( options.before ) options.before( xhr );
-
-                // Set headers
-                for ( var key in headers ) {
-
-                    var headerValue = headers[ key ];
-
-                    if ( headerValue != null ) {
-                        xhr.setRequestHeader( key, String( headerValue ) );
-                    }
-                }
-
-                // Override mime type if needed
-                if ( mimeType ) {
-                    if ( mimeType in mimeTypeShortcuts ) {
-                        xhr.responseType = mimeType;
-                        mimeType = mimeTypeShortcuts[ mimeType ];
-                    } else if ( xhr.overrideMimeType ) {
-                        xhr.overrideMimeType( mimeType );
-                    }
-                }
-
-                xhr.onabort = handleErrorResponse( "abort" );
-                xhr.onerror = handleErrorResponse( "error" );
-                xhr.ontimeout = handleErrorResponse( "timeout" );
-                xhr.onreadystatechange = function() {
-
-                    if ( xhr.readyState === 4 ) {
+                xhr.onabort = handleErrorResponse("abort");
+                xhr.onerror = handleErrorResponse("error");
+                xhr.ontimeout = handleErrorResponse("timeout");
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
                         // by default parse response depending on Content-Type header
-                        mimeType = mimeType || xhr.getResponseHeader( contentType ) || "";
+                        mimeType = mimeType || xhr.getResponseHeader(contentType) || "";
 
-                        // responseText is the old-school way of retrieving response (supported by IE8 & 9)
+                         // responseText is the old-school way of retrieving response (supported by IE8 & 9)
                         // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
                         var response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
                             // Support: IE9
@@ -174,12 +137,12 @@
                             // skip possible charset suffix
                             parseResponse = mimeTypeStrategies[mimeType.split( ";" )[ 0 ] ];
 
-                        if ( parseResponse ) {
+                        if (parseResponse) {
                             try {
                                 // when strategy found - parse response according to it
-                                response = parseResponse( response );
-                            } catch ( err ) {
-                                return reject( err );
+                                response = parseResponse(response);
+                            } catch (err) {
+                                return reject(err);
                             }
                         }
 
@@ -191,120 +154,119 @@
                     }
                 };
 
+                xhr.open(method, url, true);
+                xhr.timeout = config.timeout || XHR.options.timeout;
+
+                if ( options.before ) options.before( xhr );
+                
+                // Set headers
+                for ( var key in headers ) {
+
+                    var headerValue = headers[ key ];
+
+                    if ( headerValue != null ) {
+                        xhr.setRequestHeader( key, String( headerValue ) );
+                    }
+                }
+
+                // Override mime type if needed
+                if (mimeType) {
+                    if (mimeType in mimeTypeShortcuts) {
+                        xhr.responseType = mimeType;
+                        mimeType = mimeTypeShortcuts[mimeType];
+                    } else if (xhr.overrideMimeType) {
+                        xhr.overrideMimeType(mimeType);
+                    }
+                }
+
                 xhr.send( data || null );
             });
 
-        promise[ 0 ] = xhr;
+        promise[0] = xhr;
 
         return promise;
-    }
+    };
+
+    // define shortcuts
+    HTTP_METHODS.forEach((method) => {
+        XHR[method.toLowerCase()] = (url, config) => XHR(method, url, config);
+    });
+
+    XHR.serialize = (node) => {
+        var result = {};
+
+        if ("form" in node) {
+            node = [node];
+        } else if ("elements" in node) {
+            node = node.elements;
+        } else {
+            node = [];
+        }
+
+        for (let el of node) {
+            var name = el.name;
+
+            if (el.disabled || !name) continue;
+
+            switch(el.type) {
+            case "select-multiple":
+                result[name] = [];
+                /* falls through */
+            case "select-one":
+                for (let option of el.options) {
+                    if (option.selected) {
+                        if (name in result) {
+                            result[name].push(option.value);
+                        } else {
+                            result[name] = option.value;
+                        }
+                    }
+                }
+                break;
+
+            case undefined:
+            case "fieldset": // fieldset
+            case "file": // file input
+            case "submit": // submit button
+            case "reset": // reset button
+            case "button": // custom button
+                break;
+
+            case "checkbox": // checkbox
+                if (el.checked && result[name]) {
+                    if (typeof result[name] === "string") {
+                        result[name] = [ result[name] ];
+                    }
+
+                    result[name].push(el.value);
+
+                    break;
+                }
+                /* falls through */
+            case "radio": // radio button
+                if (!el.checked) break;
+                /* falls through */
+            default:
+                result[name] = el.value;
+            }
+        }
+
+        return result;
+    };
+
    /**
     * Set default values for future Ajax requests. Its use is not recommended.
     */
-    XHR.defaults = {
+
+    XHR.options = {
         timeout: 15000,
+        cacheBurst: "_",
         charset: "UTF-8",
-        headers: {
-            // X-Requested-With header
-            "X-Requested-With": "XMLHttpRequest"
-        }
+        headers: { "X-Requested-With": "XMLHttpRequest" }
     };
 
-    /* Expose */
-
-    ugma.extend({
-      
-     /**
-      * Perform an asynchronous HTTP (Ajax) request.
-      */
-
-      XHR: XHR,
-
-     /**
-      * XHR shortcuts
-      */
-
-      post: shortcuts( "post" ),
-      get: shortcuts( "get" ),
-      put: shortcuts( "put" ),
-      delete: shortcuts( "delete" ),
-      patch: shortcuts( "patch" ),
-       
-       /**
-        * Encode a set of form elements as a string for submission.
-        */
-       
-        serialize: function( node ) {
-
-            var result = {};
-
-            if ( "form" in node ) {
-                node = [ node ];
-            } else if ( "elements" in node ) {
-                node = node.elements;
-            } else {
-                node = [];
-            }
-
-            var el, index = 0,
-                length = node.length;
-
-            for (; index < length;) {
-                el = ( node[ index++ ] );
-
-                var name = el.name;
-                // don't serialize elements that are disabled or without a name
-                if ( el.disabled || !name ) continue;
-
-                switch ( el.type ) {
-                    case "select-multiple":
-                        result[ name ] = [];
-                    case "select-one":
-
-                        var option, opts = ( el.options );
-
-                        for (index = 0, length = opts.length; index < length;) {
-                            option = ( opts[ index++ ] );
-
-                            if ( option.selected ) {
-                                if ( name in result ) {
-                                    result[ name ].push( option.value );
-                                } else {
-                                    result[ name ] = option.value;
-                                }
-                            }
-                        }
-                        break;
-
-                    case undefined:
-                    case "fieldset": // fieldset
-                    case "file": // file input
-                    case "image": // image input                    
-                    case "submit": // submit button
-                    case "reset": // reset button
-                    case "button": // custom button
-                        break;
-                    case "textarea": // textarea
-                       result[ name ].push( el.value.replace(/\r?\n/g, '\r\n') );
-                    case "checkbox": // checkbox
-                        if ( el.checked && result[ name ] ) {
-                            if ( typeof result[ name ] === "string" ) {
-                                result[ name ] = [ result[ name ] ];
-                            }
-
-                            result[ name ].push( el.value );
-
-                            break;
-                        }
-                    case "radio": // radio button
-                        if ( !el.checked ) break;
-                    default:
-                        result[ name ] = el.value;
-                }
-            }
-
-            return result;
-        }
-    });
+  
+/* Expose */
+   window.XHR = XHR;
 
 })( window.ugma );
