@@ -145,7 +145,7 @@ gulp.task("test", ["compile", "lint"], function(done) {
 
 
 // make a minified version of XHR
-gulp.task("XHRminify", ["test"], function() {
+gulp.task("minifyXHR", ["test"], function() {
     var dest = argv.tag ? "dist/" : "build/";
 
     return gulp.src(dest + "xhr.js")
@@ -157,7 +157,7 @@ gulp.task("XHRminify", ["test"], function() {
 });
 
 // make a minified version
-gulp.task("minify", ["XHRminify", "test"], function() {
+gulp.task("minify", ["minifyXHR", "test"], function() {
     var dest = argv.tag ? "dist/" : "build/";
 
     return gulp.src(dest + "ugma.js")
