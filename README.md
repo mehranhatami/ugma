@@ -184,11 +184,11 @@ $ gulp minifyXHR
 
 ```
 
+#Plugin contribution
 
+For contribution of ugma plugins to this repo, it's important to remember:
 
-
-
-
-
-
-
+1. Need to be added in the plugin folder with a readme.md file.
+2. All plugins should be written in ES6.
+3. Create a sub-folder in the test folder for the plugin, and run minimum 5 test cases 
+4. Make a own build and minified build for the plugin in the gulp.js file, and merge it with the existing build process.
