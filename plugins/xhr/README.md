@@ -1,6 +1,6 @@
 # XHR
 
-Lightweight, ES6-promised based implementation for working with AJAX. You need to have **ugma** added in your project before using this plugin, and for older browsers that don't support native Promise inthe browser - you will need to add a polyfill.
+Lightweight, ES6-promised based implementation for working with AJAX. For older browsers that don't support native Promise inthe browser - you will need to add a polyfill.
 
 # API
 
@@ -14,16 +14,16 @@ XHR supports ES6 promises, and following API methods:
 
 ```javascript
 
-ugma.XHR.get("/foo/url").then(function(response) {
+XHR.get("/foo/url").then(function(response) {
     // do something with response
 });
 
 // shortcuts
 
-ugma.post("/test/modify/url", {data: {a: "b"}}).then(successCallback, errorCallback);
+XHR.post("/test/modify/url", {data: {a: "b"}}).then(successCallback, errorCallback);
 
 // or general method
-ugma.XHR(method, url, config).then(success, fail);
+XHR.XHR(method, url, config).then(success, fail);
 
 ```
 
@@ -31,10 +31,10 @@ ugma.XHR(method, url, config).then(success, fail);
 
 ```javascript
 
-ugma.XHR( ("/foo/url", options ); 
+XHR( ("/foo/url", options ); 
 
 // execute a 'before' function 
-ugma.XHR( ("/foo/url", {
+XHR( ("/foo/url", {
 
 before: function() {}
 }); 
@@ -49,7 +49,7 @@ before: function() {}
 ```javascript
 
 // set default timeout to 10 seconds
-ugma.XHR.defaults.timeout = 10000; 
+XHR.options.timeout = 10000; 
 
 ```
 
