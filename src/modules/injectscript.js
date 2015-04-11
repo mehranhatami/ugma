@@ -2,9 +2,9 @@
  * @module injectscript
  */
 
-import { implement                    } from "../core/core";
-import { injectElement, is, sliceArgs } from "../helpers";
-import { minErr                       } from "../minErr";
+import { implement      } from "../core/core";
+import { is, sliceArgs  } from "../helpers";
+import { minErr         } from "../minErr";
 
 implement({
   /**
@@ -15,6 +15,9 @@ implement({
     injectScript() {
         var urls = sliceArgs( arguments ),
             doc = this[ 0 ].ownerDocument,
+            injectElement = ( node ) => {
+                  if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
+            },
             callback = () => {
 
                 var arg = urls.shift(),
@@ -28,7 +31,7 @@ implement({
                     // Support: IE9
                     // Bug in IE force us to set the 'src' after the element has been
                     // added to the document.
-                    injectElement( script );
+                   injectElement( script );
 
                     script.src = arg;
                     script.async = true;

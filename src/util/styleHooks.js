@@ -2,10 +2,10 @@
  * @module styleHooks
  */
 
-import { ugma, implement                                         } from "../core/core";
-import { minErr                                                  } from "../minErr";
-import { filter, map, keys, camelize, each, forOwn, is, isArray  } from "../helpers";
-import { VENDOR_PREFIXES, HTML                                   } from "../const";
+import { implement                                         } from "../core/core";
+import { minErr                                            } from "../minErr";
+import { filter, map, camelize, each, forOwn, is, isArray  } from "../helpers";
+import { VENDOR_PREFIXES                                   } from "../const";
 
 var unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
     "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +

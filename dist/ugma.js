@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 11 Apr 2015 11:52:36 GMT
+ * Build date: Sat, 11 Apr 2015 13:53:39 GMT
  */
 (function() {
     "use strict";
@@ -30,9 +30,9 @@
     var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
     // Internet Explorer
-    // WARNING! 'document.documentMode' can't be used to identify
-    // Internet Explorer. It only tell if the console in IE are open, and
-    // can give serious issues in the code.
+    // WARNING! 'document.documentMode' can not be used to identify
+    // Internet Explorer. In some cases it only identify IE if the console
+    // window are open.
 
     var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
     var INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
@@ -58,7 +58,6 @@
     var helpers$$every = helpers$$arrayProto.every;
     var helpers$$slice = helpers$$arrayProto.slice;
     var helpers$$keys  = Object.keys;
-
     var helpers$$isArray = Array.isArray;
 
     /**
@@ -73,11 +72,8 @@
                var arr = collection || [],
                    index = -1,
                    length = arr.length;
-               while ( ++index < length ) {
-                   if ( callback( arr[ index ], index, arr ) === false ) {
-                       break;
-                   }
-               }
+               while ( ++index < length )
+                   if ( callback( arr[ index ], index, arr ) === false ) break;
            return arr;
        },
    
@@ -112,9 +108,7 @@
       *     is({}, "function");
       *     // false
       */    
-       helpers$$is = function( obj, type )  {
-           return typeof obj === type;
-       },
+       helpers$$is = function( obj, type )  {return typeof obj === type},
    
        // Iterates over own enumerable properties of an object, executing  the callback for each property.
        helpers$$forOwn = function( object, callback )  {
@@ -129,9 +123,7 @@
    
                    key = props[ index ];
    
-                   if ( callback( key, obj[ key ], obj ) === false) {
-                       break;
-                   }
+                   if ( callback( key, obj[ key ], obj ) === false) break;
                }
            return obj;
        },
@@ -148,12 +140,11 @@
        
        helpers$$filter = function( array, predicate )  {
            array = array || [];
+           
              var result = [];
    
            helpers$$forOwn( array, function( index, value )  {
-               if ( predicate( value, index, array ) ) {
-                   result.push( value );
-               }
+               if ( predicate( value, index, array ) ) result.push( value );
            });
            return result;
        },
@@ -163,9 +154,6 @@
        helpers$$proxy = function( context, fn, arg1, arg2 )  {
    
            if ( helpers$$is( fn, "string" ) ) fn = context[ fn ];
-   
-           // Quick check to determine if target is callable
-           if ( !helpers$$is( fn, "function" ) ) return undefined;
    
            try {
                return fn.call( context, arg1, arg2 );
@@ -183,9 +171,8 @@
            var i = arg.length,
                args = new Array( i || 0 );
    
-           while ( i-- ) {
-               args[ i ] = arg[ i ];
-           }
+           while ( i-- ) args[ i ] = arg[ i ];
+   
            return args;
        },
    
@@ -209,7 +196,6 @@
      * Support for pseudo-elements in getComputedStyle for plug-ins
      *
      */
-   
        helpers$$computeStyle = function( node, pseudoElement )  {
            // Support: IE<=11+, Firefox<=30+
            // IE throws on elements created in popups
@@ -220,10 +206,6 @@
                    DOCUMENT.defaultView ).getComputedStyle( node, pseudoElement || null );
            }
            return WINDOW.getComputedStyle( node, pseudoElement || null );
-       },
-       // inject elements in the document.head
-       helpers$$injectElement = function( node )  {
-           if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
        };
 
     /**
@@ -1304,7 +1286,6 @@
     
             var self = this,
                 node = this[ 0 ],
-                handlers,
                 removeHandler = function( handler )  {
     
                     // Cancel previous frame if it exists
@@ -1496,8 +1477,8 @@
 
     if ( !util$support$$default.optSelected ) {
         util$accessorhooks$$accessorHooks.get.selected = function( node )  {
-            var parent = node.parentNode;
             /* jshint ignore:start */
+            var parent = node.parentNode;
             if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
             /* jshint ignore:end */
             return null;
@@ -1637,10 +1618,8 @@
     }, null, function()  {return function()  {}});
 
     core$core$$implement({
-          minErr: minErr$$minErr,
           camelize: helpers$$camelize,
           computeStyle: helpers$$computeStyle,
-          proxy: helpers$$proxy,
           deserializeValue: util$readData$$deserializeValue,
       });
 
@@ -1682,6 +1661,7 @@
          *    ugma.importStyles(".foo", {color: "red", padding: 5}); // key/value pairs
          *    ugma.importStyles(".bar", "background: white; color: gray"); // strings
          */
+         
         injectCSS: function(selector, styleContent) {
     
             if ( styleContent && helpers$$is( styleContent, "object" ) ) {
@@ -1711,7 +1691,8 @@
             if ( !styleSheet ) {
     
                 var doc = this[0].ownerDocument,
-                    styleNode = helpers$$injectElement( doc.createElement( "style" ) );
+                    styleElement = doc.createElement( "style" ),
+                    styleNode = styleElement.ownerDocument.head.appendChild( styleElement );
     
                 styleSheet = styleNode.sheet || styleNode.styleSheet;
                 // store object internally
@@ -1741,6 +1722,9 @@
         injectScript: function() {
             var urls = helpers$$sliceArgs( arguments ),
                 doc = this[ 0 ].ownerDocument,
+                injectElement = function( node )  {
+                      if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
+                },
                 callback = function()  {
     
                     var arg = urls.shift(),
@@ -1754,7 +1738,7 @@
                         // Support: IE9
                         // Bug in IE force us to set the 'src' after the element has been
                         // added to the document.
-                        helpers$$injectElement( script );
+                       injectElement( script );
     
                         script.src = arg;
                         script.async = true;
@@ -2000,11 +1984,11 @@
         };
 
     // Add button/input type pseudos
-    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key, value )  {
+    helpers$$forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, function( key )  {
         util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createInputPseudo( key );
     });
 
-    helpers$$forOwn({ submit: true, reset: true }, function( key, value )  {
+    helpers$$forOwn({ submit: true, reset: true }, function( key )  {
         util$pseudoClasses$$pseudoClasses[ ":" + key ] = util$pseudoClasses$$createButtonPseudo( key );
     });
 
@@ -2814,6 +2798,7 @@
         quote = value && value.indexOf( "\"" ) >= 0 ? "'" : "\"";
     
         if ( helpers$$is( rawValue, "string" ) ) value = rawValue;
+      
         // handle boolean attributes by using name as value
         if ( !helpers$$is( value, "string" ) ) value = name;
        

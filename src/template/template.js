@@ -93,6 +93,6 @@ ugma.template = function( template, args ) {
 };
 
 // populate empty tag names with result
-each( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" } );
+each( "area base br col hr img input link meta param command keygen source".split(" "), ( tag ) => { tagCache[ tag ] = "<" + tag + ">" }; );
 
 export default tagCache;

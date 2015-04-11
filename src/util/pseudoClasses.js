@@ -42,11 +42,11 @@ var createButtonPseudo = ( type ) => {
     };
 
 // Add button/input type pseudos
-forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, ( key, value ) => {
+forOwn({ radio: true, checkbox: true, file: true, text: true, password: true, image: true }, ( key ) => {
     pseudoClasses[ ":" + key ] = createInputPseudo( key );
 });
 
-forOwn({ submit: true, reset: true }, ( key, value ) => {
+forOwn({ submit: true, reset: true }, ( key ) => {
     pseudoClasses[ ":" + key ] = createButtonPseudo( key );
 });
 

@@ -9,6 +9,7 @@ function parseAttr( quote, name, value, rawValue ) {
     quote = value && value.indexOf( "\"" ) >= 0 ? "'" : "\"";
 
     if ( is( rawValue, "string" ) ) value = rawValue;
+  
     // handle boolean attributes by using name as value
     if ( !is( value, "string" ) ) value = name;
    

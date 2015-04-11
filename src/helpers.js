@@ -6,39 +6,17 @@
  * @private methods
  */
 
-import { DOCUMENT, WINDOW                    } from "./const";
-import { ugma, domTree, nodeTree, dummyTree  } from "./core/core";
+import { DOCUMENT, WINDOW  } from "./const";
+import { ugma              } from "./core/core";
 
 // jshint unused:false
 
 // Create local references to Array.prototype methods we'll want to use later.
 var arrayProto = Array.prototype;
 
-/**
- * Checks if the given callback returns a true(-ish) value for each element in the collection.
- * @example
- *     link.every(function(element) {
- *         return element.hasAttribute('active')
- *     });
- *     // true/false
- */
-
 export const every = arrayProto.every;
 export const slice = arrayProto.slice;
 export const keys  = Object.keys;
-
-/**
- * Determine whether the argument is an array.
- *
- * @param {Object} [obj] Object to test whether or not it is an array.
- * @return {boolean} 
- * @example
- *     isArray([]);
- *     // true
- * @example
- *     isArray({});
- *     // false
- */
 export const isArray = Array.isArray;
 
 /**
@@ -53,11 +31,8 @@ export const isArray = Array.isArray;
             var arr = collection || [],
                 index = -1,
                 length = arr.length;
-            while ( ++index < length ) {
-                if ( callback( arr[ index ], index, arr ) === false ) {
-                    break;
-                }
-            }
+            while ( ++index < length )
+                if ( callback( arr[ index ], index, arr ) === false ) break;
         return arr;
     },
 
@@ -92,9 +67,7 @@ export const isArray = Array.isArray;
    *     is({}, "function");
    *     // false
    */    
-    is = ( obj, type ) => {
-        return typeof obj === type;
-    },
+    is = ( obj, type ) => typeof obj === type,
 
     // Iterates over own enumerable properties of an object, executing  the callback for each property.
     forOwn = ( object, callback ) => {
@@ -109,9 +82,7 @@ export const isArray = Array.isArray;
 
                 key = props[ index ];
 
-                if ( callback( key, obj[ key ], obj ) === false) {
-                    break;
-                }
+                if ( callback( key, obj[ key ], obj ) === false) break;
             }
         return obj;
     },
@@ -128,12 +99,11 @@ export const isArray = Array.isArray;
     
     filter = ( array, predicate ) => {
         array = array || [];
+        
           var result = [];
 
         forOwn( array, ( index, value ) => {
-            if ( predicate( value, index, array ) ) {
-                result.push( value );
-            }
+            if ( predicate( value, index, array ) ) result.push( value );
         });
         return result;
     },
@@ -143,9 +113,6 @@ export const isArray = Array.isArray;
     proxy = ( context, fn, arg1, arg2 ) => {
 
         if ( is( fn, "string" ) ) fn = context[ fn ];
-
-        // Quick check to determine if target is callable
-        if ( !is( fn, "function" ) ) return undefined;
 
         try {
             return fn.call( context, arg1, arg2 );
@@ -163,9 +130,8 @@ export const isArray = Array.isArray;
         var i = arg.length,
             args = new Array( i || 0 );
 
-        while ( i-- ) {
-            args[ i ] = arg[ i ];
-        }
+        while ( i-- ) args[ i ] = arg[ i ];
+
         return args;
     },
 
@@ -189,7 +155,6 @@ export const isArray = Array.isArray;
   * Support for pseudo-elements in getComputedStyle for plug-ins
   *
   */
-
     computeStyle = ( node, pseudoElement ) => {
         // Support: IE<=11+, Firefox<=30+
         // IE throws on elements created in popups
@@ -200,13 +165,9 @@ export const isArray = Array.isArray;
                 DOCUMENT.defaultView ).getComputedStyle( node, pseudoElement || null );
         }
         return WINDOW.getComputedStyle( node, pseudoElement || null );
-    },
-    // inject elements in the document.head
-    injectElement = ( node ) => {
-        if ( node && node.nodeType === 1 ) return node.ownerDocument.head.appendChild( node );
     };
 
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle, injectElement };
+export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle };

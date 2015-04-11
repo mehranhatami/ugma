@@ -5,18 +5,18 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 11 Apr 2015 11:52:33 GMT
+ * Build date: Sat, 11 Apr 2015 13:53:36 GMT
  */
 (function() {
     "use strict";
+
     (function(window) {
     
         "use strict";
     
         /* es6-transpiler has-iterators:false, has-generators: false */
     
-        var Promise = window.Promise,
-            isArray = Array.isArray,
+        var isArray = Array.isArray,
             keys = Object.keys,
             toString = Object.prototype.toString,
             isObject = function( obj )  {return toString.call( obj ) === "[object Object]"},
@@ -158,7 +158,7 @@
                                     }
                                 }
     
-                                if ( status >= 200 && status < 300 || status === 304 ) {
+                                if ( isSuccess( status ) ) {
                                     resolve( response );
                                 } else {
                                     reject( response );

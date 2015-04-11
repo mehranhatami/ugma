@@ -6,7 +6,7 @@ import { RETURN_THIS, RETURN_TRUE                                   } from "../c
 import   EventHandler                                                 from "../util/eventhandler";
 import   eventhooks                                                   from "../util/eventhooks";
 import { implement                                                  } from "../core/core";
-import { isArray, keys, each, forOwn, is, filter, proxy             } from "../helpers";
+import { isArray, each, forOwn, is, filter, proxy             } from "../helpers";
 import { minErr                                                     } from "../minErr";
 import { cancelFrame                                                } from "../util/raf";
 
@@ -126,7 +126,6 @@ implement({
 
         var self = this,
             node = this[ 0 ],
-            handlers,
             removeHandler = ( handler ) => {
 
                 // Cancel previous frame if it exists

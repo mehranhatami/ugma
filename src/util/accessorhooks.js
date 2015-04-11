@@ -2,11 +2,11 @@
  * @module accessorHooks
  */
 
-import { ugma, implement                    } from "../core/core";
-import { each, forOwn, every, is, isArray   } from "../helpers";
-import { DOCUMENT, WINDOW, FOCUSABLE        } from "../const";
-import { minErr                             } from "../minErr";
-import   support                              from "../util/support";
+import { implement                         } from "../core/core";
+import { each, forOwn, every, is, isArray  } from "../helpers";
+import { DOCUMENT, FOCUSABLE               } from "../const";
+import { minErr                            } from "../minErr";
+import   support                             from "../util/support";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -114,8 +114,8 @@ if ( !support.radioValue ) {
 
 if ( !support.optSelected ) {
     accessorHooks.get.selected = ( node ) => {
-        var parent = node.parentNode;
         /* jshint ignore:start */
+        var parent = node.parentNode;
         if ( parent && parent.parentNode ) parent.parentNode.selectedIndex;
         /* jshint ignore:end */
         return null;
