@@ -139,3 +139,56 @@ ugma.query('body').shadow('bar', function(core) { });
 ugma.query('body').shadow('zoo', function(core) { });
 
 ```
+
+#Installation
+
+Download the repo and run:
+
+```javascript
+**npm install**
+```
+
+This will install all dependencies for you, so you can modify the source code as you wish.
+
+Ugma are using **gulp** and ES6 transpillers, but the commands are stright forward:
+
+```javascript
+
+// compile the code
+
+$ gulp compile
+
+// minimize - compress
+
+$ gulp minify
+
+// running tests
+
+$ gulp test
+
+// linting
+
+$ gulp lint
+
+```
+
+The plugins are part of the build process and will be build together with ugma.
+
+```javascript
+// build the XHR plugin
+$ gulp xhr
+
+// minimize the XHR plugin
+
+$ gulp XHRminify
+
+```
+
+
+
+
+
+
+
+
+
