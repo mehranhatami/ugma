@@ -4,9 +4,9 @@
 
 import { ERROR_MSG                 } from "../const";
 import { minErr                    } from "../minErr";
-import { ugma, Nodes, implement } from "../core/core";
+import { ugma, Nodes, implement    } from "../core/core";
 import   tagCache                    from "../template/template";
-import { reduce, is, trim          } from "../helpers";
+import { reduce, is                } from "../helpers";
 
 implement({
      /**
@@ -44,7 +44,7 @@ implement({
 
     } else {
 
-        value = trim( value );
+        value = value.trim();
 
         // handle vanila HTML strings
         // e.g. <div id="foo" class="bar"></div>

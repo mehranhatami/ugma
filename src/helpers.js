@@ -70,12 +70,10 @@ export const isArray = Array.isArray;
     *     // ['ever', 'green']
     */     
      
-    map = ( collection, callback ) => {
-        var arr = collection || [],
-            result = [];
-      // Go through the array, translating each of the items to their
-      // new value (or values).
-        each(arr, ( value, key ) => {
+    map = ( array, callback ) => {
+          array = array || [];
+            var result = [];
+        each(array, ( value, key ) => {
             result.push( callback( value, key ) );
         });
         return result;
@@ -128,43 +126,16 @@ export const isArray = Array.isArray;
     *     });
     */    
     
-    filter = ( collection, predicate ) => {
-        var arr = collection || [],
-            result = [];
+    filter = ( array, predicate ) => {
+        array = array || [];
+          var result = [];
 
-        forOwn( arr, ( index, value ) => {
-            if ( predicate( value, index, arr ) ) {
+        forOwn( array, ( index, value ) => {
+            if ( predicate( value, index, array ) ) {
                 result.push( value );
             }
         });
         return result;
-    },
-
-    trim = ( value ) => {
-        return is( value, "string" ) ? value.trim() : value;
-    },
-
-    inArray = ( arr, searchElement, fromIndex ) => {
-        fromIndex = fromIndex || 0;
-        /* jshint ignore:start */
-        if ( fromIndex > arr.length ) {
-
-            arr - 1;
-        }
-        /* jshint ignore:end */
-        var i = 0,
-            len = arr.length;
-
-        for ( ; i < len; i++ ) {
-            if ( arr[ i ] === searchElement && fromIndex <= i ) {
-                return i;
-            }
-
-            if ( arr[ i ] === searchElement && fromIndex > i ) {
-                return -1;
-            }
-        }
-        return -1;
     },
 
     // Bind a function to a context, optionally partially applying 
@@ -238,4 +209,4 @@ export const isArray = Array.isArray;
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, trim, inArray, proxy, sliceArgs, camelize, computeStyle, injectElement };
+export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle, injectElement };

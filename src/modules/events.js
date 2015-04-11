@@ -6,7 +6,7 @@ import { RETURN_THIS, RETURN_TRUE                                   } from "../c
 import   EventHandler                                                 from "../util/eventhandler";
 import   eventhooks                                                   from "../util/eventhooks";
 import { implement                                                  } from "../core/core";
-import { isArray, keys, each, forOwn, is, inArray, filter, proxy    } from "../helpers";
+import { isArray, keys, each, forOwn, is, filter, proxy             } from "../helpers";
 import { minErr                                                     } from "../minErr";
 import { cancelFrame                                                } from "../util/raf";
 
@@ -70,9 +70,6 @@ implement({
 
         // http://jsperf.com/string-indexof-vs-split
         var node = this[ 0 ],
-            parts,
-            eventTypes = inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
-            i = eventTypes.length,
             handler,
             handlers = this._.handlers || ( this._.handlers = [] );
 
@@ -129,7 +126,6 @@ implement({
 
         var self = this,
             node = this[ 0 ],
-            parts,
             handlers,
             removeHandler = ( handler ) => {
 

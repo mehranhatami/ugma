@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 11 Apr 2015 10:36:23 GMT
+ * Build date: Sat, 11 Apr 2015 11:49:19 GMT
  */
 (function() {
     "use strict";
@@ -90,12 +90,10 @@
        *     // ['ever', 'green']
        */     
         
-       helpers$$map = function( collection, callback )  {
-           var arr = collection || [],
-               result = [];
-         // Go through the array, translating each of the items to their
-         // new value (or values).
-           helpers$$each(arr, function( value, key )  {
+       helpers$$map = function( array, callback )  {
+             array = array || [];
+               var result = [];
+           helpers$$each(array, function( value, key )  {
                result.push( callback( value, key ) );
            });
            return result;
@@ -148,43 +146,16 @@
        *     });
        */    
        
-       helpers$$filter = function( collection, predicate )  {
-           var arr = collection || [],
-               result = [];
+       helpers$$filter = function( array, predicate )  {
+           array = array || [];
+             var result = [];
    
-           helpers$$forOwn( arr, function( index, value )  {
-               if ( predicate( value, index, arr ) ) {
+           helpers$$forOwn( array, function( index, value )  {
+               if ( predicate( value, index, array ) ) {
                    result.push( value );
                }
            });
            return result;
-       },
-   
-       helpers$$trim = function( value )  {
-           return helpers$$is( value, "string" ) ? value.trim() : value;
-       },
-   
-       helpers$$inArray = function( arr, searchElement, fromIndex )  {
-           fromIndex = fromIndex || 0;
-           /* jshint ignore:start */
-           if ( fromIndex > arr.length ) {
-   
-               arr - 1;
-           }
-           /* jshint ignore:end */
-           var i = 0,
-               len = arr.length;
-   
-           for ( ; i < len; i++ ) {
-               if ( arr[ i ] === searchElement && fromIndex <= i ) {
-                   return i;
-               }
-   
-               if ( arr[ i ] === searchElement && fromIndex > i ) {
-                   return -1;
-               }
-           }
-           return -1;
        },
    
        // Bind a function to a context, optionally partially applying 
@@ -529,7 +500,7 @@
     
             if ( existingClasses.indexOf( " " + token + " " ) === -1 ) existingClasses += token + " ";
     
-            node[ 0 ].className = helpers$$trim(existingClasses);
+            node[ 0 ].className = existingClasses.trim();
         }],
        /**
         * Remove class(es) or an array of class names from element
@@ -1277,9 +1248,6 @@
     
             // http://jsperf.com/string-indexof-vs-split
             var node = this[ 0 ],
-                parts,
-                eventTypes = helpers$$inArray( eventType, " " ) >= -1 ? eventType.split( " " ) : [ eventType ],
-                i = eventTypes.length,
                 handler,
                 handlers = this._.handlers || ( this._.handlers = [] );
     
@@ -1336,7 +1304,6 @@
     
             var self = this,
                 node = this[ 0 ],
-                parts,
                 handlers,
                 removeHandler = function( handler )  {
     
@@ -1438,7 +1405,7 @@
                 option: function( node )  {
                     // Support: IE<11
                     // option.value not trimmed
-                    return helpers$$trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+                    return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
                 },
                 select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
     
@@ -1946,7 +1913,7 @@
     
             if ( helpers$$is( content, "string" ) ) {
                 if ( helpers$$is( fragment, "string" ) ) {
-                    fragment += helpers$$trim( content );
+                    fragment += content.trim();
                 } else {
                     content = core$core$$ugma.renderAll( content );
                 }
@@ -2844,7 +2811,7 @@
 
     function template$parseAttr$$parseAttr( quote, name, value, rawValue ) {
         // try to determine which kind of quotes to use
-        quote = value && helpers$$inArray( value, "\"" ) >= 0 ? "'" : "\"";
+        quote = value && value.indexOf( "\"" ) >= 0 ? "'" : "\"";
     
         if ( helpers$$is( rawValue, "string" ) ) value = rawValue;
         // handle boolean attributes by using name as value
@@ -3061,7 +3028,7 @@
     
         } else {
     
-            value = helpers$$trim( value );
+            value = value.trim();
     
             // handle vanila HTML strings
             // e.g. <div id="foo" class="bar"></div>

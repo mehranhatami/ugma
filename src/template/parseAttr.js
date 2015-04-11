@@ -2,11 +2,11 @@
  * @module parseAttr
  */
 
-import { is, inArray } from "../helpers";
+import { is } from "../helpers";
 
 function parseAttr( quote, name, value, rawValue ) {
     // try to determine which kind of quotes to use
-    quote = value && inArray( value, "\"" ) >= 0 ? "'" : "\"";
+    quote = value && value.indexOf( "\"" ) >= 0 ? "'" : "\"";
 
     if ( is( rawValue, "string" ) ) value = rawValue;
     // handle boolean attributes by using name as value

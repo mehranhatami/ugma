@@ -4,7 +4,7 @@
 
 import { HTML, RETURN_FALSE, RETURN_THIS } from "../const";
 import { implement                       } from "../core/core";
-import { trim, is                        } from "../helpers";
+import { is                              } from "../helpers";
 import { minErr                          } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
@@ -34,7 +34,7 @@ implement({
 
         if ( existingClasses.indexOf( " " + token + " " ) === -1 ) existingClasses += token + " ";
 
-        node[ 0 ].className = trim(existingClasses);
+        node[ 0 ].className = existingClasses.trim();
     }],
    /**
     * Remove class(es) or an array of class names from element

@@ -2,11 +2,11 @@
  * @module accessorHooks
  */
 
-import { ugma, implement                         } from "../core/core";
-import { trim, each, forOwn, every, is, isArray  } from "../helpers";
-import { DOCUMENT, WINDOW, FOCUSABLE             } from "../const";
-import { minErr                                  } from "../minErr";
-import   support                                   from "../util/support";
+import { ugma, implement                    } from "../core/core";
+import { each, forOwn, every, is, isArray   } from "../helpers";
+import { DOCUMENT, WINDOW, FOCUSABLE        } from "../const";
+import { minErr                             } from "../minErr";
+import   support                              from "../util/support";
 
 var langFix = /_/g,
     accessorHooks = {
@@ -23,7 +23,7 @@ var langFix = /_/g,
             option: ( node ) => {
                 // Support: IE<11
                 // option.value not trimmed
-                return trim( node[ node.hasAttribute( "value" ) ? "value" : "text" ] );
+                return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
             },
             select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
 
