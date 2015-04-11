@@ -20,7 +20,7 @@
             }
         };
 
-        if ( !window.Promise ) throw new Error("The browser dows not support native Promises!!! You have to include a Promise polyfill");
+        if ( !window.Promise ) throw new Error( "The browser dows not support native Promises!!! You have to include a Promise polyfill" );
 
        var isSuccess = ( status ) => {
             return status >= 200 && status < 300 || status === 304;
@@ -55,19 +55,19 @@
                 headers[ key ] = config.headers[ key ];
             });
 
-            if (isObject(data)) {
-                keys(data).forEach((key) => {
+            if ( isObject( data ) ) {
+                keys( data ).forEach( ( key ) => {
 
                     var enc = encodeURIComponent,
-                        name = enc(key),
-                        value = data[key];
+                        name = enc( key ),
+                        value = data[ key ];
 
-                    if (isArray(value)) {
-                        value.forEach((value) => {
-                            extraArgs.push(name + "=" + enc(value));
+                    if ( isArray( value ) ) {
+                        value.forEach( ( value ) => {
+                            extraArgs.push( name + "=" + enc( value ) );
                         });
                     } else {
-                        extraArgs.push(name + "=" + enc(value));
+                        extraArgs.push( name + "=" + enc( value ) );
                     }
                 });
 
@@ -101,7 +101,7 @@
 
             // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
             // And an `X-HTTP-Method-Override` header.
-            if (config.emulateHTTP && (method === "PUT" || method === "DELETE" || method === "PATCH" || method === "POST" || method === "GET")) {
+            if ( config.emulateHTTP && ( method === "PUT" || method === "DELETE" || method === "PATCH" || method === "POST" || method === "GET" ) ) {
                 extraArgs.push( config.emulateHTTP + "=" + method );
                 headers[ "X-Http-Method-Override" ] = method;
                 method = "POST";
@@ -123,12 +123,13 @@
                     xhr.onabort = handleErrorResponse( "abort" );
                     xhr.onerror = handleErrorResponse( "error" );
                     xhr.ontimeout = handleErrorResponse( "timeout" );
-                    xhr.onreadystatechange = () => {
+                    xhr.onload = () => {
+                        
                         if ( xhr.readyState === 4 ) {
                             // by default parse response depending on Content-Type header
                             mimeType = mimeType || xhr.getResponseHeader( "Content-Type" ) || "";
 
-                            // responseText is the old-school way of retrieving response (supported by IE8 & 9)
+                            // responseText is the old-school way of retrieving response (supported by 9)
                             // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
                             var response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
                                 // Support: IE9
@@ -158,8 +159,8 @@
                     xhr.open( method, url, true );
                     xhr.timeout = config.timeout || XHR.options.timeout;
 
-                    // before 
-                    if (XHR.options.before) XHR.options.before(xhr);
+                    // beforeSend 
+                    if (XHR.options.beforeSend) XHR.options.beforeSend( xhr );
 
                     // Set headers
                     for (var key in headers) {
@@ -197,8 +198,8 @@
         var result = {};
 
         if ("form" in node) {
-            node = [node];
-        } else if ("elements" in node) {
+            node = [ node ];
+        } else if ( "elements" in node ) {
             node = node.elements;
         } else {
             node = [];
@@ -207,19 +208,19 @@
         for (let el of node) {
             var name = el.name;
             // don't serialize elements that are disabled or without a name
-            if (el.disabled || !name) continue;
+            if ( el.disabled || !name ) continue;
 
-            switch (el.type) {
+            switch ( el.type ) {
                 case "select-multiple":
                     result[name] = [];
                     /* falls through */
                 case "select-one":
-                    for (let option of el.options) {
-                        if (option.selected) {
-                            if (name in result) {
-                                result[name].push(option.value);
+                    for ( let option of el.options ) {
+                        if ( option.selected ) {
+                            if ( name in result ) {
+                                result[ name ].push( option.value );
                             } else {
-                                result[name] = option.value;
+                                result[ name ] = option.value;
                             }
                         }
                     }
@@ -233,15 +234,15 @@
                 case "button": // custom button
                     break;
                 case "textarea": // textarea
-                    result[name].push(el.value.replace(/\r?\n/g, "\r\n"));
+                    result[ name ].push(el.value.replace(/\r?\n/g, "\r\n") );
                     break;
                 case "checkbox": // checkbox
-                    if (el.checked && result[name]) {
-                        if (typeof result[name] === "string") {
-                            result[name] = [result[name]];
+                    if ( el.checked && result[ name ] ) {
+                        if (typeof result[ name ] === "string" ) {
+                            result[ name ] = [ result[name ] ];
                         }
 
-                        result[name].push(el.value);
+                        result[ name ].push( el.value );
 
                         break;
                     }
@@ -250,7 +251,7 @@
                     if (!el.checked) break;
                     /* falls through */
                 default:
-                    result[name] = el.value;
+                    result[ name ] = el.value;
             }
         }
 
@@ -273,8 +274,8 @@
      * XHR shortcuts
      */
 
-    ["GET", "POST", "PUT", "DELETE", "PATCH"].forEach((method) => {
-        XHR[method.toLowerCase()] = (url, config) => XHR(method, url, config);
+    [ "GET", "POST", "PUT", "DELETE", "PATCH" ].forEach( ( method ) => {
+        XHR[ method.toLowerCase() ] = ( url, config ) => XHR( method, url, config );
     });
 
 

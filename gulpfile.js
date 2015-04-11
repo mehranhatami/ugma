@@ -65,7 +65,7 @@ gulp.task("xhr", function() {
         .pipe(es6transpiler())
         .pipe(header(banner = [
             "/**",
-            " * <%= pkg.description %> <%= pkg.version %>",
+            " * XHR (ajax) for ugma javascript framework <%= pkg.version %>",
             " * <%= pkg.repository.url %>",
             " * ",
             " * Copyright 2014 - " + new Date().getFullYear() + " <%= pkg.author %>",
