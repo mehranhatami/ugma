@@ -145,7 +145,7 @@ ugma.query('body').shadow('zoo', function(core) { });
 Download the repo and run:
 
 ```javascript
-**npm install**
+npm install
 ```
 
 This will install all dependencies for you, so you can modify the source code as you wish.
