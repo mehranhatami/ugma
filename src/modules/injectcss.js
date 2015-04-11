@@ -6,9 +6,8 @@
   * http://www.w3.org/TR/DOM-Level-2-Style/css.html
   */
 import { implement            } from "../core/core";
-import { DOCUMENT             } from "../const";
 import { minErr               } from "../minErr";
-import { is, each, map, keys  } from "../helpers";
+import { is, each, keys       } from "../helpers";
 import   styleHooks             from "../util/styleHooks";
 
 implement({

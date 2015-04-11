@@ -2,7 +2,7 @@
  * @module showHide
  */
 
-import { ugma, implement             } from "../core/core";
+import { implement                   } from "../core/core";
 import { RETURN_THIS                 } from "../const";
 import { is, computeStyle            } from "../helpers";
 import { minErr                      } from "../minErr";

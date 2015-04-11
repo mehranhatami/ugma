@@ -39,4 +39,4 @@ implement({
 
         minErr( "contains()", "Comparing position against non-Node values is not allowed." );
     }
-}, null, () => RETURN_FALSE);
+}, null, () => RETURN_FALSE );

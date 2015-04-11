@@ -93,7 +93,7 @@ implement({
     remove: [ "", false, true, ( node ) => {
         node.parentNode.removeChild( node );
     }]
-}, ( methodName, adjacentHTML, native, requiresParent, strategy ) => function() {
+}, ( methodName, adjacentHTML, native, requiresParent, fallback ) => function() {
     
       var contents = sliceArgs( arguments ),
           node = this[ 0 ];
@@ -150,7 +150,7 @@ implement({
     if ( is( fragment, "string" ) ) {
         node.insertAdjacentHTML( adjacentHTML, fragment );
     } else {
-        strategy( node, fragment );
+        fallback( node, fragment );
     }
 
     return this;

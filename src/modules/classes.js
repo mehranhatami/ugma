@@ -104,45 +104,45 @@ implement({
 
         return !hasClass;
     }]
-}, ( methodName, nativeMethodName, iteration, strategy ) => {
+}, ( methodName, classList, iteration, fallback ) => {
 
-    if ( HTML.classList ) {
-        // use native classList property if possible
-        strategy = ( el, token ) => {
-            return el[ 0 ].classList[ nativeMethodName ]( token );
-        };
-    }
+    // use native classList property if possible
+    if ( HTML.classList ) fallback = ( el, token ) => el[ 0 ].classList[ classList ]( token );
 
     if ( !iteration ) {
 
         return function( token, stateVal ) {
            
-            if ( is( stateVal, "boolean") && nativeMethodName === "toggle" ) {
+            if ( is( stateVal, "boolean") && classList === "toggle" ) {
                 this[ stateVal ? "addClass" : "removeClass" ]( token );
 
                 return stateVal;
             }
 
-            if ( !is( token, "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
+            if ( !is( token, "string" ) ) minErr( classList + "()", "The class provided is not a string." );
 
-            return strategy( this, token );
+            return fallback( this, token );
         };
     } else {
 
         return function() {
-                
-                for (var i = 0, len = arguments.length; i < len; i++) {    
-                
-                if ( !is( arguments[ i ], "string" ) ) minErr( nativeMethodName + "()", "The class provided is not a string." );
+            
+          var index = -1,
+              length = arguments.length;
 
-                strategy( this, arguments[ i ] );
-            }
-            return this;
+           while ( ++index < length ) {
+  
+                if ( !is( arguments[ index ], "string" ) ) minErr( classList + "()", "The class provided is not a string." );
+
+                fallback( this, arguments[ index ] ); 
+           }
+
+           return this;
         };
     }
- }, ( methodName, defaultStrategy ) => {
+ }, ( methodName ) => {
 
-      if( defaultStrategy === "contains" || defaultStrategy === "toggle" ) return RETURN_FALSE;
+      if( methodName === "hasClass" || methodName === "toggleClass" ) return RETURN_FALSE;
       
       return RETURN_THIS;
   });

@@ -3,8 +3,6 @@
  */
 
 import { implement  } from "../core/core";
-import { WINDOW, DOCUMENT, RETURN_FALSE     } from "../const";
-
 
 implement({
    /**
@@ -13,13 +11,10 @@ implement({
     * @example
     *     link.position();
     */
-   position(other) {
+   position() {
 
            var node = this[ 0 ],
-               docElem = node.ownerDocument.documentElement,
                offsetParent, offset,
-               scrollTop = WINDOW.pageYOffset || docElem.scrollTop,
-               scrollLeft = WINDOW.pageXOffset || docElem.scrollLeft,
                parentOffset = {
                    top: 0,
                    left: 0

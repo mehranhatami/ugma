@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 11 Apr 2015 13:57:36 GMT
+ * Build date: Sat, 11 Apr 2015 14:54:28 GMT
  */
 (function() {
     "use strict";
@@ -552,45 +552,45 @@
     
             return !hasClass;
         }]
-    }, function( methodName, nativeMethodName, iteration, strategy )  {
+    }, function( methodName, classList, iteration, fallback )  {
     
-        if ( HTML.classList ) {
-            // use native classList property if possible
-            strategy = function( el, token )  {
-                return el[ 0 ].classList[ nativeMethodName ]( token );
-            };
-        }
+        // use native classList property if possible
+        if ( HTML.classList ) fallback = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
     
         if ( !iteration ) {
     
             return function( token, stateVal ) {
                
-                if ( helpers$$is( stateVal, "boolean") && nativeMethodName === "toggle" ) {
+                if ( helpers$$is( stateVal, "boolean") && classList === "toggle" ) {
                     this[ stateVal ? "addClass" : "removeClass" ]( token );
     
                     return stateVal;
                 }
     
-                if ( !helpers$$is( token, "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
+                if ( !helpers$$is( token, "string" ) ) minErr$$minErr( classList + "()", "The class provided is not a string." );
     
-                return strategy( this, token );
+                return fallback( this, token );
             };
         } else {
     
             return function() {
-                    
-                    for (var i = 0, len = arguments.length; i < len; i++) {    
-                    
-                    if ( !helpers$$is( arguments[ i ], "string" ) ) minErr$$minErr( nativeMethodName + "()", "The class provided is not a string." );
+                
+              var index = -1,
+                  length = arguments.length;
     
-                    strategy( this, arguments[ i ] );
-                }
-                return this;
+               while ( ++index < length ) {
+      
+                    if ( !helpers$$is( arguments[ index ], "string" ) ) minErr$$minErr( classList + "()", "The class provided is not a string." );
+    
+                    fallback( this, arguments[ index ] ); 
+               }
+    
+               return this;
             };
         }
-     }, function( methodName, defaultStrategy )  {
+     }, function( methodName )  {
     
-          if( defaultStrategy === "contains" || defaultStrategy === "toggle" ) return RETURN_FALSE;
+          if( methodName === "hasClass" || methodName === "toggleClass" ) return RETURN_FALSE;
           
           return RETURN_THIS;
       });
@@ -700,7 +700,7 @@
     
             minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
         }
-    }, null, function()  {return RETURN_FALSE});
+    }, null, function()  {return RETURN_FALSE} );
 
     var util$styleHooks$$unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink order orphans " +
         "color richness volume counter-increment float reflect stop-opacity float scale backface-visibility " +
@@ -1870,7 +1870,7 @@
         remove: [ "", false, true, function( node )  {
             node.parentNode.removeChild( node );
         }]
-    }, function( methodName, adjacentHTML, native, requiresParent, strategy )  {return function() {var this$0 = this;
+    }, function( methodName, adjacentHTML, native, requiresParent, fallback )  {return function() {var this$0 = this;
         
           var contents = helpers$$sliceArgs( arguments ),
               node = this[ 0 ];
@@ -1927,7 +1927,7 @@
         if ( helpers$$is( fragment, "string" ) ) {
             node.insertAdjacentHTML( adjacentHTML, fragment );
         } else {
-            strategy( node, fragment );
+            fallback( node, fragment );
         }
     
         return this;
@@ -2090,7 +2090,6 @@
         }
     }, null, function()  {return RETURN_FALSE});
 
-
     core$core$$implement({
        /**
         * Calculates position of the current element
@@ -2098,13 +2097,10 @@
         * @example
         *     link.position();
         */
-       position: function(other) {
+       position: function() {
     
                var node = this[ 0 ],
-                   docElem = node.ownerDocument.documentElement,
                    offsetParent, offset,
-                   scrollTop = WINDOW.pageYOffset || docElem.scrollTop,
-                   scrollLeft = WINDOW.pageXOffset || docElem.scrollLeft,
                    parentOffset = {
                        top: 0,
                        left: 0
