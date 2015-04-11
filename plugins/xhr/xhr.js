@@ -20,9 +20,9 @@
             }
         };
 
-    if (!Promise) throw new Error("In order to use XHR you have to include a Promise polyfill");
+        if (!window.Promise) throw new Error("The browser dows not support native Promises!!! You have to include a Promise polyfill");
 
-    var isSuccess = (status) => {
+       var isSuccess = (status) => {
             return status >= 200 && status < 300 || status === 304;
         },
 
@@ -111,7 +111,7 @@
             }
 
             var xhr = config.xhr || new window.XMLHttpRequest(),
-                promise = new Promise((resolve, reject) => {
+                promise = new window.Promise( (resolve, reject) => {
                     var handleErrorResponse = (message) => () => {
                         reject(new Error(message));
                     };
