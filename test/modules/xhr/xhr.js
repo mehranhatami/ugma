@@ -167,7 +167,7 @@ describe("XHR", function() {
     
     
     
-describe("XHR", function() {
+describe("XHR - options", function() {
 
     beforeEach(function() {
         this.spy = jasmine.createSpy("callback");
@@ -182,7 +182,7 @@ describe("XHR", function() {
     });
 
     it("should send query string for POST requests", function() {
-        XHR.post("url1", {data: "a=b&c=1", cacheBurst: false}).then(this.spy);
+        XHR.post("url1", {data: "a=b&c=1"}).then(this.spy);
 
         this.mockXhr = jasmine.Ajax.requests.mostRecent();
 
@@ -193,7 +193,7 @@ describe("XHR", function() {
     });
 
     it("should send query string for GET requests", function() {
-        XHR.get("url3", {data: "a=b&c=1", cacheBurst: false}).then(this.spy);
+        XHR.get("url3", {data: "a=b&c=1"}).then(this.spy);
 
         this.mockXhr = jasmine.Ajax.requests.mostRecent();
 
@@ -204,7 +204,7 @@ describe("XHR", function() {
     });
 
     it("should support array values in data", function() {
-        XHR.post("url4", {data: {a: ["1", "2"]}, cacheBurst: false}).then(this.spy);
+        XHR.post("url4", {data: {a: ["1", "2"]}}).then(this.spy);
 
         this.mockXhr = jasmine.Ajax.requests.mostRecent();
 
@@ -215,7 +215,7 @@ describe("XHR", function() {
     });
 
     it("should serialize object data", function() {
-        XHR.post("url2", {data: {"a+b": "c d", v: 1}, cacheBurst: false}).then(this.spy);
+        XHR.post("url2", {data: {"a+b": "c d", v: 1}}).then(this.spy);
 
         this.mockXhr = jasmine.Ajax.requests.mostRecent();
 
@@ -226,7 +226,7 @@ describe("XHR", function() {
     });
 
     it("should send json string", function() {
-        XHR.post("url", {json: {a: "b", c: 123}, cacheBurst: false}).then(this.spy);
+        XHR.post("url", {json: {a: "b", c: 123}}).then(this.spy);
 
         this.mockXhr = jasmine.Ajax.requests.mostRecent();
 
@@ -255,9 +255,8 @@ describe("XHR", function() {
     });
 
     it("should have default settings", function() {
-        expect(XHR.defaults).toEqual({
+        expect(XHR.options).toEqual({
             timeout: 15000,
-            cacheBurst: "_",
             charset: "UTF-8",
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
@@ -272,7 +271,6 @@ describe("XHR", function() {
 
         expect(this.mockXhr.url).toBe("url4");
         expect(this.mockXhr.method).toBe("GET");
-        expect(this.mockXhr.params).toBeUndefined();
         expect(this.mockXhr.requestHeaders).toEqual({});
     });
 
@@ -286,24 +284,6 @@ describe("XHR", function() {
         expect(this.mockXhr.timeout).toBe(10000);
     });
 
-    describe("cache bursting", function() {
-        it("should append extra param by default", function() {
-            XHR.get("url1").then(this.spy);
-            this.mockXhr = jasmine.Ajax.requests.mostRecent();
-            expect(this.mockXhr.url.indexOf("url1?" + XHR.defaults.cacheBurst)).toBe(0);
-
-            XHR.get("url2", {cacheBurst: false}).then(this.spy);
-            this.mockXhr = jasmine.Ajax.requests.mostRecent();
-            expect(this.mockXhr.url).toBe("url2");
-        });
-
-        it("should work only for GET requests", function() {
-            XHR.post("url", {a: "b"}).then(this.spy);
-            this.mockXhr = jasmine.Ajax.requests.mostRecent();
-            expect(this.mockXhr.url).toBe("url");
-        });
-    });
-
     it("can emulate extra HTTP methods", function() {
         XHR.put(this.randomUrl, {emulateHTTP: "_method"}).then(this.spy);
 
@@ -311,7 +291,6 @@ describe("XHR", function() {
 
         expect(this.mockXhr.url).toBe(this.randomUrl + "?_method=PUT");
         expect(this.mockXhr.method).toBe("POST");
-        expect(this.mockXhr.params).toBeUndefined();
         expect(this.mockXhr.requestHeaders).toEqual({
             "X-Requested-With": "XMLHttpRequest",
             "X-Http-Method-Override": "PUT"

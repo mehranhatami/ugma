@@ -41,7 +41,6 @@
         method = method.toUpperCase();
 
         var charset = "charset" in config ? config.charset : XHR.options.charset,
-            cacheBurst = "cacheBurst" in config ? config.cacheBurst : XHR.options.cacheBurst,
             mimeType = "mimeType" in config ? config.mimeType : XHR.options.mimeType,
             data = config.data,
             extraArgs = [],
@@ -99,10 +98,6 @@
             headers[contentType] += "; charset=" + charset;
         }
 
-        if (cacheBurst && method === "GET") {
-            extraArgs.push(cacheBurst + "=" + Date.now());
-        }
-
         // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
         // And an `X-HTTP-Method-Override` header.
         if ( config.emulateHTTP && (method === "PUT" || method === "DELETE" || method === "PATCH" || method === "POST" || method === "GET" ) ) {
@@ -156,8 +151,7 @@
 
                 xhr.open(method, url, true);
                 xhr.timeout = config.timeout || XHR.options.timeout;
-
-                if ( options.before ) options.before( xhr );
+//                if ( XHR.options.before ) XHR.options.before( xhr );
                 
                 // Set headers
                 for ( var key in headers ) {
@@ -260,7 +254,6 @@
 
     XHR.options = {
         timeout: 15000,
-        cacheBurst: "_",
         charset: "UTF-8",
         headers: { "X-Requested-With": "XMLHttpRequest" }
     };
