@@ -9,20 +9,20 @@
         isArray = Array.isArray,
         keys = Object.keys,
         toString = Object.prototype.toString,
-        isObject = (obj) => toString.call(obj) === "[object Object]",
-        toQueryString = (params) => params.join("&").replace(/%20/g, "+"),
+        isObject = ( obj ) => toString.call( obj ) === "[object Object]",
+        toQueryString = ( params ) => params.join( "&" ).replace(/%20/g, "+"),
         mimeTypeShortcuts = {
             json: "application/json"
         },
         mimeTypeStrategies = {
             "application/json": function(text) {
-                return JSON.parse(text);
+                return JSON.parse( text );
             }
         };
 
-        if (!window.Promise) throw new Error("The browser dows not support native Promises!!! You have to include a Promise polyfill");
+        if ( !window.Promise ) throw new Error("The browser dows not support native Promises!!! You have to include a Promise polyfill");
 
-       var isSuccess = (status) => {
+       var isSuccess = ( status ) => {
             return status >= 200 && status < 300 || status === 304;
         },
 
@@ -32,9 +32,9 @@
 
         XHR = (method, url) => {
 
-            var config = arguments[2];
+            var config = arguments[ 2 ];
 
-            if (config === void 0) config = {};
+            if ( config === void 0 ) config = {};
 
             method = method.toUpperCase();
 
@@ -45,13 +45,14 @@
                 headers = {};
 
             // read default headers first
-            keys(XHR.options.headers).forEach((key) => {
-                headers[key] = XHR.options.headers[key];
+            keys( XHR.options.headers ).forEach( ( key ) => {
+                var value = XHR.options.headers[ key ];
+               if ( value != null ) headers[ key ] = value;
             });
 
             // apply request specific headers
-            keys(config.headers || {}).forEach((key) => {
-                headers[key] = config.headers[key];
+            keys(config.headers || {} ).forEach( (key ) => {
+                headers[ key ] = config.headers[ key ];
             });
 
             if (isObject(data)) {
@@ -78,80 +79,83 @@
                 }
             }
 
-            if (typeof data === "string") {
-                if (method === "GET") {
-                    extraArgs.push(data);
+            if ( typeof data === "string" ) {
+                if ( method === "GET" ) {
+                    extraArgs.push( data );
 
                     data = null;
                 } else {
-                    headers["Content-Type"] = "application/x-www-form-urlencoded";
+                    headers[ "Content-Type" ] = "application/x-www-form-urlencoded";
                 }
             }
 
-            if (isObject(config.json)) {
-                data = JSON.stringify(config.json);
+            if ( isObject( config.json ) ) {
+                data = JSON.stringify( config.json );
 
-                headers["Content-Type"] = "application/json";
+                headers[ "Content-Type" ] = "application/json";
             }
 
-            if ("Content-Type" in headers) {
-                headers["Content-Type"] += "; charset=" + charset;
+            if ( "Content-Type" in headers ) {
+                headers[ "Content-Type" ] += "; charset=" + charset;
             }
 
             // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
             // And an `X-HTTP-Method-Override` header.
             if (config.emulateHTTP && (method === "PUT" || method === "DELETE" || method === "PATCH" || method === "POST" || method === "GET")) {
-                extraArgs.push(config.emulateHTTP + "=" + method);
-                headers["X-Http-Method-Override"] = method;
+                extraArgs.push( config.emulateHTTP + "=" + method );
+                headers[ "X-Http-Method-Override" ] = method;
                 method = "POST";
             }
 
-            if (extraArgs.length) {
-                url += (~url.indexOf("?") ? "&" : "?") + toQueryString(extraArgs);
+            if ( extraArgs.length ) {
+                url += ( ~url.indexOf( "?" ) ? "&" : "?" ) + toQueryString( extraArgs );
             }
 
             var xhr = config.xhr || new window.XMLHttpRequest(),
-                promise = new window.Promise( (resolve, reject) => {
-                    var handleErrorResponse = (message) => () => {
-                        reject(new Error(message));
+                promise = new window.Promise( ( resolve, reject ) => {
+
+                    // The response is always empty
+                    // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
+                    var handleErrorResponse = ( message ) => () => {
+                        reject( new Error(message ) );
                     };
 
-                    xhr.onabort = handleErrorResponse("abort");
-                    xhr.onerror = handleErrorResponse("error");
-                    xhr.ontimeout = handleErrorResponse("timeout");
+                    xhr.onabort = handleErrorResponse( "abort" );
+                    xhr.onerror = handleErrorResponse( "error" );
+                    xhr.ontimeout = handleErrorResponse( "timeout" );
                     xhr.onreadystatechange = () => {
-                        if (xhr.readyState === 4) {
+                        if ( xhr.readyState === 4 ) {
                             // by default parse response depending on Content-Type header
-                            mimeType = mimeType || xhr.getResponseHeader("Content-Type") || "";
+                            mimeType = mimeType || xhr.getResponseHeader( "Content-Type" ) || "";
 
                             // responseText is the old-school way of retrieving response (supported by IE8 & 9)
                             // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-                            var response = ("response" in xhr) ? xhr.response : xhr.responseText,
+                            var response = ( "response" in xhr ) ? xhr.response : xhr.responseText,
                                 // Support: IE9
                                 // sometimes IE returns 1223 when it should be 204
                                 // http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
                                 status = xhr.status === 1223 ? 204 : xhr.status,
                                 // skip possible charset suffix
-                                parseResponse = mimeTypeStrategies[mimeType.split(";")[0]];
+                                parseResponse = mimeTypeStrategies[ mimeType.split(";")[ 0 ] ];
 
-                            if (parseResponse) {
+                            if ( parseResponse ) {
                                 try {
                                     // when strategy found - parse response according to it
-                                    response = parseResponse(response);
-                                } catch (err) {
-                                    return reject(err);
+                                    response = parseResponse( response );
+                                } catch ( err ) {
+                                    return reject( err );
                                 }
                             }
 
-                            if (isSuccess(status)) {
-                                resolve(response);
+                            if ( status >= 200 && status < 300 || status === 304 ) {
+                                resolve( response );
                             } else {
-                                reject(response);
+                                reject( response );
                             }
                         }
                     };
 
-                    xhr.open(method, url, true);
+                    xhr.open( method, url, true );
                     xhr.timeout = config.timeout || XHR.options.timeout;
 
                     // before 
@@ -160,27 +164,27 @@
                     // Set headers
                     for (var key in headers) {
 
-                        var headerValue = headers[key];
+                        var headerValue = headers[ key ];
 
                         if (headerValue != null) {
-                            xhr.setRequestHeader(key, String(headerValue));
+                            xhr.setRequestHeader( key, String( headerValue ) );
                         }
                     }
 
                     // Override mime type if needed
-                    if (mimeType) {
-                        if (mimeType in mimeTypeShortcuts) {
+                    if ( mimeType ) {
+                        if ( mimeType in mimeTypeShortcuts ) {
                             xhr.responseType = mimeType;
-                            mimeType = mimeTypeShortcuts[mimeType];
-                        } else if (xhr.overrideMimeType) {
-                            xhr.overrideMimeType(mimeType);
+                            mimeType = mimeTypeShortcuts[ mimeType ];
+                        } else if ( xhr.overrideMimeType ) {
+                            xhr.overrideMimeType( mimeType );
                         }
                     }
 
-                    xhr.send(data || null);
-                });
+                    xhr.send( data || null );
+                } );
 
-            promise[0] = xhr;
+            promise[ 0 ] = xhr;
 
             return promise;
         };
