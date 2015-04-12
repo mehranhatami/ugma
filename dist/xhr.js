@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 07:23:18 GMT
+ * Build date: Sun, 12 Apr 2015 10:18:39 GMT
  */
 (function() {
     "use strict";

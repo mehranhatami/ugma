@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 07:23:21 GMT
+ * Build date: Sun, 12 Apr 2015 10:18:42 GMT
  */
 (function() {
     "use strict";
@@ -1398,8 +1398,17 @@
                     // option.value not trimmed
                     return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
                 },
-                select: function( node )  {return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : ""},
-    
+                select: function(node)  {
+                    if (node.multiple) {
+                        var result = [];
+                        helpers$$each(node.options, function(option)  {
+                            if (option.selected) result.push(option.value || option.text);
+                        });
+                        return result.length === 0 ? null : result;
+                    } else {
+                        return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                    }
+                },
                 value: function( node )  {
     
                     // Support: Android<4.4
@@ -1568,6 +1577,11 @@
 
     var util$accessorhooks$$default = util$accessorhooks$$accessorHooks;
 
+    var util$customAttr$$default = { // W3C
+        "htmlFor": "for",
+        "className": "class"
+    };
+
     core$core$$implement({
        
       /**
@@ -1612,7 +1626,7 @@
                    // try to fetch HTML5 `data-*` attribute      
                       util$readData$$readData( node, name ) : 
                     //... fallback to the getAttribute method, and let non-existent attributes return null
-                      node.getAttribute( name );
+                      node.getAttribute( util$customAttr$$default[ name] || name );
     
             } else if ( helpers$$isArray( name ) ) {
                 var obj = {};
@@ -2379,7 +2393,7 @@
                    var lowercasedName = name.toLowerCase();
     
                 // handle executable functions
-                if (helpers$$is(value, "function")) value = value( this );
+                if ( helpers$$is( value, "function") ) value = value( this );
     
                 if ( value == null ) {
                     node.removeAttribute( name );
@@ -2391,8 +2405,8 @@
                     node[ name ] = value;
                   // set attribute
                 } else {
-                    // // convert the value to a string 
-                    node.setAttribute( lowercasedName, "" + value);
+                    // Provides a normalized attribute interface.
+                    node.setAttribute( lowercasedName, "" + ( util$customAttr$$default[ value ] || value ) );
                 }
                 // set array of key values
                 // e.g. link.set(["autocomplete", "autocorrect"], "off");
