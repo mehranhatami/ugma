@@ -2,10 +2,10 @@
  * @module classes
  */
 
-import { HTML, RETURN_FALSE, RETURN_THIS } from "../const";
-import { implement                       } from "../core/core";
-import { is                              } from "../helpers";
-import { minErr                          } from "../minErr";
+import { HTML, RETURN_FALSE, RETURN_THIS, SVG } from "../const";
+import { implement                            } from "../core/core";
+import { is                                   } from "../helpers";
+import { minErr                               } from "../minErr";
 
 /* es6-transpiler has-iterators:false, has-generators: false */
 
@@ -30,12 +30,17 @@ implement({
     *      ugma.query('#foo')[0].className;
     *      // -> 'apple fruit food'
     */
-    addClass: [ "add", true, ( node, token ) => {
-        var existingClasses = ( " " + node[ 0 ].className + " " ).replace( reClass, " " );
+    addClass: [ "add", true, ( node, token, svg ) => {
+     
+        var existingClasses = ( " " + (svg ? node[0].className.baseVal : node[0].className) + " " ).replace( reClass, " " );
 
         if ( existingClasses.indexOf( " " + token + " " ) === -1 ) existingClasses += token + " ";
 
-        node[ 0 ].className = existingClasses.trim();
+        if (svg) {
+            node[0].className.baseVal = existingClasses.trim();
+        } else {
+            node[0].className = existingClasses.trim();
+        }
     }],
    /**
     * Remove class(es) or an array of class names from a given element.
@@ -53,7 +58,7 @@ implement({
     *      ugma.query('#foo')[0].className;
     *      // -> 'apple fruit'
     */
-    removeClass: [ "remove", true, ( node, token ) => {
+    removeClass: [ "remove", true, ( node, token, svg ) => {
         node[ 0 ].className = (" " + node[ 0 ].className + " ").replace(reClass, " ").replace(" " + token + " ", " ");
     }],
    /**
@@ -72,11 +77,12 @@ implement({
     *      ugma.query('#foo').hasClass('vegetable');
     *      // -> false    
     */
-    hasClass: [ "contains", false, ( node, token ) => {
-        if ( (" " + node[ 0 ].className + " " ).replace( reClass, " " ).indexOf( " " + token + " " ) > -1 ) return true;
+    hasClass: [ "contains", false, ( node, token, svg ) => {
+        if ( (" " + (svg ? node[0].className.baseVal : node[0].className) + " " ).replace( reClass, " " ).indexOf( " " + token + " " ) > -1 ) return true;
         
         return false;
     }],
+    
    /**
     * If the className exists on the node it is removed, if it doesn't exist it is added.
     * @param {HTMLElement} element The DOM element
@@ -134,13 +140,14 @@ implement({
         return function() {
             
           var index = -1,
-              length = arguments.length;
+              length = arguments.length,
+              isSVG = SVG(this[0]);
 
            while ( ++index < length ) {
   
                 if ( !is( arguments[ index ], "string" ) ) minErr( classList + "()", "The class provided is not a string." );
 
-                returnFn( this, arguments[ index ] ); 
+                returnFn( this, arguments[ index ], isSVG ); 
            }
 
            return this;

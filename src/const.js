@@ -17,6 +17,10 @@ export const RETURN_TRUE = () => true;
 export const RETURN_FALSE = () => false;
 export const FOCUSABLE = /^(?:input|select|textarea|button)$/i;
 
+// SVG - check for namespace
+
+export const SVG = (node) => (node.nodeType === 1 && node.namespaceURI === "http://www.w3.org/2000/svg");
+
 // Internet Explorer
 // WARNING! 'document.documentMode' can not be used to identify
 // Internet Explorer. In some cases it only identify IE if the console
