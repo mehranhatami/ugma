@@ -24,6 +24,14 @@ describe("set", function() {
         input = ugma.query("#set_input");
         txt = ugma.query("#text1");
     });
+    
+    it("should read/write a HTML value", function() {
+      var element = ugma.render("<div>abc</div>");
+      expect(element[0].innerHTML).toEqual("abc");
+      expect(element.get()).toEqual("abc");
+      expect(element.set("xyz") === element).toBeTruthy();
+      expect(element.get()).toEqual("xyz");
+    });
 
     it("should set boolean element property", function() {
 

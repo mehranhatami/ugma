@@ -13,7 +13,7 @@ describe("data", function() {
     it("should read an appropriate data-* attribute if if no data was found internally", function() {
         expect(input.data("test")).toEqual("x");
     });
-    
+
     it("should only remove the specified value when setting a property name to 'null'", function() {
 
         input.data("prop1", "value");
@@ -46,6 +46,28 @@ describe("data", function() {
         input.data("prop2", undefined);
     });
 
+    it("should only remove the specified value when providing a 'null' as second argument", function() {
+
+        expect(input.data("prop1")).toBeNull();
+
+        input.data("prop1", "value");
+
+        expect(input.data("prop1")).toBe("value");
+
+        input.data("prop1", null);
+
+        expect(input.data("prop1")).toBeNull();
+
+    });
+
+    it("should set and get and remove data", function() {
+
+        input.data("prop", "new value");
+        expect(input.data("prop")).toBe("new value");
+
+        expect(input.data("prop", undefined)).toBe(input);
+        expect(input.data("prop")).toBeNull();
+    });
 
     it("should provide the non-wrapped data calls", function() {
         var node = document.createElement("div"),
@@ -112,5 +134,5 @@ describe("data", function() {
     it("should add and remove data on SVGs", function() {
         expect(ugma.render("<svg><rect></rect></svg>").data("svg-level", 1).data("svg-level")).toEqual(1);
     });
-    
+
 });

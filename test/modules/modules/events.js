@@ -15,6 +15,16 @@ describe("events", function() {
             spy = jasmine.createSpy("callback");
         });
 
+        it("should set event.target on IE", function() {
+            var elm = ugma.render("a");
+            elm.on("click", ["target"], function(target) {
+                expect(target).toBe(elm);
+            });
+            elm.fire("click");
+
+        });
+
+
         it("should return reference to 'this'", function() {
             expect(input.on("click", spy)).toEqual(input);
         });
@@ -316,8 +326,7 @@ describe("events", function() {
         });
     });
 
-
-    describe("once", function() {
+   describe("once", function() {
         "use strict";
 
         var link, input, form, spy;
@@ -335,8 +344,6 @@ describe("events", function() {
         it("should return reference to 'this'", function() {
             expect(input.once("click", spy)).toEqual(input);
         });
-
-
     });
 
     describe("off", function() {
@@ -356,7 +363,6 @@ describe("events", function() {
 
             spy = jasmine.createSpy("click");
         });
-
 
         it("should do nothing when no listener was registered with bound", function() {
             link.off("click");
@@ -408,7 +414,6 @@ describe("events", function() {
         });
 
     });
-
 
     describe("fire", function() {
         "use strict";
