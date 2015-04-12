@@ -1,36 +1,30 @@
-/* globals window, document */
+/* globals window */
+
 (function(window) {
 
     "use strict";
 
     /* es6-transpiler has-iterators:false, has-generators: false */
 
-    var Promise = window.Promise,
+    var r20 = /%20/g,
         isArray = Array.isArray,
         keys = Object.keys,
         toString = Object.prototype.toString,
         isObject = ( obj ) => toString.call( obj ) === "[object Object]",
-        toQueryString = ( params ) => params.join( "&" ).replace(/%20/g, "+"),
-        mimeTypeShortcuts = {
-            json: "application/json"
-        },
+        toQueryString = ( params ) => /* Return the resulting serialization */ params.join( "&" ).replace( r20, "+" ),
+        mimeTypeShortcuts = { json: "application/json" },
         mimeTypeStrategies = {
-            "application/json": function(text) {
-                return JSON.parse( text );
-            }
-        };
+            "application/json": (text) => { return JSON.parse( text ) }
+        },
+        isSuccess = ( status ) => status >= 200 && status < 300 || status === 304;
 
         if ( !window.Promise ) throw new Error( "The browser dows not support native Promises!!! You have to include a Promise polyfill" );
-
-       var isSuccess = ( status ) => {
-            return status >= 200 && status < 300 || status === 304;
-        },
 
         /**
          * Perform an asynchronous HTTP (Ajax) request.
          */
 
-        XHR = (method, url) => {
+       var XHR = ( method, url ) => {
 
             var config = arguments[ 2 ];
 
@@ -38,7 +32,10 @@
 
             method = method.toUpperCase();
 
-            var charset = "charset" in config ? config.charset : XHR.options.charset,
+            var async = "async" in config ? config.async : true,                
+                username = "username" in config ? config.username : null,                
+                password = "password" in config ? config.password : null,                                
+                charset = "charset" in config ? config.charset : XHR.options.charset,
                 mimeType = "mimeType" in config ? config.mimeType : XHR.options.mimeType,
                 data = config.data,
                 extraArgs = [],
@@ -54,7 +51,8 @@
             keys(config.headers || {} ).forEach( (key ) => {
                 headers[ key ] = config.headers[ key ];
             });
-
+            
+            // object
             if ( isObject( data ) ) {
                 keys( data ).forEach( ( key ) => {
 
@@ -71,19 +69,21 @@
                     }
                 });
 
-                if (method === "GET") {
+                if ( method === "GET" ) {
                     data = null;
                 } else {
-                    data = toQueryString(extraArgs);
+                    data = toQueryString( extraArgs );
                     extraArgs = [];
                 }
             }
-
+            
+             // string
             if ( typeof data === "string" ) {
                 if ( method === "GET" ) {
-                    extraArgs.push( data );
 
+                    extraArgs.push( data );
                     data = null;
+
                 } else {
                     headers[ "Content-Type" ] = "application/x-www-form-urlencoded";
                 }
@@ -148,7 +148,7 @@
                                 }
                             }
 
-                            if ( status >= 200 && status < 300 || status === 304 ) {
+                            if ( isSuccess( status ) ) {
                                 resolve( response );
                             } else {
                                 reject( response );
@@ -156,7 +156,14 @@
                         }
                     };
 
-                    xhr.open( method, url, true );
+                    xhr.open(
+                        method,
+                        url,
+                        async,
+                        username,
+                        password
+                    );
+                    
                     xhr.timeout = config.timeout || XHR.options.timeout;
 
                     // beforeSend 
@@ -274,8 +281,8 @@
      * XHR shortcuts
      */
 
-    [ "GET", "POST", "PUT", "DELETE", "PATCH" ].forEach( ( method ) => {
-        XHR[ method.toLowerCase() ] = ( url, config ) => XHR( method, url, config );
+    [ "get", "post", "put", "delete", "patch" ].forEach( ( method ) => {
+        XHR[ method ] = ( url, config ) => XHR( method, url, config );
     });
 
 

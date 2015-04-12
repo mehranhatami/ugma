@@ -6,7 +6,7 @@ import { RETURN_THIS, RETURN_TRUE                                   } from "../c
 import   EventHandler                                                 from "../util/eventhandler";
 import   eventhooks                                                   from "../util/eventhooks";
 import { implement                                                  } from "../core/core";
-import { isArray, each, forOwn, is, filter, proxy             } from "../helpers";
+import { isArray, each, forOwn, is, filter, proxy                   } from "../helpers";
 import { minErr                                                     } from "../minErr";
 import { cancelFrame                                                } from "../util/raf";
 
@@ -50,9 +50,10 @@ implement({
 
     if ( is( eventType, "string" ) ) {
         if ( is( args, "function" ) ) {
+            
             callback = args;
 
-            if ( is(selector, "string" ) ) {
+            if ( is( selector, "string" ) ) {
                 args = null;
             } else {
                 args = selector;
@@ -98,7 +99,6 @@ implement({
 
     return this;
 }, () => RETURN_THIS);
-
 
 implement({
 
@@ -177,6 +177,7 @@ implement({
         if ( hook ) handler = hook( handler ) || handler;
 
         eventType = handler._eventType || type;
+        
     } else {
         minErr( "fire()", "The string did not match the expected pattern" );
     }
