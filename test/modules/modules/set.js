@@ -194,7 +194,13 @@ describe("set", function() {
 
         expect(ugma.query("#select2").inner()).toBe("3");
 
-        expect(ugma.query("#select3").inner()).toBe("1");
+        var sel3 = ugma.query("#select3").inner();
+        
+        expect(Array.isArray(sel3)).toBe(true);
+
+        expect(sel3[0]).toBe("1");        
+        
+        expect(sel3[1]).toBe("2");        
 
         expect(ugma.query("#select2").get("selectedIndex")).toBe(3);
 
@@ -207,10 +213,6 @@ describe("set", function() {
         expect(ugma.query("#option3a").inner()).toBe("");
 
         ugma.query("#select3").inner("");
-
-        expect(ugma.query("#select3").inner()).toBe("");
-
-        expect(ugma.query("#select3").inner()).toBe("");
 
         expect(ugma.query("#select5").inner()).toBe("3");
 
@@ -230,6 +232,27 @@ describe("set", function() {
         expect(ugma.query("#select5").inner()).toBe("");
     });
 
+   it("should get an array of selected elements from a multi select", function() {
+
+      expect(ugma.render(
+        "<select multiple>" +
+          "<option selected>test 1</option>" +
+          "<option selected>test 2</option>" +
+        "</select>").get()).toEqual(["test 1", "test 2"]);
+
+      expect(ugma.render(
+        "<select multiple>" +
+          "<option selected>test 1</option>" +
+          "<option>test 2</option>" +
+        "</select>").get()).toEqual(["test 1"]);
+
+
+      expect(ugma.render(
+        "<select multiple>" +
+          "<option>test 1</option>" +
+          "<option>test 2</option>" +
+        "</select>").get()).toEqual(null);
+   });
 
     it("should return reference to 'this'", function() {
         expect(link.set("id", "t")).toBe(link);

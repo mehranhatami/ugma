@@ -7,6 +7,7 @@ import { proxy, isArray, each, is, forOwn   } from "../helpers";
 import { minErr                             } from "../minErr";
 import { RETURN_THIS                        } from "../const";
 import   accessorhooks                        from "../util/accessorhooks";
+import   customAttr                           from "../util/customAttr";
 
  var objectTag = "[object Object]",
      getTagName = ( node ) => {
@@ -79,7 +80,7 @@ implement({
                var lowercasedName = name.toLowerCase();
 
             // handle executable functions
-            if (is(value, "function")) value = value( this );
+            if ( is( value, "function") ) value = value( this );
 
             if ( value == null ) {
                 node.removeAttribute( name );
@@ -91,8 +92,8 @@ implement({
                 node[ name ] = value;
               // set attribute
             } else {
-                // // convert the value to a string 
-                node.setAttribute( lowercasedName, "" + value);
+                // Provides a normalized attribute interface.
+                node.setAttribute( lowercasedName, "" + ( customAttr[ value ] || value ) );
             }
             // set array of key values
             // e.g. link.set(["autocomplete", "autocorrect"], "off");

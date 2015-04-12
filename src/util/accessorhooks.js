@@ -25,8 +25,17 @@ var langFix = /_/g,
                 // option.value not trimmed
                 return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
             },
-            select: ( node ) => ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "",
-
+            select: (node) => {
+                if (node.multiple) {
+                    var result = [];
+                    each(node.options, (option) => {
+                        if (option.selected) result.push(option.value || option.text);
+                    });
+                    return result.length === 0 ? null : result;
+                } else {
+                    return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                }
+            },
             value: ( node ) => {
 
                 // Support: Android<4.4

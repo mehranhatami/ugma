@@ -7,6 +7,7 @@ import { implement            } from "../core/core";
 import { isArray, each, is    } from "../helpers";
 import { readData             } from "../util/readData";
 import   accessorhooks          from "../util/accessorhooks";
+import   customAttr             from "../util/customAttr";
 
 implement({
    
@@ -52,7 +53,7 @@ implement({
                // try to fetch HTML5 `data-*` attribute      
                   readData( node, name ) : 
                 //... fallback to the getAttribute method, and let non-existent attributes return null
-                  node.getAttribute( name );
+                  node.getAttribute( customAttr[ name] || name );
 
         } else if ( isArray( name ) ) {
             var obj = {};
