@@ -2,11 +2,10 @@
  * @module render
  */
 
-import { ERROR_MSG                 } from "../const";
-import { minErr                    } from "../minErr";
-import { ugma, Nodes, implement    } from "../core/core";
-import   tagCache                    from "../template/template";
-import { reduce, is                } from "../helpers";
+import { minErr                  } from "../minErr";
+import { ugma, Nodes, implement  } from "../core/core";
+import   tagCache                  from "../template/template";
+import { is                      } from "../helpers";
 
 implement({
 

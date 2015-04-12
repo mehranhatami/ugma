@@ -18,8 +18,7 @@ implement({
   */
     scrollTo(x, y) {
       
-      var node = this[0],
-          offset = this.offset();
+      var offset = this.offset();
       
       WINDOW.scrollTo(x || offset.left, y || offset.top);
 

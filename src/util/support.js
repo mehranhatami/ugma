@@ -2,16 +2,16 @@
  * @module support
  */
 
-import { ugma     } from "../core/core";
-import { DOCUMENT, HTML } from "../const";
+import { implement } from "../core/core";
 
   var support = {};
   
   /**
     Expose 'support' to the ugma namespace
   */
-  
-  ugma.support = support;
-  
+
+ implement({
+     support: support
+ });
 
 export default support;

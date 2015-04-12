@@ -5,6 +5,11 @@
     "newcap": false,
     "eqnull": true,
 
+    "expr": true,
+
+    "smarttabs": true,
+
+
     "quotmark": "double",
     "indent": 4,
     "eqeqeq": true,

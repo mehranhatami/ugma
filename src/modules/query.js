@@ -2,10 +2,9 @@
  * @module query
  */
 
-import { DOCUMENT, ugma, ERROR_MSG, HTML   } from "../const";
-import { Nodes, Shallow, implement         } from "../core/core";
-import { minErr                            } from "../minErr";
-import { is, map, proxy                    } from "../helpers";
+import { Nodes, Shallow, implement     } from "../core/core";
+import { minErr                        } from "../minErr";
+import { map, proxy                    } from "../helpers";
 
 var fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
     rescape  = /'|\\/g;

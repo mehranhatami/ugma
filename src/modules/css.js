@@ -2,10 +2,10 @@
  * @module css
  */
 
-import { implement                                           } from "../core/core";
-import { isArray, computeStyle, is, map, forOwn, each, trim  } from "../helpers";
-import { minErr                                              } from "../minErr";
-import   styleHooks                                            from "../util/styleHooks";
+import { implement                                     } from "../core/core";
+import { isArray, computeStyle, is, map, forOwn, each  } from "../helpers";
+import { minErr                                        } from "../minErr";
+import   styleHooks                                      from "../util/styleHooks";
 
  implement({
    /**
@@ -73,7 +73,7 @@ import   styleHooks                                            from "../util/sty
 
          if ( len === 2 && is( name, "string" ) ) {
           
-             var ret, setter = styleHooks.set[ name ] || styleHooks._default( name, style );
+             var setter = styleHooks.set[ name ] || styleHooks._default( name, style );
 
              if ( is( value, "function" ) ) value = value( this );
 

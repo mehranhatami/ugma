@@ -2,8 +2,7 @@
  * @module selectormatcher
  */
 
-import { DOCUMENT, HTML, VENDOR_PREFIXES } from "../const";
-import { minErr                          } from "../minErr";
+import { HTML, VENDOR_PREFIXES } from "../const";
 import { is                              } from "../helpers";
 
 // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
@@ -62,7 +61,7 @@ export default function(selector, context) {
         }
 
         return function( node ) {
-            var result, found;
+            var result;
 
             for (; node && node.nodeType === 1; node = node.parentNode) {
                 if (matches) {
@@ -73,7 +72,7 @@ export default function(selector, context) {
                         ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                     );
                 } else {
-                    result = node[ matchesMethod ]( selector ); //matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
+                    result = matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
                 }
 
                 if (result || !context || node === context) break;

@@ -2,7 +2,6 @@
  * @module debounce
  */
 
-import { ugma } from "../core/core";
 import { requestFrame } from "../util/raf";
 
 // Receive specific events at 60fps, with requestAnimationFrame (rAF).

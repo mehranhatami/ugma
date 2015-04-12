@@ -101,7 +101,7 @@ implement({
             each(name, ( key ) => { this.set(key, value) } );
         // Set the value (with attr map support)
         } else if ( is( name, "object" ) ) {
-            forOwn( name, ( key, value ) => { this.set( key, name[ key ] ) } );
+            forOwn( name, ( key, value ) => { this.set( key, value ) } );
         } else {
             minErr( "set()", "The property or attribute is not valid." );
         }

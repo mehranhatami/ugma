@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 12:49:23 GMT
+ * Build date: Sun, 12 Apr 2015 13:26:30 GMT
  */
 (function() {
     "use strict";
@@ -22,7 +22,7 @@
         throw new wrapper( module, msg );
     }var WINDOW = window;
     var DOCUMENT = document;
-    var HTML = DOCUMENT.documentElement;
+    var HTML = document.documentElement;
 
     var RETURN_THIS = function() { return this };
     var RETURN_TRUE = function()  {return true};
@@ -34,7 +34,7 @@
     // Internet Explorer. In some cases it only identify IE if the console
     // window are open.
 
-    var jscriptVersion = WINDOW.ScriptEngineMajorVersion;
+    var jscriptVersion = window.ScriptEngineMajorVersion;
     var INTERNET_EXPLORER = jscriptVersion && jscriptVersion();
 
     var VENDOR_PREFIXES = [ "Webkit", "Moz", "ms", "O" ];
@@ -43,8 +43,8 @@
      * Check to see if we"re in IE9 to see if we are in combatibility mode and provide
      *  information on preventing it
      */
-    if (DOCUMENT.documentMode && INTERNET_EXPLORER < 10) {
-        WINDOW.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
+    if (document.documentMode && INTERNET_EXPLORER < 10) {
+        window.console.warn("Internet Explorer is running in compatibility mode, please add the following " +
             "tag to your HTML to prevent this from happening: " +
             "<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
         );
@@ -390,7 +390,7 @@
             }
     
             return function( node ) {
-                var result, found;
+                var result;
     
                 for (; node && node.nodeType === 1; node = node.parentNode) {
                     if (matches) {
@@ -401,7 +401,7 @@
                             ( !matches[ 4 ] || (" " + node.className + " ").indexOf( matches[ 4 ] ) >= 0 )
                         );
                     } else {
-                        result = node[ util$selectormatcher$$matchesMethod ]( selector ); //matchesMethod ? node[ matchesMethod ]( selector ) : query( node, selector );
+                        result = util$selectormatcher$$matchesMethod ? node[ util$selectormatcher$$matchesMethod ]( selector ) : util$selectormatcher$$query( node, selector );
                     }
     
                     if (result || !context || node === context) break;
@@ -865,7 +865,7 @@
    
             if ( len === 2 && helpers$$is( name, "string" ) ) {
              
-                var ret, setter = util$styleHooks$$default.set[ name ] || util$styleHooks$$default._default( name, style );
+                var setter = util$styleHooks$$default.set[ name ] || util$styleHooks$$default._default( name, style );
    
                 if ( helpers$$is( value, "function" ) ) value = value( this );
    
@@ -984,33 +984,6 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    var util$raf$$lastTime = 0,
-        util$raf$$requestAnimationFrame =
-              WINDOW.requestAnimationFrame             ||
-              WINDOW.webkitRequestAnimationFrame       ||
-              WINDOW.mozRequestAnimationFrame,
-        util$raf$$cancelAnimationFrame = 
-              WINDOW.cancelAnimationFrame              ||
-              WINDOW.webkitCancelAnimationFrame        ||
-              WINDOW.webkitCancelRequestAnimationFrame ||
-              WINDOW.mozCancelAnimationFrame,
-        util$raf$$requestFrame = util$raf$$requestAnimationFrame ||
-          function( callback ) {
-            // Dynamically set delay on a per-tick basis to match 60fps.
-            var currTime = Date.now(),
-                timeDelay = Math.max( 0, 16 - ( currTime - util$raf$$lastTime ) ); // 1000 / 60 = 16.666
-            util$raf$$lastTime = currTime + timeDelay;
-            return WINDOW.setTimeout( function() {
-                callback( Date.now() );
-            }, timeDelay );
-        },
-        util$raf$$cancelFrame = util$raf$$cancelAnimationFrame || 
-          function( frameId ) {
-            WINDOW.clearTimeout( frameId );
-        };
-
-    // Works around a rare bug in Safari 6 where the first request is never invoked.
-    util$raf$$requestFrame( function()  {return function()  {}} );
 
     core$core$$implement({
         /**
@@ -1066,6 +1039,34 @@
         */
         empty: function() { return this.set( "" ) }
     }, null, function()  {return RETURN_THIS} );
+
+    var util$raf$$lastTime = 0,
+        util$raf$$requestAnimationFrame =
+              WINDOW.requestAnimationFrame             ||
+              WINDOW.webkitRequestAnimationFrame       ||
+              WINDOW.mozRequestAnimationFrame,
+        util$raf$$cancelAnimationFrame = 
+              WINDOW.cancelAnimationFrame              ||
+              WINDOW.webkitCancelAnimationFrame        ||
+              WINDOW.webkitCancelRequestAnimationFrame ||
+              WINDOW.mozCancelAnimationFrame,
+        util$raf$$requestFrame = util$raf$$requestAnimationFrame ||
+          function( callback ) {
+            // Dynamically set delay on a per-tick basis to match 60fps.
+            var currTime = Date.now(),
+                timeDelay = Math.max( 0, 16 - ( currTime - util$raf$$lastTime ) ); // 1000 / 60 = 16.666
+            util$raf$$lastTime = currTime + timeDelay;
+            return WINDOW.setTimeout( function() {
+                callback( Date.now() );
+            }, timeDelay );
+        },
+        util$raf$$cancelFrame = util$raf$$cancelAnimationFrame || 
+          function( frameId ) {
+            WINDOW.clearTimeout( frameId );
+        };
+
+    // Works around a rare bug in Safari 6 where the first request is never invoked.
+    util$raf$$requestFrame( function()  {return function()  {}} );
 
     // Receive specific events at 60fps, with requestAnimationFrame (rAF).
     // http://www.html5rocks.com/en/tutorials/speed/animations/
@@ -1420,8 +1421,9 @@
       Expose 'support' to the ugma namespace
     */
 
-    core$core$$ugma.support = util$support$$support;
-
+    core$core$$implement({
+        support: util$support$$support
+    });
 
     var util$support$$default = util$support$$support;
 
@@ -2318,8 +2320,7 @@
       */
         scrollTo: function(x, y) {
           
-          var node = this[0],
-              offset = this.offset();
+          var offset = this.offset();
           
           WINDOW.scrollTo(x || offset.left, y || offset.top);
     
@@ -2418,7 +2419,7 @@
                 helpers$$each(name, function( key )  { this$0.set(key, value) } );
             // Set the value (with attr map support)
             } else if ( helpers$$is( name, "object" ) ) {
-                helpers$$forOwn( name, function( key, value )  { this$0.set( key, name[ key ] ) } );
+                helpers$$forOwn( name, function( key, value )  { this$0.set( key, value ) } );
             } else {
                 minErr$$minErr( "set()", "The property or attribute is not valid." );
             }

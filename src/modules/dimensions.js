@@ -2,11 +2,10 @@
  * @module showHide
  */
 
-import { implement                   } from "../core/core";
-import { RETURN_THIS                 } from "../const";
-import { is, computeStyle            } from "../helpers";
-import { minErr                      } from "../minErr";
-import { requestFrame, cancelFrame   } from "../util/raf";
+import { implement     } from "../core/core";
+import { RETURN_THIS   } from "../const";
+import { is            } from "../helpers";
+
 
 implement({
     /**
