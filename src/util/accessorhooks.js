@@ -40,7 +40,7 @@ var langFix = /_/g,
                             result.push( option.value || option.text );
                         }
                     });
-                    return result.length === 0 ? null : result;
+                    return result.length ? result : null;
                 }
                 return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
             },
@@ -88,7 +88,8 @@ var langFix = /_/g,
             }
         }
     };
-    
+
+// immediately-invoked function expression (IIFE)    
 (function() {
 	var input = DOCUMENT.createElement( "input" ),
 		select = DOCUMENT.createElement( "select" ),

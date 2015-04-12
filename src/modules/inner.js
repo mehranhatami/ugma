@@ -18,11 +18,13 @@ implement({
      */
      inner( value ) {
   
-       if ( arguments.length === 0 ) return this.get();
+        if ( arguments.length)  {
 
-       if ( instanceOf( value ) || isArray( value ) ) return this.set( "" ).append( value );
-
-       return this.set( value );
+          if ( instanceOf( value ) || isArray( value ) ) return this.set( "" ).append( value );
+ 
+          return this.set( value );
+       }
+      return this.get();
     }
 }, null, () => function() {
     

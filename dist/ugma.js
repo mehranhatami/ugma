@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 11:40:52 GMT
+ * Build date: Sun, 12 Apr 2015 12:07:59 GMT
  */
 (function() {
     "use strict";
@@ -169,7 +169,7 @@
        // Faster alternative then slice.call
        helpers$$sliceArgs = function( arg )  {
            var i = arg.length,
-               args = new Array( i || 0 );
+               args = [];
    
            while ( i-- ) args[ i ] = arg[ i ];
    
@@ -1477,7 +1477,7 @@
                                 result.push( option.value || option.text );
                             }
                         });
-                        return result.length === 0 ? null : result;
+                        return result.length ? result : null;
                     }
                     return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
                 },
@@ -1526,6 +1526,7 @@
             }
         };
 
+    // immediately-invoked function expression (IIFE)    
     (function() {
         var input = DOCUMENT.createElement( "input" ),
             select = DOCUMENT.createElement( "select" ),
@@ -1864,11 +1865,13 @@
          */
          inner: function(value) {
       
-           if ( arguments.length === 0 ) return this.get();
+            if ( arguments.length)  {
     
-           if ( core$core$$instanceOf( value ) || helpers$$isArray( value ) ) return this.set( "" ).append( value );
-    
-           return this.set( value );
+              if ( core$core$$instanceOf( value ) || helpers$$isArray( value ) ) return this.set( "" ).append( value );
+     
+              return this.set( value );
+           }
+          return this.get();
         }
     }, null, function()  {return function() {
         
@@ -2849,23 +2852,15 @@
         template$multiple$$indexRegex = /(\$+)(?:@(-)?(\d+)?)?/g,
         template$multiple$$multiple = function( num, term )  {
     
-            /**
-             * Set limit to 'max' 1600 HTML  created at once
-             * else ' new Array' will throw, and the whole 
-             * process will become slow if more then 1800.
-             */
-    
-            if ( num >= 1600 ) num = 1600;
-            
-            // normalize to avoid negative values
-            if ( num <= 0 ) num = 1;
+           // normalize negative values
+           if ( num <= 0 ) num = 1;
     
             var i = num,
-                result = new Array( i );
+                result = [];
     
             // while loop iteration gives best performance
             while ( i-- ) {
-                result[ i ] = term.replace( template$multiple$$indexRegex, function( expr, fmt, sign, base )  {
+                result[i] = term.replace( template$multiple$$indexRegex, function( expr, fmt, sign, base )  {
                     var pos = ( sign ? num - i - 1 : i ) + ( base ? +base : 1 );
                     // handle zero-padded index values, like $$$ etc.
                     return ( fmt + pos ).slice( -fmt.length ).replace( template$multiple$$dollarRegex, "0" );
