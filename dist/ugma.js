@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 10:18:42 GMT
+ * Build date: Sun, 12 Apr 2015 10:31:22 GMT
  */
 (function() {
     "use strict";
@@ -1401,16 +1401,25 @@
                 select: function(node)  {
                     if (node.multiple) {
                         var result = [];
+                        // Loop through all the selected options
                         helpers$$each(node.options, function(option)  {
-                            if (option.selected) result.push(option.value || option.text);
+                            // IE9 doesn't update selected after form reset
+                            if (option.selected &&
+                                // Don't return options that are disabled or in a disabled optgroup
+                                option.getAttribute("disabled") === null &&
+                                (!option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP")) {
+    
+                                result.push(option.value || option.text);
+    
+                            }
+    
                         });
                         return result.length === 0 ? null : result;
-                    } else {
-                        return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
                     }
+                    console.log("dd")
+                    return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
                 },
                 value: function( node )  {
-    
                     // Support: Android<4.4
                     // Default value for a checkbox should be "on"
                     if ( node.type === "checkbox" && !util$support$$default.checkOn ) {

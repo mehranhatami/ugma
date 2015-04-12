@@ -28,16 +28,22 @@ var langFix = /_/g,
             select: (node) => {
                 if (node.multiple) {
                     var result = [];
+                    // Loop through all the selected options
                     each(node.options, (option) => {
-                        if (option.selected) result.push(option.value || option.text);
+                        // IE9 doesn't update selected after form reset
+                        if (option.selected &&
+                            // Don't return options that are disabled or in a disabled optgroup
+                            option.getAttribute("disabled") === null &&
+                            (!option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP")) {
+
+                            result.push(option.value || option.text);
+                        }
                     });
                     return result.length === 0 ? null : result;
-                } else {
-                    return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
                 }
+                return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
             },
             value: ( node ) => {
-
                 // Support: Android<4.4
                 // Default value for a checkbox should be "on"
                 if ( node.type === "checkbox" && !support.checkOn ) {
