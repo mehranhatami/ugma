@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.6c
+ * Javascript framework 0.0.7a
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 13:26:30 GMT
+ * Build date: Sun, 12 Apr 2015 15:03:11 GMT
  */
 (function() {
     "use strict";
@@ -558,10 +558,10 @@
     
             return !hasClass;
         }]
-    }, function( methodName, classList, iteration, fallback )  {
+    }, function( methodName, classList, iteration, returnFn )  {
     
         // use native classList property if possible
-        if ( !HTML.classList ) fallback = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
+        if ( !HTML.classList ) returnFn = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
     
         if ( !iteration ) {
     
@@ -575,7 +575,7 @@
     
                 if ( !helpers$$is( token, "string" ) ) minErr$$minErr( classList + "()", "The class provided is not a string." );
     
-                return fallback( this, token );
+                return returnFn( this, token );
             };
         } else {
     
@@ -588,7 +588,7 @@
       
                     if ( !helpers$$is( arguments[ index ], "string" ) ) minErr$$minErr( classList + "()", "The class provided is not a string." );
     
-                    fallback( this, arguments[ index ] ); 
+                    returnFn( this, arguments[ index ] ); 
                }
     
                return this;
@@ -1664,7 +1664,7 @@
        *    link.get("textContent");           // get 'textContent'
        */
        
-        get: function(name) {var this$0 = this;
+        get: function(name, namespace) {var this$0 = this;
             var node = this[ 0 ],
                 hook = util$accessorhooks$$default.get[ name ];
     
@@ -1676,11 +1676,16 @@
                 // If applicable, access the attribute via the DOM 0 way
                 if (name in node || node[ name ] !== undefined) return node[ name ];
                 
+                
+                 
+                
                return /^data-/.test( name ) ? 
                    // try to fetch HTML5 `data-*` attribute      
                       util$readData$$readData( node, name ) : 
                     //... fallback to the getAttribute method, and let non-existent attributes return null
-                      node.getAttribute( util$customAttr$$default[ name] || name );
+                      (namespace ? ( node.getAttributeNS( namespace, name ) || 
+                                     node.getAttribute( namespace + ":" + name) ) : 
+                                     node.getAttribute( util$customAttr$$default[ name ] || name ) );
     
             } else if ( helpers$$isArray( name ) ) {
                 var obj = {};
@@ -1950,7 +1955,7 @@
         remove: [ "", false, true, function( node )  {
             node.parentNode.removeChild( node );
         }]
-    }, function( methodName, adjacentHTML, native, requiresParent, fallback )  {return function() {var this$0 = this;
+    }, function( methodName, adjacentHTML, native, requiresParent, returnFn )  {return function() {var this$0 = this;
         
           var contents = helpers$$sliceArgs( arguments ),
               node = this[ 0 ];
@@ -2007,7 +2012,7 @@
         if ( helpers$$is( fragment, "string" ) ) {
             node.insertAdjacentHTML( adjacentHTML, fragment );
         } else {
-            fallback( node, fragment );
+            returnFn( node, fragment );
         }
     
         return this;
@@ -2784,15 +2789,15 @@
     // 'format' a placeholder value with it's original content 
     // @example
     // ugma.format('{0}-{1}', [0, 1]) equal to '0-1')
-    core$core$$ugma.format = function( template, varMap )  {
+    core$core$$ugma.format = function( template, ValueMap )  {
         // Enforce data types on user input
         if ( !helpers$$is( template, "string" ) ) template = String( template );
     
-        if ( !varMap || !helpers$$is(varMap, "object") ) varMap = {};
+        if ( !ValueMap || !helpers$$is(ValueMap, "object") ) ValueMap = {};
     
         return template.replace( template$format$$reVar, function( placeholder, name, index )  {
-            if ( name in varMap ) {
-                placeholder = varMap[ name ];
+            if ( name in ValueMap ) {
+                placeholder = ValueMap[ name ];
     
                 if ( helpers$$is( placeholder, "function") ) placeholder = placeholder( index );
     
@@ -2955,7 +2960,7 @@
     /* es6-transpiler has-iterators:false, has-generators: false */
 
     var template$process$$attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-        template$process$$charMap = { 
+        template$process$$badCharacterEntities = { 
             "&": "&amp;",    // ampersand
             "<": "&lt;",     // less-than
             ">": "&gt;",     // greater-than
@@ -2973,7 +2978,7 @@
         template$process$$escapeChars = function( str )  {
            // always make sure the'str' argument is a string, in a few 'rare' 
            // cases it could be an array, and ugma will throw
-           return helpers$$is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$charMap[ ch ]} );
+           return helpers$$is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, function( ch )  {return template$process$$badCharacterEntities[ ch ]} );
         },
         template$process$$process = function( template )  {
     
@@ -3026,19 +3031,19 @@
         /**
          * Creates a new DOM node from Emmet or HTML string in memory using the provided markup string.
          * @param  {String}       template     The Emmet or HTML markup used to create the element
-         * @param  {Object|Array} [varMap]  key/value map of variables
+         * @param  {Object|Array} [ValueMap]  key/value map of variables
          */
         render: "",
     
         /**
          * Create a new array of Nodes from Emmet or HTML string in memory
          * @param  {String}       template    The Emmet or HTML markup used to create the element
-         * @param  {Object|Array} [varMap]  key/value map of variables
+         * @param  {Object|Array} [ValueMap]  key/value map of variables
          * @function
          */    
         renderAll: "All"
     
-    }, function(methodName, all)  {return function(template, varMap) {
+    }, function(methodName, all)  {return function(template, ValueMap) {
     
         // Create native DOM elements
         // e.g. "document.createElement('div')"
@@ -3065,10 +3070,10 @@
             // e.g. <div id="foo" class="bar"></div>
             if (template[ 0 ] === "<" && template[ template.length - 1 ] === ">" && template.length >= 3 ) {
     
-                template = varMap ? core$core$$ugma.format( template, varMap ) : template;
+                template = ValueMap ? core$core$$ugma.format( template, ValueMap ) : template;
     
             } else { // emmet strings
-                template = core$core$$ugma.template( template, varMap );
+                template = core$core$$ugma.template( template, ValueMap );
             }
     
             sandbox.innerHTML = template; // parse input HTML string
@@ -3178,7 +3183,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.6c";
+    core$core$$ugma.version = "0.0.7a";
 
     WINDOW.ugma = core$core$$ugma;
 })();

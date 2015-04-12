@@ -110,10 +110,10 @@ implement({
 
         return !hasClass;
     }]
-}, ( methodName, classList, iteration, fallback ) => {
+}, ( methodName, classList, iteration, returnFn ) => {
 
     // use native classList property if possible
-    if ( !HTML.classList ) fallback = ( el, token ) => el[ 0 ].classList[ classList ]( token );
+    if ( !HTML.classList ) returnFn = ( el, token ) => el[ 0 ].classList[ classList ]( token );
 
     if ( !iteration ) {
 
@@ -127,7 +127,7 @@ implement({
 
             if ( !is( token, "string" ) ) minErr( classList + "()", "The class provided is not a string." );
 
-            return fallback( this, token );
+            return returnFn( this, token );
         };
     } else {
 
@@ -140,7 +140,7 @@ implement({
   
                 if ( !is( arguments[ index ], "string" ) ) minErr( classList + "()", "The class provided is not a string." );
 
-                fallback( this, arguments[ index ] ); 
+                returnFn( this, arguments[ index ] ); 
            }
 
            return this;

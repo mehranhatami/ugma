@@ -1,11 +1,11 @@
 /**
- * XHR (ajax) for ugma javascript framework 0.0.6c
+ * XHR (ajax) for ugma javascript framework 0.0.7a
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 13:26:27 GMT
+ * Build date: Sun, 12 Apr 2015 15:03:08 GMT
  */
 (function() {
     "use strict";
@@ -66,16 +66,16 @@
                 if ( isObject( data ) ) {
                     keys( data ).forEach( function( key )  {
     
-                        var enc = encodeURIComponent,
-                            name = enc( key ),
+                        var encoder = encodeURIComponent,
+                            name = encoder( key ),
                             value = data[ key ];
     
                         if ( isArray( value ) ) {
                             value.forEach( function( value )  {
-                                extraArgs.push( name + "=" + enc( value ) );
+                                extraArgs.push( name + "=" + encoder( value ) );
                             });
                         } else {
-                            extraArgs.push( name + "=" + enc( value ) );
+                            extraArgs.push( name + "=" + encoder( value ) );
                         }
                     });
     

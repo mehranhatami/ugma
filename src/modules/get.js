@@ -37,7 +37,7 @@ implement({
    *    link.get("textContent");           // get 'textContent'
    */
    
-    get(name) {
+    get(name, namespace) {
         var node = this[ 0 ],
             hook = accessorhooks.get[ name ];
 
@@ -49,11 +49,16 @@ implement({
             // If applicable, access the attribute via the DOM 0 way
             if (name in node || node[ name ] !== undefined) return node[ name ];
             
+            
+             
+            
            return /^data-/.test( name ) ? 
                // try to fetch HTML5 `data-*` attribute      
                   readData( node, name ) : 
                 //... fallback to the getAttribute method, and let non-existent attributes return null
-                  node.getAttribute( customAttr[ name] || name );
+                  (namespace ? ( node.getAttributeNS( namespace, name ) || 
+                                 node.getAttribute( namespace + ":" + name) ) : 
+                                 node.getAttribute( customAttr[ name ] || name ) );
 
         } else if ( isArray( name ) ) {
             var obj = {};

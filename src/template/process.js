@@ -13,7 +13,7 @@ import operators          from "../template/operators";
 /* es6-transpiler has-iterators:false, has-generators: false */
 
 var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
-    charMap = { 
+    badCharacterEntities = { 
         "&": "&amp;",    // ampersand
         "<": "&lt;",     // less-than
         ">": "&gt;",     // greater-than
@@ -31,7 +31,7 @@ var attributes = /\s*([\w\-]+)(?:=((?:`([^`]*)`)|[^\s]*))?/g,
     escapeChars = ( str ) => {
        // always make sure the'str' argument is a string, in a few 'rare' 
        // cases it could be an array, and ugma will throw
-       return is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => charMap[ ch ] );
+       return is( str, "string" ) && str.replace( /[&<>"'¢¥§©®™]/g, ( ch ) => badCharacterEntities[ ch ] );
     },
     process = ( template ) => {
 

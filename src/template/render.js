@@ -12,19 +12,19 @@ implement({
     /**
      * Creates a new DOM node from Emmet or HTML string in memory using the provided markup string.
      * @param  {String}       template     The Emmet or HTML markup used to create the element
-     * @param  {Object|Array} [varMap]  key/value map of variables
+     * @param  {Object|Array} [ValueMap]  key/value map of variables
      */
     render: "",
 
     /**
      * Create a new array of Nodes from Emmet or HTML string in memory
      * @param  {String}       template    The Emmet or HTML markup used to create the element
-     * @param  {Object|Array} [varMap]  key/value map of variables
+     * @param  {Object|Array} [ValueMap]  key/value map of variables
      * @function
      */    
     renderAll: "All"
 
-}, (methodName, all) => function(template, varMap) {
+}, (methodName, all) => function(template, ValueMap) {
 
     // Create native DOM elements
     // e.g. "document.createElement('div')"
@@ -51,10 +51,10 @@ implement({
         // e.g. <div id="foo" class="bar"></div>
         if (template[ 0 ] === "<" && template[ template.length - 1 ] === ">" && template.length >= 3 ) {
 
-            template = varMap ? ugma.format( template, varMap ) : template;
+            template = ValueMap ? ugma.format( template, ValueMap ) : template;
 
         } else { // emmet strings
-            template = ugma.template( template, varMap );
+            template = ugma.template( template, ValueMap );
         }
 
         sandbox.innerHTML = template; // parse input HTML string
