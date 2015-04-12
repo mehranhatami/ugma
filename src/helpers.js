@@ -128,7 +128,7 @@ export const isArray = Array.isArray;
     // Faster alternative then slice.call
     sliceArgs = ( arg ) => {
         var i = arg.length,
-            args = new Array( i || 0 );
+            args = [];
 
         while ( i-- ) args[ i ] = arg[ i ];
 
