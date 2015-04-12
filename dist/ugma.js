@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.6b
+ * Javascript framework 0.0.6c
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 11:18:40 GMT
+ * Build date: Sun, 12 Apr 2015 11:40:52 GMT
  */
 (function() {
     "use strict";
@@ -802,8 +802,8 @@
     core$core$$implement({
       /**
         * Sets and get a style property for a given element.
-        * @param  {String|Object}      name    style property name or key/value object
-        * @param  {String|Function}    [value] style property value or functor
+        * @param  {String|Object}      name   style property name or key/value object
+        * @param  {String|Function}    value  style property value or functor
         * @param {Object} [style] The style node. Defaults to `node.style`.
         * @chainable
         * @example
@@ -869,12 +869,12 @@
    
                 if ( helpers$$is( value, "function" ) ) value = value( this );
    
-                if ( value == null || helpers$$is( value, "boolean" ) ) value = "";
+                if ( value == null) value = "";
    
                 if ( helpers$$is( setter, "function" ) ) {
                     setter ( value, style );
                 } else {
-                    style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : value;
+                    style[ setter ] = /* number values may need a unit */ helpers$$is( value, "number" ) ? value + "px" : value;
                 }
             } else if ( len === 1 && name && helpers$$is( name, "object" ) ) {
                 // Sets multiple style properties.
@@ -3228,7 +3228,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.6b";
+    core$core$$ugma.version = "0.0.6c";
 
     WINDOW.ugma = core$core$$ugma;
 })();

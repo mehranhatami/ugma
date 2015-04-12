@@ -10,8 +10,8 @@ import   styleHooks                                            from "../util/sty
  implement({
    /**
      * Sets and get a style property for a given element.
-     * @param  {String|Object}      name    style property name or key/value object
-     * @param  {String|Function}    [value] style property value or functor
+     * @param  {String|Object}      name   style property name or key/value object
+     * @param  {String|Function}    value  style property value or functor
      * @param {Object} [style] The style node. Defaults to `node.style`.
      * @chainable
      * @example
@@ -77,12 +77,12 @@ import   styleHooks                                            from "../util/sty
 
              if ( is( value, "function" ) ) value = value( this );
 
-             if ( value == null || is( value, "boolean" ) ) value = "";
+             if ( value == null) value = "";
 
              if ( is( setter, "function" ) ) {
                  setter ( value, style );
              } else {
-                 style[ setter ] = is( value, "number" ) ? value + "px" : value;
+                 style[ setter ] = /* number values may need a unit */ is( value, "number" ) ? value + "px" : value;
              }
          } else if ( len === 1 && name && is( name, "object" ) ) {
              // Sets multiple style properties.
