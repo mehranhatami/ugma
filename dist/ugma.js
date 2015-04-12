@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 15:03:11 GMT
+ * Build date: Sun, 12 Apr 2015 16:24:48 GMT
  */
 (function() {
     "use strict";
@@ -151,12 +151,12 @@
    
        // Bind a function to a context, optionally partially applying 
        // one or two arguments.
-       helpers$$proxy = function( context, fn, arg1, arg2 )  {
+       helpers$$proxy = function( context, callFn, arg1, arg2 )  {
    
-           if ( helpers$$is( fn, "string" ) ) fn = context[ fn ];
+           if ( helpers$$is( callFn, "string" ) ) callFn = context[ callFn ];
    
            try {
-               return fn.call( context, arg1, arg2 );
+               return callFn.call( context, arg1, arg2 );
            } catch ( err ) {
                WINDOW.setTimeout( function()  {
                    throw err;

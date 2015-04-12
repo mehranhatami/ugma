@@ -110,12 +110,12 @@ export const isArray = Array.isArray;
 
     // Bind a function to a context, optionally partially applying 
 	// one or two arguments.
-    proxy = ( context, fn, arg1, arg2 ) => {
+    proxy = ( context, callFn, arg1, arg2 ) => {
 
-        if ( is( fn, "string" ) ) fn = context[ fn ];
+        if ( is( callFn, "string" ) ) callFn = context[ callFn ];
 
         try {
-            return fn.call( context, arg1, arg2 );
+            return callFn.call( context, arg1, arg2 );
         } catch ( err ) {
             WINDOW.setTimeout( () => {
                 throw err;
