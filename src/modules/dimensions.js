@@ -48,26 +48,6 @@ implement({
 
 }, (methodName, propertyName) => function(value) {
 
-//   if( !is( value, "string" ) || !is( value, "number" ) ) minErr(methodName + "()", "This operation is not supported.");
-
-    var node = this[ 0 ], 
-        size = 0;
-
-    value = (value > 0 ) ? value : 0;
-
-    node.style[ propertyName ] = value + "px";
-    size = (propertyName === "height") ? node[ propertyName ] : node[ propertyName ];
-
-    if ( size > value ) {
-        value = value - ( size - value );
-
-        if ( value < 0 ) {
-            value = 0;
-        }
-
-        node.style[ propertyName ] = value + "px";
-    }
-
-   return this.offset()[ methodName ];
+   return is( value, "number" ) ? this.css( methodName, value ) : this.get( propertyName );
 
 }, () => () => RETURN_THIS );
