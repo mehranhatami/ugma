@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 10:31:22 GMT
+ * Build date: Sun, 12 Apr 2015 11:18:40 GMT
  */
 (function() {
     "use strict";
@@ -984,17 +984,6 @@
         }
     }, null, function()  {return RETURN_THIS} );
 
-    core$core$$implement({
-      /**
-        * Remove child nodes of current element from the DOM
-        * @chainable
-        * @example
-        *
-        *    link.empty();
-        */
-        empty: function() { return this.set( "" ) }
-    }, null, function()  {return RETURN_THIS} );
-
     var util$raf$$lastTime = 0,
         util$raf$$requestAnimationFrame =
               WINDOW.requestAnimationFrame             ||
@@ -1022,6 +1011,81 @@
 
     // Works around a rare bug in Safari 6 where the first request is never invoked.
     util$raf$$requestFrame( function()  {return function()  {}} );
+
+    core$core$$implement({
+        /**
+         * Calculate element's width in pixels, or set the width of 
+         * the element to the given size, regardless of box model,
+         * border, padding, etc.
+         * @param {String|Number} size The pixel width  to size to
+         * @return {Number} element width in pixels
+         * @example
+         *
+         *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
+         *
+         *   ugma.query('#rectangle').width();
+         *      // -> 200
+         *
+         *   ugma.query('#rectangle').width(230);
+         *      // -> 230
+         */
+    
+        width: "offsetWidth",
+        /**
+         * Calculate element's height in pixels, or set the height of 
+         * the element to the given size, regardless of box model,
+         * border, padding, etc.
+         * @param {String|Number} size The pixel height to size to
+         * @return {Number} element height in pixels
+         * @example
+         *
+         *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
+         *
+         *   ugma.query('#rectangle').height();
+         *      // -> 100
+         *
+         *   ugma.query('#rectangle').height(130);
+         *      // -> 130
+         */
+    
+        height: "offsetHeight",
+    
+    }, function(methodName, propertyName)  {return function(value) {
+    
+    //   if( !is( value, "string" ) || !is( value, "number" ) ) minErr(methodName + "()", "This operation is not supported.");
+    
+        var node = this[ 0 ], 
+            size = 0;
+    
+        value = (value > 0 ) ? value : 0;
+    
+        node.style[ propertyName ] = value + "px";
+        size = (propertyName === "height") ? node[ propertyName ] : node[ propertyName ];
+    
+        if ( size > value ) {
+            value = value - ( size - value );
+    
+            if ( value < 0 ) {
+                value = 0;
+            }
+    
+            node.style[ propertyName ] = value + "px";
+        }
+    
+       return this.offset()[ methodName ];
+    
+    }}, function()  {return function()  {return RETURN_THIS}} );
+
+    core$core$$implement({
+      /**
+        * Remove child nodes of current element from the DOM
+        * @chainable
+        * @example
+        *
+        *    link.empty();
+        */
+        empty: function() { return this.set( "" ) }
+    }, null, function()  {return RETURN_THIS} );
 
     // Receive specific events at 60fps, with requestAnimationFrame (rAF).
     // http://www.html5rocks.com/en/tutorials/speed/animations/
@@ -1398,26 +1462,24 @@
                     // option.value not trimmed
                     return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
                 },
-                select: function(node)  {
-                    if (node.multiple) {
+                select: function( node )  {
+                    // multipe select
+                    if ( node.multiple ) {
                         var result = [];
                         // Loop through all the selected options
-                        helpers$$each(node.options, function(option)  {
+                        helpers$$each( node.options, function( option )  {
                             // IE9 doesn't update selected after form reset
-                            if (option.selected &&
+                            if ( option.selected &&
                                 // Don't return options that are disabled or in a disabled optgroup
-                                option.getAttribute("disabled") === null &&
-                                (!option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP")) {
+                                option.getAttribute( "disabled" ) === null &&
+                                ( !option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP" ) ) {
     
-                                result.push(option.value || option.text);
-    
+                                result.push( option.value || option.text );
                             }
-    
                         });
                         return result.length === 0 ? null : result;
                     }
-                    console.log("dd")
-                    return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                    return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
                 },
                 value: function( node )  {
                     // Support: Android<4.4
@@ -2069,31 +2131,7 @@
                 width: boundingRect.right - boundingRect.left,
                 height: boundingRect.bottom - boundingRect.top
             };
-        },
-    
-      /**
-       * Calculate width based on element's offset
-       * @return {Number} element width in pixels
-       * @example
-       *
-       *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
-       *
-       *   ugma.query('#rectangle').width();
-       *      // -> 200
-       */    
-       width: function() { return this.offset().width },
-     
-      /**
-       * Calculate height based on element's offset
-       * @return {Number} element height in pixels
-       * @example
-       *
-       *    <div id="rectangle" style="font-size: 10px; width: 20em; height: 10em"></div>
-       *
-       *   ugma.query('#rectangle').height();
-       *      // -> 100
-       */    
-       height: function() { return this.offset().height }
+        }
        
     }, null, function(methodName)  {return function()  { return methodName === "offset" ? { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 } : 0 }} );
 

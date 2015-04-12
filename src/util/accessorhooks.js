@@ -25,23 +25,24 @@ var langFix = /_/g,
                 // option.value not trimmed
                 return node[ node.hasAttribute( "value" ) ? "value" : "text" ].trim();
             },
-            select: (node) => {
-                if (node.multiple) {
+            select: ( node ) => {
+                // multipe select
+                if ( node.multiple ) {
                     var result = [];
                     // Loop through all the selected options
-                    each(node.options, (option) => {
+                    each( node.options, ( option ) => {
                         // IE9 doesn't update selected after form reset
-                        if (option.selected &&
+                        if ( option.selected &&
                             // Don't return options that are disabled or in a disabled optgroup
-                            option.getAttribute("disabled") === null &&
-                            (!option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP")) {
+                            option.getAttribute( "disabled" ) === null &&
+                            ( !option.parentNode.disabled || option.parentNode.nodeName !== "OPTGROUP" ) ) {
 
-                            result.push(option.value || option.text);
+                            result.push( option.value || option.text );
                         }
                     });
                     return result.length === 0 ? null : result;
                 }
-                return ~node.selectedIndex ? node.options[node.selectedIndex].value : "";
+                return ~node.selectedIndex ? node.options[ node.selectedIndex ].value : "";
             },
             value: ( node ) => {
                 // Support: Android<4.4
