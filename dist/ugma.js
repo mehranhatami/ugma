@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.6a
+ * Javascript framework 0.0.6b
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 02:00:25 GMT
+ * Build date: Sun, 12 Apr 2015 07:23:21 GMT
  */
 (function() {
     "use strict";
@@ -441,17 +441,17 @@
     
         var node = this[ 0 ],
             matcher = util$selectormatcher$$default( selector ),
-            children = node.children;
+            childNodes = node.children;
     
         if ( all ) {
-            if ( matcher ) children = helpers$$filter( children, matcher );
+            if ( matcher ) childNodes = helpers$$filter( childNodes, matcher );
     
-            return helpers$$map(children, core$core$$Nodes);
+            return helpers$$map(childNodes, core$core$$Nodes);
         } 
             // Avoid negative children, normalize to 0
-        if ( selector < 0 ) selector = children.length + selector;
+        if ( selector < 0 ) selector = childNodes.length + selector;
     
-           return core$core$$Nodes( children[ selector ] );
+           return core$core$$Nodes( childNodes[ selector ] );
         
     }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$Shallow()}} );
 
@@ -463,7 +463,8 @@
        
        /**
         * Adds a class(es) or an array of class names
-        * @param  {...String} classNames class name(s)
+        * @param {HTMLElement} element The DOM element.
+        * @param {String} className the class name to remove from the class attribute
         * @chainable
         * @example
         * 
@@ -485,8 +486,10 @@
             node[ 0 ].className = existingClasses.trim();
         }],
        /**
-        * Remove class(es) or an array of class names from element
-        * @param  {...String} classNames class name(s)
+        * Remove class(es) or an array of class names from a given element.
+        * @method removeClass
+        * @param {HTMLElement} element The DOM element.
+        * @param {String} className the class name to remove from the class attribute
         * @chainable
         * @example
         * 
@@ -503,7 +506,8 @@
         }],
        /**
         * Check if element contains class name
-        * @param  {...String} classNames class name(s)
+        * @param {HTMLElement} element The DOM element.
+        * @param {String} className the class name to remove from the class attribute
         * @chainable
         * @example
         *  
@@ -522,8 +526,10 @@
             return false;
         }],
        /**
-        * Toggle the `class` in the class list. Optionally force state via `condition`
-        * @param  {...String} classNames class name(s)
+        * If the className exists on the node it is removed, if it doesn't exist it is added.
+        * @param {HTMLElement} element The DOM element
+        * @param {String} className the class name to be toggled
+        * @param {Boolean} force
         * @chainable
         * @example
         * 
@@ -544,7 +550,7 @@
         toggleClass: ["toggle", false, function( el, token )  {
             var hasClass = el.hasClass( token );
            
-             if(hasClass) {
+             if( hasClass ) {
                  el.removeClass( token ); 
              } else {
                 el.addClass( token ); 
@@ -555,16 +561,16 @@
     }, function( methodName, classList, iteration, fallback )  {
     
         // use native classList property if possible
-        if ( HTML.classList ) fallback = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
+        if ( !HTML.classList ) fallback = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
     
         if ( !iteration ) {
     
-            return function( token, stateVal ) {
-               
-                if ( helpers$$is( stateVal, "boolean") && classList === "toggle" ) {
-                    this[ stateVal ? "addClass" : "removeClass" ]( token );
+            return function( token, force ) {
     
-                    return stateVal;
+                if ( helpers$$is( force, "boolean") && classList === "toggle" ) {
+                    this[ force ? "addClass" : "removeClass" ]( token );
+    
+                    return force;
                 }
     
                 if ( !helpers$$is( token, "string" ) ) minErr$$minErr( classList + "()", "The class provided is not a string." );
@@ -670,8 +676,8 @@
     core$core$$implement({
      /**
       * Check if element is inside of context
-      * @param  {ugma wrapped Object} element to check
-      * @return {Boolean} returns true if success and false otherwise
+      * @param  {HTMLElement, ugmaElement} element The containing ugma wrapped object or html element.
+      * @return {Boolean} Whether or not the element is or contains the 'other'
       *
       * @example
       *   ugma.contains(childElement);
@@ -686,16 +692,17 @@
       */
         contains: function(other) {
     
-            var reference = this[ 0 ];
+            var reference = this[ 0 ],
+                nodeType = other && other.nodeType;
     
-            if ( core$core$$instanceOf(other) ) {
+            if ( !other || ( core$core$$instanceOf( other ) || nodeType === 1 ) ) {
     
-                 other = other[ 0 ];
+                 other = nodeType === 1 ? other : other[ 0 ];
     
                 // If other and reference are the same object, return zero.
                 if ( reference === other ) return 0;
-    
-                return reference.contains(other);
+                // Match contains behavior (node.contains(node) === true).
+                return reference.contains( other );
             }
     
             minErr$$minErr( "contains()", "Comparing position against non-Node values is not allowed." );
@@ -767,6 +774,7 @@
         return this.get[ name ] = this.set[ name ] = propName;
     };
 
+
     /**
      * Make 'styleHooks' global
      * Has to use the "implement" API method here, so this will be accessible
@@ -793,9 +801,10 @@
 
     core$core$$implement({
       /**
-        * Get and set the style property on a DOM Node
+        * Sets and get a style property for a given element.
         * @param  {String|Object}      name    style property name or key/value object
         * @param  {String|Function}    [value] style property value or functor
+        * @param {Object} [style] The style node. Defaults to `node.style`.
         * @chainable
         * @example
         *
@@ -820,13 +829,13 @@
         *  
         */
         
-        css: function(name, value) {var this$0 = this;
-            
+        css: function(name, value, style) {var this$0 = this;
             var len = arguments.length,
                 node = this[ 0 ],
-                style = node.style,
                 computed;
    
+              style = style || node.style;             
+              
             // Get CSS values with support for pseudo-elements
             if ( len === 1 && ( helpers$$is( name, "string" ) || helpers$$isArray( name ) ) ) {
                 
@@ -868,7 +877,7 @@
                     style[ setter ] = helpers$$is( value, "number" ) ? value + "px" : value;
                 }
             } else if ( len === 1 && name && helpers$$is( name, "object" ) ) {
-                
+                // Sets multiple style properties.
                 helpers$$forOwn( name, function( key, value )  {
                     this$0.css( key, value );
                 });
@@ -1814,7 +1823,7 @@
         *     link.prepend('<span>start</span>');
         */    
         prepend: [ "afterbegin", true, false, function( node, relatedNode )  {
-            node.insertBefore( relatedNode, node.firstChild );
+            node.insertBefore( relatedNode, node.firstElementChild );
         }],
        /**
         * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
@@ -1840,7 +1849,7 @@
         *     link.after(ugma.render("b"));   
         */    
         after: [ "afterend", true, true, function( node, relatedNode )  {
-            node.parentNode.insertBefore( relatedNode, node.nextSibling );
+            node.parentNode.insertBefore( relatedNode, node.nextElementSibling );
         }],
        /**
         * Replace current element with HTMLString or a ugma wrapped object
@@ -2575,32 +2584,32 @@
       /**
        * Subscribe on particular properties / attributes, and get notified if they are changing
        * @param  {String}   name     property/attribute name
-       * @param  {Function}  callback  function for notifying about changes of the property/attribute
+       * @param  {Function}  fn  function for notifying about changes of the property/attribute
        * @chainable
        * @example
        *     link.subscribe("value", function(value, oldValue) { });
        */
-        subscribe: function(name, callback) {
+        subscribe: function(name, fn) {
                 var subscription = this._.subscription || ( this._.subscription = [] );
     
                 if ( !subscription[ name ] ) subscription[ name ] = [];
     
-                subscription[ name ].push( callback );
+                subscription[ name ].push( fn );
     
                 return this;
             },
      /**
       * Cancel / stop a property / attribute subscription
       * @param  {String}   name    property/attribute name
-      * @param  {Function}  callback  function for notifying about changes of the property/attribute
+      * @param  {Function}  fn  function for notifying about changes of the property/attribute
       * @chainable
       * @example
       *     link.unsubscribe("value", function(value, oldValue) { });
       */
-       unsubscribe: function(name, callback) {
+       unsubscribe: function(name, fn) {
                 var subscription = this._.subscription;
     
-                if ( subscription[ name ] ) subscription[ name ] = helpers$$filter( subscription[ name ], function( cb )  {return cb !== callback} );
+                if ( subscription[ name ] ) subscription[ name ] = helpers$$filter( subscription[ name ], function( callback )  {return callback !== fn} );
     
                 return this;
             }
@@ -2748,6 +2757,7 @@
         }
     
         return all ? helpers$$map( descendants, core$core$$Nodes ) : core$core$$Nodes( currentNode );
+        
     }}, function( methodName )  {return function()  {return methodName.slice( -3 ) === "All" ? [] : new core$core$$Shallow()}} );
 
     var template$format$$reVar = /\{([\w\-]+)\}/g;
@@ -3001,54 +3011,56 @@
     };
 
     core$core$$implement({
-         /**
-         * Create a new DOM node from Emmet or HTML string in memory
-         * @param  {String}       value     Emmet or HTML string
+    
+        /**
+         * Creates a new DOM node from Emmet or HTML string in memory using the provided markup string.
+         * @param  {String}       template     The Emmet or HTML markup used to create the element
          * @param  {Object|Array} [varMap]  key/value map of variables
          */
         render: "",
+    
         /**
          * Create a new array of Nodes from Emmet or HTML string in memory
-         * @param  {String}       value     Emmet or HTML string
+         * @param  {String}       template    The Emmet or HTML markup used to create the element
          * @param  {Object|Array} [varMap]  key/value map of variables
          * @function
          */    
         renderAll: "All"
     
-    }, function(methodName, all)  {return function(value, varMap) {
+    }, function(methodName, all)  {return function(template, varMap) {
     
         // Create native DOM elements
         // e.g. "document.createElement('div')"
-        if (value.nodeType === 1) return core$core$$Nodes(value);
+        if (template.nodeType === 1) return core$core$$Nodes(template);
     
-        if (!helpers$$is(value, "string")) minErr$$minErr(methodName + "()", "Not supported.");
+        if (!helpers$$is(template, "string")) minErr$$minErr(methodName + "()", "Not supported.");
     
         var doc = this[0].ownerDocument,
             sandbox = this._.sandbox || (this._.sandbox = doc.createElement("div"));
     
         var nodes, el;
     
-        if ( value && value in template$template$$default ) {
+        if ( template && template in template$template$$default ) {
     
-            nodes = doc.createElement( value );
+            nodes = doc.createElement( template );
     
             if ( all ) nodes = [ new core$core$$Nodes( nodes ) ];
     
         } else {
     
-            value = value.trim();
+            template = template.trim();
     
             // handle vanila HTML strings
             // e.g. <div id="foo" class="bar"></div>
-            if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3 ) {
+            if (template[ 0 ] === "<" && template[ template.length - 1 ] === ">" && template.length >= 3 ) {
     
-                value = varMap ? core$core$$ugma.format( value, varMap ) : value;
+                template = varMap ? core$core$$ugma.format( template, varMap ) : template;
     
             } else { // emmet strings
-                value = core$core$$ugma.template( value, varMap );
+                template = core$core$$ugma.template( template, varMap );
             }
     
-            sandbox.innerHTML = value; // parse input HTML string
+            sandbox.innerHTML = template; // parse input HTML string
     
             for ( nodes = all ? [] : null; el = sandbox.firstChild; ) {
                 sandbox.removeChild( el ); // detach element from the sandbox
@@ -3155,7 +3167,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.6a";
+    core$core$$ugma.version = "0.0.6b";
 
     WINDOW.ugma = core$core$$ugma;
 })();
