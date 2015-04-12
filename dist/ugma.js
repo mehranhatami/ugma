@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sat, 11 Apr 2015 14:54:28 GMT
+ * Build date: Sun, 12 Apr 2015 02:00:25 GMT
  */
 (function() {
     "use strict";
@@ -1210,9 +1210,10 @@
     
         if ( helpers$$is( eventType, "string" ) ) {
             if ( helpers$$is( args, "function" ) ) {
+                
                 callback = args;
     
-                if ( helpers$$is(selector, "string" ) ) {
+                if ( helpers$$is( selector, "string" ) ) {
                     args = null;
                 } else {
                     args = selector;
@@ -1258,7 +1259,6 @@
     
         return this;
     }}, function()  {return RETURN_THIS});
-
 
     core$core$$implement({
     
@@ -1337,6 +1337,7 @@
             if ( hook ) handler = hook( handler ) || handler;
     
             eventType = handler._eventType || type;
+            
         } else {
             minErr$$minErr( "fire()", "The string did not match the expected pattern" );
         }
@@ -2139,44 +2140,79 @@
     
      }, null, function()   {return function()  { return { top: 0, left: 0 }; }} );
 
-    var modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
-        modules$query$$rescape  = /'|\\/g;
+    var modules$query$$unionSplit = /([^\s,](?:"(?:\\.|[^"])+"|'(?:\\.|[^'])+'|[^,])*)/g,
+        modules$query$$fasting = /^(?:(\w+)|\.([\w\-]+))$/,
+        modules$query$$rescape = /'|\\/g;
 
     core$core$$implement({
-     /**
-      * Find the first matched element by css selector
-      * @param  {String} selector css selector
-      * @example
-      *
-      *      ugma.query('#foo'); 
-      *      // first, single element
-      */
+        /**
+         * Find the first matched element by css selector
+         * @param  {String} selector css selector
+         * @example
+         *
+         *      ugma.query('#foo'); 
+         *      // first, single element
+         */
         query: "",
-     /**
-      * Find all matched elements by css selector
-      * @param  {String} selector css selector
-      * @example
-      *
-      *      ugma.queryAll('#div'); 
-      *      // return an array with multiple divs
-      *
-      *      ugma.query('a[href="#"]');
-      *      // -> all links with a href attribute of value "#"
-      *
-      *      ugma.query('div:empty');
-      *      // -> all DIVs without content (i.e., whitespace-only)
-      */
-       queryAll: "All"
+        /**
+         * Find all matched elements by css selector
+         * @param  {String} selector css selector
+         * @example
+         *
+         *      ugma.queryAll('#div'); 
+         *      // return an array with multiple divs
+         *
+         *      ugma.query('a[href="#"]');
+         *      // -> all links with a href attribute of value "#"
+         *
+         *      ugma.query('div:empty');
+         *      // -> all DIVs without content (i.e., whitespace-only)
+         */
+        queryAll: "All"
     
     }, function(methodName, all)  {return function(selector) {
-        if (typeof selector !== "string") minErr$$minErr();
     
-        var node = this[ 0 ],
-            quickMatch = modules$query$$fasting.exec(selector),
-            result, old, nid, context;
+        if ( !helpers$$is( selector, "string" ) ) minErr$$minErr( methodName + "()", "Syntax error" );
     
-        if (quickMatch) {
-            if (quickMatch[ 1 ]) {
+        var node = this[0],
+            quickMatch = modules$query$$fasting.exec( selector ),
+            result, old, nid, context,
+            useRoot = function( context, query, method )  {
+                // this function creates a temporary id so we can do rooted qSA queries, this is taken from sizzle
+                var oldContext = context,
+                    old = context.getAttribute( "id" ),
+                    nid = old || "__ugma__",
+                    hasParent = context.parentNode,
+                    relativeHierarchySelector = /^\s*[+~]/.test( query );
+    
+                if ( relativeHierarchySelector && !hasParent ) return [];
+    
+                if ( !old ) {
+                    context.setAttribute( "id", nid );
+                } else {
+                    nid = nid.replace( /'/g, "\\$&" );
+                }
+    
+                if (relativeHierarchySelector && hasParent) context = context.parentNode;
+    
+                var selectors = query.match( modules$query$$unionSplit ),
+                    index = -1,
+                    length = selectors.length;
+    
+                    while ( ++index < length ) selectors[ index ] = "[id='" + nid + "'] " + selectors[ index ];
+                    query = selectors.join(",");
+    
+                try {
+                    return method.call( context, query );
+                } finally {
+                    if ( !old ) {
+                        oldContext.removeAttribute( "id" );
+                    }
+                }
+            };
+    
+        if ( quickMatch ) {
+            if ( quickMatch [1] ) {
                 // speed-up: "TAG"
                 result = node.getElementsByTagName( selector );
             } else {
@@ -2185,35 +2221,26 @@
             }
     
             if ( result && !all ) result = result[ 0 ];
-            
+    
         } else {
             old = true;
             context = node;
     
-            if (node !== node.ownerDocument.documentElement) {
-                // qSA works strangely on Element-rooted queries
-                // We can work around this by specifying an extra ID on the root
-                // and working up from there (Thanks to Andrew Dupont for the technique)
-                if ( (old = node.getAttribute( "id" )) ) {
-                    nid = old.replace( modules$query$$rescape, "\\$&" );
-                } else {
-                    nid = "__ugma_mehran__";
-                    node.setAttribute("id", nid);
-                }
+            if ( node !== node.ownerDocument.documentElement ) {
     
-                nid = "[id='" + nid + "'] ";
-                
-                selector = nid + selector.split(",").join("," + nid);
+                result = useRoot( node, selector, node[ "querySelector" + all ] );
+    
+            } else {
+    
+                result = helpers$$proxy( context, "querySelector" + all, selector );
             }
     
-            result = helpers$$proxy(context, "querySelector" + all, selector);
-    
-            if (!old) node.removeAttribute("id");
+            if (!old) node.removeAttribute( "id" );
         }
     
-            return all ? helpers$$map(result, core$core$$Nodes) : core$core$$Nodes(result);
-            
-    }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$Shallow()}});
+        return all ? helpers$$map( result, core$core$$Nodes ) : core$core$$Nodes( result );
+    
+    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$Shallow()}} );
 
     var modules$ready$$readyCallbacks = [],
         // Supports: IE9+
