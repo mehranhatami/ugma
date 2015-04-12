@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 12:23:56 GMT
+ * Build date: Sun, 12 Apr 2015 12:34:14 GMT
  */
 (function() {
     "use strict";
@@ -2213,80 +2213,44 @@
     
      }, null, function()   {return function()  { return { top: 0, left: 0 }; }} );
 
-    var modules$query$$unionSplit = /([^\s,](?:"(?:\\.|[^"])+"|'(?:\\.|[^'])+'|[^,])*)/g,
-        modules$query$$fasting = /^(?:(\w+)|\.([\w\-]+))$/,
-        modules$query$$rescape = /'|\\/g;
+    var modules$query$$fasting  = /^(?:(\w+)|\.([\w\-]+))$/,
+        modules$query$$rescape  = /'|\\/g;
 
     core$core$$implement({
-        /**
-         * Find the first matched element by css selector
-         * @param  {String} selector css selector
-         * @example
-         *
-         *      ugma.query('#foo'); 
-         *      // first, single element
-         */
+     /**
+      * Find the first matched element by css selector
+      * @param  {String} selector css selector
+      * @example
+      *
+      *      ugma.query('#foo'); 
+      *      // first, single element
+      */
         query: "",
-        /**
-         * Find all matched elements by css selector
-         * @param  {String} selector css selector
-         * @example
-         *
-         *      ugma.queryAll('#div'); 
-         *      // return an array with multiple divs
-         *
-         *      ugma.query('a[href="#"]');
-         *      // -> all links with a href attribute of value "#"
-         *
-         *      ugma.query('div:empty');
-         *      // -> all DIVs without content (i.e., whitespace-only)
-         */
-        queryAll: "All"
+     /**
+      * Find all matched elements by css selector
+      * @param  {String} selector css selector
+      * @example
+      *
+      *      ugma.queryAll('#div'); 
+      *      // return an array with multiple divs
+      *
+      *      ugma.query('a[href="#"]');
+      *      // -> all links with a href attribute of value "#"
+      *
+      *      ugma.query('div:empty');
+      *      // -> all DIVs without content (i.e., whitespace-only)
+      */
+       queryAll: "All"
     
     }, function(methodName, all)  {return function(selector) {
+        if (typeof selector !== "string") minErr$$minErr();
     
-        if ( !helpers$$is( selector, "string" ) ) minErr$$minErr( methodName + "()", "Syntax error" );
+        var node = this[ 0 ],
+            quickMatch = modules$query$$fasting.exec(selector),
+            result, old, nid, context;
     
-        var node = this[0],
-            quickMatch = modules$query$$fasting.exec( selector ),
-            result, old, nid, context,
-            useRoot = function( context, query, method )  {
-                // this function creates a temporary id so we can do rooted qSA queries, this is taken from sizzle
-                var oldContext = context,
-                    old = context.getAttribute( "id" ),
-                    // use a leading underscore _ when naming private properties.
-                    nid = old || "_ugma_",
-                    hasParent = context.parentNode,
-                    relativeHierarchySelector = /^\s*[+~]/.test( query );
-    
-                if ( relativeHierarchySelector && !hasParent ) return [];
-    
-                if ( !old ) {
-                    context.setAttribute( "id", nid );
-                } else {
-                    nid = nid.replace( /'/g, "\\$&" );
-                }
-    
-                if (relativeHierarchySelector && hasParent) context = context.parentNode;
-    
-                var selectors = query.match( modules$query$$unionSplit ),
-                    index = -1,
-                    length = selectors.length;
-    
-                    while ( ++index < length ) selectors[ index ] = "[id='" + nid + "'] " + selectors[ index ];
-                    query = selectors.join(",");
-    
-                try {
-                    return method.call( context, query );
-                } finally {
-                    if ( !old ) {
-                        oldContext.removeAttribute( "id" );
-                    }
-                }
-            };
-    
-        if ( quickMatch ) {
-            if ( quickMatch [1] ) {
+        if (quickMatch) {
+            if (quickMatch[ 1 ]) {
                 // speed-up: "TAG"
                 result = node.getElementsByTagName( selector );
             } else {
@@ -2295,26 +2259,35 @@
             }
     
             if ( result && !all ) result = result[ 0 ];
-    
+            
         } else {
             old = true;
             context = node;
     
-            if ( node !== node.ownerDocument.documentElement ) {
+            if (node !== node.ownerDocument.documentElement) {
+                // qSA works strangely on Element-rooted queries
+                // We can work around this by specifying an extra ID on the root
+                // and working up from there (Thanks to Andrew Dupont for the technique)
+                if ( (old = node.getAttribute( "id" )) ) {
+                    nid = old.replace( modules$query$$rescape, "\\$&" );
+                } else {
+                    nid = "__ugma_mehran__";
+                    node.setAttribute("id", nid);
+                }
     
-                result = useRoot( node, selector, node[ "querySelector" + all ] );
-    
-            } else {
-    
-                result = helpers$$proxy( context, "querySelector" + all, selector );
+                nid = "[id='" + nid + "'] ";
+                
+                selector = nid + selector.split(",").join("," + nid);
             }
     
-            if (!old) node.removeAttribute( "id" );
+            result = helpers$$proxy(context, "querySelector" + all, selector);
+    
+            if (!old) node.removeAttribute("id");
         }
     
-        return all ? helpers$$map( result, core$core$$Nodes ) : core$core$$Nodes( result );
-    
-    }}, function( methodName, all )  {return function()  {return all ? [] : new core$core$$Shallow()}} );
+            return all ? helpers$$map(result, core$core$$Nodes) : core$core$$Nodes(result);
+            
+    }}, function(methodName, all)  {return function()  {return all ? [] : new core$core$$Shallow()}});
 
     var modules$ready$$readyCallbacks = [],
         // Supports: IE9+
