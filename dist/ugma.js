@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 12:07:59 GMT
+ * Build date: Sun, 12 Apr 2015 12:23:56 GMT
  */
 (function() {
     "use strict";
@@ -1357,15 +1357,15 @@
                 selector = void 0;
             }
     
-            var self = this,
+            var _this = this,
                 node = this[ 0 ],
                 removeHandler = function( handler )  {
     
                     // Cancel previous frame if it exists
-                    if ( self._._raf ) {
-                          util$raf$$cancelFrame( self._.raf );
+                    if ( _this._._raf ) {
+                          util$raf$$cancelFrame( _this._.raf );
                         // Zero out rAF id used during the animation
-                        self._._raf = null;
+                        _this._._raf = null;
                     }
                     // Remove the listener
                     node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
@@ -1405,11 +1405,11 @@
     
         if ( helpers$$is( type, "string" ) ) {
             var hook = util$eventhooks$$default[ type ],
-                handler = {};
+                eventHandler = {};
     
-            if ( hook ) handler = hook( handler ) || handler;
+            if ( hook ) eventHandler = hook( eventHandler ) || eventHandler;
     
-            eventType = handler._eventType || type;
+            eventType = eventHandler._eventType || type;
             
         } else {
             minErr$$minErr( "fire()", "The string did not match the expected pattern" );
@@ -2254,7 +2254,8 @@
                 // this function creates a temporary id so we can do rooted qSA queries, this is taken from sizzle
                 var oldContext = context,
                     old = context.getAttribute( "id" ),
-                    nid = old || "__ugma__",
+                    // use a leading underscore _ when naming private properties.
+                    nid = old || "_ugma_",
                     hasParent = context.parentNode,
                     relativeHierarchySelector = /^\s*[+~]/.test( query );
     

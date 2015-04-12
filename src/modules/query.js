@@ -48,7 +48,8 @@ implement({
             // this function creates a temporary id so we can do rooted qSA queries, this is taken from sizzle
             var oldContext = context,
                 old = context.getAttribute( "id" ),
-                nid = old || "__ugma__",
+                // use a leading underscore _ when naming private properties.
+                nid = old || "_ugma_",
                 hasParent = context.parentNode,
                 relativeHierarchySelector = /^\s*[+~]/.test( query );
 

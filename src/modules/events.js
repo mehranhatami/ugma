@@ -124,15 +124,15 @@ implement({
             selector = void 0;
         }
 
-        var self = this,
+        var _this = this,
             node = this[ 0 ],
             removeHandler = ( handler ) => {
 
                 // Cancel previous frame if it exists
-                if ( self._._raf ) {
-                      cancelFrame( self._.raf );
+                if ( _this._._raf ) {
+                      cancelFrame( _this._.raf );
                     // Zero out rAF id used during the animation
-                    self._._raf = null;
+                    _this._._raf = null;
                 }
                 // Remove the listener
                 node.removeEventListener( ( handler._eventType || handler.eventType ), handler, !!handler.capturing );
@@ -171,12 +171,12 @@ implement({
         e, eventType, canContinue;
 
     if ( is( type, "string" ) ) {
-        let hook = eventhooks[ type ],
-            handler = {};
+        var hook = eventhooks[ type ],
+            eventHandler = {};
 
-        if ( hook ) handler = hook( handler ) || handler;
+        if ( hook ) eventHandler = hook( eventHandler ) || eventHandler;
 
-        eventType = handler._eventType || type;
+        eventType = eventHandler._eventType || type;
         
     } else {
         minErr( "fire()", "The string did not match the expected pattern" );
