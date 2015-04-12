@@ -3,8 +3,8 @@
  */
 
 import { minErr                          } from "../minErr";
-import { implement, Nodes, Shallow  } from "../core/core";
-import   SelectorMatcher                  from "../util/selectormatcher";
+import { implement, Nodes, Shallow       } from "../core/core";
+import   SelectorMatcher                   from "../util/selectormatcher";
 import { map, filter, is                 } from "../helpers";
 
 implement({
@@ -35,16 +35,16 @@ implement({
 
     var node = this[ 0 ],
         matcher = SelectorMatcher( selector ),
-        children = node.children;
+        childNodes = node.children;
 
     if ( all ) {
-        if ( matcher ) children = filter( children, matcher );
+        if ( matcher ) childNodes = filter( childNodes, matcher );
 
-        return map(children, Nodes);
+        return map(childNodes, Nodes);
     } 
         // Avoid negative children, normalize to 0
-    if ( selector < 0 ) selector = children.length + selector;
+    if ( selector < 0 ) selector = childNodes.length + selector;
 
-       return Nodes( children[ selector ] );
+       return Nodes( childNodes[ selector ] );
     
 }, ( methodName, all ) => () => all ? [] : new Shallow() );

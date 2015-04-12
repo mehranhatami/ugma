@@ -9,9 +9,10 @@ import   styleHooks                                            from "../util/sty
 
  implement({
    /**
-     * Get and set the style property on a DOM Node
+     * Sets and get a style property for a given element.
      * @param  {String|Object}      name    style property name or key/value object
      * @param  {String|Function}    [value] style property value or functor
+     * @param {Object} [style] The style node. Defaults to `node.style`.
      * @chainable
      * @example
      *
@@ -36,13 +37,13 @@ import   styleHooks                                            from "../util/sty
      *  
      */
      
-     css( name, value ) {
-         
+     css( name, value, style ) {
          var len = arguments.length,
              node = this[ 0 ],
-             style = node.style,
              computed;
 
+           style = style || node.style;             
+           
          // Get CSS values with support for pseudo-elements
          if ( len === 1 && ( is( name, "string" ) || isArray( name ) ) ) {
              
@@ -84,7 +85,7 @@ import   styleHooks                                            from "../util/sty
                  style[ setter ] = is( value, "number" ) ? value + "px" : value;
              }
          } else if ( len === 1 && name && is( name, "object" ) ) {
-             
+             // Sets multiple style properties.
              forOwn( name, ( key, value ) => {
                  this.css( key, value );
              });

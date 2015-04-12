@@ -15,7 +15,8 @@ implement({
    
    /**
     * Adds a class(es) or an array of class names
-    * @param  {...String} classNames class name(s)
+    * @param {HTMLElement} element The DOM element.
+    * @param {String} className the class name to remove from the class attribute
     * @chainable
     * @example
     * 
@@ -37,8 +38,10 @@ implement({
         node[ 0 ].className = existingClasses.trim();
     }],
    /**
-    * Remove class(es) or an array of class names from element
-    * @param  {...String} classNames class name(s)
+    * Remove class(es) or an array of class names from a given element.
+    * @method removeClass
+    * @param {HTMLElement} element The DOM element.
+    * @param {String} className the class name to remove from the class attribute
     * @chainable
     * @example
     * 
@@ -55,7 +58,8 @@ implement({
     }],
    /**
     * Check if element contains class name
-    * @param  {...String} classNames class name(s)
+    * @param {HTMLElement} element The DOM element.
+    * @param {String} className the class name to remove from the class attribute
     * @chainable
     * @example
     *  
@@ -74,8 +78,10 @@ implement({
         return false;
     }],
    /**
-    * Toggle the `class` in the class list. Optionally force state via `condition`
-    * @param  {...String} classNames class name(s)
+    * If the className exists on the node it is removed, if it doesn't exist it is added.
+    * @param {HTMLElement} element The DOM element
+    * @param {String} className the class name to be toggled
+    * @param {Boolean} force
     * @chainable
     * @example
     * 
@@ -96,7 +102,7 @@ implement({
     toggleClass: ["toggle", false, ( el, token ) => {
         var hasClass = el.hasClass( token );
        
-         if(hasClass) {
+         if( hasClass ) {
              el.removeClass( token ); 
          } else {
             el.addClass( token ); 
@@ -107,16 +113,16 @@ implement({
 }, ( methodName, classList, iteration, fallback ) => {
 
     // use native classList property if possible
-    if ( HTML.classList ) fallback = ( el, token ) => el[ 0 ].classList[ classList ]( token );
+    if ( !HTML.classList ) fallback = ( el, token ) => el[ 0 ].classList[ classList ]( token );
 
     if ( !iteration ) {
 
-        return function( token, stateVal ) {
-           
-            if ( is( stateVal, "boolean") && classList === "toggle" ) {
-                this[ stateVal ? "addClass" : "removeClass" ]( token );
+        return function( token, force ) {
 
-                return stateVal;
+            if ( is( force, "boolean") && classList === "toggle" ) {
+                this[ force ? "addClass" : "removeClass" ]( token );
+
+                return force;
             }
 
             if ( !is( token, "string" ) ) minErr( classList + "()", "The class provided is not a string." );

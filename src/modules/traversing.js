@@ -154,4 +154,5 @@ implement({
     }
 
     return all ? map( descendants, Nodes ) : Nodes( currentNode );
+    
 }, ( methodName ) => () => methodName.slice( -3 ) === "All" ? [] : new Shallow() );

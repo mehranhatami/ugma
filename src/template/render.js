@@ -9,54 +9,56 @@ import   tagCache                    from "../template/template";
 import { reduce, is                } from "../helpers";
 
 implement({
-     /**
-     * Create a new DOM node from Emmet or HTML string in memory
-     * @param  {String}       value     Emmet or HTML string
+
+    /**
+     * Creates a new DOM node from Emmet or HTML string in memory using the provided markup string.
+     * @param  {String}       template     The Emmet or HTML markup used to create the element
      * @param  {Object|Array} [varMap]  key/value map of variables
      */
     render: "",
+
     /**
      * Create a new array of Nodes from Emmet or HTML string in memory
-     * @param  {String}       value     Emmet or HTML string
+     * @param  {String}       template    The Emmet or HTML markup used to create the element
      * @param  {Object|Array} [varMap]  key/value map of variables
      * @function
      */    
     renderAll: "All"
 
-}, (methodName, all) => function(value, varMap) {
+}, (methodName, all) => function(template, varMap) {
 
     // Create native DOM elements
     // e.g. "document.createElement('div')"
-    if (value.nodeType === 1) return Nodes(value);
+    if (template.nodeType === 1) return Nodes(template);
 
-    if (!is(value, "string")) minErr(methodName + "()", "Not supported.");
+    if (!is(template, "string")) minErr(methodName + "()", "Not supported.");
 
     var doc = this[0].ownerDocument,
         sandbox = this._.sandbox || (this._.sandbox = doc.createElement("div"));
 
     var nodes, el;
 
-    if ( value && value in tagCache ) {
+    if ( template && template in tagCache ) {
 
-        nodes = doc.createElement( value );
+        nodes = doc.createElement( template );
 
         if ( all ) nodes = [ new Nodes( nodes ) ];
 
     } else {
 
-        value = value.trim();
+        template = template.trim();
 
         // handle vanila HTML strings
         // e.g. <div id="foo" class="bar"></div>
-        if (value[ 0 ] === "<" && value[ value.length - 1 ] === ">" && value.length >= 3 ) {
+        if (template[ 0 ] === "<" && template[ template.length - 1 ] === ">" && template.length >= 3 ) {
 
-            value = varMap ? ugma.format( value, varMap ) : value;
+            template = varMap ? ugma.format( template, varMap ) : template;
 
         } else { // emmet strings
-            value = ugma.template( value, varMap );
+            template = ugma.template( template, varMap );
         }
 
-        sandbox.innerHTML = value; // parse input HTML string
+        sandbox.innerHTML = template; // parse input HTML string
 
         for ( nodes = all ? [] : null; el = sandbox.firstChild; ) {
             sandbox.removeChild( el ); // detach element from the sandbox

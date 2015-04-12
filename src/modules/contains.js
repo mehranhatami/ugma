@@ -9,8 +9,8 @@ import { RETURN_FALSE           } from "../const";
 implement({
  /**
   * Check if element is inside of context
-  * @param  {ugma wrapped Object} element to check
-  * @return {Boolean} returns true if success and false otherwise
+  * @param  {HTMLElement, ugmaElement} element The containing ugma wrapped object or html element.
+  * @return {Boolean} Whether or not the element is or contains the 'other'
   *
   * @example
   *   ugma.contains(childElement);
@@ -25,16 +25,17 @@ implement({
   */
     contains( other ) {
 
-        var reference = this[ 0 ];
+        var reference = this[ 0 ],
+            nodeType = other && other.nodeType;
 
-        if ( instanceOf(other) ) {
+        if ( !other || ( instanceOf( other ) || nodeType === 1 ) ) {
 
-             other = other[ 0 ];
+             other = nodeType === 1 ? other : other[ 0 ];
 
             // If other and reference are the same object, return zero.
             if ( reference === other ) return 0;
-
-            return reference.contains(other);
+            // Match contains behavior (node.contains(node) === true).
+            return reference.contains( other );
         }
 
         minErr( "contains()", "Comparing position against non-Node values is not allowed." );

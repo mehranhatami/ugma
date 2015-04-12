@@ -10,32 +10,32 @@ implement({
   /**
    * Subscribe on particular properties / attributes, and get notified if they are changing
    * @param  {String}   name     property/attribute name
-   * @param  {Function}  callback  function for notifying about changes of the property/attribute
+   * @param  {Function}  fn  function for notifying about changes of the property/attribute
    * @chainable
    * @example
    *     link.subscribe("value", function(value, oldValue) { });
    */
-    subscribe( name, callback ) {
+    subscribe( name, fn ) {
             var subscription = this._.subscription || ( this._.subscription = [] );
 
             if ( !subscription[ name ] ) subscription[ name ] = [];
 
-            subscription[ name ].push( callback );
+            subscription[ name ].push( fn );
 
             return this;
         },
  /**
   * Cancel / stop a property / attribute subscription
   * @param  {String}   name    property/attribute name
-  * @param  {Function}  callback  function for notifying about changes of the property/attribute
+  * @param  {Function}  fn  function for notifying about changes of the property/attribute
   * @chainable
   * @example
   *     link.unsubscribe("value", function(value, oldValue) { });
   */
-   unsubscribe(name, callback) {
+   unsubscribe(name, fn) {
             var subscription = this._.subscription;
 
-            if ( subscription[ name ] ) subscription[ name ] = filter( subscription[ name ], ( cb ) => cb !== callback );
+            if ( subscription[ name ] ) subscription[ name ] = filter( subscription[ name ], ( callback ) => callback !== fn );
 
             return this;
         }

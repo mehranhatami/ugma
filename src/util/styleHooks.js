@@ -72,6 +72,7 @@ styleHooks._default = function(name, style) {
     return this.get[ name ] = this.set[ name ] = propName;
 };
 
+
 /**
  * Make 'styleHooks' global
  * Has to use the "implement" API method here, so this will be accessible

@@ -13,6 +13,10 @@
            expect(node.contains(node.query("a"))).toBeTruthy();
        });
 
+       it("should accept a DOM element of nodeType 1", function() {
+           expect(node.contains(node.query("a")[0])).toBeTruthy();
+       });
+
        it("should return zero for node itself", function() {
            expect(node.contains(node)).toBe(0);
        });

@@ -36,7 +36,7 @@ implement({
     *     link.prepend('<span>start</span>');
     */    
     prepend: [ "afterbegin", true, false, ( node, relatedNode ) => {
-        node.insertBefore( relatedNode, node.firstChild );
+        node.insertBefore( relatedNode, node.firstElementChild );
     }],
    /**
     * Insert  HTMLString, native DOM element or a ugma wrapped object before the current element
@@ -62,7 +62,7 @@ implement({
     *     link.after(ugma.render("b"));   
     */    
     after: [ "afterend", true, true, ( node, relatedNode ) => {
-        node.parentNode.insertBefore( relatedNode, node.nextSibling );
+        node.parentNode.insertBefore( relatedNode, node.nextElementSibling );
     }],
    /**
     * Replace current element with HTMLString or a ugma wrapped object
