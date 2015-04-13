@@ -143,6 +143,32 @@ ugma.query('body').shadow('zoo', function(core) { });
 
 Ugma supports **svg**. For further info, take a look here: https://github.com/ugma/ugma/issues/2
 
+Couple of SVG examples:
+
+```javascript
+
+// HTML markup
+<svg width="500" height="100">
+    <rect id="rect1" x="10" y="10" width="50" height="80"
+          style="stroke:#000000; fill:none;"/>
+</svg>
+
+// Javascript
+
+ ugma.query("button").on("click", function() {
+    // set width to 100
+      ugma.query("#rect1").set("width", "100")
+     // set a style value - stroke   
+     ugma.query("#rect1").set("style", "stroke: #ff0000");
+ });    
+
+```
+
+
+
+
+
+
 #Installation
 
 Download the repo and run:
