@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 05:04:33 GMT
+ * Build date: Mon, 13 Apr 2015 06:22:01 GMT
  */
 (function() {
     "use strict";
@@ -2363,7 +2363,7 @@
             // grab the previous value if it's already a subscription on this attribute / property,
             if ( subscription ) previousValue = this.get( name );
     
-            if ( helpers$$is(name, "string" ) ) {
+            if ( helpers$$is( name, "string" ) ) {
     
                 /**
                  *
@@ -2376,10 +2376,15 @@
                    var lowercasedName = name.toLowerCase();
     
                 // handle executable functions
-                if ( helpers$$is( value, "function") ) value = value( this );
+                if ( helpers$$is( value, "function" ) ) value = value( this );
     
                 if ( value == null ) {
-                    node.removeAttribute( name );
+                     // SVG
+                     if ( node[ name ] && node[ name ].baseVal ) {
+                         node[ name ].baseVal.value = null;
+                     } else {
+                         node.removeAttribute( name );
+                     }              
                 // Grab necessary hook if one is defined
                 } else if ( hook ) {
                     hook( node, value );
