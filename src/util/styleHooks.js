@@ -12,7 +12,7 @@ var unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink
     "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
     "overflow rotate3d border-right-color border-top-color " +
     // SVG-related properties
-    "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+    "stop-opacity stroke-mitrelimit stroke-dash-offset stroke-width stroke-opacity fill-opacity").split(" "),
 
     // Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property    
