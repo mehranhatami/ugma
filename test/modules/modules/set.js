@@ -24,13 +24,13 @@ describe("set", function() {
         input = ugma.query("#set_input");
         txt = ugma.query("#text1");
     });
-    
+
     it("should read/write a HTML value", function() {
-      var element = ugma.render("<div>abc</div>");
-      expect(element[0].innerHTML).toEqual("abc");
-      expect(element.get()).toEqual("abc");
-      expect(element.set("xyz") === element).toBeTruthy();
-      expect(element.get()).toEqual("xyz");
+        var element = ugma.render("<div>abc</div>");
+        expect(element[0].innerHTML).toEqual("abc");
+        expect(element.get()).toEqual("abc");
+        expect(element.set("xyz") === element).toBeTruthy();
+        expect(element.get()).toEqual("xyz");
     });
 
     it("should set boolean element property", function() {
@@ -203,12 +203,12 @@ describe("set", function() {
         expect(ugma.query("#select2").inner()).toBe("3");
 
         var sel3 = ugma.query("#select3").inner();
-        
+
         expect(Array.isArray(sel3)).toBe(true);
 
-        expect(sel3[0]).toBe("1");        
-        
-        expect(sel3[1]).toBe("2");        
+        expect(sel3[0]).toBe("1");
+
+        expect(sel3[1]).toBe("2");
 
         expect(ugma.query("#select2").get("selectedIndex")).toBe(3);
 
@@ -240,27 +240,27 @@ describe("set", function() {
         expect(ugma.query("#select5").inner()).toBe("");
     });
 
-   it("should get an array of selected elements from a multi select", function() {
+    it("should get an array of selected elements from a multi select", function() {
 
-      expect(ugma.render(
-        "<select multiple>" +
-          "<option selected>test 1</option>" +
-          "<option selected>test 2</option>" +
-        "</select>").get()).toEqual(["test 1", "test 2"]);
+        expect(ugma.render(
+            "<select multiple>" +
+            "<option selected>test 1</option>" +
+            "<option selected>test 2</option>" +
+            "</select>").get()).toEqual(["test 1", "test 2"]);
 
-      expect(ugma.render(
-        "<select multiple>" +
-          "<option selected>test 1</option>" +
-          "<option>test 2</option>" +
-        "</select>").get()).toEqual(["test 1"]);
+        expect(ugma.render(
+            "<select multiple>" +
+            "<option selected>test 1</option>" +
+            "<option>test 2</option>" +
+            "</select>").get()).toEqual(["test 1"]);
 
 
-      expect(ugma.render(
-        "<select multiple>" +
-          "<option>test 1</option>" +
-          "<option>test 2</option>" +
-        "</select>").get()).toEqual(null);
-   });
+        expect(ugma.render(
+            "<select multiple>" +
+            "<option>test 1</option>" +
+            "<option>test 2</option>" +
+            "</select>").get()).toEqual(null);
+    });
 
     it("should return reference to 'this'", function() {
         expect(link.set("id", "t")).toBe(link);
@@ -539,5 +539,19 @@ describe("set", function() {
     it("should fix misspelled language attribute", function() {
         expect(input.set("lang", "zh_CN")).toHaveAttr("lang", "zh-cn");
         expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
+    });
+
+    it("should set SVG attributes", function() {
+
+        var svg = ugma.render("<svg><rect></rect></svg>");
+
+        svg.set("height", 44);
+
+        expect(svg[0].height.baseVal.value).toBe(44);
+
+        svg.set("foo", "bar");
+
+        expect(svg.get("foo")).toBe("bar");
+
     });
 });

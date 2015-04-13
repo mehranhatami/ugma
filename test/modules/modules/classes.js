@@ -21,6 +21,10 @@ describe("classes manipulation", function() {
         });
 
     });
+    
+
+
+
 
     describe("hasClass", function() {
 
