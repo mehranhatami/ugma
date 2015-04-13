@@ -143,11 +143,36 @@ ugma.query('body').shadow('zoo', function(core) { });
 
 Ugma supports **svg**. For further info, take a look here: https://github.com/ugma/ugma/issues/2
 
+### Viewbox
+
+```javascript
+// HTML markup
+
+<button> click!! </button>
+ 
+<svg width="500" height="100">
+    <rect id="rect1" x="10" y="10" width="50" height="80"
+          style="stroke:#000000; fill:none;"/>
+</svg>
+
+// javascript
+
+  ugma.query("button").on("click", function() {
+     
+     // set viewbox
+     ugma.query("#rect1").set("viewbox", "0 0 800 600");
+      });    
+
+```
+
 ### Width and style
 
 ```javascript
 
 // HTML markup
+
+<button> click!! </button>
+
 <svg width="500" height="100">
     <rect id="rect1" x="10" y="10" width="50" height="80"
           style="stroke:#000000; fill:none;"/>
