@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 02:57:12 GMT
+ * Build date: Mon, 13 Apr 2015 03:14:02 GMT
  */
 (function() {
     "use strict";
@@ -1616,7 +1616,7 @@
 
     core$core$$implement({
         
-     styleHooks:function(  mixin, where )  {
+     accessorHooks:function(  mixin, where )  {
         // Stop here if 'where' is not a typeof string
          if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
        
@@ -2414,7 +2414,7 @@
                 } else if ( hook ) {
                     hook( node, value );
                  // Handle everything which isn't a DOM element node
-                } else if ( name in node && node.namespaceURI) { 
+                } else if ( name in node && !SVG( node ) ) { 
                     node[ name ] = value;
                   // set attribute
                 } else {

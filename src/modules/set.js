@@ -5,7 +5,7 @@
 import { implement                          } from "../core/core";
 import { proxy, isArray, each, is, forOwn   } from "../helpers";
 import { minErr                             } from "../minErr";
-import { RETURN_THIS                        } from "../const";
+import { RETURN_THIS, SVG                   } from "../const";
 import   accessorhooks                        from "../util/accessorhooks";
 import   customAttr                           from "../util/customAttr";
 
@@ -88,7 +88,7 @@ implement({
             } else if ( hook ) {
                 hook( node, value );
              // Handle everything which isn't a DOM element node
-            } else if ( name in node && node.namespaceURI) { 
+            } else if ( name in node && !SVG( node ) ) { 
                 node[ name ] = value;
               // set attribute
             } else {

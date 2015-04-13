@@ -196,7 +196,7 @@ each((
  
  implement({
      
-  styleHooks:(  mixin, where ) => {
+  accessorHooks:(  mixin, where ) => {
      // Stop here if 'where' is not a typeof string
       if( !is( where, "string" ) ) minErr( "ugma.accessorHooks()", "Not a valid string value" );
     
