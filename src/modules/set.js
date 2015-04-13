@@ -93,9 +93,13 @@ implement({
             } else if ( hook ) {
                 hook( node, value );
              // Handle everything which isn't a DOM element node
-            } else if ( name in node && !SVG( node ) ) { 
-                node[ name ] = value;
-              // set attribute
+            } else if ( name in node ) { 
+                if (node[name] && node[name].baseVal) {
+                     node[name].baseVal.value = value;
+                } else {
+                     node[name] = value;
+                } 
+            // set attribute
             } else {
                 // Provides a normalized attribute interface.
                 node.setAttribute( lowercasedName, "" + ( customAttr[ value ] || value ) );

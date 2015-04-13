@@ -541,17 +541,4 @@ describe("set", function() {
         expect(input.set("lang", "en_US")).toHaveAttr("lang", "en-us");
     });
 
-    it("should set SVG attributes", function() {
-
-        var svg = ugma.render("<svg><rect></rect></svg>");
-
-        svg.set("height", 44);
-
-        expect(svg[0].height.baseVal.value).toBe(44);
-
-        svg.set("foo", "bar");
-
-        expect(svg.get("foo")).toBe("bar");
-
-    });
 });

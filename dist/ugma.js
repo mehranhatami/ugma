@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 06:22:01 GMT
+ * Build date: Mon, 13 Apr 2015 07:29:36 GMT
  */
 (function() {
     "use strict";
@@ -2379,7 +2379,7 @@
                 if ( helpers$$is( value, "function" ) ) value = value( this );
     
                 if ( value == null ) {
-                     // SVG
+                     // Support removing attributes on SVG nodes
                      if ( node[ name ] && node[ name ].baseVal ) {
                          node[ name ].baseVal.value = null;
                      } else {
@@ -2389,9 +2389,13 @@
                 } else if ( hook ) {
                     hook( node, value );
                  // Handle everything which isn't a DOM element node
-                } else if ( name in node && !SVG( node ) ) { 
-                    node[ name ] = value;
-                  // set attribute
+                } else if ( name in node ) { 
+                    if (node[name] && node[name].baseVal) {
+                         node[name].baseVal.value = value;
+                    } else {
+                         node[name] = value;
+                    } 
+                // set attribute
                 } else {
                     // Provides a normalized attribute interface.
                     node.setAttribute( lowercasedName, "" + ( util$customAttr$$default[ value ] || value ) );
@@ -2616,6 +2620,22 @@
                 return this;
             }
     }, null, function()  {return RETURN_THIS} );
+
+    core$core$$implement({
+        svg: function(name, attributes, style) {
+   
+         // Create the SVG element in memory
+         
+   //      ugma.render('svg').set(attributes).css(style);
+     
+       var svg = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg");    
+         
+         
+   
+   
+            return this;
+        }
+    });
 
     core$core$$implement({
     
