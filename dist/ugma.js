@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 07:37:56 GMT
+ * Build date: Mon, 13 Apr 2015 11:34:23 GMT
  */
 (function() {
     "use strict";
@@ -1541,6 +1541,33 @@
             return null;
         };
     }
+
+    // SVG attributes
+
+    helpers$$each( ("width height x y cx cy r rx ry x1 x2 y1 y2 transform").split( " "), function( key )   {
+        
+    
+         util$accessorhooks$$accessorHooks.get[ key ] = function( node )  {
+             
+           // we use use getBBox() to ensure we always get values for elements with undefined height/width attributes.
+              if( key === "width" || key === "height") {
+               
+             // Firefox throws an error if .getBBox() is called on an SVG that isn't attached to the DOM.
+              try {
+                    return node.getBBox()[key];
+                  } catch ( err ) {
+                     return 0;
+              }
+               // Otherwise, access the attribute value directly.
+            } else {
+                 return node.getAttribute(key);
+            }
+        
+         
+         
+         };
+    
+        });
 
     /**
      * Properties written as camelCase

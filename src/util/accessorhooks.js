@@ -139,6 +139,30 @@ if ( !support.optSelected ) {
     };
 }
 
+// SVG attributes
+
+each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform" ).split(" "), ( key ) => {
+    
+    // getter
+    accessorHooks.get[key] = ( node ) => {
+
+        // we use use getBBox() to ensure we always get values for elements with undefined height/width attributes.
+        if ( key === "width" || key === "height" ) {
+
+            // Firefox throws an error if .getBBox() is called on an SVG that isn't attached to the DOM.
+            // TODO! Use the proxy() instead
+            try {
+                return node.getBBox()[ key ];
+            } catch ( err ) {
+                return 0;
+            }
+            // Otherwise, access the attribute value directly.
+        } else {
+            return node.getAttribute(key);
+        }
+    };
+});
+
 /**
  * Properties written as camelCase
  *
