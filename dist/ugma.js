@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 07:29:36 GMT
+ * Build date: Mon, 13 Apr 2015 07:31:27 GMT
  */
 (function() {
     "use strict";
@@ -2620,22 +2620,6 @@
                 return this;
             }
     }, null, function()  {return RETURN_THIS} );
-
-    core$core$$implement({
-        svg: function(name, attributes, style) {
-   
-         // Create the SVG element in memory
-         
-   //      ugma.render('svg').set(attributes).css(style);
-     
-       var svg = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg");    
-         
-         
-   
-   
-            return this;
-        }
-    });
 
     core$core$$implement({
     
