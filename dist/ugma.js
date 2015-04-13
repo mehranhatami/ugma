@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Sun, 12 Apr 2015 16:24:48 GMT
+ * Build date: Mon, 13 Apr 2015 02:57:12 GMT
  */
 (function() {
     "use strict";
@@ -28,6 +28,8 @@
     var RETURN_TRUE = function()  {return true};
     var RETURN_FALSE = function()  {return false};
     var FOCUSABLE = /^(?:input|select|textarea|button)$/i;
+
+    var SVG = function(node)  {return node.nodeType === 1 && node.namespaceURI === "http://www.w3.org/2000/svg"} ;
 
     // Internet Explorer
     // WARNING! 'document.documentMode' can not be used to identify
@@ -1704,6 +1706,7 @@
           camelize: helpers$$camelize,
           computeStyle: helpers$$computeStyle,
           deserializeValue: util$readData$$deserializeValue,
+          isSVG: SVG
       });
 
     core$core$$implement({
@@ -2411,7 +2414,7 @@
                 } else if ( hook ) {
                     hook( node, value );
                  // Handle everything which isn't a DOM element node
-                } else if ( name in node ) { 
+                } else if ( name in node && node.namespaceURI) { 
                     node[ name ] = value;
                   // set attribute
                 } else {

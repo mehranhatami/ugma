@@ -88,7 +88,7 @@ implement({
             } else if ( hook ) {
                 hook( node, value );
              // Handle everything which isn't a DOM element node
-            } else if ( name in node ) { 
+            } else if ( name in node && node.namespaceURI) { 
                 node[ name ] = value;
               // set attribute
             } else {
