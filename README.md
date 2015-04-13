@@ -147,21 +147,13 @@ Ugma supports **svg**. For further info, take a look here: https://github.com/ug
 
 ```javascript
 // HTML markup
-
-<button> click!! </button>
- 
 <svg width="500" height="100">
     <rect id="rect1" x="10" y="10" width="50" height="80"
           style="stroke:#000000; fill:none;"/>
 </svg>
 
 // javascript
-
-  ugma.query("button").on("click", function() {
-     
-     // set viewbox
-     ugma.query("#rect1").set("viewbox", "0 0 800 600");
-      });    
+  ugma.query("#rect1").set("viewbox", "0 0 800 600");
 
 ```
 
@@ -179,7 +171,6 @@ Ugma supports **svg**. For further info, take a look here: https://github.com/ug
 </svg>
 
 // Javascript
-
  ugma.query("button").on("click", function() {
     // set width to 100
       ugma.query("#rect1").set("width", "100")
