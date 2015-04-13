@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.7a
+ * Javascript framework 0.0.7b
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 03:14:02 GMT
+ * Build date: Mon, 13 Apr 2015 03:37:31 GMT
  */
 (function() {
     "use strict";
@@ -563,7 +563,7 @@
     }, function( methodName, classList, iteration, returnFn )  {
     
         // use native classList property if possible
-        if ( !HTML.classList ) returnFn = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
+        if ( HTML.classList ) returnFn = function( el, token )  {return el[ 0 ].classList[ classList ]( token )};
     
         if ( !iteration ) {
     
@@ -716,7 +716,7 @@
         "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
         "overflow rotate3d border-right-color border-top-color " +
         // SVG-related properties
-        "stop-opacity stroke-mitrelimit stroke-dash-offset, stroke-width, stroke-opacity fill-opacity").split(" "),
+        "stop-opacity stroke-mitrelimit stroke-dash-offset stroke-width stroke-opacity fill-opacity").split(" "),
     
         // Add in style property hooks for overriding the default
         // behavior of getting and setting a style property    
@@ -3186,7 +3186,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.7a";
+    core$core$$ugma.version = "0.0.7b";
 
     WINDOW.ugma = core$core$$ugma;
 })();
