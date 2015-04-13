@@ -139,6 +139,9 @@ ugma.query('body').shadow('bar', function(core) { });
 ugma.query('body').shadow('zoo', function(core) { });
 
 ```
+#SVG
+
+Ugma supports **svg**. For further info, take a look here: https://github.com/ugma/ugma/issues/2
 
 #Installation
 
