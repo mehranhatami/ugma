@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 07:31:27 GMT
+ * Build date: Mon, 13 Apr 2015 07:37:56 GMT
  */
 (function() {
     "use strict";
@@ -2373,28 +2373,25 @@
                  * -  lower camelCase for attributes.
                  */
     
-                   var lowercasedName = name.toLowerCase();
-    
+               var lowercasedName = name.toLowerCase(),
+                   svgCheck = function( remove )  {
+                       if (node[ name ] && node[name].baseVal ) {
+                           node[ name ].baseVal.value = remove ? null : value;
+                       } else {
+                           remove ? node.removeAttribute( name ) : node[ name ] = value;
+                       }
+                   };
                 // handle executable functions
                 if ( helpers$$is( value, "function" ) ) value = value( this );
     
                 if ( value == null ) {
-                     // Support removing attributes on SVG nodes
-                     if ( node[ name ] && node[ name ].baseVal ) {
-                         node[ name ].baseVal.value = null;
-                     } else {
-                         node.removeAttribute( name );
-                     }              
+                    svgCheck( true );
                 // Grab necessary hook if one is defined
                 } else if ( hook ) {
                     hook( node, value );
                  // Handle everything which isn't a DOM element node
                 } else if ( name in node ) { 
-                    if (node[name] && node[name].baseVal) {
-                         node[name].baseVal.value = value;
-                    } else {
-                         node[name] = value;
-                    } 
+                    svgCheck();
                 // set attribute
                 } else {
                     // Provides a normalized attribute interface.

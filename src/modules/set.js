@@ -77,28 +77,25 @@ implement({
              * -  lower camelCase for attributes.
              */
 
-               var lowercasedName = name.toLowerCase();
-
+           var lowercasedName = name.toLowerCase(),
+               svgCheck = ( remove ) => {
+                   if (node[ name ] && node[name].baseVal ) {
+                       node[ name ].baseVal.value = remove ? null : value;
+                   } else {
+                       remove ? node.removeAttribute( name ) : node[ name ] = value;
+                   }
+               };
             // handle executable functions
             if ( is( value, "function" ) ) value = value( this );
 
             if ( value == null ) {
-                 // Support removing attributes on SVG nodes
-                 if ( node[ name ] && node[ name ].baseVal ) {
-                     node[ name ].baseVal.value = null;
-                 } else {
-                     node.removeAttribute( name );
-                 }              
+                svgCheck( true );
             // Grab necessary hook if one is defined
             } else if ( hook ) {
                 hook( node, value );
              // Handle everything which isn't a DOM element node
             } else if ( name in node ) { 
-                if (node[name] && node[name].baseVal) {
-                     node[name].baseVal.value = value;
-                } else {
-                     node[name] = value;
-                } 
+                svgCheck();
             // set attribute
             } else {
                 // Provides a normalized attribute interface.
