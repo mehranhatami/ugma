@@ -67,7 +67,7 @@ implement({
         // grab the previous value if it's already a subscription on this attribute / property,
         if ( subscription ) previousValue = this.get( name );
 
-        if ( is(name, "string" ) ) {
+        if ( is( name, "string" ) ) {
 
             /**
              *
@@ -80,10 +80,15 @@ implement({
                var lowercasedName = name.toLowerCase();
 
             // handle executable functions
-            if ( is( value, "function") ) value = value( this );
+            if ( is( value, "function" ) ) value = value( this );
 
             if ( value == null ) {
-                node.removeAttribute( name );
+                 // Support removing attributes on SVG nodes
+                 if ( node[ name ] && node[ name ].baseVal ) {
+                     node[ name ].baseVal.value = null;
+                 } else {
+                     node.removeAttribute( name );
+                 }              
             // Grab necessary hook if one is defined
             } else if ( hook ) {
                 hook( node, value );
