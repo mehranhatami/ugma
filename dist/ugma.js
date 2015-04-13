@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 11:34:23 GMT
+ * Build date: Mon, 13 Apr 2015 12:12:18 GMT
  */
 (function() {
     "use strict";
@@ -1544,30 +1544,37 @@
 
     // SVG attributes
 
-    helpers$$each( ("width height x y cx cy r rx ry x1 x2 y1 y2 transform").split( " "), function( key )   {
+    helpers$$each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform" ).split(" "), function( key )  {
         
+        // getter
+        util$accessorhooks$$accessorHooks.get[ key ] = function( node )  {
     
-         util$accessorhooks$$accessorHooks.get[ key ] = function( node )  {
-             
-           // we use use getBBox() to ensure we always get values for elements with undefined height/width attributes.
-              if( key === "width" || key === "height") {
-               
-             // Firefox throws an error if .getBBox() is called on an SVG that isn't attached to the DOM.
-              try {
-                    return node.getBBox()[key];
-                  } catch ( err ) {
-                     return 0;
-              }
-               // Otherwise, access the attribute value directly.
-            } else {
-                 return node.getAttribute(key);
+            // we use use getBBox() to ensure we always get values for elements with undefined height/width attributes.
+            if ( key === "width" || key === "height" ) {
+    
+                // Firefox throws an error if .getBBox() is called on an SVG that isn't attached to the DOM.
+                try {
+                    return node.getBBox()[ key ];
+                } catch ( err ) {
+                    return 0;
+                }
             }
+             // Otherwise, access the attribute value directly.
+             return node.getAttribute( key );
+        };
         
+        // setter
+        util$accessorhooks$$accessorHooks.set[ key ] = function( node, value )  { /* nothinf for now. Will be implemented!! */
          
-         
-         };
-    
-        });
+          // FIX ME!
+          // SVG Transform need to be developed
+          // if( key === "transform" ) { }
+          
+        // SVG nodes have their dimensional properties (width, height, x, y, cx, etc.) applied directly 
+        // as attributes instead of as styles.
+          node.setAttribute( key, value );
+        };
+    });
 
     /**
      * Properties written as camelCase
@@ -1674,9 +1681,6 @@
                 
                 // If applicable, access the attribute via the DOM 0 way
                 if (name in node || node[ name ] !== undefined) return node[ name ];
-                
-                
-                 
                 
                return /^data-/.test( name ) ? 
                    // try to fetch HTML5 `data-*` attribute      
@@ -2400,25 +2404,24 @@
                  * -  lower camelCase for attributes.
                  */
     
-               var lowercasedName = name.toLowerCase(),
-                   svgCheck = function( remove )  {
-                       if (node[ name ] && node[name].baseVal ) {
-                           node[ name ].baseVal.value = remove ? null : value;
-                       } else {
-                           remove ? node.removeAttribute( name ) : node[ name ] = value;
-                       }
-                   };
+               var lowercasedName = name.toLowerCase();
+               
                 // handle executable functions
-                if ( helpers$$is( value, "function" ) ) value = value( this );
+                if (helpers$$is(value, "function")) value = value(this);
     
-                if ( value == null ) {
-                    svgCheck( true );
+                if (value == null) {
+    
+                    if (node[name] && node[name].baseVal) {
+                        node[name].baseVal.value = null;
+                    } else {
+                        node.removeAttribute(name);
+                    }            
                 // Grab necessary hook if one is defined
                 } else if ( hook ) {
                     hook( node, value );
                  // Handle everything which isn't a DOM element node
                 } else if ( name in node ) { 
-                    svgCheck();
+                    node[ name ] = value;
                 // set attribute
                 } else {
                     // Provides a normalized attribute interface.
