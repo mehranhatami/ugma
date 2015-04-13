@@ -163,8 +163,45 @@ Couple of SVG examples:
  });    
 
 ```
+### Animating SVG Shapes
 
+```javascript
 
+// HTML markup
+<svg width="500" height="100">
+    <circle id="circle1" cx="20" cy="20" r="10"
+            style="stroke: none; fill: #ff0000;"/>
+</svg>
+
+// Javascript
+
+var timerFunction = null;
+
+function animate() {
+        var circle = ugma.query("#circle1");
+        var x = circle.get("cx");
+        var newX = 2 + parseInt(x);
+        if(newX > 500) {
+            newX = 20;
+        }
+        circle.set("cx", newX);
+    }  
+
+      ugma.query("#start").on("click", function() {
+          if (timerFunction == null) {
+              timerFunction = setInterval(animate, 20);
+          }
+      });
+
+      ugma.query("#stop").on("click", function() {
+          if (timerFunction != null) {
+              clearInterval(timerFunction);
+              timerFunction = null;
+          }
+
+      });
+ 
+```
 
 
 
