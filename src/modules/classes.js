@@ -113,7 +113,7 @@ implement({
 }, ( methodName, classList, iteration, returnFn ) => {
 
     // use native classList property if possible
-    if ( !HTML.classList ) returnFn = ( el, token ) => el[ 0 ].classList[ classList ]( token );
+    if ( HTML.classList ) returnFn = ( el, token ) => el[ 0 ].classList[ classList ]( token );
 
     if ( !iteration ) {
 
