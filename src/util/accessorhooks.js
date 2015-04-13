@@ -140,11 +140,20 @@ if ( !support.optSelected ) {
 }
 
 // SVG attributes
-
-each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform" ).split(" "), ( key ) => {
+// NOTE!! At some pont SVG DOM conflicts with DOM, so for this edge cases there has to 
+// be developed separate hooks to check "isSVG(node")
+each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform viewbox preserveaspectratio autoReverse " +
+"calcMode clip clipPathUnits direction diffuseConstant xml:base preserveAspectRatio limitingConeAngle " +
+"contentScriptType contentStyleType cursor g1 g2 glyphRef gradientTransform gradientUnits d decelerate descent   " +
+"display divisor dur dx dy k1 k2 k3 k4 lengthAdjust pathLength patternContentUnits patternTransform patternUnits " +
+"tableValues target targetX targetY xlink:actuate xlink:arcrole xlink:href xlink:role xlink:show xlink:title xlink:type " +
+"xml:lang xml:space viewTarget unicode radius refX refY markerUnits markerWidth mask maskContentUnits maskUnits mathematical " +
+"max media method min mode format from fx fy g1 g2 gradientTransform gradientUnits hanging onabort onactivate " +
+"orient orientation origin overflow path local points pointsAtX pointsAtY pointsAtZ preserveAlpha " +
+"primitiveUnits to textLength").split(" "), ( key ) => {
     
     // getter
-    accessorHooks.get[ key ] = ( node ) => {
+    accessorHooks.get[ key.toLowerCase() ] = ( node ) => {
 
         // we use use getBBox() to ensure we always get values for elements with undefined height/width attributes.
         if ( key === "width" || key === "height" ) {
@@ -157,6 +166,7 @@ each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform" ).split(" "), ( k
             }
         }
          // Otherwise, access the attribute value directly.
+         // Note: For SVG attributes, vendor-prefixed property names are never used.
          return node.getAttribute( key );
     };
     
@@ -170,6 +180,68 @@ each( ( "width height x y cx cy r rx ry x1 x2 y1 y2 transform" ).split(" "), ( k
     // SVG nodes have their dimensional properties (width, height, x, y, cx, etc.) applied directly 
     // as attributes instead of as styles.
       node.setAttribute( key, value );
+    };
+});
+
+/**
+ * Special SVG attribute treatment
+ */
+ 
+forOwn({
+    alignmentBaseline:          "alignment-baseline",
+    baselineShift:              "baseline-shift",
+    clipPath:                   "clip-path",
+    clipRule:                   "clip-rule",
+    colorInterpolation:         "color-interpolation",
+    colorInterpolationFilters:  "color-interpolation-filters",
+    colorRendering:             "color-rendering",
+    dominantBaseline:           "dominant-baseline",
+    enableBackground:           "enable-background",
+    fillOpacity:                "fill-opacity",
+    fillRule:                   "fill-rule",
+    floodColor:                 "flood-color",
+    floodOpacity:               "flood-opacity",
+    fontFamily:                 "font-family",
+    fontSize:                   "font-size",
+    fontSizeAdjust:             "font-size-adjust",
+    fontStretch:                "font-stretch",
+    fontStyle:                  "font-style",
+    fontVariant:                "font-variant",
+    fontWeight:                 "font-weight",
+    glyphOrientationHorizontal: "glyph-orientation-horizontal",
+    glyphOrientationVertical:   "glyph-orientation-vertical",
+    horizAdvX:                  "horiz-adv-x",
+    horizOriginX:               "horiz-origin-x",
+    imageRendering:             "image-rendering",
+    letterSpacing:              "letter-spacing",
+    lightingColor:              "lighting-color",
+    markerEnd:                  "marker-end",
+    markerMid:                  "marker-mid",
+    markerStart:                "marker-start",
+    stopColor:                  "stop-color",
+    stopOpacity:                "stop-opacity",
+    strikethroughPosition:      "strikethrough-position",
+    strikethroughThickness:     "strikethrough-thickness",
+    strokeDashArray:            "stroke-dasharray",
+    strokeDashOffset:           "stroke-dashoffset",
+    strokeLineCap:              "stroke-linecap",
+    strokeLineJoin:             "stroke-linejoin",
+    strokeMiterLimit:           "stroke-miterlimit",
+    strokeOpacity:              "stroke-opacity",
+    strokeWidth:                "stroke-width",
+    textAnchor:                 "text-anchor",
+    textDecoration:             "text-decoration",
+    textRendering:              "text-rendering",
+    underlinePosition:          "underline-position",
+    underlineThickness:         "underline-thickness",
+    vertAdvY:                   "vert-adv-y",
+    vertOriginY:                "vert-origin-y",
+    wordSpacing:                "word-spacing",
+    writingMode:                "writing-mode"
+}, ( key, value )  => {
+
+    accessorHooks.set[ key ] = ( node ) => {
+        node.setAttribute( key, value );
     };
 });
 
