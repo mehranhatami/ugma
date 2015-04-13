@@ -12,6 +12,10 @@ var unitless = ("box-flex box-flex-group column-count flex flex-grow flex-shrink
     "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
     "overflow rotate3d border-right-color border-top-color " +
     // SVG-related properties
+    "alignment-baseline flood-color font-size-adjust glyph-orientation-horizontal glyph-orientation-vertical letter-spacing " +
+    "font-variant  horiz-adc-x image-rendering stop-color stroke-linecap stroke-width text-decoration vert-adv-y " + 
+    "stroke-dashoffset stroke-likejoin text-anchor strikethrough-position  strikethrough-thickness font-stretch " +
+    "dominant-baseline color-rendering baseline-shift marker-start sroke-dasharray word-spacing writing-mode " +
     "stop-opacity stroke-mitrelimit stroke-dash-offset stroke-width stroke-opacity fill-opacity").split(" "),
 
     // Add in style property hooks for overriding the default

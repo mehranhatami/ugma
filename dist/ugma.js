@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 04:31:18 GMT
+ * Build date: Mon, 13 Apr 2015 05:04:33 GMT
  */
 (function() {
     "use strict";
@@ -716,6 +716,10 @@
         "fill-opacity font-weight line-height opacity orphans widows z-index zoom column-rule-color perspective alpha " +
         "overflow rotate3d border-right-color border-top-color " +
         // SVG-related properties
+        "alignment-baseline flood-color font-size-adjust glyph-orientation-horizontal glyph-orientation-vertical letter-spacing " +
+        "font-variant  horiz-adc-x image-rendering stop-color stroke-linecap stroke-width text-decoration vert-adv-y " + 
+        "stroke-dashoffset stroke-likejoin text-anchor strikethrough-position  strikethrough-thickness font-stretch " +
+        "dominant-baseline color-rendering baseline-shift marker-start sroke-dasharray word-spacing writing-mode " +
         "stop-opacity stroke-mitrelimit stroke-dash-offset stroke-width stroke-opacity fill-opacity").split(" "),
     
         // Add in style property hooks for overriding the default
