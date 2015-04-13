@@ -1,11 +1,11 @@
 /**
- * Javascript framework 0.0.7b
+ * Javascript framework 0.0.7c
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 13:41:44 GMT
+ * Build date: Mon, 13 Apr 2015 14:07:27 GMT
  */
 (function() {
     "use strict";
@@ -1641,10 +1641,13 @@
         vertOriginY:                "vert-origin-y",
         wordSpacing:                "word-spacing",
         writingMode:                "writing-mode"
-    }, function( key, value )   {
+    }, function( key, original )   {
     
-        util$accessorhooks$$accessorHooks.set[ key ] = function( node )  {
-            node.setAttribute( key, value );
+        util$accessorhooks$$accessorHooks.set[ key ] = function( node, value )  {
+            node.setAttribute( original, value );
+        };
+        util$accessorhooks$$accessorHooks.get[ key ] = function( node )  {
+           return node.getAttribute( original );
         };
     });
 
@@ -3264,7 +3267,7 @@
     };
 
     // Current version of the library. Keep in sync with `package.json`.
-    core$core$$ugma.version = "0.0.7b";
+    core$core$$ugma.version = "0.0.7c";
 
     WINDOW.ugma = core$core$$ugma;
 })();

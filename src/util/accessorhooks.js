@@ -238,10 +238,13 @@ forOwn({
     vertOriginY:                "vert-origin-y",
     wordSpacing:                "word-spacing",
     writingMode:                "writing-mode"
-}, ( key, value )  => {
+}, ( key, original )  => {
 
-    accessorHooks.set[ key ] = ( node ) => {
-        node.setAttribute( key, value );
+    accessorHooks.set[ key ] = ( node, value ) => {
+        node.setAttribute( original, value );
+    };
+    accessorHooks.get[ key ] = ( node ) => {
+       return node.getAttribute( original );
     };
 });
 

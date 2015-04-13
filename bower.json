@@ -1,6 +1,6 @@
 {
   "name": "ugma",
-  "version": "0.0.7a",
+  "version": "0.0.7c",
   "codename": "mehran",
   "main": [
     "dist/ugma.js"

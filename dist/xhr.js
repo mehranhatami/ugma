@@ -1,11 +1,11 @@
 /**
- * XHR (ajax) for ugma javascript framework 0.0.7b
+ * XHR (ajax) for ugma javascript framework 0.0.7c
  * https://github.com/ugma/ugma
  * 
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 13:41:41 GMT
+ * Build date: Mon, 13 Apr 2015 14:07:24 GMT
  */
 (function() {
     "use strict";
