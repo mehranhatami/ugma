@@ -5,7 +5,7 @@
  * Copyright 2014 - 2015 Kenny Flashlight
  * Released under the MIT license
  * 
- * Build date: Mon, 13 Apr 2015 03:37:31 GMT
+ * Build date: Mon, 13 Apr 2015 04:31:18 GMT
  */
 (function() {
     "use strict";
@@ -784,19 +784,7 @@
      */
 
     core$core$$implement({
-        
-     styleHooks:function( mixin, where )  {
-        // Stop here if 'where' is not a typeof string
-         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.styleHooks()", "Not a valid string value" );
-       
-         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-   
-             helpers$$forOwn( mixin, function( key, value )  {
-                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$styleHooks$$styleHooks[ where ][ key ] = mixin;
-             });
-         }
-     }
-   
+          styleHooks: util$styleHooks$$styleHooks
     });
 
     var util$styleHooks$$default = util$styleHooks$$styleHooks;
@@ -1138,17 +1126,7 @@
      */
 
     core$core$$implement({
-        
-     eventHooks:function(  mixin )  {
-         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-   
-             helpers$$forOwn( mixin, function( key, value )  {
-                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) )
-                 util$eventhooks$$eventHooks[ key ] = mixin;
-             });
-         }
-     }
-     
+        eventHooks: util$eventhooks$$eventHooks
     });
 
 
@@ -1615,19 +1593,7 @@
      */
 
     core$core$$implement({
-        
-     accessorHooks:function(  mixin, where )  {
-        // Stop here if 'where' is not a typeof string
-         if( !helpers$$is( where, "string" ) ) minErr$$minErr( "ugma.accessorHooks()", "Not a valid string value" );
-       
-         if ( helpers$$is( mixin, "object" ) && !helpers$$isArray( mixin ) ) {
-   
-             helpers$$forOwn( mixin, function( key, value )  {
-                 if( helpers$$is( value, "string" ) || helpers$$is( value, "function" ) ) util$accessorhooks$$accessorHooks[ where ][ key ] = mixin;
-             });
-         }
-     }
-     
+          accessorHooks:util$accessorhooks$$accessorHooks
     });
 
 

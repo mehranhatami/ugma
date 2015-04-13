@@ -195,19 +195,7 @@ each((
  */
  
  implement({
-     
-  accessorHooks:(  mixin, where ) => {
-     // Stop here if 'where' is not a typeof string
-      if( !is( where, "string" ) ) minErr( "ugma.accessorHooks()", "Not a valid string value" );
-    
-      if ( is( mixin, "object" ) && !isArray( mixin ) ) {
-
-          forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) ) accessorHooks[ where ][ key ] = mixin;
-          });
-      }
-  }
-  
+       accessorHooks:accessorHooks
  });
   
     

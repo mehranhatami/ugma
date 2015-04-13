@@ -60,17 +60,7 @@ if (INTERNET_EXPLORER < 10) {
  */
  
  implement({
-     
-  eventHooks:(  mixin ) => {
-      if ( is( mixin, "object" ) && !isArray( mixin ) ) {
-
-          forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) )
-              eventHooks[ key ] = mixin;
-          });
-      }
-  }
-  
+     eventHooks: eventHooks
  });
 
 

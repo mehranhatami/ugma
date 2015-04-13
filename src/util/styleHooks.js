@@ -80,19 +80,7 @@ styleHooks._default = function(name, style) {
  */
  
  implement({
-     
-  styleHooks:( mixin, where ) => {
-     // Stop here if 'where' is not a typeof string
-      if( !is( where, "string" ) ) minErr( "ugma.styleHooks()", "Not a valid string value" );
-    
-      if ( is( mixin, "object" ) && !isArray( mixin ) ) {
-
-          forOwn( mixin, ( key, value ) => {
-              if( is( value, "string" ) || is( value, "function" ) ) styleHooks[ where ][ key ] = mixin;
-          });
-      }
-  }
-
+       styleHooks: styleHooks
  });
 
 /*
