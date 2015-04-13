@@ -184,6 +184,10 @@ Ugma supports **svg**. For further info, take a look here: https://github.com/ug
 ```javascript
 
 // HTML markup
+
+<button id="start"> Start </button>
+<button id="stop"> Stop </button>
+
 <svg width="500" height="100">
     <circle id="circle1" cx="20" cy="20" r="10"
             style="stroke: none; fill: #ff0000;"/>
