@@ -3,8 +3,7 @@
  */
 
 import { WINDOW, DOCUMENT    } from "../const";
-import { forOwn, is, copy  } from "../helpers";
-import   create        from "./create";
+import { forOwn, is, copy, create  } from "../helpers";
 
 function newObject(proto, FN, args) {
     var obj = create(proto);

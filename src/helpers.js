@@ -195,9 +195,30 @@ export const isArray = Array.isArray;
         object[key] = source[key];
       }
       return object;
+    },
+    isObject = ( value ) => {
+        var type = typeof value;
+        return type === "function" || (value && type === "object") || false;
+    },
+    baseCreateFactory = () => {
+      function UgmaObject() {}
+      return function (prototype) {
+        var result;
+        if (isObject(prototype)) {
+          UgmaObject.prototype = prototype;
+          result = new UgmaObject();
+          UgmaObject.prototype = null;
+        }
+        return result || WINDOW.Object();
+      };
+    },
+    baseCreate = baseCreateFactory(),
+    create = ( prototype, properties ) => {
+      var result = baseCreate(prototype);
+      return properties ? copy(properties, result) : result;
     };
 
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle, copy };
+export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle, copy, create };
