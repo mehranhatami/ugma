@@ -33,12 +33,12 @@ var uClass = (Base, info) => {
         Base = undefined;
     }
     if( arguments.len === 3 ){
-        throw new Error('WTF????');
+        throw new Error("WTF????");
     }
     var proto = Base ? create(Base && Base.prototype) : {};
     //I dont like it, because it makes it a bit slow but ugma has used it extensively this way, all around the code
     //If I were in charge, I would do it another way without messing around with `constructor` keyword
-    copy(proto, info, ['constructor']);
+    copy(proto, info, ["constructor"]);
 
     function instantiate(args){
         return newObject(proto, info.constructor, args);
