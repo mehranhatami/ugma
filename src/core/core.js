@@ -2,9 +2,17 @@
  * @module core
  */
 
-import { DOCUMENT    } from "../const";
+import { WINDOW, DOCUMENT    } from "../const";
 import { forOwn, is  } from "../helpers";
+import   create        from "./create";
 
+function newObject(proto, FN, args) {
+    var obj = create(proto);
+    if (typeof FN === "function") {
+        FN.apply(obj, args);
+    }
+    return obj;
+}
 /**
  * uClass - class system
  *
@@ -19,51 +27,32 @@ import { forOwn, is  } from "../helpers";
  * to make it easier for end-devs to create plugins.
  *
  */
+var uClass = (Base, info) => {
+    var Class;
+    if( arguments.len === 1 ){
+        info = Base;
+        Base = undefined;
+    }
+    if( arguments.len === 3 ){
+        throw new Error('WTF????');
+    }
+    var proto = Base ? create(Base && Base.prototype) : {};
+    //I dont like it, because it makes it a bit slow but ugma has used it extensively this way, all around the code
+    //If I were in charge, I would do it another way without messing around with `constructor` keyword
+    copy(proto, info, ['constructor']);
 
-var uClass = () => {
-
-    var len = arguments.length,
-        mixin = arguments[ len - 1 ],
-        SuperClass = len > 1 ? arguments[ 0 ] : null,
-        Class, SuperClassEmpty,
-        noop = () => {},
-        extend = ( obj, extension, overwrite ) => {
-
-            // failsave if something goes wrong
-            if ( !obj || !extension) return obj || extension || {};
-
-            forOwn( extension, ( prop, func ) => {
-    
-                if ( overwrite === false ) {
-                
-                   if ( !( prop in obj ) ) obj[ prop ] = func;
-                
-                } else {
-                
-                    obj[ prop ] = func;
-                }
-            });
+    function instantiate(args){
+        return newObject(proto, info.constructor, args);
+    }
+    function Class() {
+        return instantiate(arguments);
+    }
+    Class.new = function () {
+        return instantiate(arguments);
     };
-
-    if ( is( mixin.constructor, "object" ) ) {
-        Class = noop;
-    } else {
-        Class = mixin.constructor;
-        delete mixin.constructor;
-    }
-
-    if (SuperClass) {
-        SuperClassEmpty = noop;
-        SuperClassEmpty.prototype = SuperClass.prototype;
-        Class.prototype = new SuperClassEmpty();
-        Class.prototype.constructor = Class;
-        Class.Super = SuperClass;
-
-        extend( Class, SuperClass, false );
-    }
-   
-    extend( Class.prototype, mixin );
-
+    Class.prototype = proto;
+    proto.constructor = Class;
+    Class.Super = Base;
     return Class;
 },
 

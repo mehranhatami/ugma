@@ -165,9 +165,39 @@ export const isArray = Array.isArray;
                 DOCUMENT.defaultView ).getComputedStyle( node, pseudoElement || null );
         }
         return WINDOW.getComputedStyle( node, pseudoElement || null );
+    },
+
+ /**
+  *
+  * copies all the properties from source to object
+  *
+  */
+    copy = ( source, object, except ) => {
+      var index = -1,
+        ind,
+        props = keys(source),
+        length,
+        key;
+      if(isArray(except) && except.length){
+          length = except.length;
+          while (++index < length) {
+              key = except[index];
+              ind = props.indexOf(key);
+              if( -1 < ind ){
+                  props.splice(ind, 1);
+              }
+          }
+      }
+      index = -1;
+      length = props.length;
+      while (++index < length) {
+        key = props[index];
+        object[key] = source[key];
+      }
+      return object;
     };
 
 /*
  * Export interface
  */        
-export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle };
+export { each, map, forOwn, filter, is, proxy, sliceArgs, camelize, computeStyle, copy };
