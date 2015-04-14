@@ -3,7 +3,7 @@
  */
 
 import { WINDOW, DOCUMENT    } from "../const";
-import { forOwn, is  } from "../helpers";
+import { forOwn, is, copy  } from "../helpers";
 import   create        from "./create";
 
 function newObject(proto, FN, args) {
@@ -28,7 +28,6 @@ function newObject(proto, FN, args) {
  *
  */
 var uClass = (Base, info) => {
-    var Class;
     if( arguments.len === 1 ){
         info = Base;
         Base = undefined;

@@ -1,4 +1,5 @@
 import { WINDOW } from "../const";
+import { copy  } from "../helpers";
 
 function isObject(value) {
   var type = typeof value;
