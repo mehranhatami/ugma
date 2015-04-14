@@ -7,18 +7,19 @@ function isObject(value) {
 }
 var baseCreate = (function(){
   function UgmaObject() {}
-  return function(prototype) {
-    var result;
-    if (isObject(prototype)) {
-      UgmaObject.prototype = prototype;
-      result = new UgmaObject();
-      UgmaObject.prototype = null;
-    }
-    return result || WINDOW.Object();
+      return function (prototype) {
+          var result;
+          if (isObject(prototype)) {
+              UgmaObject.prototype = prototype;
+              result = new UgmaObject();
+              UgmaObject.prototype = null;
+          }
+          return result || WINDOW.Object();
+      };
+  }()),
+  create = function (prototype, properties) {
+    var result = baseCreate(prototype);
+    return properties ? copy(properties, result) : result;
   };
-}());
 
-export function create(prototype, properties) {
-  var result = baseCreate(prototype);
-  return properties ? copy(properties, result) : result;
-}
+export { baseCreate, create };
